@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="RidePlanner.Api/RidePlanner.Api.csproj" />
+  <Project Path="RidePlanner.Application/RidePlanner.Application.csproj" />
+  <Project Path="RidePlanner.Domain/RidePlanner.Domain.csproj" />
+  <Project Path="RidePlanner.Infrastructure/RidePlanner.Infrastructure.csproj" />
+</Solution>
