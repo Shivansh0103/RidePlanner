@@ -13,3 +13,9 @@ Every significant architectural discussion must result in either:
 An ADR,
 An architecture document update, or
 A code change.
+
+## YAGNI
+
+Base classes should contain only functionality required by current business requirements.
+
+Avoid speculative abstractions.

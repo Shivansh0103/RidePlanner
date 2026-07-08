@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace RidePlanner.Domain.Common;
 
-namespace RidePlanner.Domain.Common
+public abstract class Entity
 {
-    internal class Entity
-    {
-    }
+    public Guid Id { get; protected set; }
 }

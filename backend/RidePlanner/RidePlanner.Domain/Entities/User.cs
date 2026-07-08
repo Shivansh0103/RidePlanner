@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using RidePlanner.Domain.Common;
 
-namespace RidePlanner.Domain.Entities
+public class User : Entity
 {
-    internal class User
+    public string Name { get; private set; }
+
+    public string Email { get; private set; }
+
+    public DateTimeOffset CreatedAt { get; private set; }
+
+    private User()
     {
     }
 }
