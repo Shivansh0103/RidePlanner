@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RidePlanner.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6924d232282794d8e086479d63447d1ae1895385")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b81ad3eaeba7662ba90df10a34ab6729a33fca79")]
 [assembly: System.Reflection.AssemblyProductAttribute("RidePlanner.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RidePlanner.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
