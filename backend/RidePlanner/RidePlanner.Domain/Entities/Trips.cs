@@ -1,18 +1,57 @@
-﻿namespace RidePlanner.Domain.Entities;
+﻿using RidePlanner.Domain.Common;
+using RidePlanner.Domain.Exceptions;
 
-public class Trip
+public class Trip : Entity
 {
-    public Guid Id { get; set; }
+    public string Name { get; private set; }
 
-    public string Name { get; set; } = string.Empty;
+    public string? Description { get; private set; }
 
-    public string? Description { get; set; }
+    public DateOnly StartDate { get; private set; }
 
-    public DateOnly StartDate { get; set; }
+    public DateOnly EndDate { get; private set; }
 
-    public DateOnly EndDate { get; set; }
+    public DateTimeOffset CreatedAt { get; private set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; private set; }
 
-    public DateTime UpdatedAt { get; set; }
+    private Trip(
+        Guid id,
+        string name,
+        string? description,
+        DateOnly startDate,
+        DateOnly endDate)
+    {
+        Id = id;
+        Name = name;
+        Description = description;
+        StartDate = startDate;
+        EndDate = endDate;
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    public static Trip Create(
+        string name,
+        string? description,
+        DateOnly startDate,
+        DateOnly endDate)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainException("Trip name cannot be empty.");
+
+        if (endDate < startDate)
+            throw new DomainException("End date cannot be before start date.");
+
+        return new Trip(
+            Guid.NewGuid(),
+            name,
+            description,
+            startDate,
+            endDate);
+    }
+
+    private Trip()
+    {
+    }
 }
