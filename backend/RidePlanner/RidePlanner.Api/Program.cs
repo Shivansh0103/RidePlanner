@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RidePlanner.Api.Middleware;
 using RidePlanner.Infrastructure;
 using Scalar.AspNetCore;
 
@@ -21,6 +22,8 @@ if (app.Environment.IsDevelopment())
 
     app.MapScalarApiReference();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
