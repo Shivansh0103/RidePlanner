@@ -1,32 +1,33 @@
 # Sprint 1 – Trip Management MVP
 
-**Status:** Planned  
+**Status:** In Progress  
 **Sprint:** 1  
-**Estimated Duration:** 1–2 Weeks  
-**Version:** 1.0
+**Estimated Duration:** 2–3 Weeks  
+**Version:** 1.1
 
 ---
 
 # Objective
 
-Build the first end-to-end working version of Ride Planner by implementing Trip Management.
+Build the first end-to-end version of Ride Planner by implementing complete Trip Management while establishing a scalable Clean Architecture.
 
-By the end of this sprint, users should be able to create, view, update and delete trips through a React frontend connected to an ASP.NET Core Web API backed by PostgreSQL.
-
-This sprint focuses on establishing a clean, maintainable architecture that future features can build upon.
+This sprint intentionally prioritizes backend architecture before frontend integration so future modules (Hotels, Expenses, Fuel Stops, Itinerary, etc.) follow the same architecture.
 
 ---
 
 # Sprint Goal
 
-Deliver a functioning MVP with:
+Deliver:
 
 - ASP.NET Core Web API
-- React + TypeScript frontend
 - PostgreSQL database
 - Entity Framework Core
-- End-to-end CRUD functionality
-- Clean Architecture foundation
+- Complete Trip CRUD
+- Global Exception Handling
+- DTO Mapping
+- Application Service Layer
+- React Frontend
+- End-to-end CRUD
 
 ---
 
@@ -82,67 +83,128 @@ Deliver a functioning MVP with:
 
 ---
 
-# Acceptance Criteria
+# Sprint Structure
 
-The sprint is considered complete when:
+## Sprint 1.1 — Backend Foundation ✅
 
-- Users can create trips.
-- Users can retrieve all trips.
-- Users can retrieve a single trip.
-- Users can edit trips.
-- Users can delete trips.
-- Trip data is stored in PostgreSQL.
-- Swagger successfully tests every endpoint.
-- React frontend successfully communicates with the backend.
-- Application builds without errors.
+### Completed
+
+- Create Trip entity
+- Configure Entity Framework Core
+- Configure PostgreSQL
+- Create RidePlannerDbContext
+- Register Infrastructure
+- Create Initial Migration
+- Apply Database Migration
+- Configure User Secrets
 
 ---
 
-# Technical Scope
+## Sprint 1.2 — Backend CRUD ✅
 
-## Backend
+### Completed
 
-- ASP.NET Core Web API
-- Clean Architecture
-- Entity Framework Core
-- PostgreSQL
+- Create TripController
+- Implement Create endpoint
+- Implement Read endpoints
+- Implement Update endpoint
+- Implement Delete endpoint
+- Global Exception Middleware
+- DTO Request / Response Models
+- Trip Mapping Extensions
+- Tested using Scalar API Reference
+
+---
+
+## Sprint 1.3 — Backend Architecture 🚧
+
+### Goal
+
+Refactor the backend into the intended Clean Architecture.
+
+### Tasks
+
+#### Application Layer
+
+- Create `ITripService`
+- Create `TripService`
+- Register services using Dependency Injection
+- Move business workflows from controllers into services
+
+#### Controller Refactoring
+
+Controllers should only handle:
+
+- HTTP Requests
+- HTTP Responses
+- Status Codes
+
+No direct EF Core interaction should remain inside controllers.
+
+#### Validation
+
+Prepare validation strategy.
+
+Topics:
+
+- API Validation
+- Domain Validation
+- FluentValidation (Sprint 2)
+
+#### Learning Objectives
+
+Understand:
+
+- Application Layer
+- Service Layer
+- Separation of Concerns
 - Dependency Injection
-- REST APIs
-- Database Migrations
-
-### APIs
-
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| GET | /api/trips | Get all trips |
-| GET | /api/trips/{id} | Get trip by ID |
-| POST | /api/trips | Create trip |
-| PUT | /api/trips/{id} | Update trip |
-| DELETE | /api/trips/{id} | Delete trip |
 
 ---
 
-## Frontend
+## Sprint 1.4 — Frontend Foundation
 
-- React
-- TypeScript
-- Vite
-- React Router
-- API Integration using Fetch or Axios
-- Basic responsive UI
+### React
 
-Pages:
+- Create Vite project
+- Configure TypeScript
+- Configure React Router
+- Create folder structure
+- Create shared layout
+
+---
+
+## Sprint 1.5 — Frontend Integration
+
+### Pages
 
 - Trip List
+- Trip Details
 - Create Trip
 - Edit Trip
-- Trip Details
+
+### Integration
+
+- API Client
+- CRUD Operations
+- Loading States
+- Error Handling
+
+---
+
+# API Endpoints
+
+| Method | Endpoint | Status |
+|---------|----------|--------|
+| GET | /api/trips | ✅ |
+| GET | /api/trips/{id} | ✅ |
+| POST | /api/trips | ✅ |
+| PUT | /api/trips/{id} | ✅ |
+| DELETE | /api/trips/{id} | ✅ |
 
 ---
 
 # Database
-
-Initial database schema:
 
 ## Trips
 
@@ -158,48 +220,52 @@ Initial database schema:
 
 ---
 
-# Sprint Tasks
+# Current Progress
 
-## Sprint 1.1 — Backend Foundation
+## ✅ Completed
 
-- Create Trip entity
-- Configure Entity Framework Core
-- Configure PostgreSQL
-- Create RidePlannerDbContext
-- Register services
-- Create initial migration
-- Update database
+### Infrastructure
+
+- PostgreSQL Integration
+- Entity Framework Core
+- User Secrets
+- Dependency Injection
+- Initial Migration
+
+### Domain
+
+- Trip Entity
+- User Entity
+- Factory Methods
+- Domain Validation
+- Entity Update Behaviour
+
+### API
+
+- POST /api/trips
+- GET /api/trips
+- GET /api/trips/{id}
+- PUT /api/trips/{id}
+- DELETE /api/trips/{id}
+
+### Architecture
+
+- Global Exception Middleware
+- DTOs
+- Mapping Extensions
 
 ---
 
-## Sprint 1.2 — Backend CRUD
+## 🚧 In Progress
 
-- Create TripController
-- Implement Create endpoint
-- Implement Read endpoints
-- Implement Update endpoint
-- Implement Delete endpoint
-- Test using Swagger
+- Application Service Layer
 
 ---
 
-## Sprint 1.3 — Frontend Foundation
+## ⏳ Pending
 
-- Create React application
-- Configure TypeScript
-- Configure React Router
-- Create folder structure
-- Create shared layout
-
----
-
-## Sprint 1.4 — Frontend Integration
-
-- Create Trip List page
-- Create Trip Details page
-- Create Trip Form
-- Connect frontend to backend
-- Implement CRUD operations
+- React Frontend
+- Frontend Integration
 
 ---
 
@@ -207,110 +273,109 @@ Initial database schema:
 
 Sprint 1 is complete when:
 
-- All acceptance criteria are satisfied.
-- Database migrations execute successfully.
-- CRUD operations function correctly.
-- Application builds without warnings or errors.
-- Code is committed to Git.
-- README is updated if necessary.
+## Backend
 
----
+- Complete CRUD implemented
+- Application Services introduced
+- Controllers no longer depend directly on DbContext
+- Global Exception Middleware working
+- Mapping centralized
 
-# Out of Scope
+## Frontend
 
-The following features are intentionally excluded from Sprint 1:
+- React application created
+- CRUD integrated with backend
 
-- User Authentication
-- Authorization
-- Maps
-- Route Planning
-- Weather
-- Fuel Calculations
-- Hotel Recommendations
-- AI Features
-- File Uploads
-- Notifications
-- Mobile Application
-- Docker Deployment
-- CI/CD Pipeline
+## Quality
 
-These features will be implemented in future sprints.
+- Migrations execute successfully
+- Application builds successfully
+- No secrets committed
+- Code committed
+- Documentation updated
 
 ---
 
 # Learning Objectives
 
-This sprint introduces:
+By the end of Sprint 1 you will understand:
 
-- ASP.NET Core Web API
-- Clean Architecture
-- Entity Framework Core
-- PostgreSQL Integration
-- Database Migrations
+## ASP.NET Core
+
+- Controllers
+- Routing
+- Middleware
 - Dependency Injection
-- REST API Design
-- React with TypeScript
+- Model Binding
+- REST APIs
+
+## Entity Framework Core
+
+- DbContext
+- DbSet
+- CRUD Operations
+- Change Tracking
+- Migrations
+
+## Clean Architecture
+
+- Domain Layer
+- Application Layer
+- Infrastructure Layer
+- DTOs
+- Mapping
+- Services
+
+## Frontend
+
+- React
+- TypeScript
 - React Router
-- Frontend–Backend Communication
+- API Integration
 
 ---
 
-# Deliverables
+# Out of Scope
 
-At the end of Sprint 1, the project will include:
+The following remain outside Sprint 1:
 
-- Functional ASP.NET Core backend
-- PostgreSQL database
-- React frontend
-- End-to-end CRUD workflow
-- Swagger documentation
-- Git commits for completed tasks
-
----
-
-# Success Criteria
-
-A user should be able to:
-
-1. Open the application.
-2. Create a trip.
-3. View all trips.
-4. Open a trip.
-5. Edit the trip.
-6. Delete the trip.
-
-If all of the above are possible without directly modifying the database, Sprint 1 is considered successfully completed.
+- Authentication
+- Authorization
+- Maps
+- Route Planning
+- Weather
+- Fuel Calculations
+- Hotels
+- AI Features
+- Notifications
+- Mobile Application
+- Docker
+- CI/CD
 
 ---
 
 # Notes
 
-Sprint 1 establishes the technical foundation for the Ride Planner application.
+During implementation it became clear that introducing the Application Layer after implementing CRUD provides a better learning progression than introducing it immediately.
 
-Future sprints will extend this foundation by introducing authentication, mapping, route planning, itinerary management, weather integration, AI-assisted trip planning, and additional advanced features while preserving the architecture established during this sprint.
+The project intentionally follows this order:
 
-## Sprint 1 Progress
+Backend Foundation
 
-### ✅ Completed
+↓
 
-- Created `Trip` domain entity
-- Configured Entity Framework Core
-- Configured PostgreSQL provider
-- Created `RidePlannerDbContext`
-- Registered Infrastructure using Dependency Injection
-- Externalized connection string configuration
-- Configured ASP.NET Core User Secrets for local development
-- Generated initial EF Core migration
-- Created PostgreSQL database
-- Applied initial migration successfully
+CRUD
 
-### 📦 Deliverables
+↓
 
-- `Trips` table created
-- `__EFMigrationsHistory` table created
-- Database connectivity verified
+Application Layer
 
-### Notes
+↓
 
-- Local secrets are managed using ASP.NET Core User Secrets.
-- `appsettings.json` no longer contains sensitive credentials.
+Frontend
+
+↓
+
+Future Features
+
+This keeps the learning curve gradual while ensuring future modules follow a scalable architecture.
