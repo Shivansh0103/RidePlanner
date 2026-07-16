@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RidePlanner.Application.Trips.DTOs;
+using RidePlanner.Application.Trips.Mappings;
 using RidePlanner.Infrastructure.Persistence;
 
 namespace RidePlanner.Api.Controllers;
@@ -28,16 +31,63 @@ public class TripsController : ControllerBase
 
         await _dbContext.SaveChangesAsync();
 
-        var response = new TripResponse(
-                    trip.Id,
-                    trip.Name,
-                    trip.Description,
-                    trip.StartDate,
-                    trip.EndDate,
-                    trip.CreatedAt,
-                    trip.UpdatedAt);
-
-        return Created(string.Empty, response);
+        return Created(string.Empty, trip.ToResponse());
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<TripResponse>> GetTrip(Guid id)
+    {
+        var trip = await _dbContext.Trips.FindAsync(id);
+
+        if (trip == null)
+            return NotFound();
+
+        return Ok(trip.ToResponse());
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<TripResponse>>> GetTrips()
+    {
+        var trips = await _dbContext.Trips.ToListAsync();
+
+        IEnumerable<TripResponse> response = trips.Select(trip => trip.ToResponse());
+
+        return Ok(response);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<TripResponse>> UpdateTrip(
+    Guid id,
+    UpdateTripRequest request)
+    {
+        var trip = await _dbContext.Trips.FindAsync(id);
+
+        if (trip == null)
+            return NotFound();
+
+        trip.Update(request.Name,
+                    request.Description,
+                    request.StartDate,
+                    request.EndDate);
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(trip.ToResponse());
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> DeleteTrip(
+    Guid id)
+    {
+        var trip = await _dbContext.Trips.FindAsync(id);
+
+        if (trip == null)
+            return NotFound();
+
+        _dbContext.Trips.Remove(trip);
+
+        await _dbContext.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

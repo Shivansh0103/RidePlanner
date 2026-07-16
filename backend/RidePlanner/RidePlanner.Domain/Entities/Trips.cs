@@ -32,16 +32,12 @@ public class Trip : Entity
     }
 
     public static Trip Create(
-        string name,
-        string? description,
-        DateOnly startDate,
-        DateOnly endDate)
+    string name,
+    string? description,
+    DateOnly startDate,
+    DateOnly endDate)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new DomainException("Trip name cannot be empty.");
-
-        if (endDate < startDate)
-            throw new DomainException("End date cannot be before start date.");
+        Validate(name, startDate, endDate);
 
         return new Trip(
             Guid.NewGuid(),
@@ -49,6 +45,33 @@ public class Trip : Entity
             description,
             startDate,
             endDate);
+    }
+
+    public void Update(
+    string name,
+    string? description,
+    DateOnly startDate,
+    DateOnly endDate)
+    {
+        Validate(name, startDate, endDate);
+
+        Name = name;
+        Description = description;
+        StartDate = startDate;
+        EndDate = endDate;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    private static void Validate(
+    string name,
+    DateOnly startDate,
+    DateOnly endDate)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainException("Trip name cannot be empty.");
+
+        if (endDate < startDate)
+            throw new DomainException("End date cannot be before start date.");
     }
 
     private Trip()
