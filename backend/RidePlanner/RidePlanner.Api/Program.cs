@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RidePlanner.Api.Middleware;
 using RidePlanner.Infrastructure;
+using RidePlanner.Application;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddApplication();
 
 builder.Services.AddOpenApi();
 
