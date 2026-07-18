@@ -1,17 +1,17 @@
-# Sprint 1 – Trip Management MVP
+# Sprint 1 – Backend MVP
 
-**Status:** In Progress  
+**Status:** ✅ Completed  
 **Sprint:** 1  
 **Estimated Duration:** 2–3 Weeks  
-**Version:** 1.1
+**Version:** 2.0
 
 ---
 
 # Objective
 
-Build the first end-to-end version of Ride Planner by implementing complete Trip Management while establishing a scalable Clean Architecture.
+Build the first production-ready backend for Ride Planner by implementing complete Trip Management using ASP.NET Core, PostgreSQL, Entity Framework Core, and Clean Architecture.
 
-This sprint intentionally prioritizes backend architecture before frontend integration so future modules (Hotels, Expenses, Fuel Stops, Itinerary, etc.) follow the same architecture.
+This sprint focused on learning backend fundamentals first before introducing the frontend.
 
 ---
 
@@ -20,14 +20,15 @@ This sprint intentionally prioritizes backend architecture before frontend integ
 Deliver:
 
 - ASP.NET Core Web API
-- PostgreSQL database
+- PostgreSQL Database
 - Entity Framework Core
 - Complete Trip CRUD
+- Clean Architecture
+- CQRS (Commands & Queries)
+- Repository Pattern
 - Global Exception Handling
 - DTO Mapping
-- Application Service Layer
-- React Frontend
-- End-to-end CRUD
+- Production-ready backend structure
 
 ---
 
@@ -39,7 +40,7 @@ Deliver:
 
 **I want** to create a trip
 
-**So that** I can start planning my journey.
+**So that** I can begin planning my ride.
 
 ---
 
@@ -49,7 +50,7 @@ Deliver:
 
 **I want** to see all my trips
 
-**So that** I can manage them.
+**So that** I can manage my rides.
 
 ---
 
@@ -57,17 +58,17 @@ Deliver:
 
 **As a** user
 
-**I want** to view details of a trip
+**I want** to view a trip
 
-**So that** I can review my travel plans.
+**So that** I can review its details.
 
 ---
 
-### US-4 — Edit Trip
+### US-4 — Update Trip
 
 **As a** user
 
-**I want** to modify an existing trip
+**I want** to edit my trip
 
 **So that** I can keep my itinerary up to date.
 
@@ -79,7 +80,7 @@ Deliver:
 
 **I want** to remove a trip
 
-**So that** I can keep my trip list clean.
+**So that** I can keep my trip list organized.
 
 ---
 
@@ -89,106 +90,84 @@ Deliver:
 
 ### Completed
 
-- Create Trip entity
-- Configure Entity Framework Core
+- Create Domain project
+- Create Trip Entity
 - Configure PostgreSQL
+- Configure Entity Framework Core
 - Create RidePlannerDbContext
-- Register Infrastructure
-- Create Initial Migration
-- Apply Database Migration
-- Configure User Secrets
+- Dependency Injection
+- Initial Migration
+- User Secrets
 
 ---
 
-## Sprint 1.2 — Backend CRUD ✅
+## Sprint 1.2 — CRUD API ✅
 
 ### Completed
 
-- Create TripController
-- Implement Create endpoint
-- Implement Read endpoints
-- Implement Update endpoint
-- Implement Delete endpoint
-- Global Exception Middleware
+- Create TripsController
+- Create Trip
+- Get Trip
+- Get Trips
+- Update Trip
+- Delete Trip
 - DTO Request / Response Models
-- Trip Mapping Extensions
-- Tested using Scalar API Reference
+- Mapping Extensions
+- Scalar API Testing
 
 ---
 
-## Sprint 1.3 — Backend Architecture 🚧
+## Sprint 1.3 — Backend Architecture ✅
 
-### Goal
+### Completed
 
-Refactor the backend into the intended Clean Architecture.
+#### Clean Architecture
 
-### Tasks
+- Domain Layer
+- Application Layer
+- Infrastructure Layer
+- API Layer
 
-#### Application Layer
+#### CQRS
 
-- Create `ITripService`
-- Create `TripService`
-- Register services using Dependency Injection
-- Move business workflows from controllers into services
+- Commands
+- Queries
+- Handlers
+
+#### Repository Pattern
+
+- ITripRepository
+- TripRepository
+
+#### Dependency Injection
+
+- Infrastructure Registration
+- Application Registration
 
 #### Controller Refactoring
 
-Controllers should only handle:
+Controllers now:
 
-- HTTP Requests
-- HTTP Responses
-- Status Codes
+- Receive HTTP Requests
+- Create Commands / Queries
+- Invoke Handlers
+- Return HTTP Responses
 
-No direct EF Core interaction should remain inside controllers.
-
-#### Validation
-
-Prepare validation strategy.
-
-Topics:
-
-- API Validation
-- Domain Validation
-- FluentValidation (Sprint 2)
-
-#### Learning Objectives
-
-Understand:
-
-- Application Layer
-- Service Layer
-- Separation of Concerns
-- Dependency Injection
+No direct DbContext usage remains.
 
 ---
 
-## Sprint 1.4 — Frontend Foundation
+## Sprint 1.4 — Backend Polish ✅
 
-### React
+### Completed
 
-- Create Vite project
-- Configure TypeScript
-- Configure React Router
-- Create folder structure
-- Create shared layout
-
----
-
-## Sprint 1.5 — Frontend Integration
-
-### Pages
-
-- Trip List
-- Trip Details
-- Create Trip
-- Edit Trip
-
-### Integration
-
-- API Client
-- CRUD Operations
-- Loading States
-- Error Handling
+- Global Exception Middleware
+- Repository Cleanup
+- Nullable Reference Fixes
+- CreatedAtAction responses
+- Async/Await improvements
+- Logging improvements
+- Code Review & Refactoring
 
 ---
 
@@ -220,19 +199,37 @@ Understand:
 
 ---
 
-# Current Progress
+# Architecture
 
-## ✅ Completed
+```text
+API
+│
+├── Controllers
+│
+Application
+│
+├── Commands
+├── Queries
+├── Handlers
+├── Repository Abstractions
+│
+Infrastructure
+│
+├── EF Core
+├── PostgreSQL
+├── Repository Implementations
+│
+Domain
+│
+├── Entities
+├── Business Rules
+```
 
-### Infrastructure
+---
 
-- PostgreSQL Integration
-- Entity Framework Core
-- User Secrets
-- Dependency Injection
-- Initial Migration
+# Completed Deliverables
 
-### Domain
+## Domain
 
 - Trip Entity
 - User Entity
@@ -240,32 +237,27 @@ Understand:
 - Domain Validation
 - Entity Update Behaviour
 
-### API
+## Infrastructure
 
-- POST /api/trips
-- GET /api/trips
-- GET /api/trips/{id}
-- PUT /api/trips/{id}
-- DELETE /api/trips/{id}
+- PostgreSQL
+- EF Core
+- DbContext
+- Repository Implementations
+- Dependency Injection
 
-### Architecture
+## Application
 
-- Global Exception Middleware
+- Commands
+- Queries
+- Handlers
+- Repository Abstractions
+
+## API
+
+- CRUD Endpoints
 - DTOs
 - Mapping Extensions
-
----
-
-## 🚧 In Progress
-
-- Application Service Layer
-
----
-
-## ⏳ Pending
-
-- React Frontend
-- Frontend Integration
+- Global Exception Middleware
 
 ---
 
@@ -273,32 +265,21 @@ Understand:
 
 Sprint 1 is complete when:
 
-## Backend
-
-- Complete CRUD implemented
-- Application Services introduced
-- Controllers no longer depend directly on DbContext
-- Global Exception Middleware working
-- Mapping centralized
-
-## Frontend
-
-- React application created
-- CRUD integrated with backend
-
-## Quality
-
-- Migrations execute successfully
-- Application builds successfully
-- No secrets committed
-- Code committed
+- Complete Trip CRUD implemented
+- Clean Architecture established
+- CQRS introduced
+- Repository Pattern implemented
+- Controllers independent of DbContext
+- Backend builds successfully
+- Database migrations execute successfully
+- Code reviewed and cleaned up
 - Documentation updated
 
 ---
 
-# Learning Objectives
+# Learning Outcomes
 
-By the end of Sprint 1 you will understand:
+By completing Sprint 1 you will understand:
 
 ## ASP.NET Core
 
@@ -306,76 +287,56 @@ By the end of Sprint 1 you will understand:
 - Routing
 - Middleware
 - Dependency Injection
-- Model Binding
 - REST APIs
 
 ## Entity Framework Core
 
 - DbContext
 - DbSet
-- CRUD Operations
-- Change Tracking
+- CRUD
 - Migrations
+- Change Tracking
 
 ## Clean Architecture
 
 - Domain Layer
 - Application Layer
 - Infrastructure Layer
-- DTOs
-- Mapping
-- Services
+- API Layer
 
-## Frontend
+## Architectural Patterns
 
-- React
-- TypeScript
-- React Router
-- API Integration
+- CQRS
+- Repository Pattern
+- DTO Mapping
+- Separation of Concerns
 
 ---
 
 # Out of Scope
 
-The following remain outside Sprint 1:
-
+- Frontend
 - Authentication
 - Authorization
 - Maps
-- Route Planning
 - Weather
-- Fuel Calculations
 - Hotels
-- AI Features
+- Fuel Planning
+- Expenses
 - Notifications
-- Mobile Application
+- Mobile App
 - Docker
 - CI/CD
+- Deployment
 
 ---
 
-# Notes
+# Retrospective
 
-During implementation it became clear that introducing the Application Layer after implementing CRUD provides a better learning progression than introducing it immediately.
+Originally, Sprint 1 was planned to include both backend and frontend development.
 
-The project intentionally follows this order:
+During implementation, the backend evolved significantly beyond the initial estimate as additional architectural concepts were introduced, including CQRS, Repository Pattern, layered architecture, and production-oriented refactoring.
 
-Backend Foundation
+Rather than rushing the frontend, the sprint was intentionally closed after delivering a complete, well-structured backend.
 
-↓
-
-CRUD
-
-↓
-
-Application Layer
-
-↓
-
-Frontend
-
-↓
-
-Future Features
-
-This keeps the learning curve gradual while ensuring future modules follow a scalable architecture.
+Frontend development begins in **Sprint 2**.
