@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 
@@ -13,11 +13,9 @@ public sealed class TripRepository : ITripRepository
         _dbContext = dbContext;
     }
 
-    public async Task AddAsync(
-        Trip trip,
-        CancellationToken cancellationToken = default)
+    public void Add(Trip trip)
     {
-        await _dbContext.Trips.AddAsync(trip, cancellationToken);
+        _dbContext.Trips.Add(trip);
     }
 
     public async Task<Trip?> GetByIdAsync(

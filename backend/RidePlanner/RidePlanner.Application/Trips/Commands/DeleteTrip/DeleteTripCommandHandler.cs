@@ -1,5 +1,4 @@
-﻿using RidePlanner.Application.Abstractions.Persistence;
-using RidePlanner.Application.Trips.Commands.CreateTrip;
+using RidePlanner.Application.Abstractions.Persistence;
 namespace RidePlanner.Application.Trips.Commands.DeleteTrip
 {
     public sealed class DeleteTripCommandHandler

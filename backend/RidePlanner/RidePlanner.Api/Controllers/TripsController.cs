@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Trips.Commands.CreateTrip;
 using RidePlanner.Application.Trips.Commands.UpdateTrip;
 using RidePlanner.Application.Trips.Commands.DeleteTrip;
@@ -48,7 +48,7 @@ public class TripsController : ControllerBase
             command,
             cancellationToken);
 
-        return Created(string.Empty, trip.ToResponse());
+        return CreatedAtAction(nameof(GetTrip), new { id = trip.Id }, trip.ToResponse());
     }
 
     [HttpGet("{id:guid}")]

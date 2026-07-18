@@ -1,4 +1,4 @@
-﻿using RidePlanner.Application.Abstractions.Persistence;
+using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 
 namespace RidePlanner.Application.Trips.Commands.UpdateTrip;
@@ -12,7 +12,7 @@ public sealed class UpdateTripCommandHandler
         _tripRepository = tripRepository;
     }
 
-    public async Task<Trip>? Handle(
+    public async Task<Trip?> Handle(
         UpdateTripCommand command,
         CancellationToken cancellationToken = default)
     {

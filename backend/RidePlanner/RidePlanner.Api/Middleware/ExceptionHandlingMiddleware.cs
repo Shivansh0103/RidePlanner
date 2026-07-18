@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Api.Middleware;
@@ -6,10 +7,12 @@ namespace RidePlanner.Api.Middleware;
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next)
+    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -20,6 +23,15 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception exception)
         {
+            if (exception is DomainException)
+            {
+                _logger.LogWarning(exception, "A domain exception occurred: {Message}", exception.Message);
+            }
+            else
+            {
+                _logger.LogError(exception, "An unhandled exception occurred: {Message}", exception.Message);
+            }
+
             var statusCode = exception switch
             {
                 DomainException => StatusCodes.Status400BadRequest,

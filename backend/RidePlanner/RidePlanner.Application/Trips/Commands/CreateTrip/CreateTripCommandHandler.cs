@@ -1,4 +1,4 @@
-﻿using RidePlanner.Application.Abstractions.Persistence;
+using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 
 namespace RidePlanner.Application.Trips.Commands.CreateTrip;
@@ -22,7 +22,7 @@ public sealed class CreateTripCommandHandler
             command.StartDate,
             command.EndDate);
 
-        await _tripRepository.AddAsync(trip, cancellationToken);
+        _tripRepository.Add(trip);
 
         await _tripRepository.SaveChangesAsync(cancellationToken);
 

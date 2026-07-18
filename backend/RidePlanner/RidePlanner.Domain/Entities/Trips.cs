@@ -1,4 +1,4 @@
-﻿using RidePlanner.Domain.Common;
+using RidePlanner.Domain.Common;
 using RidePlanner.Domain.Exceptions;
 
 public class Trip : Entity
@@ -76,5 +76,6 @@ public class Trip : Entity
 
     private Trip()
     {
+        Name = null!;
     }
 }
