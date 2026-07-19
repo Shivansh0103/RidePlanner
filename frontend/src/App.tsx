@@ -1,5 +1,7 @@
+import AppRouter from "@/app/router/AppRouter";
+
 function App() {
-  return <h1>Ride Planner</h1>;
+  return <AppRouter />;
 }
 
 export default App;
