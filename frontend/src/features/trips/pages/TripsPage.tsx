@@ -1,6 +1,16 @@
-import { Alert, CircularProgress, List, ListItem, ListItemText, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  Container,
+  Stack,
+  Typography,
+} from "@mui/material";
 
+import TripList from "../components/TripList";
 import { useTrips } from "../hooks/useTrips";
+import StatCard from "@/shared/components/StatCard";
+import Grid from "@mui/material/Grid";
 
 export default function TripsPage() {
   const { data: trips, isLoading, isError, error } = useTrips();
@@ -24,21 +34,42 @@ export default function TripsPage() {
   }
 
   return (
-    <>
-      <Typography variant="h4" gutterBottom>
-        Trips
-      </Typography>
+    <Container
+      maxWidth="lg"
+      sx={{
+        py: 4,
+      }}
+    >
+      <Stack spacing={4}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <Typography variant="h4">Trips</Typography>
 
-      <List>
-        {trips.map((trip) => (
-          <ListItem key={trip.id}>
-            <ListItemText
-              primary={trip.name}
-              secondary={`${trip.startDate} - ${trip.endDate}`}
+            <Typography color="text.secondary">
+              Your motorcycle adventures and upcoming journeys.
+            </Typography>
+          </div>
+
+          <Button variant="contained">
+            Create Trip
+          </Button>
+        </Stack>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <StatCard
+              label="Total Trips"
+              value={trips.length}
             />
-          </ListItem>
-        ))}
-      </List>
-    </>
+          </Grid>
+        </Grid>
+        <TripList trips={trips} />
+      </Stack>
+    </Container>
   );
 }
