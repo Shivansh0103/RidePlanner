@@ -1,32 +1,29 @@
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import { Card, CardContent, Stack, Typography } from "@mui/material";
+import { Button, Card, CardContent, Stack, Typography } from "@mui/material";
 
-import type { Trip } from "../types/trip";
 import { formatDate } from "@/shared/utils/date";
+import type { Trip } from "../types/trip";
 
 type TripCardProps = {
   trip: Trip;
+  onEdit: (trip: Trip) => void;
 };
 
-export default function TripCard({ trip }: TripCardProps) {
+export default function TripCard({ trip, onEdit }: TripCardProps) {
   return (
     <Card
-  elevation={2}
-  sx={{
-    borderRadius: 3,
-    height: "100%",
-    transition: "0.2s ease",
-    "&:hover": {
-      transform: "translateY(-4px)",
-      boxShadow: 6,
-    },
-  }}
->
-      <CardContent
-        sx={{
-          p: 3,
-        }}
-      >
+      elevation={2}
+      sx={{
+        borderRadius: 3,
+        height: "100%",
+        transition: "0.2s ease",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow: 6,
+        },
+      }}
+    >
+      <CardContent sx={{ p: 3 }}>
         <Stack spacing={2}>
           <div>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -34,15 +31,20 @@ export default function TripCard({ trip }: TripCardProps) {
             </Typography>
 
             {trip.description && (
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mt: 0.5 }}
-              >
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 {trip.description}
               </Typography>
             )}
           </div>
+
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => onEdit(trip)}
+            sx={{ alignSelf: "flex-start" }}
+          >
+            Edit
+          </Button>
 
           <Stack
             direction="row"

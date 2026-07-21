@@ -1,13 +1,14 @@
 import Grid from "@mui/material/Grid";
 
-import type { Trip } from "../types/trip";
 import TripCard from "./TripCard";
+import type { Trip } from "../types/trip";
 
 type TripListProps = {
   trips: Trip[];
+  onEdit: (trip: Trip) => void;
 };
 
-export default function TripList({ trips }: TripListProps) {
+export default function TripList({ trips, onEdit }: TripListProps) {
   return (
     <Grid container spacing={3}>
       {trips.map((trip) => (
@@ -18,7 +19,7 @@ export default function TripList({ trips }: TripListProps) {
             md: 6,
           }}
         >
-          <TripCard trip={trip} />
+          <TripCard trip={trip} onEdit={onEdit} />
         </Grid>
       ))}
     </Grid>

@@ -6,8 +6,9 @@ import Grid from "@mui/material/Grid";
 import TripList from "../components/TripList";
 import NewTripButton from "../components/NewTripButton";
 import CreateTripDialog from "../components/CreateTripDialog";
+import EditTripDialog from "../components/EditTripDialog";
 import { useTrips } from "../hooks/useTrips";
-
+import { type Trip } from "../types/trip";
 import StatCard from "@/shared/components/StatCard";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 import ErrorState from "@/shared/ui/ErrorState";
@@ -16,7 +17,7 @@ import PageHeader from "@/shared/ui/PageHeader";
 
 export default function TripsPage() {
   const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);
-
+  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const { data: trips, isLoading, isError, error } = useTrips();
 
   if (isLoading) {
@@ -36,6 +37,14 @@ export default function TripsPage() {
     );
   }
 
+  const handleEdit = (trip: Trip) => {
+    setSelectedTrip(trip);
+  };
+
+  const handleCloseEdit = () => {
+    setSelectedTrip(null);
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
@@ -51,9 +60,12 @@ export default function TripsPage() {
           </Grid>
         </Grid>
 
-        <TripList trips={trips} />
+        <TripList trips={trips} onEdit={handleEdit} />
 
         <CreateTripDialog open={isCreateDialogOpen} onClose={() => setCreateDialogOpen(false)} />
+        {selectedTrip && (
+          <EditTripDialog open={true} trip={selectedTrip} onClose={handleCloseEdit} />
+        )}
       </Stack>
     </Container>
   );
