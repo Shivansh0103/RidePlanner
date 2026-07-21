@@ -1,6 +1,7 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 import TripForm from "./TripForm";
+import { tripDefaults } from "../constants/tripDefaults";
 import type { CreateTripRequest } from "../schemas/createTripSchema";
 import { useCreateTrip } from "../hooks/useCreateTrip";
 import { toast } from "sonner";
@@ -11,18 +12,18 @@ type CreateTripDialogProps = {
 };
 
 export default function CreateTripDialog({ open, onClose }: CreateTripDialogProps) {
-  const { mutate, isPending, error, isError } = useCreateTrip();
+  const { mutateAsync, isPending, error, isError } = useCreateTrip();
 
-  const handleCreateTrip = (data: CreateTripRequest) => {
-    mutate(data, {
-      onSuccess: () => {
-        onClose();
+  const handleCreateTrip = async (data: CreateTripRequest) => {
+    try {
+      await mutateAsync(data);
 
-        toast.success("Trip created!", {
-          description: "Your new trip has been added.",
-        });
-      },
-    });
+      onClose();
+
+      toast.success("Trip created!", {
+        description: "Your trip has been added.",
+      });
+    } catch {}
   };
 
   return (
@@ -35,15 +36,7 @@ export default function CreateTripDialog({ open, onClose }: CreateTripDialogProp
             {error instanceof Error ? error.message : "Failed to create trip."}
           </Alert>
         )}
-        <TripForm
-          defaultValues={{
-            name: "",
-            description: "",
-            startDate: "",
-            endDate: "",
-          }}
-          onSubmit={handleCreateTrip}
-        />
+        <TripForm defaultValues={tripDefaults} onSubmit={handleCreateTrip} />
       </DialogContent>
 
       <DialogActions>

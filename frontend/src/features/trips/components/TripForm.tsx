@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { createTripSchema, type CreateTripRequest } from "../schemas/createTripSchema";
+import { tripDefaults } from "../constants/tripDefaults";
 
 type TripFormProps = {
   defaultValues?: CreateTripRequest;
@@ -16,12 +17,7 @@ export default function TripForm({ defaultValues, onSubmit }: TripFormProps) {
     formState: { errors },
   } = useForm<CreateTripRequest>({
     resolver: zodResolver(createTripSchema),
-    defaultValues: defaultValues ?? {
-      name: "",
-      description: "",
-      startDate: "",
-      endDate: "",
-    },
+    defaultValues: defaultValues ?? tripDefaults,
   });
 
   return (
