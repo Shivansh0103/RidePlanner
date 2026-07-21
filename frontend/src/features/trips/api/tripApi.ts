@@ -1,9 +1,9 @@
 import { apiClient } from "@/api/axios";
 import type { Trip } from "../types/trip";
-import type { TripFormValues } from "../schemas/tripSchema";
+import type { CreateTripRequest } from "../schemas/createTripSchema";
 
 export async function createTrip(
-  trip: TripFormValues
+  trip: CreateTripRequest
 ): Promise<Trip> {
   const response = await apiClient.post<Trip>(
     "/trips",

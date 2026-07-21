@@ -9,6 +9,7 @@ import TripDetailsPage from "@/features/trips/pages/TripDetailsPage";
 
 import HomePage from "@/shared/pages/HomePage";
 import NotFoundPage from "@/shared/pages/NotFoundPage";
+import { Toaster } from "sonner";
 
 const router = createBrowserRouter([
   {
@@ -50,5 +51,11 @@ const router = createBrowserRouter([
 ]);
 
 export default function AppRouter() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+
+      <Toaster richColors position="top-right" />
+    </>
+  );
 }
