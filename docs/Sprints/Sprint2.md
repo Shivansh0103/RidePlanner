@@ -1,6 +1,6 @@
-# Sprint 2 – Frontend Foundation & Trip Management UI
+# Sprint 2 – Frontend Foundation & Trip Management
 
-**Status:** Planned  
+**Status:** ✅ Completed  
 **Sprint:** 2  
 **Estimated Duration:** 2–3 Weeks  
 **Version:** 1.0
@@ -9,281 +9,364 @@
 
 # Objective
 
-Build the first production-ready React frontend for Ride Planner and integrate it with the existing ASP.NET Core backend created during Sprint 1.
+Build the frontend foundation for Ride Planner by implementing a scalable React application and delivering the first complete end-to-end user feature: **Trip Management**.
 
-By the end of this sprint, users should be able to perform complete Trip Management through the web interface.
-
----
-
-# Sprint Goals
-
-Implement the frontend foundation while following scalable architecture and best practices.
-
-This sprint focuses on:
-
-- React application setup
-- Shared frontend architecture
-- Routing
-- API communication
-- Trip Management UI
-- End-to-end backend integration
+This sprint focuses on establishing reusable frontend architecture rather than rapidly adding features. The patterns introduced here will support future modules including Hotels, Expenses, Fuel Stops, Destinations, Itinerary, Documents, and Maps.
 
 ---
 
-# Scope
+# Goals
 
-## Included
-
-- React + TypeScript application
-- Vite setup
-- Routing
-- Responsive layout
-- API client
-- Trip CRUD
-- Form validation
-- Loading states
-- Error handling
-
-## Excluded
-
-- Authentication
-- Authorization
-- Maps
-- Hotels
-- Expenses
-- Fuel Stops
-- Itinerary
-- Offline support
-- PWA
-- Notifications
+- Establish a production-ready React architecture.
+- Integrate the frontend with the existing ASP.NET Core backend.
+- Implement complete Trip CRUD.
+- Introduce reusable UI components.
+- Build scalable frontend patterns for future modules.
 
 ---
 
-# Technology Stack
+# Deliverables
 
-Frontend
+## Frontend Foundation
 
-- React
+- React 19
 - TypeScript
 - Vite
-
-Libraries
-
-- React Router
-- Axios
-- TanStack Query
-- React Hook Form
-- Zod
 - Material UI
+- React Router
+- TanStack Query
+- Axios
+- React Hook Form
+- Zod Validation
 
 ---
 
-# Frontend Architecture
+## Architecture
 
-```
+Implemented a feature-first frontend architecture.
+
+```text
 src/
 
-    app/
+app/
+layouts/
+routes/
 
-    layouts/
-
-    routes/
-
-    features/
-
-        trips/
-
-            api/
-
-            components/
-
-            hooks/
-
-            pages/
-
-            types/
-
-    shared/
-
+features/
+    trips/
+        api/
         components/
-
         hooks/
+        pages/
+        schemas/
+        types/
 
-        utils/
-
-    services/
-
-    assets/
-
-    styles/
+shared/
+    components/
+    ui/
+    utils/
 ```
 
----
+The frontend follows clear separation of responsibilities:
 
-# User Stories
-
-## Story 1
-
-Project Setup
-
-### Tasks
-
-- Create React project
-- Configure TypeScript
-- Configure ESLint
-- Configure Prettier
-- Configure path aliases
-- Configure environment variables
-
----
-
-## Story 2
-
-Application Shell
-
-### Tasks
-
-- App layout
-- Navigation
-- Header
-- Footer
-- Theme
-- Responsive container
-
----
-
-## Story 3
-
-Routing
-
-Pages
-
-- Home
-- Trips
-- Create Trip
-- Trip Details
-- Edit Trip
-- Not Found
-
----
-
-## Story 4
-
+```text
+Page
+    │
+    ▼
+Components
+    │
+    ▼
+Hooks
+    │
+    ▼
 API Layer
+    │
+    ▼
+Axios Client
+    │
+    ▼
+Backend
+```
 
-### Tasks
+This mirrors the backend architecture:
 
-- Axios instance
-- Base URL
-- Error handling
-- Request configuration
+```text
+Controller
+    │
+    ▼
+Application
+    │
+    ▼
+Repository
+    │
+    ▼
+Database
+```
+
+Keeping similar architectural patterns across the frontend and backend simplifies reasoning about the application.
 
 ---
 
-## Story 5
+# Features Delivered
 
-Trip List
+## Trip Listing
 
-### Features
+Implemented trip listing with:
 
-- Fetch trips
 - Loading state
 - Error state
 - Empty state
+- Responsive grid layout
 - Trip cards
-- Navigation
 
 ---
 
-## Story 6
+## Create Trip
 
-Create Trip
-
-### Features
+Implemented:
 
 - React Hook Form
 - Zod validation
-- Backend integration
+- Material UI Dialog
+- React Query mutation
+- Toast notifications
+- Cache invalidation
 
 ---
 
-## Story 7
+## Edit Trip
 
-Trip Details
+Implemented:
 
-Display
-
-- Name
-- Description
-- Dates
-- Metadata
-
----
-
-## Story 8
-
-Edit Trip
-
-- Load existing trip
-- Update
-- Save
+- Shared TripForm
+- Prefilled form values
+- Update mutation
+- Validation
+- Success feedback
+- Query invalidation
 
 ---
 
-## Story 9
+## Delete Trip
 
-Delete Trip
+Implemented:
 
+- Action menu
 - Confirmation dialog
-- Delete request
-- Refresh list
+- Delete mutation
+- Toast notifications
+- Query invalidation
 
 ---
 
-# Backend Changes
+# Shared Components
 
-Only improvements discovered during integration.
+Created reusable UI components:
 
-Possible updates include:
+- PageHeader
+- StatCard
+- LoadingSpinner
+- ErrorState
+- EmptyState
+- ConfirmDialog
 
-- Better validation responses
-- Improved error messages
-- DTO refinements
-- Minor API adjustments
+These components establish consistent UI patterns and will be reused throughout future features.
+
+---
+
+# Shared Utilities
+
+Implemented shared utility functions including:
+
+- Date formatting
+- Axios client
+- Query key organization
+
+---
+
+# State Management
+
+Client state:
+
+- React State
+
+Server state:
+
+- TanStack Query
+
+Forms:
+
+- React Hook Form
+
+Validation:
+
+- Zod
+
+This separation keeps each tool focused on a single responsibility.
+
+---
+
+# UI Improvements
+
+Introduced:
+
+- Responsive layouts
+- Shared page structure
+- Improved typography hierarchy
+- Action menus
+- Confirmation dialogs
+- Toast notifications
+- Accessibility improvements
+- Theme refinements
+
+The objective was to build a clean, production-quality interface while avoiding unnecessary visual complexity.
+
+---
+
+# Architectural Decisions
+
+During this sprint several important architectural decisions were made.
+
+## Feature-based organization
+
+Instead of organizing by technical type:
+
+```text
+components/
+pages/
+hooks/
+```
+
+the application is organized by feature:
+
+```text
+features/
+    trips/
+```
+
+This scales significantly better as new product modules are introduced.
+
+---
+
+## Shared Component Library
+
+Reusable UI components were extracted into the shared layer.
+
+This reduces duplication while maintaining consistency across features.
+
+---
+
+## API Abstraction
+
+Pages never communicate directly with Axios.
+
+Instead:
+
+```text
+Page
+
+↓
+
+Hook
+
+↓
+
+API
+
+↓
+
+Axios Client
+```
+
+This makes testing easier and isolates networking concerns.
+
+---
+
+## Form Strategy
+
+React Hook Form combined with Zod provides:
+
+- Strong typing
+- Schema validation
+- Reusable forms
+- Consistent validation behaviour
+
+---
+
+## Query Strategy
+
+TanStack Query manages all server state.
+
+Benefits include:
+
+- Request caching
+- Automatic refetching
+- Mutation management
+- Cache invalidation
+- Loading states
 
 ---
 
 # Definition of Done
 
-Every completed story must:
+Sprint 2 is considered complete when:
 
-- Build successfully
-- Pass TypeScript compilation
-- Have no lint errors
-- Integrate with backend
-- Handle loading states
-- Handle error states
-- Validate user input
-- Follow project architecture
+- ✅ Frontend architecture established
+- ✅ Backend integration completed
+- ✅ Complete Trip CRUD implemented
+- ✅ Responsive layouts
+- ✅ Shared component library established
+- ✅ Form validation implemented
+- ✅ React Query integrated
+- ✅ Loading, Error and Empty states implemented
+- ✅ Toast notifications
+- ✅ Confirmation dialogs
+- ✅ Production-ready project structure
 
 ---
 
-# Acceptance Criteria
+# Lessons Learned
 
-Users can:
+## Architecture first
 
-- View all trips
-- Create trips
-- Edit trips
-- Delete trips
-- View trip details
-- Refresh pages without losing functionality
-- Navigate directly using URLs
+Building reusable architecture before adding numerous features significantly reduced later complexity.
+
+---
+
+## Shared components provide compounding value
+
+Extracting reusable UI components early reduced duplication and improved consistency.
+
+---
+
+## Server state deserves dedicated tooling
+
+React Query simplified asynchronous state management considerably compared to manual state handling.
+
+---
+
+## Reuse forms instead of duplicating them
+
+A shared TripForm reduced maintenance effort while improving consistency between Create and Edit workflows.
+
+---
+
+## Introduce abstractions only when needed
+
+Rather than over-engineering early, abstractions were introduced incrementally as genuine reuse opportunities emerged.
 
 ---
 
 # Sprint Outcome
 
-Ride Planner becomes a complete full-stack application with a React frontend communicating with the ASP.NET Core backend through REST APIs.
+Sprint 2 successfully established the frontend architecture for Ride Planner and delivered the application's first complete end-to-end feature.
 
-This establishes the foundation for future modules such as Hotels, Expenses, Fuel Stops, Packing Lists, and Itinerary Planning.
+The project now contains a production-ready frontend foundation capable of supporting significantly larger modules without requiring major architectural changes.
+
+Future sprints can primarily focus on product capabilities rather than frontend infrastructure.
+
+---
+
+# Next Sprint
+
+Sprint 3 will begin building the Trip Workspace by introducing dedicated Trip Details pages and laying the foundation for itinerary planning, destinations, accommodations, expenses, and related planning features.

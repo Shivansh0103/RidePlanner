@@ -14,18 +14,36 @@ The roadmap is intended to communicate direction rather than deadlines.
 
 The roadmap is guided by the following principles:
 
-* Deliver meaningful user value with every milestone.
-* Build upon a stable and reliable foundation.
-* Improve existing experiences before introducing entirely new capabilities.
-* Prefer depth over breadth.
-* Expand thoughtfully without compromising the product's core purpose.
-* Remain flexible as user needs and product understanding evolve.
+- Deliver meaningful user value with every milestone.
+- Build upon a stable and reliable foundation.
+- Improve existing experiences before introducing entirely new capabilities.
+- Prefer depth over breadth.
+- Expand thoughtfully without compromising the product's core purpose.
+- Remain flexible as user needs and product understanding evolve.
 
 ---
 
 # Product Evolution
 
 Ride Planner is expected to evolve through the following milestones.
+
+---
+
+## Current Project Status
+
+**Version:** v0.2.0
+
+### Completed
+
+- ✅ Sprint 0 – Project Foundation
+- ✅ Sprint 1 – Backend Foundation
+- ✅ Sprint 2 – Frontend Foundation & Trip Management
+
+### Current Focus
+
+Sprint 3 – Trip Workspace
+
+The project has now completed both backend and frontend foundations. Future development will primarily focus on expanding Ride Planner's planning capabilities while continuing to refine the overall user experience.
 
 ---
 
@@ -39,27 +57,27 @@ The first milestone focuses on enabling travelers to successfully plan and manag
 
 ### Primary Product Domains
 
-* Trip Management
-* Itinerary Management
-* Route Planning
-* Budget & Expense Management
-* Travel Preparation
-* Trip Memories
+- Trip Management
+- Itinerary Management
+- Route Planning
+- Budget & Expense Management
+- Travel Preparation
+- Trip Memories
 
 ### Primary Personas
 
-* Solo Explorer
-* Family Planner
+- Solo Explorer
+- Family Planner
 
 ### Success Criteria
 
 Travelers can:
 
-* Create and manage trips.
-* Organize itineraries.
-* Estimate and track expenses.
-* Prepare before departure.
-* Complete and archive trips.
+- Create and manage trips.
+- Organize itineraries.
+- Estimate and track expenses.
+- Prepare before departure.
+- Complete and archive trips.
 
 The application should provide a complete planning experience without relying on spreadsheets or multiple note-taking applications.
 
@@ -75,25 +93,25 @@ This milestone introduces supporting capabilities that make planning more effici
 
 ### Primary Product Domains
 
-* Accommodation
-* Weather
-* Notifications
-* Templates
-* Budget & Expense Management
+- Accommodation
+- Weather
+- Notifications
+- Templates
+- Budget & Expense Management
 
 ### Primary Personas
 
-* Family Planner
-* Adventure Traveler
+- Family Planner
+- Adventure Traveler
 
 ### Potential Capabilities
 
-* Accommodation planning
-* Weather forecasts
-* Smart reminders
-* Trip templates
-* Improved expense summaries
-* Better planning workflows
+- Accommodation planning
+- Weather forecasts
+- Smart reminders
+- Trip templates
+- Improved expense summaries
+- Better planning workflows
 
 ### Success Criteria
 
@@ -111,21 +129,21 @@ The focus shifts from individual planning to shared planning experiences.
 
 ### Primary Product Domains
 
-* Collaboration
-* Budget & Expense Management
-* Notifications
+- Collaboration
+- Budget & Expense Management
+- Notifications
 
 ### Primary Personas
 
-* Group Organizer
+- Group Organizer
 
 ### Potential Capabilities
 
-* Shared trips
-* Trip invitations
-* Collaborative itinerary editing
-* Shared expenses
-* Role-based permissions
+- Shared trips
+- Trip invitations
+- Collaborative itinerary editing
+- Shared expenses
+- Role-based permissions
 
 ### Success Criteria
 
@@ -143,20 +161,20 @@ Ride Planner becomes the central hub that organizes information while integratin
 
 ### Primary Product Domains
 
-* Integrations
+- Integrations
 
 ### Primary Personas
 
-* All Personas
+- All Personas
 
 ### Potential Capabilities
 
-* Calendar integration
-* Navigation integration
-* Cloud storage integration
-* Photo library integration
-* Booking references
-* Import and export
+- Calendar integration
+- Navigation integration
+- Cloud storage integration
+- Photo library integration
+- Booking references
+- Import and export
 
 ### Success Criteria
 
@@ -174,19 +192,19 @@ The focus is on providing recommendations and automation while ensuring users re
 
 ### Primary Product Domains
 
-* Intelligent Assistance
+- Intelligent Assistance
 
 ### Primary Personas
 
-* All Personas
+- All Personas
 
 ### Potential Capabilities
 
-* Personalized recommendations
-* Smart itinerary suggestions
-* Packing suggestions
-* Budget insights
-* Route recommendations
+- Personalized recommendations
+- Smart itinerary suggestions
+- Packing suggestions
+- Budget insights
+- Route recommendations
 
 ### Success Criteria
 
@@ -204,21 +222,21 @@ The platform begins supporting knowledge sharing, inspiration, and community-dri
 
 ### Primary Product Domains
 
-* Community
-* Analytics
+- Community
+- Analytics
 
 ### Primary Personas
 
-* All Personas
+- All Personas
 
 ### Potential Capabilities
 
-* Community routes
-* Public trips
-* Travel inspiration
-* Travel achievements
-* Personal analytics
-* Annual travel summaries
+- Community routes
+- Public trips
+- Travel inspiration
+- Travel achievements
+- Personal analytics
+- Annual travel summaries
 
 ### Success Criteria
 
