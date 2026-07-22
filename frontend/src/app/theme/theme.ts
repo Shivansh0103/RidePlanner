@@ -8,6 +8,10 @@ const theme = createTheme({
     secondary: {
       main: "#2e7d32",
     },
+    background: {
+      default: "#f8fafc",
+      paper: "#ffffff",
+    },
   },
 
   shape: {
@@ -22,6 +26,30 @@ const theme = createTheme({
       "Arial",
       "sans-serif",
     ].join(","),
+    button: {
+      textTransform: "none",
+      fontWeight: 600,
+    },
+  },
+
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontWeight: 600,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          border: "1px solid",
+          borderColor: "rgba(0, 0, 0, 0.08)",
+        },
+      },
+    },
   },
 });
 

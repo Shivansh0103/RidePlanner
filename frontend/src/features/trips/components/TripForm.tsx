@@ -31,7 +31,7 @@ export default function TripForm({ defaultValues, onSubmit }: TripFormProps) {
           {...register("name")}
         />
 
-        <Stack direction="row" spacing={2}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
             label="Start Date"
             type="date"

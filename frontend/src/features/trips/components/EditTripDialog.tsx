@@ -35,8 +35,8 @@ export default function EditTripDialog({ open, trip, onClose }: EditTripDialogPr
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Edit Trip</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="edit-trip-dialog-title">
+      <DialogTitle id="edit-trip-dialog-title">Edit Trip</DialogTitle>
 
       <DialogContent>
         {isError && (

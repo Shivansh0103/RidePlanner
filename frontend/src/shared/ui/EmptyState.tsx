@@ -12,8 +12,8 @@ export default function EmptyState({
   return (
     <Stack
       spacing={1}
-      alignItems="center"
       sx={{
+        alignItems: "center",
         py: 8,
       }}
     >
@@ -24,7 +24,7 @@ export default function EmptyState({
       {description && (
         <Typography
           color="text.secondary"
-          textAlign="center"
+          sx={{ textAlign: "center" }}
         >
           {description}
         </Typography>

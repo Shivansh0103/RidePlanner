@@ -33,3 +33,7 @@ export async function updateTrip(
 
   return response.data;
 }
+
+export async function deleteTrip(id: string): Promise<void> {
+  await apiClient.delete(`/trips/${id}`);
+}

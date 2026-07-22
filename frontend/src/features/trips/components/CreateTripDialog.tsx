@@ -27,8 +27,8 @@ export default function CreateTripDialog({ open, onClose }: CreateTripDialogProp
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Create Trip</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="create-trip-dialog-title">
+      <DialogTitle id="create-trip-dialog-title">Create Trip</DialogTitle>
 
       <DialogContent>
         {isError && (

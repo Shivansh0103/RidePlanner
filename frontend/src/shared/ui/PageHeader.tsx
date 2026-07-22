@@ -14,19 +14,20 @@ export default function PageHeader({
 }: PageHeaderProps) {
   return (
     <Stack
-      direction="row"
+      direction={{ xs: "column", sm: "row" }}
+      spacing={{ xs: 2, sm: 0 }}
       sx={{
         justifyContent: "space-between",
-        alignItems: "flex-start",
+        alignItems: { xs: "flex-start", sm: "center" },
       }}
     >
       <Stack spacing={0.5}>
-        <Typography variant="h4">
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
           {title}
         </Typography>
 
         {subtitle && (
-          <Typography color="text.secondary">
+          <Typography color="text.secondary" variant="body1">
             {subtitle}
           </Typography>
         )}

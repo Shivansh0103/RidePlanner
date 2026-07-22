@@ -6,9 +6,10 @@ import type { Trip } from "../types/trip";
 type TripListProps = {
   trips: Trip[];
   onEdit: (trip: Trip) => void;
+  onDelete: (trip: Trip) => void;
 };
 
-export default function TripList({ trips, onEdit }: TripListProps) {
+export default function TripList({ trips, onEdit, onDelete }: TripListProps) {
   return (
     <Grid container spacing={3}>
       {trips.map((trip) => (
@@ -19,7 +20,7 @@ export default function TripList({ trips, onEdit }: TripListProps) {
             md: 6,
           }}
         >
-          <TripCard trip={trip} onEdit={onEdit} />
+          <TripCard trip={trip} onEdit={onEdit} onDelete={onDelete} />
         </Grid>
       ))}
     </Grid>
