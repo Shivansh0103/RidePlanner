@@ -1,4 +1,4 @@
-﻿namespace RidePlanner.Application.Trips.Commands.CreateTrip;
+namespace RidePlanner.Application.Features.Trips.Commands.CreateTrip;
 
 public sealed record CreateTripCommand(
     string Name,

@@ -1,31 +1,28 @@
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 
-namespace RidePlanner.Application.Trips.Commands.UpdateTrip;
+namespace RidePlanner.Application.Features.Trips.Commands.CreateTrip;
 
-public sealed class UpdateTripCommandHandler
+public sealed class CreateTripCommandHandler
 {
     private readonly ITripRepository _tripRepository;
 
-    public UpdateTripCommandHandler(ITripRepository tripRepository)
+    public CreateTripCommandHandler(ITripRepository tripRepository)
     {
         _tripRepository = tripRepository;
     }
 
-    public async Task<Trip?> Handle(
-        UpdateTripCommand command,
+    public async Task<Trip> Handle(
+        CreateTripCommand command,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(command.Id, cancellationToken);
-
-        if (trip == null)
-            return null;
-
-        trip.Update(
+        var trip = Trip.Create(
             command.Name,
             command.Description,
             command.StartDate,
             command.EndDate);
+
+        _tripRepository.Add(trip);
 
         await _tripRepository.SaveChangesAsync(cancellationToken);
 

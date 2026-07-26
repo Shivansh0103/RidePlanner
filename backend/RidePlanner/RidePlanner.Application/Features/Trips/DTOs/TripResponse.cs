@@ -1,4 +1,4 @@
-﻿namespace RidePlanner.Application.Trips.DTOs;
+namespace RidePlanner.Application.Features.Trips.DTOs;
 
 public record TripResponse(
     Guid Id,

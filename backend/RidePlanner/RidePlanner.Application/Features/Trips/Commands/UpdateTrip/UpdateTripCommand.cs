@@ -1,4 +1,4 @@
-﻿namespace RidePlanner.Application.Trips.Commands.UpdateTrip;
+namespace RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
 
 public sealed record UpdateTripCommand(
     Guid Id,

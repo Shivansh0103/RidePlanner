@@ -1,7 +1,7 @@
-﻿using RidePlanner.Application.Abstractions.Persistence;
+using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 
-namespace RidePlanner.Application.Trips.Queries.GetTrips;
+namespace RidePlanner.Application.Features.Trips.Queries.GetTrips;
 
 public sealed class GetTripsQueryHandler
 {

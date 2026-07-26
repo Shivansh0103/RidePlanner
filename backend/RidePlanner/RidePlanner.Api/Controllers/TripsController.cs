@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using RidePlanner.Application.Trips.Commands.CreateTrip;
-using RidePlanner.Application.Trips.Commands.UpdateTrip;
-using RidePlanner.Application.Trips.Commands.DeleteTrip;
-using RidePlanner.Application.Trips.DTOs;
-using RidePlanner.Application.Trips.Mappings;
-using RidePlanner.Application.Trips.Queries.GetTrip;
-using RidePlanner.Application.Trips.Queries.GetTrips;
+using RidePlanner.Application.Features.Trips.Commands.CreateTrip;
+using RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
+using RidePlanner.Application.Features.Trips.Commands.DeleteTrip;
+using RidePlanner.Application.Features.Trips.DTOs;
+using RidePlanner.Application.Features.Trips.Mappings;
+using RidePlanner.Application.Features.Trips.Queries.GetTrip;
+using RidePlanner.Application.Features.Trips.Queries.GetTrips;
 
 namespace RidePlanner.Api.Controllers;
 

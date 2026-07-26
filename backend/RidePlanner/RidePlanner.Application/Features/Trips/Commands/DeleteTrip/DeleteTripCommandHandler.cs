@@ -1,6 +1,5 @@
 using RidePlanner.Application.Abstractions.Persistence;
-namespace RidePlanner.Application.Trips.Commands.DeleteTrip
-{
+namespace RidePlanner.Application.Features.Trips.Commands.DeleteTrip;
     public sealed class DeleteTripCommandHandler
     {
         private readonly ITripRepository _tripRepository;
@@ -24,4 +23,3 @@ namespace RidePlanner.Application.Trips.Commands.DeleteTrip
             await _tripRepository.SaveChangesAsync(cancellationToken);
         }
     }
-}

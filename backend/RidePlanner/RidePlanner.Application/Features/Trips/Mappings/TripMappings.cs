@@ -1,7 +1,7 @@
-﻿using RidePlanner.Application.Trips.DTOs;
+using RidePlanner.Application.Features.Trips.DTOs;
 using RidePlanner.Domain.Entities;
 
-namespace RidePlanner.Application.Trips.Mappings;
+namespace RidePlanner.Application.Features.Trips.Mappings;
 
 public static class TripMappings
 {

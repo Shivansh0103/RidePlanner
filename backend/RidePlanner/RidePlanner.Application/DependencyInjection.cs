@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using RidePlanner.Application.Features.TripStops.Commands.CreateTripStop;
 using RidePlanner.Application.Features.TripStops.Commands.DeleteTripStop;
 using RidePlanner.Application.Features.TripStops.Commands.UpdateTripStop;
 using RidePlanner.Application.Features.TripStops.Queries.GetTripStops;
-using RidePlanner.Application.Trips.Commands.CreateTrip;
-using RidePlanner.Application.Trips.Commands.DeleteTrip;
-using RidePlanner.Application.Trips.Commands.UpdateTrip;
-using RidePlanner.Application.Trips.Queries.GetTrip;
-using RidePlanner.Application.Trips.Queries.GetTrips;
+using RidePlanner.Application.Features.Trips.Commands.CreateTrip;
+using RidePlanner.Application.Features.Trips.Commands.DeleteTrip;
+using RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
+using RidePlanner.Application.Features.Trips.Queries.GetTrip;
+using RidePlanner.Application.Features.Trips.Queries.GetTrips;
 namespace RidePlanner.Application;
 
 public static class DependencyInjection
