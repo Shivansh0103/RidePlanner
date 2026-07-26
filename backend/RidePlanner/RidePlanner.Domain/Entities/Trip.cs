@@ -15,6 +15,8 @@ public class Trip : Entity
 
     public DateTimeOffset UpdatedAt { get; private set; }
 
+    public ICollection<TripStop> Stops { get; private set; } = [];
+
     private Trip(
         Guid id,
         string name,
@@ -77,5 +79,6 @@ public class Trip : Entity
     private Trip()
     {
         Name = null!;
+        Stops = [];
     }
 }

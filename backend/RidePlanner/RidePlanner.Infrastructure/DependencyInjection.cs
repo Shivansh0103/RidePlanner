@@ -18,7 +18,7 @@ public static class DependencyInjection
                 configuration.GetConnectionString("RidePlannerDatabase")));
 
         services.AddScoped<ITripRepository, TripRepository>();
-
+        services.AddScoped<ITripStopRepository, TripStopRepository>();
         return services;
     }
 }

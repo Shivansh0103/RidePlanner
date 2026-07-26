@@ -11,4 +11,12 @@ public class RidePlannerDbContext : DbContext
     }
 
     public DbSet<Trip> Trips => Set<Trip>();
+    public DbSet<TripStop> TripStops => Set<TripStop>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RidePlannerDbContext).Assembly);
+
+        base.OnModelCreating(modelBuilder);
+    }
 }
