@@ -1,15 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Toaster } from "sonner";
 
-import MainLayout from "@/layouts/MainLayout";
-
-import TripsPage from "@/features/trips/pages/TripsPage";
 import CreateTripPage from "@/features/trips/pages/CreateTripPage";
 import EditTripPage from "@/features/trips/pages/EditTripPage";
 import TripDetailsPage from "@/features/trips/pages/TripDetailsPage";
-
+import TripsPage from "@/features/trips/pages/TripsPage";
+import MainLayout from "@/layouts/MainLayout";
 import HomePage from "@/shared/pages/HomePage";
 import NotFoundPage from "@/shared/pages/NotFoundPage";
-import { Toaster } from "sonner";
 
 const router = createBrowserRouter([
   {

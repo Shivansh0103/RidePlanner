@@ -1,9 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Stack, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 
-import { createTripSchema, type CreateTripRequest } from "../schemas/createTripSchema";
 import { tripDefaults } from "../constants/tripDefaults";
+import { type CreateTripRequest,createTripSchema } from "../schemas/createTripSchema";
 
 type TripFormProps = {
   defaultValues?: CreateTripRequest;

@@ -1,7 +1,7 @@
 import Grid from "@mui/material/Grid";
 
-import TripCard from "./TripCard";
 import type { Trip } from "../types/trip";
+import TripCard from "./TripCard";
 
 type TripListProps = {
   trips: Trip[];

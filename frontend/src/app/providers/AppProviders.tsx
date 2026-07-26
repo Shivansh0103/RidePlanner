@@ -1,7 +1,6 @@
-import type { ReactNode } from "react";
-
-import { QueryClientProvider } from "@tanstack/react-query";
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import { QueryClientProvider } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 
 import queryClient from "@/app/providers/queryClient";
 import theme from "@/app/theme/theme";

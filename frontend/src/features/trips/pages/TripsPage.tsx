@@ -1,23 +1,22 @@
-import { useState } from "react";
-
 import { Container, Stack } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import { useState } from "react";
 import { toast } from "sonner";
 
-import TripList from "../components/TripList";
-import NewTripButton from "../components/NewTripButton";
+import ConfirmDialog from "@/shared/components/ConfirmDialog";
+import StatCard from "@/shared/components/StatCard";
+import EmptyState from "@/shared/ui/EmptyState";
+import ErrorState from "@/shared/ui/ErrorState";
+import LoadingSpinner from "@/shared/ui/LoadingSpinner";
+import PageHeader from "@/shared/ui/PageHeader";
+
 import CreateTripDialog from "../components/CreateTripDialog";
 import EditTripDialog from "../components/EditTripDialog";
-import { useTrips } from "../hooks/useTrips";
+import NewTripButton from "../components/NewTripButton";
+import TripList from "../components/TripList";
 import { useDeleteTrip } from "../hooks/useDeleteTrip";
+import { useTrips } from "../hooks/useTrips";
 import { type Trip } from "../types/trip";
-
-import StatCard from "@/shared/components/StatCard";
-import ConfirmDialog from "@/shared/components/ConfirmDialog";
-import LoadingSpinner from "@/shared/ui/LoadingSpinner";
-import ErrorState from "@/shared/ui/ErrorState";
-import EmptyState from "@/shared/ui/EmptyState";
-import PageHeader from "@/shared/ui/PageHeader";
 
 export default function TripsPage() {
   const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);

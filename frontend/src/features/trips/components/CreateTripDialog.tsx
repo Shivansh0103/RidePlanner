@@ -1,10 +1,10 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-
-import TripForm from "./TripForm";
-import { tripDefaults } from "../constants/tripDefaults";
-import type { CreateTripRequest } from "../schemas/createTripSchema";
-import { useCreateTrip } from "../hooks/useCreateTrip";
 import { toast } from "sonner";
+
+import { tripDefaults } from "../constants/tripDefaults";
+import { useCreateTrip } from "../hooks/useCreateTrip";
+import type { CreateTripRequest } from "../schemas/createTripSchema";
+import TripForm from "./TripForm";
 
 type CreateTripDialogProps = {
   open: boolean;
@@ -23,7 +23,9 @@ export default function CreateTripDialog({ open, onClose }: CreateTripDialogProp
       toast.success("Trip created!", {
         description: "Your trip has been added.",
       });
-    } catch {}
+    } catch {
+      // Alert handles the error
+    }
   };
 
   return (

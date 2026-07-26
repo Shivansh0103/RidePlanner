@@ -1,7 +1,8 @@
 import { apiClient } from "@/api/axios";
-import type { Trip } from "../types/trip";
+
 import type { CreateTripRequest } from "../schemas/createTripSchema";
 import type { UpdateTripRequest } from "../schemas/updateTripSchema";
+import type { Trip } from "../types/trip";
 
 export async function createTrip(
   trip: CreateTripRequest
@@ -16,6 +17,12 @@ export async function createTrip(
 
 export async function getTrips(): Promise<Trip[]> {
   const response = await apiClient.get<Trip[]>("/trips");
+
+  return response.data;
+}
+
+export async function getTrip(id: string): Promise<Trip> {
+  const response = await apiClient.get<Trip>(`/trips/${id}`);
 
   return response.data;
 }

@@ -1,12 +1,10 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { toast } from "sonner";
 
-import TripForm from "./TripForm";
-
-import type { Trip } from "../types/trip";
-import type { CreateTripRequest } from "../schemas/createTripSchema";
-
 import { useUpdateTrip } from "../hooks/useUpdateTrip";
+import type { CreateTripRequest } from "../schemas/createTripSchema";
+import type { Trip } from "../types/trip";
+import TripForm from "./TripForm";
 
 type EditTripDialogProps = {
   open: boolean;

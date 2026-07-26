@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -7,6 +5,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
   Box,
   Card,
+  CardActionArea,
+  CardActions,
   CardContent,
   IconButton,
   ListItemIcon,
@@ -16,8 +16,11 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { formatDate } from "@/shared/utils/date";
+
 import type { Trip } from "../types/trip";
 
 type TripCardProps = {
@@ -28,6 +31,8 @@ type TripCardProps = {
 
 export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
   const menuId = `trip-menu-${trip.id}`;
@@ -47,6 +52,8 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
       sx={{
         borderRadius: 3,
         height: "100%",
+        display: "flex",
+        flexDirection: "column",
         transition: "0.2s ease-in-out",
         "&:hover": {
           transform: "translateY(-2px)",
@@ -54,11 +61,24 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         },
       }}
     >
-      <CardContent sx={{ p: 3, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-        <Stack spacing={2} sx={{ flexGrow: 1 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}>
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
+      <CardActionArea onClick={() => navigate(`/trips/${trip.id}`)} sx={{ flexGrow: 1 }}>
+        <CardContent
+          sx={{
+            p: 3,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Stack spacing={2} sx={{ flexGrow: 1 }}>
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 600,
+                  lineHeight: 1.3,
+                }}
+              >
                 {trip.name}
               </Typography>
 
@@ -69,83 +89,93 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               )}
             </Box>
 
-            <IconButton
-              id={buttonId}
-              size="small"
-              onClick={handleMenuOpen}
-              aria-label={`Trip actions for ${trip.name}`}
-              aria-controls={open ? menuId : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
-              sx={{ color: "action.active", mt: -0.5, mr: -0.5 }}
-            >
-              <MoreVertIcon fontSize="small" />
-            </IconButton>
-
-            <Menu
-              id={menuId}
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleMenuClose}
-              slotProps={{
-                list: {
-                  "aria-labelledby": buttonId,
-                },
-              }}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: "center",
+                color: "text.secondary",
+                mt: "auto",
+                pt: 1,
               }}
             >
-              <MenuItem
-                onClick={() => {
-                  handleMenuClose();
-                  onEdit(trip);
-                }}
-              >
-                <ListItemIcon>
-                  <EditIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Edit</ListItemText>
-              </MenuItem>
+              <CalendarMonthIcon fontSize="small" sx={{ color: "action.active" }} />
 
-              <MenuItem
-                onClick={() => {
-                  handleMenuClose();
-                  onDelete(trip);
-                }}
-                sx={{ color: "error.main" }}
-              >
-                <ListItemIcon sx={{ color: "error.main" }}>
-                  <DeleteIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Delete</ListItemText>
-              </MenuItem>
-            </Menu>
-          </Box>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
+              </Typography>
+            </Stack>
+          </Stack>
+        </CardContent>
+      </CardActionArea>
 
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{
-              alignItems: "center",
-              color: "text.secondary",
-              mt: "auto",
-              pt: 1,
+      <CardActions
+        sx={{
+          justifyContent: "flex-end",
+          px: 2,
+          pb: 2,
+          pt: 0,
+        }}
+      >
+        <IconButton
+          id={buttonId}
+          size="small"
+          onClick={handleMenuOpen}
+          aria-label={`Trip actions for ${trip.name}`}
+          aria-controls={open ? menuId : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+        >
+          <MoreVertIcon fontSize="small" />
+        </IconButton>
+
+        <Menu
+          id={menuId}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          slotProps={{
+            list: {
+              "aria-labelledby": buttonId,
+            },
+          }}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onEdit(trip);
             }}
           >
-            <CalendarMonthIcon fontSize="small" sx={{ color: "action.active" }} />
+            <ListItemIcon>
+              <EditIcon fontSize="small" />
+            </ListItemIcon>
 
-            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-              {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
-            </Typography>
-          </Stack>
-        </Stack>
-      </CardContent>
+            <ListItemText>Edit</ListItemText>
+          </MenuItem>
+
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onDelete(trip);
+            }}
+            sx={{ color: "error.main" }}
+          >
+            <ListItemIcon sx={{ color: "error.main" }}>
+              <DeleteIcon fontSize="small" />
+            </ListItemIcon>
+
+            <ListItemText>Delete</ListItemText>
+          </MenuItem>
+        </Menu>
+      </CardActions>
     </Card>
   );
 }
