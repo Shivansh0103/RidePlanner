@@ -61,7 +61,7 @@ export default function TripDetailsPage() {
 
         <TripSummarySection trip={trip} />
 
-        <ItinerarySection />
+        <ItinerarySection tripId={trip.id} />
       </Stack>
     </Box>
   );
