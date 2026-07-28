@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 import {
@@ -14,11 +12,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
 import TripStopList from "@/features/tripStops/components/TripStopList";
+import { useDeleteTripStop } from "@/features/tripStops/hooks/useDeleteTripStop";
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import type { TripStop } from "@/features/tripStops/types/tripStop";
+import ConfirmDialog from "@/shared/components/ConfirmDialog";
 
 type ItinerarySectionProps = {
   tripId: string;
@@ -27,8 +28,10 @@ type ItinerarySectionProps = {
 export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedStop, setSelectedStop] = useState<TripStop | null>(null);
+  const [stopToDelete, setStopToDelete] = useState<TripStop | null>(null);
 
   const { data: stops = [], isLoading, isError } = useTripStops(tripId);
+  const deleteTripStopMutation = useDeleteTripStop(tripId);
 
   const nextDisplayOrder = Math.max(0, ...stops.map((stop) => stop.displayOrder)) + 1;
 
@@ -49,7 +52,17 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
   };
 
   const handleDeleteStop = (stop: TripStop) => {
-    console.log("Delete", stop);
+    setStopToDelete(stop);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!stopToDelete) return;
+
+    deleteTripStopMutation.mutate(stopToDelete.id, {
+      onSuccess: () => {
+        setStopToDelete(null);
+      },
+    });
   };
 
   return (
@@ -163,6 +176,16 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
           onClose={handleCloseEditDialog}
         />
       )}
+
+      <ConfirmDialog
+        open={stopToDelete !== null}
+        title="Delete Stop"
+        message={`Are you sure you want to permanently delete "${stopToDelete?.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        loading={deleteTripStopMutation.isPending}
+        onClose={() => setStopToDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </>
   );
 }
