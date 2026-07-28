@@ -20,3 +20,16 @@ export async function createTripStop(
 
   return response.data;
 }
+
+export async function updateTripStop(
+  tripId: string,
+  stopId: string,
+  request: CreateTripStop
+) {
+  const response = await apiClient.put(
+    `/trips/${tripId}/stops/${stopId}`,
+    request
+  );
+
+  return response.data;
+}

@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Stack, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
@@ -15,11 +17,16 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(tripStopSchema),
     defaultValues,
   });
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues, reset]);
 
   return (
     <form id="trip-stop-form" onSubmit={handleSubmit(onSubmit)}>

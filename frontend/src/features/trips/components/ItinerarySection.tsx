@@ -18,17 +18,39 @@ import {
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
 import TripStopList from "@/features/tripStops/components/TripStopList";
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
+import type { TripStop } from "@/features/tripStops/types/tripStop";
 
 type ItinerarySectionProps = {
   tripId: string;
 };
 
 export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [selectedStop, setSelectedStop] = useState<TripStop | null>(null);
 
   const { data: stops = [], isLoading, isError } = useTripStops(tripId);
 
   const nextDisplayOrder = Math.max(0, ...stops.map((stop) => stop.displayOrder)) + 1;
+
+  const handleOpenCreateDialog = () => {
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleCloseCreateDialog = () => {
+    setIsCreateDialogOpen(false);
+  };
+
+  const handleEditStop = (stop: TripStop) => {
+    setSelectedStop(stop);
+  };
+
+  const handleCloseEditDialog = () => {
+    setSelectedStop(null);
+  };
+
+  const handleDeleteStop = (stop: TripStop) => {
+    console.log("Delete", stop);
+  };
 
   return (
     <>
@@ -36,15 +58,15 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
         <CardHeader
           title="Itinerary"
           action={
-            stops.length > 0 ? (
+            stops.length > 0 && (
               <Button
                 variant="contained"
                 startIcon={<AddLocationAltIcon />}
-                onClick={() => setIsDialogOpen(true)}
+                onClick={handleOpenCreateDialog}
               >
                 Add Stop
               </Button>
-            ) : null
+            )
           }
         />
 
@@ -100,23 +122,45 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
               <Button
                 variant="contained"
                 startIcon={<AddLocationAltIcon />}
-                onClick={() => setIsDialogOpen(true)}
+                onClick={handleOpenCreateDialog}
               >
                 Add First Stop
               </Button>
             </Stack>
           ) : (
-            <TripStopList stops={stops} />
+            <TripStopList stops={stops} onEdit={handleEditStop} onDelete={handleDeleteStop} />
           )}
         </CardContent>
       </Card>
 
-      {isDialogOpen && (
+      <TripStopDialog
+        open={isCreateDialogOpen}
+        tripId={tripId}
+        mode="create"
+        defaultValues={{
+          name: "",
+          arrivalDate: "",
+          departureDate: "",
+          notes: "",
+          displayOrder: nextDisplayOrder,
+        }}
+        onClose={handleCloseCreateDialog}
+      />
+
+      {selectedStop && (
         <TripStopDialog
           open
           tripId={tripId}
-          nextDisplayOrder={nextDisplayOrder}
-          onClose={() => setIsDialogOpen(false)}
+          mode="edit"
+          stopId={selectedStop.id}
+          defaultValues={{
+            name: selectedStop.name,
+            arrivalDate: selectedStop.arrivalDate,
+            departureDate: selectedStop.departureDate,
+            notes: selectedStop.notes ?? "",
+            displayOrder: selectedStop.displayOrder,
+          }}
+          onClose={handleCloseEditDialog}
         />
       )}
     </>

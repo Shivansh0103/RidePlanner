@@ -1,69 +1,79 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 import { useCreateTripStop } from "../hooks/useCreateTripStop";
+import { useUpdateTripStop } from "../hooks/useUpdateTripStop";
 import type { TripStopFormValues } from "../validation/tripStopSchema";
 import TripStopForm from "./TripStopForm";
 
 type TripStopDialogProps = {
   open: boolean;
   tripId: string;
-  nextDisplayOrder: number;
+  mode: "create" | "edit";
+  defaultValues: TripStopFormValues;
+  stopId?: string;
   onClose: () => void;
 };
 
 export default function TripStopDialog({
   open,
   tripId,
-  nextDisplayOrder,
+  mode,
+  defaultValues,
+  stopId,
   onClose,
 }: TripStopDialogProps) {
   const createTripStopMutation = useCreateTripStop(tripId);
+  const updateTripStopMutation = useUpdateTripStop(tripId);
 
-  const defaultValues: TripStopFormValues = {
-    name: "",
-    arrivalDate: "",
-    departureDate: "",
-    notes: "",
-    displayOrder: nextDisplayOrder,
-  };
+  const isSubmitting = createTripStopMutation.isPending || updateTripStopMutation.isPending;
 
   function handleSubmit(values: TripStopFormValues) {
-    createTripStopMutation.mutate(values, {
-      onSuccess: () => {
-        onClose();
+    if (mode === "create") {
+      createTripStopMutation.mutate(values, {
+        onSuccess: () => {
+          onClose();
+        },
+      });
+
+      return;
+    }
+
+    if (!stopId) {
+      return;
+    }
+
+    updateTripStopMutation.mutate(
+      {
+        stopId,
+        request: values,
       },
-    });
+      {
+        onSuccess: () => {
+          onClose();
+        },
+      },
+    );
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={createTripStopMutation.isPending ? undefined : onClose}
-      fullWidth
-      maxWidth="sm"
-    >
-      <DialogTitle>Add Trip Stop</DialogTitle>
+    <Dialog open={open} onClose={isSubmitting ? undefined : onClose} fullWidth maxWidth="sm">
+      <DialogTitle>{mode === "create" ? "Add Trip Stop" : "Edit Trip Stop"}</DialogTitle>
 
       <DialogContent>
         <TripStopForm
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
-          isSubmitting={createTripStopMutation.isPending}
+          isSubmitting={isSubmitting}
         />
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} disabled={createTripStopMutation.isPending}>
+        <Button onClick={onClose} disabled={isSubmitting}>
           Cancel
         </Button>
 
-        <Button
-          type="submit"
-          form="trip-stop-form"
-          variant="contained"
-          loading={createTripStopMutation.isPending}
-        >
-          Save Stop
+        <Button type="submit" form="trip-stop-form" variant="contained" loading={isSubmitting}>
+          {mode === "create" ? "Save Stop" : "Save Changes"}
         </Button>
       </DialogActions>
     </Dialog>
