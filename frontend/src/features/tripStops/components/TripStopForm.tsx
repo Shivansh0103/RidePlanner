@@ -9,7 +9,6 @@ import { tripStopSchema } from "../validation/tripStopSchema";
 type TripStopFormProps = {
   defaultValues: TripStopFormValues;
   onSubmit: (values: TripStopFormValues) => void;
-  isSubmitting?: boolean;
 };
 
 export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormProps) {
@@ -25,7 +24,15 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
 
   useEffect(() => {
     reset(defaultValues);
-  }, [defaultValues, reset]);
+  }, [
+    defaultValues.name,
+    defaultValues.arrivalDate,
+    defaultValues.departureDate,
+    defaultValues.displayOrder,
+    defaultValues.notes,
+    defaultValues,
+    reset,
+  ]);
 
   return (
     <form id="trip-stop-form" onSubmit={handleSubmit(onSubmit)}>

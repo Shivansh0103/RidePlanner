@@ -124,7 +124,7 @@ export default function TripStopCard({ stop, onEdit, onDelete }: TripStopCardPro
             {stop.name}
           </Typography>
 
-          <Stack direction="row" sx={{ alignItems: "center", spacing: 1, display: "flex" }}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <CalendarTodayIcon fontSize="small" color="action" />
 
             <Typography variant="body2" color="text.secondary">
@@ -134,7 +134,7 @@ export default function TripStopCard({ stop, onEdit, onDelete }: TripStopCardPro
             </Typography>
           </Stack>
 
-          {stop.notes && <Typography color="text.secondary">{stop.notes}</Typography>}
+          {stop.notes && <Typography variant="body2" color="text.secondary">{stop.notes}</Typography>}
         </Stack>
       </CardContent>
     </Card>

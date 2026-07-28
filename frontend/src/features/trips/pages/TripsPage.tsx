@@ -1,7 +1,6 @@
 import { Container, Stack } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useState } from "react";
-import { toast } from "sonner";
 
 import ConfirmDialog from "@/shared/components/ConfirmDialog";
 import StatCard from "@/shared/components/StatCard";
@@ -16,7 +15,7 @@ import NewTripButton from "../components/NewTripButton";
 import TripList from "../components/TripList";
 import { useDeleteTrip } from "../hooks/useDeleteTrip";
 import { useTrips } from "../hooks/useTrips";
-import { type Trip } from "../types/trip";
+import type { Trip } from "../types/trip";
 
 export default function TripsPage() {
   const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);
@@ -34,15 +33,6 @@ export default function TripsPage() {
     return <ErrorState message={error instanceof Error ? error.message : "Unknown error"} />;
   }
 
-  if (!trips || trips.length === 0) {
-    return (
-      <EmptyState
-        title="No trips yet"
-        description="Create your first ride to begin planning your adventure."
-      />
-    );
-  }
-
   const handleEdit = (trip: Trip) => {
     setSelectedTrip(trip);
   };
@@ -55,19 +45,17 @@ export default function TripsPage() {
     setSelectedTrip(null);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = () => {
     if (!tripToDelete) return;
 
-    try {
-      await deleteTripMutation.mutateAsync(tripToDelete.id);
-
-      toast.success("Trip deleted successfully.");
-
-      setTripToDelete(null);
-    } catch {
-      toast.error("Failed to delete trip.");
-    }
+    deleteTripMutation.mutate(tripToDelete.id, {
+      onSuccess: () => {
+        setTripToDelete(null);
+      },
+    });
   };
+
+  const hasTrips = trips && trips.length > 0;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -78,13 +66,23 @@ export default function TripsPage() {
           action={<NewTripButton onClick={() => setCreateDialogOpen(true)} />}
         />
 
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <StatCard label="Total Trips" value={trips.length} />
-          </Grid>
-        </Grid>
+        {hasTrips ? (
+          <>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 4 }}>
+                <StatCard label="Total Trips" value={trips.length} />
+              </Grid>
+            </Grid>
 
-        <TripList trips={trips} onEdit={handleEdit} onDelete={handleDelete} />
+            <TripList trips={trips} onEdit={handleEdit} onDelete={handleDelete} />
+          </>
+        ) : (
+          <EmptyState
+            title="No trips yet"
+            description="Create your first ride to begin planning your adventure."
+            action={<NewTripButton onClick={() => setCreateDialogOpen(true)} />}
+          />
+        )}
 
         <CreateTripDialog open={isCreateDialogOpen} onClose={() => setCreateDialogOpen(false)} />
 
@@ -103,3 +101,4 @@ export default function TripsPage() {
     </Container>
   );
 }
+

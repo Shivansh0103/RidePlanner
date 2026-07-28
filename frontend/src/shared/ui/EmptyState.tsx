@@ -1,34 +1,45 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
+import type { ReactNode } from "react";
 
 type EmptyStateProps = {
   title: string;
   description?: string;
+  icon?: ReactNode;
+  action?: ReactNode;
 };
 
 export default function EmptyState({
   title,
   description,
+  icon,
+  action,
 }: EmptyStateProps) {
   return (
     <Stack
-      spacing={1}
+      spacing={2}
       sx={{
         alignItems: "center",
         py: 8,
       }}
     >
-      <Typography variant="h6">
-        {title}
-      </Typography>
+      {icon && <Box sx={{ color: "action.disabled" }}>{icon}</Box>}
 
-      {description && (
-        <Typography
-          color="text.secondary"
-          sx={{ textAlign: "center" }}
-        >
-          {description}
+      <Stack spacing={1} sx={{ alignItems: "center" }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, textAlign: "center" }}>
+          {title}
         </Typography>
-      )}
+
+        {description && (
+          <Typography
+            color="text.secondary"
+            sx={{ textAlign: "center", maxWidth: 360 }}
+          >
+            {description}
+          </Typography>
+        )}
+      </Stack>
+
+      {action && <Box sx={{ mt: 1 }}>{action}</Box>}
     </Stack>
   );
-}
+}

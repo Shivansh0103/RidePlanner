@@ -56,15 +56,19 @@ export default function TripStopDialog({
   }
 
   return (
-    <Dialog open={open} onClose={isSubmitting ? undefined : onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{mode === "create" ? "Add Trip Stop" : "Edit Trip Stop"}</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={isSubmitting ? undefined : onClose}
+      fullWidth
+      maxWidth="sm"
+      aria-labelledby="trip-stop-dialog-title"
+    >
+      <DialogTitle id="trip-stop-dialog-title">
+        {mode === "create" ? "Add Trip Stop" : "Edit Trip Stop"}
+      </DialogTitle>
 
       <DialogContent>
-        <TripStopForm
-          defaultValues={defaultValues}
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-        />
+        <TripStopForm defaultValues={defaultValues} onSubmit={handleSubmit} />
       </DialogContent>
 
       <DialogActions>

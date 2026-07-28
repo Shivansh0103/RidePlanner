@@ -1,16 +1,11 @@
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 import {
-  Alert,
-  Box,
   Button,
   Card,
   CardContent,
   CardHeader,
-  CircularProgress,
   Divider,
-  Stack,
-  Typography,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -20,6 +15,9 @@ import { useDeleteTripStop } from "@/features/tripStops/hooks/useDeleteTripStop"
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import type { TripStop } from "@/features/tripStops/types/tripStop";
 import ConfirmDialog from "@/shared/components/ConfirmDialog";
+import EmptyState from "@/shared/ui/EmptyState";
+import ErrorState from "@/shared/ui/ErrorState";
+import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 
 type ItinerarySectionProps = {
   tripId: string;
@@ -87,59 +85,24 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
 
         <CardContent>
           {isLoading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                py: 4,
-              }}
-            >
-              <CircularProgress />
-            </Box>
+            <LoadingSpinner />
           ) : isError ? (
-            <Alert severity="error">Unable to load itinerary.</Alert>
+            <ErrorState message="Unable to load itinerary." />
           ) : stops.length === 0 ? (
-            <Stack
-              spacing={3}
-              sx={{
-                alignItems: "center",
-                py: 4,
-              }}
-            >
-              <AltRouteIcon
-                sx={{
-                  fontSize: 56,
-                  color: "action.disabled",
-                }}
-              />
-
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 600,
-                }}
-              >
-                No stops yet
-              </Typography>
-
-              <Typography
-                color="text.secondary"
-                sx={{
-                  textAlign: "center",
-                  maxWidth: 360,
-                }}
-              >
-                Add your first stop to start planning your journey.
-              </Typography>
-
-              <Button
-                variant="contained"
-                startIcon={<AddLocationAltIcon />}
-                onClick={handleOpenCreateDialog}
-              >
-                Add First Stop
-              </Button>
-            </Stack>
+            <EmptyState
+              icon={<AltRouteIcon sx={{ fontSize: 56 }} />}
+              title="No stops yet"
+              description="Add your first stop to start planning your journey."
+              action={
+                <Button
+                  variant="contained"
+                  startIcon={<AddLocationAltIcon />}
+                  onClick={handleOpenCreateDialog}
+                >
+                  Add First Stop
+                </Button>
+              }
+            />
           ) : (
             <TripStopList stops={stops} onEdit={handleEditStop} onDelete={handleDeleteStop} />
           )}

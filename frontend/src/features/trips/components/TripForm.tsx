@@ -3,7 +3,7 @@ import { Stack, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import { tripDefaults } from "../constants/tripDefaults";
-import { type CreateTripRequest,createTripSchema } from "../schemas/createTripSchema";
+import { type CreateTripRequest, createTripSchema } from "../schemas/createTripSchema";
 
 type TripFormProps = {
   defaultValues?: CreateTripRequest;

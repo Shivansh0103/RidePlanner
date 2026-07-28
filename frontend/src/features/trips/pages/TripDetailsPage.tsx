@@ -1,6 +1,9 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Alert, Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
+
+import ErrorState from "@/shared/ui/ErrorState";
+import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 
 import ItinerarySection from "../components/ItinerarySection";
 import TripSummarySection from "../components/TripSummarySection";
@@ -14,15 +17,11 @@ export default function TripDetailsPage() {
   const { data: trip, isLoading, isError } = useTrip(tripId ?? "");
 
   if (isLoading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingSpinner />;
   }
 
   if (isError || !trip) {
-    return <Alert severity="error">Unable to load trip.</Alert>;
+    return <ErrorState message="Unable to load trip." />;
   }
 
   return (

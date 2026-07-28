@@ -1,5 +1,4 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { toast } from "sonner";
 
 import { useUpdateTrip } from "../hooks/useUpdateTrip";
 import type { CreateTripRequest } from "../schemas/createTripSchema";
@@ -23,17 +22,19 @@ export default function EditTripDialog({ open, trip, onClose }: EditTripDialogPr
       });
 
       onClose();
-
-      toast.success("Trip updated!", {
-        description: "Your changes have been saved.",
-      });
     } catch {
       // Alert handles the error
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="edit-trip-dialog-title">
+    <Dialog
+      open={open}
+      onClose={isPending ? undefined : onClose}
+      fullWidth
+      maxWidth="sm"
+      aria-labelledby="edit-trip-dialog-title"
+    >
       <DialogTitle id="edit-trip-dialog-title">Edit Trip</DialogTitle>
 
       <DialogContent>
@@ -56,12 +57,15 @@ export default function EditTripDialog({ open, trip, onClose }: EditTripDialogPr
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose} disabled={isPending}>
+          Cancel
+        </Button>
 
-        <Button variant="contained" type="submit" form="trip-form" disabled={isPending}>
-          {isPending ? "Saving..." : "Save Changes"}
+        <Button variant="contained" type="submit" form="trip-form" loading={isPending}>
+          Save Changes
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
+

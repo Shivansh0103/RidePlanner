@@ -1,5 +1,4 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { toast } from "sonner";
 
 import { tripDefaults } from "../constants/tripDefaults";
 import { useCreateTrip } from "../hooks/useCreateTrip";
@@ -17,19 +16,20 @@ export default function CreateTripDialog({ open, onClose }: CreateTripDialogProp
   const handleCreateTrip = async (data: CreateTripRequest) => {
     try {
       await mutateAsync(data);
-
       onClose();
-
-      toast.success("Trip created!", {
-        description: "Your trip has been added.",
-      });
     } catch {
       // Alert handles the error
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="create-trip-dialog-title">
+    <Dialog
+      open={open}
+      onClose={isPending ? undefined : onClose}
+      fullWidth
+      maxWidth="sm"
+      aria-labelledby="create-trip-dialog-title"
+    >
       <DialogTitle id="create-trip-dialog-title">Create Trip</DialogTitle>
 
       <DialogContent>
@@ -42,12 +42,15 @@ export default function CreateTripDialog({ open, onClose }: CreateTripDialogProp
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose} disabled={isPending}>
+          Cancel
+        </Button>
 
-        <Button variant="contained" type="submit" form="trip-form" disabled={isPending}>
-          {isPending ? "Creating..." : "Create"}
+        <Button variant="contained" type="submit" form="trip-form" loading={isPending}>
+          Create
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
+
