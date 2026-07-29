@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using RidePlanner.Domain.Enums;
 
-namespace RidePlanner.Application.Features.TripStops.DTOs
-{
-    public sealed record UpdateTripStopRequest(
+namespace RidePlanner.Application.Features.TripStops.DTOs;
+
+public sealed record UpdateTripStopRequest(
     string Name,
+    TripStopCategory Category,
     DateOnly ArrivalDate,
     DateOnly DepartureDate,
     string? Notes,
     int DisplayOrder);
-}

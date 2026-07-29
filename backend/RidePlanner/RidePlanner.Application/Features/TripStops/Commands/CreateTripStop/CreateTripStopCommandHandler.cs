@@ -29,12 +29,13 @@ public sealed class CreateTripStopCommandHandler
             throw new DomainException("Trip not found.");
 
         var tripStop = TripStop.Create(
-            command.TripId,
-            command.Name,
-            command.ArrivalDate,
-            command.DepartureDate,
-            command.Notes,
-            command.DisplayOrder);
+    command.TripId,
+    command.Name,
+    command.Category,
+    command.ArrivalDate,
+    command.DepartureDate,
+    command.Notes,
+    command.DisplayOrder);
 
         _tripStopRepository.Add(tripStop);
 

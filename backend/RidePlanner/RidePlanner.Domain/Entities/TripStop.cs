@@ -1,11 +1,16 @@
 ﻿using RidePlanner.Domain.Common;
+using RidePlanner.Domain.Enums;
 using RidePlanner.Domain.Exceptions;
+
+namespace RidePlanner.Domain.Entities;
 
 public class TripStop : Entity
 {
     public Guid TripId { get; private set; }
 
     public string Name { get; private set; }
+
+    public TripStopCategory Category { get; private set; }
 
     public DateOnly ArrivalDate { get; private set; }
 
@@ -21,6 +26,7 @@ public class TripStop : Entity
         Guid id,
         Guid tripId,
         string name,
+        TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate,
         string? notes,
@@ -29,6 +35,7 @@ public class TripStop : Entity
         Id = id;
         TripId = tripId;
         Name = name;
+        Category = category;
         ArrivalDate = arrivalDate;
         DepartureDate = departureDate;
         Notes = notes;
@@ -38,17 +45,23 @@ public class TripStop : Entity
     public static TripStop Create(
         Guid tripId,
         string name,
+        TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate,
         string? notes,
         int displayOrder)
     {
-        Validate(name, arrivalDate, departureDate);
+        Validate(
+            name,
+            category,
+            arrivalDate,
+            departureDate);
 
         return new TripStop(
             Guid.NewGuid(),
             tripId,
             name,
+            category,
             arrivalDate,
             departureDate,
             notes,
@@ -57,14 +70,20 @@ public class TripStop : Entity
 
     public void Update(
         string name,
+        TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate,
         string? notes,
         int displayOrder)
     {
-        Validate(name, arrivalDate, departureDate);
+        Validate(
+            name,
+            category,
+            arrivalDate,
+            departureDate);
 
         Name = name;
+        Category = category;
         ArrivalDate = arrivalDate;
         DepartureDate = departureDate;
         Notes = notes;
@@ -73,11 +92,15 @@ public class TripStop : Entity
 
     private static void Validate(
         string name,
+        TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new DomainException("Stop name cannot be empty.");
+
+        if (!Enum.IsDefined(category))
+            throw new DomainException("Invalid trip stop category.");
 
         if (departureDate < arrivalDate)
             throw new DomainException("Departure date cannot be before arrival date.");

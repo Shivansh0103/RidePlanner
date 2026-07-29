@@ -47,12 +47,13 @@ public class TripStopsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new CreateTripStopCommand(
-            tripId,
-            request.Name,
-            request.ArrivalDate,
-            request.DepartureDate,
-            request.Notes,
-            request.DisplayOrder);
+    tripId,
+    request.Name,
+    request.Category,
+    request.ArrivalDate,
+    request.DepartureDate,
+    request.Notes,
+    request.DisplayOrder);
 
         var stopId = await _createTripStopCommandHandler.Handle(
             command,
@@ -75,6 +76,7 @@ public class TripStopsController : ControllerBase
             tripId,
             stopId,
             request.Name,
+            request.Category,
             request.ArrivalDate,
             request.DepartureDate,
             request.Notes,

@@ -10,6 +10,7 @@ public static class TripStopMappings
         return new TripStopResponse(
             tripStop.Id,
             tripStop.Name,
+            tripStop.Category,
             tripStop.ArrivalDate,
             tripStop.DepartureDate,
             tripStop.Notes,

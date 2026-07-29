@@ -35,11 +35,12 @@ public sealed class UpdateTripStopCommandHandler
             throw new DomainException("Trip stop not found.");
 
         stop.Update(
-            command.Name,
-            command.ArrivalDate,
-            command.DepartureDate,
-            command.Notes,
-            command.DisplayOrder);
+    command.Name,
+    command.Category,
+    command.ArrivalDate,
+    command.DepartureDate,
+    command.Notes,
+    command.DisplayOrder);
 
         await _tripStopRepository.SaveChangesAsync(cancellationToken);
     }

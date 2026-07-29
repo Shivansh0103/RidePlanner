@@ -1,5 +1,6 @@
 using RidePlanner.Domain.Common;
 using RidePlanner.Domain.Exceptions;
+using RidePlanner.Domain.Entities;
 
 public class Trip : Entity
 {
