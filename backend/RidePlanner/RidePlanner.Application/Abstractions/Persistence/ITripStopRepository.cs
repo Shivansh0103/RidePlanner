@@ -1,4 +1,4 @@
-﻿using RidePlanner.Domain.Entities;
+using RidePlanner.Domain.Entities;
 
 namespace RidePlanner.Application.Abstractions.Persistence;
 
@@ -15,6 +15,11 @@ public interface ITripStopRepository
     void Add(TripStop tripStop);
 
     void Remove(TripStop tripStop);
+
+    Task ReorderAsync(
+        Guid tripId,
+        IReadOnlyList<Guid> orderedStopIds,
+        CancellationToken cancellationToken = default);
 
     Task SaveChangesAsync(
         CancellationToken cancellationToken = default);

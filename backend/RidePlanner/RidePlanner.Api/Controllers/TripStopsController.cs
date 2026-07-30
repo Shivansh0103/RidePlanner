@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.TripStops.Commands.CreateTripStop;
 using RidePlanner.Application.Features.TripStops.Commands.DeleteTripStop;
+using RidePlanner.Application.Features.TripStops.Commands.ReorderTripStops;
 using RidePlanner.Application.Features.TripStops.Commands.UpdateTripStop;
 using RidePlanner.Application.Features.TripStops.DTOs;
 using RidePlanner.Application.Features.TripStops.Queries.GetTripStops;
@@ -14,17 +15,20 @@ public class TripStopsController : ControllerBase
     private readonly CreateTripStopCommandHandler _createTripStopCommandHandler;
     private readonly UpdateTripStopCommandHandler _updateTripStopCommandHandler;
     private readonly DeleteTripStopCommandHandler _deleteTripStopCommandHandler;
+    private readonly ReorderTripStopsCommandHandler _reorderTripStopsCommandHandler;
     private readonly GetTripStopsQueryHandler _getTripStopsQueryHandler;
 
     public TripStopsController(
         CreateTripStopCommandHandler createTripStopCommandHandler,
         UpdateTripStopCommandHandler updateTripStopCommandHandler,
         DeleteTripStopCommandHandler deleteTripStopCommandHandler,
+        ReorderTripStopsCommandHandler reorderTripStopsCommandHandler,
         GetTripStopsQueryHandler getTripStopsQueryHandler)
     {
         _createTripStopCommandHandler = createTripStopCommandHandler;
         _updateTripStopCommandHandler = updateTripStopCommandHandler;
         _deleteTripStopCommandHandler = deleteTripStopCommandHandler;
+        _reorderTripStopsCommandHandler = reorderTripStopsCommandHandler;
         _getTripStopsQueryHandler = getTripStopsQueryHandler;
     }
 
@@ -47,13 +51,13 @@ public class TripStopsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new CreateTripStopCommand(
-    tripId,
-    request.Name,
-    request.Category,
-    request.ArrivalDate,
-    request.DepartureDate,
-    request.Notes,
-    request.DisplayOrder);
+            tripId,
+            request.Name,
+            request.Category,
+            request.ArrivalDate,
+            request.DepartureDate,
+            request.Notes,
+            request.DisplayOrder);
 
         var stopId = await _createTripStopCommandHandler.Handle(
             command,
@@ -63,6 +67,23 @@ public class TripStopsController : ControllerBase
             nameof(GetTripStops),
             new { tripId },
             stopId);
+    }
+
+    [HttpPost("reorder")]
+    public async Task<IActionResult> ReorderTripStops(
+        Guid tripId,
+        ReorderTripStopsRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new ReorderTripStopsCommand(
+            tripId,
+            request.OrderedStopIds);
+
+        await _reorderTripStopsCommandHandler.Handle(
+            command,
+            cancellationToken);
+
+        return NoContent();
     }
 
     [HttpPut("{stopId:guid}")]

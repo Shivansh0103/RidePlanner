@@ -12,8 +12,10 @@ import { useState } from "react";
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
 import TripStopList from "@/features/tripStops/components/TripStopList";
 import { useDeleteTripStop } from "@/features/tripStops/hooks/useDeleteTripStop";
+import { useReorderTripStops } from "@/features/tripStops/hooks/useReorderTripStops";
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import type { TripStop } from "@/features/tripStops/types/tripStop";
+import { TripStopCategory } from "@/features/tripStops/types/tripStopCategory";
 import ConfirmDialog from "@/shared/components/ConfirmDialog";
 import EmptyState from "@/shared/ui/EmptyState";
 import ErrorState from "@/shared/ui/ErrorState";
@@ -30,6 +32,7 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
 
   const { data: stops = [], isLoading, isError } = useTripStops(tripId);
   const deleteTripStopMutation = useDeleteTripStop(tripId);
+  const reorderTripStopsMutation = useReorderTripStops(tripId);
 
   const nextDisplayOrder = Math.max(0, ...stops.map((stop) => stop.displayOrder)) + 1;
 
@@ -61,6 +64,10 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
         setStopToDelete(null);
       },
     });
+  };
+
+  const handleReorderStops = (orderedStopIds: string[]) => {
+    reorderTripStopsMutation.mutate(orderedStopIds);
   };
 
   return (
@@ -104,7 +111,12 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
               }
             />
           ) : (
-            <TripStopList stops={stops} onEdit={handleEditStop} onDelete={handleDeleteStop} />
+            <TripStopList
+              stops={stops}
+              onEdit={handleEditStop}
+              onDelete={handleDeleteStop}
+              onReorder={handleReorderStops}
+            />
           )}
         </CardContent>
       </Card>
@@ -115,6 +127,7 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
         mode="create"
         defaultValues={{
           name: "",
+          category: TripStopCategory.Destination,
           arrivalDate: "",
           departureDate: "",
           notes: "",
@@ -131,6 +144,7 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
           stopId={selectedStop.id}
           defaultValues={{
             name: selectedStop.name,
+            category: selectedStop.category ?? TripStopCategory.Destination,
             arrivalDate: selectedStop.arrivalDate,
             departureDate: selectedStop.departureDate,
             notes: selectedStop.notes ?? "",

@@ -21,6 +21,18 @@ export async function createTripStop(
   return response.data;
 }
 
+export async function reorderTripStops(
+  tripId: string,
+  orderedStopIds: string[]
+) {
+  const response = await apiClient.post(
+    `/trips/${tripId}/stops/reorder`,
+    { orderedStopIds }
+  );
+
+  return response.data;
+}
+
 export async function updateTripStop(
   tripId: string,
   stopId: string,

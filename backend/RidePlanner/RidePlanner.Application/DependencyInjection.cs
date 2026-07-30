@@ -8,6 +8,8 @@ using RidePlanner.Application.Features.Trips.Commands.DeleteTrip;
 using RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
 using RidePlanner.Application.Features.Trips.Queries.GetTrip;
 using RidePlanner.Application.Features.Trips.Queries.GetTrips;
+using RidePlanner.Application.Features.TripStops.Commands.ReorderTripStops;
+
 namespace RidePlanner.Application;
 
 public static class DependencyInjection
@@ -23,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<CreateTripStopCommandHandler>();
         services.AddScoped<UpdateTripStopCommandHandler>();
         services.AddScoped<DeleteTripStopCommandHandler>();
+        services.AddScoped<ReorderTripStopsCommandHandler>();
         services.AddScoped<GetTripStopsQueryHandler>();
         return services;
     }

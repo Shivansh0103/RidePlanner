@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Stack, TextField } from "@mui/material";
+import { MenuItem, Stack, TextField } from "@mui/material";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
+import { TRIP_STOP_CATEGORY_OPTIONS } from "../constants/tripStopCategoryOptions";
 import type { TripStopFormValues } from "../validation/tripStopSchema";
 import { tripStopSchema } from "../validation/tripStopSchema";
 
@@ -16,6 +17,7 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(tripStopSchema),
@@ -26,16 +28,19 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
     reset(defaultValues);
   }, [
     defaultValues.name,
+    defaultValues.category,
     defaultValues.arrivalDate,
     defaultValues.departureDate,
-    defaultValues.displayOrder,
     defaultValues.notes,
     defaultValues,
     reset,
   ]);
 
   return (
-    <form id="trip-stop-form" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      id="trip-stop-form"
+      onSubmit={handleSubmit((data) => onSubmit(data as TripStopFormValues))}
+    >
       <Stack spacing={3} sx={{ mt: 1 }}>
         <TextField
           autoFocus
@@ -44,6 +49,27 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
           error={!!errors.name}
           helperText={errors.name?.message}
           {...register("name")}
+        />
+
+        <Controller
+          name="category"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              select
+              label="Category"
+              fullWidth
+              error={!!errors.category}
+              helperText={errors.category?.message}
+            >
+              {TRIP_STOP_CATEGORY_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
         />
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
@@ -75,15 +101,6 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
             {...register("departureDate")}
           />
         </Stack>
-
-        <TextField
-          label="Display Order"
-          type="number"
-          fullWidth
-          error={!!errors.displayOrder}
-          helperText={errors.displayOrder?.message}
-          {...register("displayOrder")}
-        />
 
         <TextField
           label="Notes"

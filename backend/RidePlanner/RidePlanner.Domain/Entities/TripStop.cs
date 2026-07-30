@@ -1,4 +1,4 @@
-﻿using RidePlanner.Domain.Common;
+using RidePlanner.Domain.Common;
 using RidePlanner.Domain.Enums;
 using RidePlanner.Domain.Exceptions;
 
@@ -87,6 +87,14 @@ public class TripStop : Entity
         ArrivalDate = arrivalDate;
         DepartureDate = departureDate;
         Notes = notes;
+        DisplayOrder = displayOrder;
+    }
+
+    public void SetDisplayOrder(int displayOrder)
+    {
+        if (displayOrder <= 0)
+            throw new DomainException("Display order must be greater than 0.");
+
         DisplayOrder = displayOrder;
     }
 

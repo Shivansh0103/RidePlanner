@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 
@@ -41,6 +41,29 @@ public sealed class TripStopRepository : ITripStopRepository
     public void Remove(TripStop tripStop)
     {
         _context.TripStops.Remove(tripStop);
+    }
+
+    public async Task ReorderAsync(
+        Guid tripId,
+        IReadOnlyList<Guid> orderedStopIds,
+        CancellationToken cancellationToken = default)
+    {
+        var stops = await _context.TripStops
+            .Where(stop => stop.TripId == tripId)
+            .ToListAsync(cancellationToken);
+
+        var stopMap = stops.ToDictionary(stop => stop.Id);
+
+        for (int i = 0; i < orderedStopIds.Count; i++)
+        {
+            var id = orderedStopIds[i];
+            if (stopMap.TryGetValue(id, out var stop))
+            {
+                stop.SetDisplayOrder(i + 1);
+            }
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task SaveChangesAsync(

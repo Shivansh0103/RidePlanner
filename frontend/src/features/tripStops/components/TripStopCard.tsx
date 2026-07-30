@@ -1,12 +1,12 @@
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import PlaceIcon from "@mui/icons-material/Place";
 import {
+  Box,
   Card,
   CardContent,
-  Chip,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -20,14 +20,22 @@ import { useState } from "react";
 import { formatDate } from "@/shared/utils/date";
 
 import type { TripStop } from "../types/tripStop";
+import TripStopCategoryChip from "./TripStopCategoryChip";
 
 type TripStopCardProps = {
   stop: TripStop;
+  index?: number;
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
+  dragHandleProps?: Record<string, unknown>;
 };
 
-export default function TripStopCard({ stop, onEdit, onDelete }: TripStopCardProps) {
+export default function TripStopCard({
+  stop,
+  onEdit,
+  onDelete,
+  dragHandleProps,
+}: TripStopCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const open = Boolean(anchorEl);
@@ -46,14 +54,29 @@ export default function TripStopCard({ stop, onEdit, onDelete }: TripStopCardPro
     <Card variant="outlined">
       <CardContent>
         <Stack spacing={2}>
-          <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-            <Chip
-              icon={<PlaceIcon />}
-              label={`Stop ${stop.displayOrder}`}
-              size="small"
-              color="primary"
-              variant="outlined"
-            />
+          <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              {dragHandleProps && (
+                <Box
+                  {...dragHandleProps}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "grab",
+                    color: "action.active",
+                    "&:active": { cursor: "grabbing" },
+                    p: 0.5,
+                    borderRadius: 1,
+                    "&:hover": { bgcolor: "action.hover" },
+                  }}
+                  aria-label={`Drag to reorder ${stop.name}`}
+                >
+                  <DragIndicatorIcon fontSize="small" />
+                </Box>
+              )}
+
+              <TripStopCategoryChip category={stop.category} />
+            </Stack>
 
             <IconButton
               id={buttonId}

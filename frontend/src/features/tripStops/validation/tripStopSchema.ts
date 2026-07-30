@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { TripStopCategory } from "../types/tripStopCategory";
+
 export const tripStopSchema = z
   .object({
     name: z
@@ -8,16 +10,17 @@ export const tripStopSchema = z
       .min(1, "Name is required")
       .max(100, "Name cannot exceed 100 characters"),
 
+    category: z.nativeEnum(TripStopCategory, {
+      message: "Category is required",
+    }),
+
     arrivalDate: z.string().min(1, "Arrival date is required"),
 
     departureDate: z.string().min(1, "Departure date is required"),
 
     notes: z.string().max(500).optional(),
 
-    displayOrder: z.coerce
-      .number()
-      .int()
-      .positive("Display order must be greater than 0"),
+    displayOrder: z.coerce.number().optional(),
   })
   .refine(
     (data) => data.departureDate >= data.arrivalDate,
