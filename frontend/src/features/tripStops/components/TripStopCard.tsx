@@ -51,13 +51,27 @@ export default function TripStopCard({
   };
 
   return (
-    <Card variant="outlined">
-      <CardContent>
-        <Stack spacing={2}>
+    <Card
+      component="article"
+      aria-label={`Trip stop: ${stop.name}`}
+      variant="outlined"
+      sx={{
+        borderRadius: 2,
+        transition: "box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out",
+        "&:hover": {
+          boxShadow: 2,
+          borderColor: "action.disabled",
+        },
+      }}
+    >
+      <CardContent sx={{ p: { xs: 2, sm: 2.5 }, "&:last-child": { pb: { xs: 2, sm: 2.5 } } }}>
+        <Stack spacing={1.5}>
           <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               {dragHandleProps && (
                 <Box
+                  tabIndex={0}
+                  role="button"
                   {...dragHandleProps}
                   sx={{
                     display: "flex",
@@ -68,8 +82,13 @@ export default function TripStopCard({
                     p: 0.5,
                     borderRadius: 1,
                     "&:hover": { bgcolor: "action.hover" },
+                    "&:focus-visible": {
+                      outline: "2px solid",
+                      outlineColor: "primary.main",
+                      outlineOffset: "1px",
+                    },
                   }}
-                  aria-label={`Drag to reorder ${stop.name}`}
+                  aria-label={`Reorder ${stop.name}. Press Space or Enter to drag.`}
                 >
                   <DragIndicatorIcon fontSize="small" />
                 </Box>
@@ -82,10 +101,17 @@ export default function TripStopCard({
               id={buttonId}
               size="small"
               onClick={handleMenuOpen}
-              aria-label={`Actions for ${stop.name}`}
+              aria-label={`Actions menu for ${stop.name}`}
               aria-controls={open ? menuId : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
+              sx={{
+                "&:focus-visible": {
+                  outline: "2px solid",
+                  outlineColor: "primary.main",
+                  outlineOffset: "1px",
+                },
+              }}
             >
               <MoreVertIcon />
             </IconButton>
@@ -139,25 +165,37 @@ export default function TripStopCard({
           </Stack>
 
           <Typography
+            component="h4"
             variant="h6"
             sx={{
               fontWeight: 700,
+              fontSize: { xs: "1.05rem", sm: "1.25rem" },
+              wordBreak: "break-word",
             }}
           >
             {stop.name}
           </Typography>
 
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap" }}>
             <CalendarTodayIcon fontSize="small" color="action" />
 
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              aria-label={`From ${formatDate(stop.arrivalDate)} to ${formatDate(stop.departureDate)}`}
+              sx={{ wordBreak: "break-word" }}
+            >
               {formatDate(stop.arrivalDate)}
               {" → "}
               {formatDate(stop.departureDate)}
             </Typography>
           </Stack>
 
-          {stop.notes && <Typography variant="body2" color="text.secondary">{stop.notes}</Typography>}
+          {stop.notes && (
+            <Typography variant="body2" color="text.secondary" sx={{ wordBreak: "break-word" }}>
+              {stop.notes}
+            </Typography>
+          )}
         </Stack>
       </CardContent>
     </Card>

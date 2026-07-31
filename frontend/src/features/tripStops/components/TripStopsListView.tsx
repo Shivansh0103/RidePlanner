@@ -75,7 +75,7 @@ export default function TripStopsListView({
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={items.map((stop) => stop.id)} strategy={verticalListSortingStrategy}>
-        <Stack spacing={2.5}>
+        <Stack role="region" aria-label="Reorderable trip stops list" spacing={{ xs: 1.5, sm: 2.5 }}>
           {items.map((stop, index) => (
             <SortableTripStopCard
               key={stop.id}

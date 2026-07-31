@@ -1,6 +1,7 @@
-import { groupStopsByDay } from "../utils/groupStopsByDay";
+import { Box, Stack } from "@mui/material";
+
 import type { TripStop } from "../types/tripStop";
-import { Stack } from "@mui/material";
+import { groupStopsByDay } from "../utils/groupStopsByDay";
 import { TimelineDay } from "./timelineDay";
 
 type TripStopsTimelineViewProps = {
@@ -13,15 +14,17 @@ export function TripStopsTimelineView({ stops, onEdit, onDelete }: TripStopsTime
   const groups = groupStopsByDay(stops);
 
   return (
-    <Stack spacing={3}>
-      {groups.map((group) => (
-        <TimelineDay
-          key={group.date.toISOString()}
-          group={group}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
-    </Stack>
+    <Box role="region" aria-label="Trip stops timeline" sx={{ py: { xs: 0.5, sm: 1 } }}>
+      <Stack spacing={{ xs: 3, sm: 4.5 }}>
+        {groups.map((group) => (
+          <TimelineDay
+            key={group.date.toISOString()}
+            group={group}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        ))}
+      </Stack>
+    </Box>
   );
 }

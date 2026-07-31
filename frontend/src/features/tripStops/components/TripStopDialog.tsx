@@ -62,21 +62,30 @@ export default function TripStopDialog({
       fullWidth
       maxWidth="sm"
       aria-labelledby="trip-stop-dialog-title"
+      PaperProps={{
+        sx: { borderRadius: 2 },
+      }}
     >
-      <DialogTitle id="trip-stop-dialog-title">
+      <DialogTitle id="trip-stop-dialog-title" sx={{ px: 3, pt: 2.5, pb: 1.5, fontWeight: 700 }}>
         {mode === "create" ? "Add Trip Stop" : "Edit Trip Stop"}
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ px: 3, py: 1.5 }}>
         <TripStopForm defaultValues={defaultValues} onSubmit={handleSubmit} />
       </DialogContent>
 
-      <DialogActions>
+      <DialogActions sx={{ px: 3, pb: 2.5, pt: 1 }}>
         <Button onClick={onClose} disabled={isSubmitting}>
           Cancel
         </Button>
 
-        <Button type="submit" form="trip-stop-form" variant="contained" loading={isSubmitting}>
+        <Button
+          type="submit"
+          form="trip-stop-form"
+          variant="contained"
+          loading={isSubmitting}
+          sx={{ fontWeight: 600 }}
+        >
           {mode === "create" ? "Save Stop" : "Save Changes"}
         </Button>
       </DialogActions>

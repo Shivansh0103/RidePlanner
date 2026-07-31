@@ -1,6 +1,6 @@
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
-import { Button, Card, CardContent, CardHeader, Divider } from "@mui/material";
+import { Button, Card, CardContent, CardHeader, Chip, Divider, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
@@ -64,27 +64,56 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
     reorderTripStopsMutation.mutate(orderedStopIds);
   };
 
+  const addStopButton = (
+    <Button
+      variant="contained"
+      startIcon={<AddLocationAltIcon />}
+      onClick={handleOpenCreateDialog}
+      aria-label="Add a new stop to itinerary"
+      sx={{ fontWeight: 600 }}
+    >
+      Add Stop
+    </Button>
+  );
+
   return (
     <>
-      <Card>
+      <Card
+        component="section"
+        aria-labelledby="itinerary-heading"
+        variant="outlined"
+        sx={{ borderRadius: 2 }}
+      >
         <CardHeader
-          title="Itinerary"
-          action={
-            stops.length > 0 && (
-              <Button
-                variant="contained"
-                startIcon={<AddLocationAltIcon />}
-                onClick={handleOpenCreateDialog}
-              >
-                Add Stop
-              </Button>
-            )
+          title={
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+              <Typography id="itinerary-heading" component="h2" variant="h6" sx={{ fontWeight: 700 }}>
+                Itinerary
+              </Typography>
+              {stops.length > 0 && (
+                <Chip
+                  label={`${stops.length} ${stops.length === 1 ? "stop" : "stops"}`}
+                  size="small"
+                  variant="outlined"
+                  aria-label={`Total ${stops.length} ${stops.length === 1 ? "stop" : "stops"}`}
+                  sx={{ fontWeight: 500, color: "text.secondary" }}
+                />
+              )}
+            </Stack>
           }
+          sx={{
+            py: { xs: 1.5, sm: 2 },
+            px: { xs: 2, sm: 3 },
+            "& .MuiCardHeader-action": {
+              m: 0,
+              alignSelf: "center",
+            },
+          }}
         />
 
         <Divider />
 
-        <CardContent>
+        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
           {isLoading ? (
             <LoadingSpinner />
           ) : isError ? (
@@ -110,6 +139,7 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
               onEdit={handleEditStop}
               onDelete={handleDeleteStop}
               onReorder={handleReorderStops}
+              headerAction={addStopButton}
             />
           )}
         </CardContent>

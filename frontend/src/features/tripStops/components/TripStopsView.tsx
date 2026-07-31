@@ -1,36 +1,56 @@
-import type { TripStop } from "@/features/tripStops/types/tripStop";
+import { Box, Fade } from "@mui/material";
 import { useState } from "react";
-import ViewToggle from "./ViewToggle";
+
+import type { TripStop } from "@/features/tripStops/types/tripStop";
+
 import type { TripStopsViewMode } from "../types/tripStopsViewMode";
 import TripStopsListView from "./TripStopsListView";
 import { TripStopsTimelineView } from "./TripStopsTimelineView";
-import { Box } from "@mui/material";
+import ViewToggle from "./ViewToggle";
 
 type TripStopsViewProps = {
   stops: TripStop[];
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
   onReorder?: (orderedStopIds: string[]) => void;
+  headerAction?: React.ReactNode;
 };
 
-export default function TripStopsView(props: TripStopsViewProps) {
+export default function TripStopsView({
+  headerAction,
+  ...props
+}: TripStopsViewProps) {
   const [viewMode, setViewMode] = useState<TripStopsViewMode>("list");
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: { xs: "stretch", sm: "center" },
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 2,
+          mb: { xs: 2, sm: 3 },
+        }}
+      >
         <ViewToggle value={viewMode} onChange={setViewMode} />
+        {headerAction}
       </Box>
 
-      {viewMode === "timeline" ? (
-        <TripStopsTimelineView
-          stops={props.stops}
-          onEdit={props.onEdit}
-          onDelete={props.onDelete}
-        />
-      ) : (
-        <TripStopsListView {...props} />
-      )}
+      <Fade in key={viewMode} timeout={300}>
+        <Box>
+          {viewMode === "timeline" ? (
+            <TripStopsTimelineView
+              stops={props.stops}
+              onEdit={props.onEdit}
+              onDelete={props.onDelete}
+            />
+          ) : (
+            <TripStopsListView {...props} />
+          )}
+        </Box>
+      </Fade>
     </>
   );
 }
