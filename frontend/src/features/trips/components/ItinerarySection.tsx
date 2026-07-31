@@ -1,16 +1,9 @@
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-} from "@mui/material";
+import { Button, Card, CardContent, CardHeader, Divider } from "@mui/material";
 import { useState } from "react";
 
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
-import TripStopList from "@/features/tripStops/components/TripStopList";
 import { useDeleteTripStop } from "@/features/tripStops/hooks/useDeleteTripStop";
 import { useReorderTripStops } from "@/features/tripStops/hooks/useReorderTripStops";
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
@@ -20,6 +13,7 @@ import ConfirmDialog from "@/shared/components/ConfirmDialog";
 import EmptyState from "@/shared/ui/EmptyState";
 import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
+import TripStopsView from "@/features/tripStops/components/TripStopsView";
 
 type ItinerarySectionProps = {
   tripId: string;
@@ -111,7 +105,7 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
               }
             />
           ) : (
-            <TripStopList
+            <TripStopsView
               stops={stops}
               onEdit={handleEditStop}
               onDelete={handleDeleteStop}

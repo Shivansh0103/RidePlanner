@@ -27,7 +27,7 @@ type TripStopListProps = {
   onReorder?: (orderedStopIds: string[]) => void;
 };
 
-export default function TripStopList({
+export default function TripStopsListView({
   stops: initialStops,
   onEdit,
   onDelete,
@@ -53,7 +53,7 @@ export default function TripStopList({
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -73,15 +73,8 @@ export default function TripStopList({
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext
-        items={items.map((stop) => stop.id)}
-        strategy={verticalListSortingStrategy}
-      >
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={items.map((stop) => stop.id)} strategy={verticalListSortingStrategy}>
         <Stack spacing={2.5}>
           {items.map((stop, index) => (
             <SortableTripStopCard

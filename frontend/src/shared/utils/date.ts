@@ -1,7 +1,7 @@
-export function formatDate(date: string): string {
+export function formatDate(date: string | Date): string {
   return new Intl.DateTimeFormat("en-IN", {
     day: "numeric",
     month: "short",
     year: "numeric",
-  }).format(new Date(date));
+  }).format(typeof date === "string" ? new Date(date) : date);
 }
