@@ -2,7 +2,7 @@ import { Box, Stack } from "@mui/material";
 
 import type { TripStop } from "../types/tripStop";
 import { groupStopsByDay } from "../utils/groupStopsByDay";
-import { TimelineDay } from "./timelineDay";
+import { TimelineDay } from "./TimelineDay";
 
 type TripStopsTimelineViewProps = {
   stops: TripStop[];

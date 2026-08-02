@@ -62,8 +62,10 @@ export default function TripStopDialog({
       fullWidth
       maxWidth="sm"
       aria-labelledby="trip-stop-dialog-title"
-      PaperProps={{
-        sx: { borderRadius: 2 },
+      slotProps={{
+        paper: {
+          sx: { borderRadius: 2 },
+        },
       }}
     >
       <DialogTitle id="trip-stop-dialog-title" sx={{ px: 3, pt: 2.5, pb: 1.5, fontWeight: 700 }}>

@@ -1,5 +1,5 @@
 import { Map as GoogleMap } from "@vis.gl/react-google-maps";
-import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "../constants/index";
+import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "../constants";
 
 export interface MapProps {
   center?: google.maps.LatLngLiteral;
