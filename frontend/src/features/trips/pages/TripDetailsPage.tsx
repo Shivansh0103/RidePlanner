@@ -9,6 +9,7 @@ import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 import ItinerarySection from "../components/ItinerarySection";
 import TripSummary from "../components/TripSummary";
 import { useTrip } from "../hooks/useTrip";
+import { Map } from "@/shared/maps";
 
 export default function TripDetailsPage() {
   const navigate = useNavigate();
@@ -61,10 +62,18 @@ export default function TripDetailsPage() {
         </Stack>
 
         <TripSummary trip={trip} stops={stops} />
-
+        <Box
+          sx={{
+            height: 500,
+            borderRadius: 3,
+            overflow: "hidden",
+            mt: 3,
+          }}
+        >
+          <Map />
+        </Box>
         <ItinerarySection tripId={trip.id} />
       </Stack>
     </Box>
   );
 }
-
