@@ -1,15 +1,18 @@
 import type { PlaceLocation } from "../types";
 
 export function mapGooglePlaceToPlaceLocation(
-  place: google.maps.places.PlaceResult,
+  place: google.maps.places.Place,
 ): PlaceLocation {
   return {
-    placeId: place.place_id ?? "",
-    displayName: place.name ?? "",
-    formattedAddress: place.formatted_address ?? "",
+    placeId: place.id ?? "",
+
+    displayName: place.displayName ?? "",
+
+    formattedAddress: place.formattedAddress ?? "",
+
     coordinates: {
-      latitude: place.geometry?.location?.lat() ?? 0,
-      longitude: place.geometry?.location?.lng() ?? 0,
+      latitude: place.location?.lat() ?? 0,
+      longitude: place.location?.lng() ?? 0,
     },
   };
 }

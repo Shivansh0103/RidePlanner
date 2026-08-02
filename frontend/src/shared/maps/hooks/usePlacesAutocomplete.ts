@@ -1,24 +1,36 @@
-import { useMemo } from "react";
-
-import { useMapsLibrary } from "@vis.gl/react-google-maps";
+import { useCallback, useMemo, useRef } from "react";
 
 import { PlacesService } from "../services";
 
 export function usePlacesAutocomplete() {
-  const placesLibrary = useMapsLibrary("places");
+  const service = useMemo(() => new PlacesService(), []);
 
-  const service = useMemo(() => {
-    if (!placesLibrary) {
-      return null;
+  const sessionTokenRef =
+    useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+
+  const getSessionToken = useCallback(async () => {
+    if (sessionTokenRef.current) {
+      return sessionTokenRef.current;
     }
 
-    return new PlacesService(
-      new placesLibrary.AutocompleteService(),
-    );
-  }, [placesLibrary]);
+    const { AutocompleteSessionToken } =
+      await google.maps.importLibrary(
+        "places",
+      ) as google.maps.PlacesLibrary;
+
+    sessionTokenRef.current = new AutocompleteSessionToken();
+
+    return sessionTokenRef.current;
+  }, []);
+
+  const resetSession = useCallback(() => {
+    sessionTokenRef.current = null;
+  }, []);
 
   return {
     service,
-    isLoaded: service !== null,
+    getSessionToken,
+    resetSession,
+    isLoaded: true,
   };
 }

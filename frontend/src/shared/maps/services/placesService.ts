@@ -1,29 +1,49 @@
-import type { PlacePrediction } from "../types";
+import { mapGooglePlaceToPlaceLocation } from "./placeMapper";
+
+import type { PlaceLocation, PlaceSuggestion } from "../types";
 
 export class PlacesService {
-  private readonly autocompleteService: google.maps.places.AutocompleteService;
-
-  constructor(
-    autocompleteService: google.maps.places.AutocompleteService,
-  ) {
-    this.autocompleteService = autocompleteService;
-  }
-
-  async searchPredictions(
-    query: string,
-  ): Promise<PlacePrediction[]> {
-    if (!query.trim()) {
+  async searchSuggestions(
+    input: string,
+    sessionToken: google.maps.places.AutocompleteSessionToken,
+  ): Promise<PlaceSuggestion[]> {
+    if (!input.trim()) {
       return [];
     }
 
-    const { predictions } =
-      await this.autocompleteService.getPlacePredictions({
-        input: query,
+    const { AutocompleteSuggestion } =
+      await google.maps.importLibrary(
+        "places",
+      ) as google.maps.PlacesLibrary;
+
+    const { suggestions } =
+      await AutocompleteSuggestion.fetchAutocompleteSuggestions({
+        input,
+        sessionToken,
       });
 
-    return predictions.map((prediction) => ({
-      placeId: prediction.place_id,
-      text: prediction.description,
-    }));
+    return suggestions
+      .filter((suggestion) => suggestion.placePrediction)
+      .map((suggestion) => ({
+        text: suggestion.placePrediction!.text.toString(),
+        prediction: suggestion.placePrediction!,
+      }));
+  }
+
+  async resolveSuggestion(
+    suggestion: PlaceSuggestion,
+  ): Promise<PlaceLocation> {
+    const place = suggestion.prediction.toPlace();
+
+    await place.fetchFields({
+      fields: [
+        "id",
+        "displayName",
+        "formattedAddress",
+        "location",
+      ],
+    });
+
+    return mapGooglePlaceToPlaceLocation(place);
   }
 }

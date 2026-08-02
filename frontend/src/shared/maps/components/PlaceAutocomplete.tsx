@@ -1,60 +1,112 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Autocomplete, TextField } from "@mui/material";
-
-import type { PlaceLocation, PlacePrediction } from "../types";
-import { useEffect } from "react";
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 
 import { usePlacesAutocomplete } from "../hooks/usePlacesAutocomplete";
 
-export interface PlaceAutocompleteProps {
-  value?: PlaceLocation | null;
-  label?: string;
-  placeholder?: string;
-  disabled?: boolean;
+import type { PlaceLocation, PlaceSuggestion } from "../types";
+
+interface PlaceAutocompleteProps {
+  value: PlaceLocation | null;
+
   onPlaceSelected: (place: PlaceLocation | null) => void;
+
+  label?: string;
+
+  placeholder?: string;
+
+  disabled?: boolean;
 }
 
 export function PlaceAutocomplete({
   value,
+  onPlaceSelected,
   label = "Location",
   placeholder = "Search for a place...",
   disabled = false,
 }: PlaceAutocompleteProps) {
-  const [options, setOptions] = useState<PlacePrediction[]>([]);
+  const [options, setOptions] = useState<PlaceSuggestion[]>([]);
   const [inputValue, setInputValue] = useState(value?.displayName ?? "");
-  const { service, isLoaded } = usePlacesAutocomplete();
+  const [loading, setLoading] = useState(false);
+
+  const { service, getSessionToken, resetSession, isLoaded } = usePlacesAutocomplete();
 
   useEffect(() => {
-    if (!isLoaded || !service) {
+    if (!isLoaded || !inputValue.trim()) {
+      setOptions([]);
       return;
     }
 
     const timeout = setTimeout(async () => {
-      const predictions = await service.searchPredictions(inputValue);
+      try {
+        setLoading(true);
 
-      setOptions(predictions);
+        const sessionToken = await getSessionToken();
+
+        const suggestions = await service.searchSuggestions(inputValue, sessionToken);
+
+        setOptions(suggestions);
+      } catch (error) {
+        console.error("Failed to fetch suggestions", error);
+        setOptions([]);
+      } finally {
+        setLoading(false);
+      }
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [inputValue, service, isLoaded]);
+  }, [inputValue, service, isLoaded, getSessionToken]);
+
   return (
-    <Autocomplete<PlacePrediction, false, false, false>
+    <Autocomplete<PlaceSuggestion, false, false, false>
       options={options}
+      loading={loading}
       inputValue={inputValue}
-      onInputChange={(_, newInputValue) => {
-        setInputValue(newInputValue);
+      onInputChange={(_, value) => {
+        setInputValue(value);
       }}
       getOptionLabel={(option) => option.text}
-      isOptionEqualToValue={(option, selected) => option.placeId === selected.placeId}
-      disabled={disabled}
       filterOptions={(x) => x}
+      disabled={disabled}
       noOptionsText="Search for a location"
+      isOptionEqualToValue={(a, b) => a.text === b.text}
       renderInput={(params) => (
-        <TextField {...params} label={label} placeholder={placeholder} fullWidth />
+        <TextField
+          {...params}
+          label={label}
+          placeholder={placeholder}
+          fullWidth
+          slotProps={{
+            input: {
+              ...params.slotProps.input,
+              endAdornment: (
+                <>
+                  {loading && <CircularProgress size={18} />}
+                  {params.slotProps.input.endAdornment}
+                </>
+              ),
+            },
+          }}
+        />
       )}
-      onChange={() => {
-        // Will be implemented in the next step.
+      onChange={async (_, suggestion) => {
+        if (!suggestion) {
+          onPlaceSelected(null);
+          resetSession();
+          return;
+        }
+
+        try {
+          const place = await service.resolveSuggestion(suggestion);
+
+          onPlaceSelected(place);
+        } catch (error) {
+          console.error("Failed to resolve place", error);
+
+          onPlaceSelected(null);
+        } finally {
+          resetSession();
+        }
       }}
     />
   );
