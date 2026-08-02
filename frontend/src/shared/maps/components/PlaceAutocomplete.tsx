@@ -71,23 +71,7 @@ export function PlaceAutocomplete({
       noOptionsText="Search for a location"
       isOptionEqualToValue={(a, b) => a.text === b.text}
       renderInput={(params) => (
-        <TextField
-          {...params}
-          label={label}
-          placeholder={placeholder}
-          fullWidth
-          slotProps={{
-            input: {
-              ...params.slotProps.input,
-              endAdornment: (
-                <>
-                  {loading && <CircularProgress size={18} />}
-                  {params.slotProps.input.endAdornment}
-                </>
-              ),
-            },
-          }}
-        />
+        <TextField {...params} label={label} placeholder={placeholder} fullWidth />
       )}
       onChange={async (_, suggestion) => {
         if (!suggestion) {

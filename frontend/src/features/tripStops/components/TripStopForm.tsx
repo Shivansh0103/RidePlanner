@@ -3,6 +3,8 @@ import { MenuItem, Stack, TextField } from "@mui/material";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+import { PlaceAutocomplete } from "@/shared/maps";
+
 import { TRIP_STOP_CATEGORY_OPTIONS } from "../constants/tripStopCategoryOptions";
 import type { TripStopFormValues } from "../validation/tripStopSchema";
 import { tripStopSchema } from "../validation/tripStopSchema";
@@ -18,29 +20,33 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
     handleSubmit,
     reset,
     control,
+    setValue,
+    watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<TripStopFormValues>({
     resolver: zodResolver(tripStopSchema),
     defaultValues,
   });
 
   useEffect(() => {
     reset(defaultValues);
-  }, [
-    defaultValues.name,
-    defaultValues.category,
-    defaultValues.arrivalDate,
-    defaultValues.departureDate,
-    defaultValues.notes,
-    defaultValues,
-    reset,
-  ]);
+  }, [defaultValues, reset]);
+
+  const selectedLocation =
+    watch("placeId") && watch("formattedAddress")
+      ? {
+          placeId: watch("placeId"),
+          displayName: watch("name"),
+          formattedAddress: watch("formattedAddress"),
+          coordinates: {
+            latitude: watch("latitude"),
+            longitude: watch("longitude"),
+          },
+        }
+      : null;
 
   return (
-    <form
-      id="trip-stop-form"
-      onSubmit={handleSubmit((data) => onSubmit(data as TripStopFormValues))}
-    >
+    <form id="trip-stop-form" onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3} sx={{ mt: 1 }}>
         <TextField
           autoFocus
@@ -49,6 +55,24 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
           error={!!errors.name}
           helperText={errors.name?.message}
           {...register("name")}
+        />
+
+        <PlaceAutocomplete
+          value={selectedLocation}
+          onPlaceSelected={(place) => {
+            if (!place) {
+              setValue("placeId", "");
+              setValue("formattedAddress", "");
+              setValue("latitude", 0);
+              setValue("longitude", 0);
+              return;
+            }
+
+            setValue("placeId", place.placeId);
+            setValue("formattedAddress", place.formattedAddress);
+            setValue("latitude", place.coordinates.latitude);
+            setValue("longitude", place.coordinates.longitude);
+          }}
         />
 
         <Controller

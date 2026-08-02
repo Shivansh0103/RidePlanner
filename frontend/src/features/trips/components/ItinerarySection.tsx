@@ -151,6 +151,10 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
         mode="create"
         defaultValues={{
           name: "",
+          placeId: "",
+          formattedAddress: "",
+          latitude: 0,
+          longitude: 0,
           category: TripStopCategory.Destination,
           arrivalDate: "",
           departureDate: "",
@@ -168,6 +172,10 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
           stopId={selectedStop.id}
           defaultValues={{
             name: selectedStop.name,
+            placeId: selectedStop.placeId,
+            formattedAddress: selectedStop.formattedAddress,
+            latitude: selectedStop.latitude,
+            longitude: selectedStop.longitude,
             category: selectedStop.category ?? TripStopCategory.Destination,
             arrivalDate: selectedStop.arrivalDate,
             departureDate: selectedStop.departureDate,

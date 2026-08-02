@@ -10,6 +10,14 @@ export const tripStopSchema = z
       .min(1, "Name is required")
       .max(100, "Name cannot exceed 100 characters"),
 
+    placeId: z.string().min(1, "Location is required"),
+
+    formattedAddress: z.string().min(1, "Location is required"),
+
+    latitude: z.number(),
+
+    longitude: z.number(),
+
     category: z.nativeEnum(TripStopCategory, {
       message: "Category is required",
     }),
@@ -20,7 +28,7 @@ export const tripStopSchema = z
 
     notes: z.string().max(500).optional(),
 
-    displayOrder: z.coerce.number().optional(),
+    displayOrder: z.number().optional(),
   })
   .refine(
     (data) => data.departureDate >= data.arrivalDate,
