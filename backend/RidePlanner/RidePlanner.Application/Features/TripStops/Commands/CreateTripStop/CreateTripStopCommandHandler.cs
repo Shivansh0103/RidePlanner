@@ -31,6 +31,10 @@ public sealed class CreateTripStopCommandHandler
         var tripStop = TripStop.Create(
     command.TripId,
     command.Name,
+    command.PlaceId,
+command.FormattedAddress,
+command.Latitude,
+command.Longitude,
     command.Category,
     command.ArrivalDate,
     command.DepartureDate,

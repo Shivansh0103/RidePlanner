@@ -14,6 +14,20 @@ public class TripStopConfiguration : IEntityTypeConfiguration<TripStop>
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(s => s.PlaceId)
+    .IsRequired()
+    .HasMaxLength(255);
+
+        builder.Property(s => s.FormattedAddress)
+            .IsRequired()
+            .HasMaxLength(500);
+
+        builder.Property(s => s.Latitude)
+            .IsRequired();
+
+        builder.Property(s => s.Longitude)
+            .IsRequired();
+
         builder.Property(s => s.Notes)
             .HasMaxLength(2000);
 
@@ -25,5 +39,7 @@ public class TripStopConfiguration : IEntityTypeConfiguration<TripStop>
             s.TripId,
             s.DisplayOrder
         });
+
+        builder.HasIndex(s => s.PlaceId);
     }
 }

@@ -36,6 +36,10 @@ public sealed class UpdateTripStopCommandHandler
 
         stop.Update(
     command.Name,
+    command.PlaceId,
+command.FormattedAddress,
+command.Latitude,
+command.Longitude,
     command.Category,
     command.ArrivalDate,
     command.DepartureDate,
