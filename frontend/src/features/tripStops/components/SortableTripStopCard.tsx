@@ -13,6 +13,8 @@ type SortableTripStopCardProps = {
 
   selected?: boolean;
   onStopSelect?: (stopId: string) => void;
+
+  registerRef?: (stopId: string) => (element: HTMLDivElement | null) => void;
 };
 
 export default function SortableTripStopCard({
@@ -22,6 +24,7 @@ export default function SortableTripStopCard({
   onDelete,
   selected = false,
   onStopSelect,
+  registerRef,
 }: SortableTripStopCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: stop.id,
@@ -40,7 +43,14 @@ export default function SortableTripStopCard({
   };
 
   return (
-    <Box ref={setNodeRef} style={style}>
+    <Box
+      ref={(node: HTMLDivElement | null) => {
+        setNodeRef(node);
+
+        registerRef?.(stop.id)(node);
+      }}
+      style={style}
+    >
       <TripStopCard
         stop={stop}
         index={index}

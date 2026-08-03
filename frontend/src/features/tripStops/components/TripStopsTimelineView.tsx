@@ -3,7 +3,7 @@ import { Box, Stack } from "@mui/material";
 import type { TripStop } from "../types/tripStop";
 import { groupStopsByDay } from "../utils/groupStopsByDay";
 import { TimelineDay } from "./TimelineDay";
-
+import { useScrollToSelection } from "../hooks/useScrollToSelection";
 type TripStopsTimelineViewProps = {
   stops: TripStop[];
   onEdit: (stop: TripStop) => void;
@@ -21,7 +21,7 @@ export function TripStopsTimelineView({
   onStopSelect,
 }: TripStopsTimelineViewProps) {
   const groups = groupStopsByDay(stops);
-
+  const { registerRef } = useScrollToSelection(selectedStopId);
   return (
     <Box role="region" aria-label="Trip stops timeline" sx={{ py: { xs: 0.5, sm: 1 } }}>
       <Stack spacing={{ xs: 3, sm: 4.5 }}>
@@ -33,6 +33,7 @@ export function TripStopsTimelineView({
             onDelete={onDelete}
             selectedStopId={selectedStopId}
             onStopSelect={onStopSelect}
+            registerRef={registerRef}
           />
         ))}
       </Stack>

@@ -16,7 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import { Stack } from "@mui/material";
 import { useEffect, useState } from "react";
-
+import { useScrollToSelection } from "../hooks/useScrollToSelection";
 import type { TripStop } from "../types/tripStop";
 import SortableTripStopCard from "./SortableTripStopCard";
 
@@ -39,7 +39,7 @@ export default function TripStopsListView({
   onStopSelect,
 }: TripStopListProps) {
   const [items, setItems] = useState<TripStop[]>(initialStops);
-
+  const { registerRef } = useScrollToSelection(selectedStopId);
   useEffect(() => {
     setItems(initialStops);
   }, [initialStops]);
@@ -92,6 +92,7 @@ export default function TripStopsListView({
               onDelete={onDelete}
               selected={selectedStopId === stop.id}
               onStopSelect={onStopSelect}
+              registerRef={registerRef}
             />
           ))}
         </Stack>

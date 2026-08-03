@@ -12,8 +12,11 @@ type TimelineDayProps = {
   group: TimelineGroup;
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
+
   selectedStopId?: string | null;
   onStopSelect?: (stopId: string) => void;
+
+  registerRef?: (stopId: string) => (element: HTMLDivElement | null) => void;
 };
 
 export function TimelineDay({
@@ -22,6 +25,7 @@ export function TimelineDay({
   onDelete,
   selectedStopId,
   onStopSelect,
+  registerRef,
 }: TimelineDayProps) {
   const stopCountText = `${group.stopCount} ${group.stopCount === 1 ? "stop" : "stops"}`;
 
@@ -133,6 +137,7 @@ export function TimelineDay({
                 </Box>
               )}
               <TripStopCard
+                ref={registerRef?.(stop.id)}
                 stop={stop}
                 onEdit={onEdit}
                 onDelete={onDelete}
