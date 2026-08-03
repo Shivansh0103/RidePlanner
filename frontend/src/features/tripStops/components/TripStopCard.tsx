@@ -28,6 +28,9 @@ type TripStopCardProps = {
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
   dragHandleProps?: Record<string, unknown>;
+
+  selected?: boolean;
+  onStopSelect?: (stopId: string) => void;
 };
 
 export default function TripStopCard({
@@ -35,6 +38,8 @@ export default function TripStopCard({
   onEdit,
   onDelete,
   dragHandleProps,
+  selected = false,
+  onStopSelect,
 }: TripStopCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -43,6 +48,7 @@ export default function TripStopCard({
   const buttonId = `stop-menu-button-${stop.id}`;
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
 
@@ -55,33 +61,64 @@ export default function TripStopCard({
       component="article"
       aria-label={`Trip stop: ${stop.name}`}
       variant="outlined"
+      onClick={() => onStopSelect?.(stop.id)}
       sx={{
         borderRadius: 2,
-        transition: "box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out",
+        cursor: "pointer",
+        borderLeft: 4,
+        borderLeftColor: selected ? "primary.main" : "transparent",
+        bgcolor: selected ? "action.selected" : "background.paper",
+        boxShadow: selected ? 4 : 0,
+        transition: "all 0.2s ease-in-out",
+
         "&:hover": {
-          boxShadow: 2,
+          boxShadow: selected ? 6 : 2,
           borderColor: "action.disabled",
         },
       }}
     >
-      <CardContent sx={{ p: { xs: 2, sm: 2.5 }, "&:last-child": { pb: { xs: 2, sm: 2.5 } } }}>
+      <CardContent
+        sx={{
+          p: { xs: 2, sm: 2.5 },
+          "&:last-child": {
+            pb: { xs: 2, sm: 2.5 },
+          },
+        }}
+      >
         <Stack spacing={1.5}>
-          <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+          <Stack
+            direction="row"
+            sx={{
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: "center",
+              }}
+            >
               {dragHandleProps && (
                 <Box
                   tabIndex={0}
                   role="button"
                   {...dragHandleProps}
+                  onClick={(e) => e.stopPropagation()}
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     cursor: "grab",
                     color: "action.active",
-                    "&:active": { cursor: "grabbing" },
+                    "&:active": {
+                      cursor: "grabbing",
+                    },
                     p: 0.5,
                     borderRadius: 1,
-                    "&:hover": { bgcolor: "action.hover" },
+                    "&:hover": {
+                      bgcolor: "action.hover",
+                    },
                     "&:focus-visible": {
                       outline: "2px solid",
                       outlineColor: "primary.main",
@@ -169,21 +206,33 @@ export default function TripStopCard({
             variant="h6"
             sx={{
               fontWeight: 700,
-              fontSize: { xs: "1.05rem", sm: "1.25rem" },
+              fontSize: {
+                xs: "1.05rem",
+                sm: "1.25rem",
+              },
               wordBreak: "break-word",
             }}
           >
             {stop.name}
           </Typography>
 
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
             <CalendarTodayIcon fontSize="small" color="action" />
 
             <Typography
               variant="body2"
               color="text.secondary"
               aria-label={`From ${formatDate(stop.arrivalDate)} to ${formatDate(stop.departureDate)}`}
-              sx={{ wordBreak: "break-word" }}
+              sx={{
+                wordBreak: "break-word",
+              }}
             >
               {formatDate(stop.arrivalDate)}
               {" → "}
@@ -192,7 +241,13 @@ export default function TripStopCard({
           </Stack>
 
           {stop.notes && (
-            <Typography variant="body2" color="text.secondary" sx={{ wordBreak: "break-word" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                wordBreak: "break-word",
+              }}
+            >
               {stop.notes}
             </Typography>
           )}

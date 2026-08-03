@@ -8,9 +8,18 @@ type TripStopsTimelineViewProps = {
   stops: TripStop[];
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
+
+  selectedStopId?: string | null;
+  onStopSelect?: (stopId: string) => void;
 };
 
-export function TripStopsTimelineView({ stops, onEdit, onDelete }: TripStopsTimelineViewProps) {
+export function TripStopsTimelineView({
+  stops,
+  onEdit,
+  onDelete,
+  selectedStopId,
+  onStopSelect,
+}: TripStopsTimelineViewProps) {
   const groups = groupStopsByDay(stops);
 
   return (
@@ -22,6 +31,8 @@ export function TripStopsTimelineView({ stops, onEdit, onDelete }: TripStopsTime
             group={group}
             onEdit={onEdit}
             onDelete={onDelete}
+            selectedStopId={selectedStopId}
+            onStopSelect={onStopSelect}
           />
         ))}
       </Stack>

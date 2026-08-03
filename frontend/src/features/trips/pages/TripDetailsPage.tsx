@@ -1,20 +1,23 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Box, Button, Stack, Typography } from "@mui/material";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
+import { Map } from "@/shared/maps";
 import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 
 import ItinerarySection from "../components/ItinerarySection";
 import TripSummary from "../components/TripSummary";
 import { useTrip } from "../hooks/useTrip";
-import { Map } from "@/shared/maps";
 
 export default function TripDetailsPage() {
   const navigate = useNavigate();
 
   const { tripId } = useParams();
+
+  const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
 
   const { data: trip, isLoading, isError } = useTrip(tripId ?? "");
   const { data: stops = [] } = useTripStops(tripId ?? "");
@@ -62,6 +65,7 @@ export default function TripDetailsPage() {
         </Stack>
 
         <TripSummary trip={trip} stops={stops} />
+
         <Box
           sx={{
             height: 500,
@@ -70,9 +74,14 @@ export default function TripDetailsPage() {
             mt: 3,
           }}
         >
-          <Map />
+          <Map stops={stops} selectedStopId={selectedStopId} onStopSelect={setSelectedStopId} />
         </Box>
-        <ItinerarySection tripId={trip.id} />
+
+        <ItinerarySection
+          tripId={trip.id}
+          selectedStopId={selectedStopId}
+          onStopSelect={setSelectedStopId}
+        />
       </Stack>
     </Box>
   );

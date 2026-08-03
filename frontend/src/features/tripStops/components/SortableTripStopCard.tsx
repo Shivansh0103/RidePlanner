@@ -10,6 +10,9 @@ type SortableTripStopCardProps = {
   index: number;
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
+
+  selected?: boolean;
+  onStopSelect?: (stopId: string) => void;
 };
 
 export default function SortableTripStopCard({
@@ -17,15 +20,12 @@ export default function SortableTripStopCard({
   index,
   onEdit,
   onDelete,
+  selected = false,
+  onStopSelect,
 }: SortableTripStopCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: stop.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: stop.id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -47,6 +47,8 @@ export default function SortableTripStopCard({
         onEdit={onEdit}
         onDelete={onDelete}
         dragHandleProps={dragHandleProps}
+        selected={selected}
+        onStopSelect={onStopSelect}
       />
     </Box>
   );

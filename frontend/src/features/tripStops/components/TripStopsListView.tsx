@@ -25,6 +25,9 @@ type TripStopListProps = {
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
   onReorder?: (orderedStopIds: string[]) => void;
+
+  selectedStopId?: string | null;
+  onStopSelect?: (stopId: string) => void;
 };
 
 export default function TripStopsListView({
@@ -32,6 +35,8 @@ export default function TripStopsListView({
   onEdit,
   onDelete,
   onReorder,
+  selectedStopId,
+  onStopSelect,
 }: TripStopListProps) {
   const [items, setItems] = useState<TripStop[]>(initialStops);
 
@@ -66,16 +71,18 @@ export default function TripStopsListView({
       const reorderedItems = arrayMove(items, oldIndex, newIndex);
       setItems(reorderedItems);
 
-      if (onReorder) {
-        onReorder(reorderedItems.map((stop) => stop.id));
-      }
+      onReorder?.(reorderedItems.map((stop) => stop.id));
     }
   };
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={items.map((stop) => stop.id)} strategy={verticalListSortingStrategy}>
-        <Stack role="region" aria-label="Reorderable trip stops list" spacing={{ xs: 1.5, sm: 2.5 }}>
+        <Stack
+          role="region"
+          aria-label="Reorderable trip stops list"
+          spacing={{ xs: 1.5, sm: 2.5 }}
+        >
           {items.map((stop, index) => (
             <SortableTripStopCard
               key={stop.id}
@@ -83,6 +90,8 @@ export default function TripStopsListView({
               index={index}
               onEdit={onEdit}
               onDelete={onDelete}
+              selected={selectedStopId === stop.id}
+              onStopSelect={onStopSelect}
             />
           ))}
         </Stack>

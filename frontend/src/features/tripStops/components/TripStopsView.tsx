@@ -14,12 +14,12 @@ type TripStopsViewProps = {
   onDelete: (stop: TripStop) => void;
   onReorder?: (orderedStopIds: string[]) => void;
   headerAction?: React.ReactNode;
+
+  selectedStopId?: string | null;
+  onStopSelect?: (stopId: string) => void;
 };
 
-export default function TripStopsView({
-  headerAction,
-  ...props
-}: TripStopsViewProps) {
+export default function TripStopsView({ headerAction, ...props }: TripStopsViewProps) {
   const [viewMode, setViewMode] = useState<TripStopsViewMode>("list");
 
   return (
@@ -45,9 +45,18 @@ export default function TripStopsView({
               stops={props.stops}
               onEdit={props.onEdit}
               onDelete={props.onDelete}
+              selectedStopId={props.selectedStopId}
+              onStopSelect={props.onStopSelect}
             />
           ) : (
-            <TripStopsListView {...props} />
+            <TripStopsListView
+              stops={props.stops}
+              onEdit={props.onEdit}
+              onDelete={props.onDelete}
+              onReorder={props.onReorder}
+              selectedStopId={props.selectedStopId}
+              onStopSelect={props.onStopSelect}
+            />
           )}
         </Box>
       </Fade>

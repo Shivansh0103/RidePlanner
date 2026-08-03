@@ -1,4 +1,4 @@
-export * from "./components/Map";
+export * from "./Map";
 export * from "./components/PlaceAutocomplete";
 export * from "./providers/MapProvider";
 export * from "./types";

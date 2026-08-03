@@ -1,6 +1,15 @@
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
-import { Button, Card, CardContent, CardHeader, Chip, Divider, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Divider,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
@@ -17,9 +26,15 @@ import TripStopsView from "@/features/tripStops/components/TripStopsView";
 
 type ItinerarySectionProps = {
   tripId: string;
+  selectedStopId?: string | null;
+  onStopSelect?: (stopId: string) => void;
 };
 
-export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
+export default function ItinerarySection({
+  tripId,
+  selectedStopId,
+  onStopSelect,
+}: ItinerarySectionProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedStop, setSelectedStop] = useState<TripStop | null>(null);
   const [stopToDelete, setStopToDelete] = useState<TripStop | null>(null);
@@ -87,7 +102,12 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
         <CardHeader
           title={
             <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-              <Typography id="itinerary-heading" component="h2" variant="h6" sx={{ fontWeight: 700 }}>
+              <Typography
+                id="itinerary-heading"
+                component="h2"
+                variant="h6"
+                sx={{ fontWeight: 700 }}
+              >
                 Itinerary
               </Typography>
               {stops.length > 0 && (
@@ -140,6 +160,8 @@ export default function ItinerarySection({ tripId }: ItinerarySectionProps) {
               onDelete={handleDeleteStop}
               onReorder={handleReorderStops}
               headerAction={addStopButton}
+              selectedStopId={selectedStopId}
+              onStopSelect={onStopSelect}
             />
           )}
         </CardContent>

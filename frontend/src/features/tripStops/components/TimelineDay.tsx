@@ -12,13 +12,25 @@ type TimelineDayProps = {
   group: TimelineGroup;
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
+  selectedStopId?: string | null;
+  onStopSelect?: (stopId: string) => void;
 };
 
-export function TimelineDay({ group, onEdit, onDelete }: TimelineDayProps) {
+export function TimelineDay({
+  group,
+  onEdit,
+  onDelete,
+  selectedStopId,
+  onStopSelect,
+}: TimelineDayProps) {
   const stopCountText = `${group.stopCount} ${group.stopCount === 1 ? "stop" : "stops"}`;
 
   return (
-    <Box component="section" aria-label={`Day ${group.dayNumber}: ${formatDate(group.date)}`} sx={{ position: "relative" }}>
+    <Box
+      component="section"
+      aria-label={`Day ${group.dayNumber}: ${formatDate(group.date)}`}
+      sx={{ position: "relative" }}
+    >
       <Paper
         variant="outlined"
         sx={{
@@ -37,7 +49,11 @@ export function TimelineDay({ group, onEdit, onDelete }: TimelineDayProps) {
           },
         }}
       >
-        <Stack direction="row" spacing={{ xs: 1, sm: 1.5 }} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+        <Stack
+          direction="row"
+          spacing={{ xs: 1, sm: 1.5 }}
+          sx={{ alignItems: "center", flexWrap: "wrap" }}
+        >
           <Box
             sx={{
               px: 1.5,
@@ -56,7 +72,15 @@ export function TimelineDay({ group, onEdit, onDelete }: TimelineDayProps) {
 
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <CalendarTodayIcon fontSize="small" color="action" />
-            <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 600, color: "text.primary", fontSize: { xs: "0.95rem", sm: "1rem" } }}>
+            <Typography
+              component="h3"
+              variant="subtitle1"
+              sx={{
+                fontWeight: 600,
+                color: "text.primary",
+                fontSize: { xs: "0.95rem", sm: "1rem" },
+              }}
+            >
               {formatDate(group.date)}
             </Typography>
           </Stack>
@@ -108,7 +132,13 @@ export function TimelineDay({ group, onEdit, onDelete }: TimelineDayProps) {
                   />
                 </Box>
               )}
-              <TripStopCard stop={stop} onEdit={onEdit} onDelete={onDelete} />
+              <TripStopCard
+                stop={stop}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                selected={stop.id === selectedStopId}
+                onStopSelect={onStopSelect}
+              />
             </Box>
           ))}
         </Stack>
