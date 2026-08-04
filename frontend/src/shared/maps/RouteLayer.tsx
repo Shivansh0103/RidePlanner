@@ -23,5 +23,13 @@ export default function RouteLayer({ stops }: RouteLayerProps) {
     return null;
   }
 
-  return <Polyline path={path} strokeColor="#1A73E8" strokeOpacity={0.9} strokeWeight={5} />;
+  return (
+    <Polyline
+      path={path}
+      strokeColor="#1A73E8"
+      strokeOpacity={0.9}
+      strokeWeight={6}
+      zIndex={2}
+    />
+  );
 }

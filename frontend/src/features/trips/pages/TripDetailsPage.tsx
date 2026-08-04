@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
-import { Map } from "@/shared/maps";
+import { Map, RouteSummary, useRoute } from "@/shared/maps";
 import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 
@@ -21,6 +21,9 @@ export default function TripDetailsPage() {
 
   const { data: trip, isLoading, isError } = useTrip(tripId ?? "");
   const { data: stops = [] } = useTripStops(tripId ?? "");
+
+  const validStops = stops.filter((stop) => stop.latitude !== null && stop.longitude !== null);
+  const { route } = useRoute(validStops);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -76,6 +79,8 @@ export default function TripDetailsPage() {
         >
           <Map stops={stops} selectedStopId={selectedStopId} onStopSelect={setSelectedStopId} />
         </Box>
+
+        <RouteSummary summary={route?.summary} stopCount={validStops.length} />
 
         <ItinerarySection
           tripId={trip.id}

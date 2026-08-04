@@ -6,12 +6,28 @@ interface ComputeDrivingRouteParams {
   stops: MapStop[];
 }
 
+const routeCache = new Map<string, RouteResult>();
+
+export function getRouteCacheKey(stops: MapStop[]): string {
+  return stops.map((s) => `${s.id}:${s.latitude},${s.longitude}`).join("|");
+}
+
+export function getCachedRoute(key: string): RouteResult | undefined {
+  return routeCache.get(key);
+}
+
 export async function computeDrivingRoute({
   Route,
   stops,
 }: ComputeDrivingRouteParams): Promise<RouteResult | null> {
   if (stops.length < 2) {
     return null;
+  }
+
+  const cacheKey = getRouteCacheKey(stops);
+  const cached = routeCache.get(cacheKey);
+  if (cached) {
+    return cached;
   }
 
   const origin = {
@@ -47,13 +63,13 @@ export async function computeDrivingRoute({
 
   const legs: RouteLeg[] =
     route.legs?.map((leg, index) => ({
-      startStopId: stops[index].id,
-      endStopId: stops[index + 1].id,
-      distanceMeters: leg.distanceMeters,
+      startStopId: stops[index]?.id ?? "",
+      endStopId: stops[index + 1]?.id ?? "",
+      distanceMeters: leg.distanceMeters ?? 0,
       durationMillis: leg.durationMillis ?? 0,
     })) ?? [];
 
-  return {
+  const result: RouteResult = {
     geometry: {
       path:
         route.path?.map((point) => ({
@@ -70,4 +86,7 @@ export async function computeDrivingRoute({
 
     legs,
   };
+
+  routeCache.set(cacheKey, result);
+  return result;
 }
