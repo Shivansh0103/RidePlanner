@@ -1,7 +1,7 @@
 import { useMap } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
 
-import type { MapStop } from "./Map";
+import type { MapStop } from "./types/map";
 
 interface MapCameraControllerProps {
   stops: MapStop[];

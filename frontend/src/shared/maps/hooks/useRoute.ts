@@ -1,20 +1,17 @@
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 
-import type { MapStop } from "../Map";
 import { computeDrivingRoute } from "../services/routeService";
+import type { MapStop } from "../types/map";
 import type { RouteResult } from "../types/route";
 
 export function useRoute(stops: MapStop[]) {
   const routesLibrary = useMapsLibrary("routes");
-
   const [route, setRoute] = useState<RouteResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
 
-  const stopsKey = JSON.stringify(
-    stops.map((s) => ({ id: s.id, lat: s.latitude, lng: s.longitude }))
-  );
+  const stopsKey = stops
+    .map((s) => `${s.id}:${s.latitude},${s.longitude}`)
+    .join("|");
 
   useEffect(() => {
     async function loadRoute() {
@@ -24,9 +21,6 @@ export function useRoute(stops: MapStop[]) {
       }
 
       try {
-        setLoading(true);
-        setError(null);
-
         const result = await computeDrivingRoute({
           Route: routesLibrary.Route,
           stops,
@@ -34,21 +28,14 @@ export function useRoute(stops: MapStop[]) {
 
         setRoute(result);
       } catch (err) {
-        console.error(err);
-
-        setError(err as Error);
+        console.error("Failed to load route", err);
         setRoute(null);
-      } finally {
-        setLoading(false);
       }
     }
 
     loadRoute();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [routesLibrary, stopsKey]);
 
-  return {
-    route,
-    loading,
-    error,
-  };
+  return { route };
 }

@@ -6,11 +6,9 @@ import MapCameraController from "./MapCameraController";
 import StopMarkerLayer from "./StopMarkerLayer";
 import RouteLayer from "./RouteLayer";
 
-export interface MapStop {
-  id: string;
-  latitude: number | null;
-  longitude: number | null;
-}
+import type { MapStop } from "./types/map";
+
+export type { MapStop };
 
 export interface MapProps {
   center?: google.maps.LatLngLiteral;

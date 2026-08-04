@@ -1,7 +1,7 @@
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
 
 import StopMarker from "./components/StopMarker";
-import type { MapStop } from "./Map";
+import type { MapStop } from "./types/map";
 
 interface StopMarkerLayerProps {
   stops: MapStop[];

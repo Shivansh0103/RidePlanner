@@ -1,4 +1,4 @@
-import type { MapStop } from "../Map";
+import type { MapStop } from "../types/map";
 import { TravelMode, type RouteLeg, type RouteResult } from "../types/route";
 
 interface ComputeDrivingRouteParams {
