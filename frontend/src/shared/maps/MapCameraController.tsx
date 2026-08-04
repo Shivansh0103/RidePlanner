@@ -10,6 +10,8 @@ interface MapCameraControllerProps {
 export default function MapCameraController({ stops }: MapCameraControllerProps) {
   const map = useMap();
 
+  const stopsKey = stops.map((s) => `${s.id}:${s.latitude},${s.longitude}`).join("|");
+
   useEffect(() => {
     if (!map || stops.length === 0) {
       return;
@@ -27,7 +29,8 @@ export default function MapCameraController({ stops }: MapCameraControllerProps)
     if (!bounds.isEmpty()) {
       map.fitBounds(bounds, 80);
     }
-  }, [map, stops]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, stopsKey]);
 
   return null;
 }
