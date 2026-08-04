@@ -4,6 +4,7 @@ import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "./constants";
 
 import MapCameraController from "./MapCameraController";
 import StopMarkerLayer from "./StopMarkerLayer";
+import RouteLayer from "./RouteLayer";
 
 export interface MapStop {
   id: string;
@@ -48,6 +49,8 @@ export function Map({
       }}
     >
       <MapCameraController stops={validStops} />
+
+      <RouteLayer stops={validStops} />
 
       <StopMarkerLayer
         stops={validStops}
