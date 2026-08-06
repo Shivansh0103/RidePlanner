@@ -1,6 +1,7 @@
 using RidePlanner.Domain.Common;
 using RidePlanner.Domain.Exceptions;
 using RidePlanner.Domain.Entities;
+using RidePlanner.Domain.Entities.Budget;
 
 public class Trip : Entity
 {
@@ -17,6 +18,8 @@ public class Trip : Entity
     public DateTimeOffset UpdatedAt { get; private set; }
 
     public ICollection<TripStop> Stops { get; private set; } = [];
+
+    public TripBudget? Budget { get; private set; }
 
     private Trip(
         Guid id,
