@@ -1,5 +1,7 @@
 # Sprint 5 – Maps & Spatial Intelligence
 
+**Status:** Completed
+
 > Goal: Make geography a first-class citizen.
 
 ## Sprint Overview

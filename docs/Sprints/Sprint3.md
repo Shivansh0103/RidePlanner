@@ -1,6 +1,6 @@
 # Sprint 3 – Trip Details & Stop Management
 
-**Status:** Planned
+**Status:** Completed
 
 **Estimated Duration:** 2–3 Weeks
 

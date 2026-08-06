@@ -1,6 +1,6 @@
 # Sprint 4 – Planning Experience
 
-**Status:** Planned
+**Status:** Completed
 
 **Estimated Duration:** 2–3 Weeks
 
