@@ -10,6 +10,13 @@ public class TripBudget
     {
     }
 
+    // Used when creating a new Trip
+    public TripBudget(Guid tripId)
+        : this(tripId, 0m)
+    {
+    }
+
+    // Used when the target budget is explicitly known
     public TripBudget(Guid tripId, decimal targetBudget)
     {
         if (targetBudget < 0)
@@ -42,5 +49,13 @@ public class TripBudget
         return _estimates
             .Where(x => x.Category == category)
             .Sum(x => x.EstimatedAmount);
+    }
+
+    public void UpdateTargetBudget(decimal targetBudget)
+    {
+        if (targetBudget < 0)
+            throw new ArgumentOutOfRangeException(nameof(targetBudget));
+
+        TargetBudget = targetBudget;
     }
 }

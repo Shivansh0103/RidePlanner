@@ -1,12 +1,12 @@
-using RidePlanner.Domain.Entities;
-
-namespace RidePlanner.Application.Abstractions.Persistence;
-
 public interface ITripRepository
 {
     void Add(Trip trip);
 
     Task<Trip?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<Trip?> GetWithBudgetAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<Trip>> GetAllAsync(CancellationToken cancellationToken = default);
 

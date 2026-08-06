@@ -19,7 +19,7 @@ public class Trip : Entity
 
     public ICollection<TripStop> Stops { get; private set; } = [];
 
-    public TripBudget Budget { get; private set; }
+    public TripBudget Budget { get; private set; } = null!;
 
     private Trip(
         Guid id,
@@ -78,6 +78,11 @@ public class Trip : Entity
 
         if (endDate < startDate)
             throw new DomainException("End date cannot be before start date.");
+    }
+
+    public void InitializeBudget()
+    {
+        Budget ??= new TripBudget(Id);
     }
 
     private Trip()

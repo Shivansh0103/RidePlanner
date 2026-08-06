@@ -22,6 +22,8 @@ public sealed class CreateTripCommandHandler
             command.StartDate,
             command.EndDate);
 
+        trip.InitializeBudget();
+
         _tripRepository.Add(trip);
 
         await _tripRepository.SaveChangesAsync(cancellationToken);
