@@ -21,5 +21,8 @@ public class TripConfiguration : IEntityTypeConfiguration<Trip>
             .WithOne(s => s.Trip)
             .HasForeignKey(s => s.TripId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Budget)
+            .WithOne(x => x.Trip);
     }
 }

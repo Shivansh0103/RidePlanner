@@ -19,7 +19,7 @@ public class Trip : Entity
 
     public ICollection<TripStop> Stops { get; private set; } = [];
 
-    public TripBudget? Budget { get; private set; }
+    public TripBudget Budget { get; private set; }
 
     private Trip(
         Guid id,
