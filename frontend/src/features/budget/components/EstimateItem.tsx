@@ -22,8 +22,8 @@ export default function EstimateItem({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        py: 1,
-        px: 1.5,
+        py: 0.75,
+        px: 1.25,
         borderRadius: 1,
         backgroundColor: "action.hover",
         transition: "background-color 0.2s",
@@ -42,15 +42,20 @@ export default function EstimateItem({
       </Box>
 
       <Stack direction="row" spacing={0.5}>
-        <Tooltip title="Edit Estimate">
-          <IconButton size="small" onClick={() => onEdit(estimate)}>
+        <Tooltip title={`Edit ${estimate.title}`}>
+          <IconButton
+            size="small"
+            aria-label={`Edit estimate ${estimate.title}`}
+            onClick={() => onEdit(estimate)}
+          >
             <EditIcon fontSize="small" />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete Estimate">
+        <Tooltip title={`Delete ${estimate.title}`}>
           <IconButton
             size="small"
             color="error"
+            aria-label={`Delete estimate ${estimate.title}`}
             onClick={() => onDelete(estimate)}
           >
             <DeleteIcon fontSize="small" />

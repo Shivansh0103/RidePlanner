@@ -88,7 +88,7 @@ export default function EditEstimateDialog({
             disabled={isLoading}
           />
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
+        <DialogActions sx={{ px: 3, pb: 2.5, pt: 1 }}>
           <Button onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>

@@ -55,10 +55,14 @@ export function formatCurrency(amount: number): string {
     return "₹0";
   }
 
+  const hasDecimals = amount % 1 !== 0;
+
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
-    maximumFractionDigits: 2,
+    minimumFractionDigits: hasDecimals ? 2 : 0,
+    maximumFractionDigits: hasDecimals ? 2 : 0,
   }).format(amount);
 }
+
 

@@ -40,12 +40,19 @@ export default function CategoryCard({
       sx={{
         borderRadius: 2,
         height: "100%",
+        minHeight: 260,
         display: "flex",
         flexDirection: "column",
       }}
     >
       <CardContent
-        sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          p: 2.5,
+          "&:last-child": { pb: 2.5 },
+        }}
       >
         {/* Header */}
         <Box
@@ -56,7 +63,7 @@ export default function CategoryCard({
             mb: 1.5,
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
             {categoryName}
           </Typography>
           <Typography
@@ -91,6 +98,8 @@ export default function CategoryCard({
                 textAlign: "center",
                 backgroundColor: "action.hover",
                 borderRadius: 1.5,
+                border: "1px dashed",
+                borderColor: "divider",
               }}
             >
               <Typography variant="body2" color="text.secondary">
@@ -107,6 +116,8 @@ export default function CategoryCard({
           startIcon={<AddIcon />}
           onClick={() => onAddEstimate(category.category)}
           size="small"
+          aria-label={`Add estimate to ${categoryName}`}
+          sx={{ mt: "auto" }}
         >
           Add Estimate
         </Button>

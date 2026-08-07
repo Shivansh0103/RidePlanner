@@ -30,7 +30,7 @@ export default function BudgetSummaryCards({
   const isOverBudget = remainingBuffer < 0;
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2.5}>
       <Box
         sx={{
           display: "flex",
@@ -50,6 +50,7 @@ export default function BudgetSummaryCards({
             startIcon={<LocalGasStationIcon />}
             onClick={onCalculateFuel}
             color="primary"
+            aria-label="Calculate Fuel Cost"
           >
             Calculate Fuel
           </Button>
@@ -58,28 +59,37 @@ export default function BudgetSummaryCards({
             variant="contained"
             startIcon={<EditIcon />}
             onClick={onEditBudget}
+            aria-label="Edit Target Budget"
           >
             Edit Target Budget
           </Button>
         </Stack>
       </Box>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={2.5}>
         {/* Target Budget Card */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card variant="outlined" sx={{ borderRadius: 2, height: "100%" }}>
-            <CardContent>
+            <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
               <Typography
-                variant="body2"
+                variant="caption"
                 color="text.secondary"
-                sx={{ fontWeight: 500 }}
+                sx={{
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.5,
+                }}
               >
                 Target Budget
               </Typography>
               <Typography
                 variant="h4"
                 color="text.primary"
-                sx={{ mt: 1, fontWeight: 700 }}
+                sx={{
+                  mt: 0.5,
+                  fontWeight: 800,
+                  fontSize: { xs: "1.75rem", sm: "2rem" },
+                }}
               >
                 {formatCurrency(targetBudget)}
               </Typography>
@@ -88,20 +98,28 @@ export default function BudgetSummaryCards({
         </Grid>
 
         {/* Estimated Cost Card */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card variant="outlined" sx={{ borderRadius: 2, height: "100%" }}>
-            <CardContent>
+            <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
               <Typography
-                variant="body2"
+                variant="caption"
                 color="text.secondary"
-                sx={{ fontWeight: 500 }}
+                sx={{
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.5,
+                }}
               >
                 Estimated Cost
               </Typography>
               <Typography
                 variant="h4"
                 color="primary.main"
-                sx={{ mt: 1, fontWeight: 700 }}
+                sx={{
+                  mt: 0.5,
+                  fontWeight: 800,
+                  fontSize: { xs: "1.75rem", sm: "2rem" },
+                }}
               >
                 {formatCurrency(estimatedCost)}
               </Typography>
@@ -110,7 +128,7 @@ export default function BudgetSummaryCards({
         </Grid>
 
         {/* Remaining Buffer Card */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card
             variant="outlined"
             sx={{
@@ -122,18 +140,26 @@ export default function BudgetSummaryCards({
                 : "background.paper",
             }}
           >
-            <CardContent>
+            <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
               <Typography
-                variant="body2"
+                variant="caption"
                 color="text.secondary"
-                sx={{ fontWeight: 500 }}
+                sx={{
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.5,
+                }}
               >
                 Remaining Buffer
               </Typography>
               <Typography
                 variant="h4"
                 color={isOverBudget ? "error.main" : "success.main"}
-                sx={{ mt: 1, fontWeight: 700 }}
+                sx={{
+                  mt: 0.5,
+                  fontWeight: 800,
+                  fontSize: { xs: "1.75rem", sm: "2rem" },
+                }}
               >
                 {formatCurrency(remainingBuffer)}
               </Typography>

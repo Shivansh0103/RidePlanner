@@ -24,7 +24,6 @@ public class BudgetEstimate
         if (!Enum.IsDefined(category))
             throw new DomainException("Invalid budget category.");
 
-        Id = Guid.NewGuid();
         TripBudgetId = tripBudgetId;
         Category = category;
         Title = title;
