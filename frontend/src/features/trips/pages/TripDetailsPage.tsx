@@ -8,6 +8,7 @@ import { Map, RouteSummary, useRoute } from "@/shared/maps";
 import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 
+import BudgetSection from "@/features/budget/components/BudgetSection";
 import ItinerarySection from "../components/ItinerarySection";
 import TripSummary from "../components/TripSummary";
 import { useTrip } from "../hooks/useTrip";
@@ -24,6 +25,8 @@ export default function TripDetailsPage() {
 
   const validStops = stops.filter((stop) => stop.latitude !== null && stop.longitude !== null);
   const { route } = useRoute(validStops);
+
+  const routeDistanceKm = (route?.summary?.distanceMeters ?? 0) / 1000;
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -87,6 +90,8 @@ export default function TripDetailsPage() {
           selectedStopId={selectedStopId}
           onStopSelect={setSelectedStopId}
         />
+
+        <BudgetSection tripId={trip.id} routeDistanceKm={routeDistanceKm} />
       </Stack>
     </Box>
   );

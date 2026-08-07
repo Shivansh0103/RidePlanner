@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 
 import { usePlacesAutocomplete } from "../hooks/usePlacesAutocomplete";
 

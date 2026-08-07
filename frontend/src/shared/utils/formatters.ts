@@ -43,3 +43,22 @@ export function formatDuration(durationMillis: number): string {
 
   return `${hours} hr ${minutes} min`;
 }
+
+/**
+ * Formats an amount as INR currency.
+ * Examples:
+ *   14000 -> "₹14,000"
+ *   4200.5 -> "₹4,200.50"
+ */
+export function formatCurrency(amount: number): string {
+  if (amount === undefined || amount === null || isNaN(amount)) {
+    return "₹0";
+  }
+
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
