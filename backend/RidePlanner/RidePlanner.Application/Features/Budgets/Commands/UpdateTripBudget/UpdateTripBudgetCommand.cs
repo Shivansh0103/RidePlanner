@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using RidePlanner.Application.Features.Budgets.DTOs;
 
-namespace RidePlanner.Application.Features.Budgets.Commands.UpdateTripBudget
-{
-    internal class UpdateTripBudgetCommand
-    {
-    }
-}
+namespace RidePlanner.Application.Features.Budgets.Commands.UpdateTripBudget;
+
+public sealed record UpdateTripBudgetCommand(
+    Guid TripId,
+    decimal TargetBudget);
