@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Budgets.Commands.CreateBudgetEstimate;
+using RidePlanner.Application.Features.Budgets.Commands.DeleteBudgetEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.UpdateBudgetEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.UpdateTripBudget;
 using RidePlanner.Application.Features.Budgets.DTOs;
@@ -15,17 +16,20 @@ public sealed class TripBudgetsController : ControllerBase
     private readonly UpdateTripBudgetCommandHandler _updateTripBudgetHandler;
     private readonly CreateBudgetEstimateCommandHandler _createBudgetEstimateHandler;
     private readonly UpdateBudgetEstimateCommandHandler _updateBudgetEstimateHandler;
+    private readonly DeleteBudgetEstimateCommandHandler _deleteBudgetEstimateHandler;
 
     public TripBudgetsController(
         GetTripBudgetQueryHandler getTripBudgetHandler,
         UpdateTripBudgetCommandHandler updateTripBudgetHandler,
         CreateBudgetEstimateCommandHandler createBudgetEstimateHandler,
-        UpdateBudgetEstimateCommandHandler updateBudgetEstimateHandler)
+        UpdateBudgetEstimateCommandHandler updateBudgetEstimateHandler,
+        DeleteBudgetEstimateCommandHandler deleteBudgetEstimateHandler)
     {
         _getTripBudgetHandler = getTripBudgetHandler;
         _updateTripBudgetHandler = updateTripBudgetHandler;
         _createBudgetEstimateHandler = createBudgetEstimateHandler;
         _updateBudgetEstimateHandler = updateBudgetEstimateHandler;
+        _deleteBudgetEstimateHandler = deleteBudgetEstimateHandler;
     }
 
     [HttpGet]
@@ -97,6 +101,26 @@ public sealed class TripBudgetsController : ControllerBase
                 estimateId,
                 request.Name,
                 request.EstimatedAmount),
+            cancellationToken);
+
+        if (result is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
+
+    [HttpDelete("estimates/{estimateId:guid}")]
+    public async Task<IActionResult> DeleteEstimate(
+        Guid tripId,
+        Guid estimateId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _deleteBudgetEstimateHandler.Handle(
+            new DeleteBudgetEstimateCommand(
+                tripId,
+                estimateId),
             cancellationToken);
 
         if (result is null)

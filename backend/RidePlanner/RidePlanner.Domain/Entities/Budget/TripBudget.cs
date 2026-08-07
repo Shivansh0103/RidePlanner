@@ -89,4 +89,16 @@ public class TripBudget
         estimate.Update(name, estimatedAmount);
         return true;
     }
+
+    public bool RemoveEstimate(Guid estimateId)
+    {
+        var estimate = _estimates.FirstOrDefault(x => x.Id == estimateId);
+        if (estimate is null)
+        {
+            return false;
+        }
+
+        _estimates.Remove(estimate);
+        return true;
+    }
 }
