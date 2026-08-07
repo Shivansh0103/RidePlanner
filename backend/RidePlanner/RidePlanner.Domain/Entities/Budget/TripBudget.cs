@@ -1,4 +1,5 @@
 using RidePlanner.Domain.Enums;
+using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Domain.Entities.Budget;
 
@@ -100,5 +101,41 @@ public class TripBudget
 
         _estimates.Remove(estimate);
         return true;
+    }
+
+    public BudgetEstimate CalculateFuelEstimate(
+        decimal routeDistanceKm,
+        decimal vehicleMileage,
+        decimal fuelPricePerLiter)
+    {
+        if (routeDistanceKm <= 0)
+            throw new DomainException("Route distance must be greater than zero.");
+
+        if (vehicleMileage <= 0)
+            throw new DomainException("Vehicle mileage must be greater than zero.");
+
+        if (fuelPricePerLiter <= 0)
+            throw new DomainException("Fuel price must be greater than zero.");
+
+        decimal fuelCost = Math.Round((routeDistanceKm / vehicleMileage) * fuelPricePerLiter, 2, MidpointRounding.AwayFromZero);
+
+        const string autoCalculatedFuelName = "Auto Calculated Fuel";
+        var existingEstimate = _estimates.FirstOrDefault(x =>
+            x.Category == BudgetCategoryType.Fuel && x.Title == autoCalculatedFuelName);
+
+        if (existingEstimate is not null)
+        {
+            existingEstimate.Update(autoCalculatedFuelName, fuelCost);
+            return existingEstimate;
+        }
+
+        var estimate = new BudgetEstimate(
+            Id,
+            BudgetCategoryType.Fuel,
+            autoCalculatedFuelName,
+            fuelCost);
+
+        _estimates.Add(estimate);
+        return estimate;
     }
 }

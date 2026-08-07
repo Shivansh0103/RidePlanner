@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using RidePlanner.Application.Features.Budgets.Commands.CalculateFuelEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.CreateBudgetEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.DeleteBudgetEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.UpdateBudgetEstimate;
@@ -17,19 +18,22 @@ public sealed class TripBudgetsController : ControllerBase
     private readonly CreateBudgetEstimateCommandHandler _createBudgetEstimateHandler;
     private readonly UpdateBudgetEstimateCommandHandler _updateBudgetEstimateHandler;
     private readonly DeleteBudgetEstimateCommandHandler _deleteBudgetEstimateHandler;
+    private readonly CalculateFuelEstimateCommandHandler _calculateFuelEstimateHandler;
 
     public TripBudgetsController(
         GetTripBudgetQueryHandler getTripBudgetHandler,
         UpdateTripBudgetCommandHandler updateTripBudgetHandler,
         CreateBudgetEstimateCommandHandler createBudgetEstimateHandler,
         UpdateBudgetEstimateCommandHandler updateBudgetEstimateHandler,
-        DeleteBudgetEstimateCommandHandler deleteBudgetEstimateHandler)
+        DeleteBudgetEstimateCommandHandler deleteBudgetEstimateHandler,
+        CalculateFuelEstimateCommandHandler calculateFuelEstimateHandler)
     {
         _getTripBudgetHandler = getTripBudgetHandler;
         _updateTripBudgetHandler = updateTripBudgetHandler;
         _createBudgetEstimateHandler = createBudgetEstimateHandler;
         _updateBudgetEstimateHandler = updateBudgetEstimateHandler;
         _deleteBudgetEstimateHandler = deleteBudgetEstimateHandler;
+        _calculateFuelEstimateHandler = calculateFuelEstimateHandler;
     }
 
     [HttpGet]
@@ -121,6 +125,28 @@ public sealed class TripBudgetsController : ControllerBase
             new DeleteBudgetEstimateCommand(
                 tripId,
                 estimateId),
+            cancellationToken);
+
+        if (result is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPost("fuel-estimate")]
+    public async Task<IActionResult> CalculateFuelEstimate(
+        Guid tripId,
+        [FromBody] CalculateFuelEstimateRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _calculateFuelEstimateHandler.Handle(
+            new CalculateFuelEstimateCommand(
+                tripId,
+                request.RouteDistanceKm,
+                request.VehicleMileage,
+                request.FuelPricePerLiter),
             cancellationToken);
 
         if (result is null)
