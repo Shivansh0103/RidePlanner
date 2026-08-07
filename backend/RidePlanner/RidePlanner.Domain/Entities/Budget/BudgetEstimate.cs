@@ -1,4 +1,5 @@
-﻿using RidePlanner.Domain.Enums;
+using RidePlanner.Domain.Enums;
+using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Domain.Entities.Budget;
 
@@ -15,10 +16,13 @@ public class BudgetEstimate
         decimal estimatedAmount)
     {
         if (string.IsNullOrWhiteSpace(title))
-            throw new ArgumentException("Title cannot be empty.", nameof(title));
+            throw new DomainException("Name is required.");
 
         if (estimatedAmount < 0)
-            throw new ArgumentOutOfRangeException(nameof(estimatedAmount));
+            throw new DomainException("Estimated amount cannot be negative.");
+
+        if (!Enum.IsDefined(category))
+            throw new DomainException("Invalid budget category.");
 
         Id = Guid.NewGuid();
         TripBudgetId = tripBudgetId;

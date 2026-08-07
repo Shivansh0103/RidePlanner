@@ -1,4 +1,4 @@
-﻿using RidePlanner.Domain.Enums;
+using RidePlanner.Domain.Enums;
 
 namespace RidePlanner.Domain.Entities.Budget;
 
@@ -57,5 +57,21 @@ public class TripBudget
             throw new ArgumentOutOfRangeException(nameof(targetBudget));
 
         TargetBudget = targetBudget;
+    }
+
+    public BudgetEstimate AddEstimate(
+        BudgetCategoryType category,
+        string name,
+        decimal estimatedAmount)
+    {
+        var estimate = new BudgetEstimate(
+            Id,
+            category,
+            name,
+            estimatedAmount);
+
+        _estimates.Add(estimate);
+
+        return estimate;
     }
 }

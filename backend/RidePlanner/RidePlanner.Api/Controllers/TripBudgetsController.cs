@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using RidePlanner.Application.Features.Budgets.Commands.CreateBudgetEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.UpdateTripBudget;
 using RidePlanner.Application.Features.Budgets.DTOs;
 using RidePlanner.Application.Features.Budgets.Queries.GetTripBudget;
@@ -11,13 +12,16 @@ public sealed class TripBudgetsController : ControllerBase
 {
     private readonly GetTripBudgetQueryHandler _getTripBudgetHandler;
     private readonly UpdateTripBudgetCommandHandler _updateTripBudgetHandler;
+    private readonly CreateBudgetEstimateCommandHandler _createBudgetEstimateHandler;
 
     public TripBudgetsController(
         GetTripBudgetQueryHandler getTripBudgetHandler,
-        UpdateTripBudgetCommandHandler updateTripBudgetHandler)
+        UpdateTripBudgetCommandHandler updateTripBudgetHandler,
+        CreateBudgetEstimateCommandHandler createBudgetEstimateHandler)
     {
         _getTripBudgetHandler = getTripBudgetHandler;
         _updateTripBudgetHandler = updateTripBudgetHandler;
+        _createBudgetEstimateHandler = createBudgetEstimateHandler;
     }
 
     [HttpGet]
@@ -44,6 +48,28 @@ public sealed class TripBudgetsController : ControllerBase
             new UpdateTripBudgetCommand(
                 tripId,
                 request.TargetBudget),
+            cancellationToken);
+
+        if (result is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPost("estimates")]
+    public async Task<IActionResult> CreateEstimate(
+        Guid tripId,
+        [FromBody] CreateBudgetEstimateRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _createBudgetEstimateHandler.Handle(
+            new CreateBudgetEstimateCommand(
+                tripId,
+                request.Category,
+                request.Name,
+                request.EstimatedAmount),
             cancellationToken);
 
         if (result is null)
