@@ -74,4 +74,19 @@ public class TripBudget
 
         return estimate;
     }
+
+    public bool UpdateEstimate(
+        Guid estimateId,
+        string name,
+        decimal estimatedAmount)
+    {
+        var estimate = _estimates.FirstOrDefault(x => x.Id == estimateId);
+        if (estimate is null)
+        {
+            return false;
+        }
+
+        estimate.Update(name, estimatedAmount);
+        return true;
+    }
 }

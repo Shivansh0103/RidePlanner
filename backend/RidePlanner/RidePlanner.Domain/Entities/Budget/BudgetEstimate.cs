@@ -42,4 +42,16 @@ public class BudgetEstimate
     public decimal EstimatedAmount { get; private set; }
 
     public TripBudget TripBudget { get; private set; } = null!;
+
+    public void Update(string title, decimal estimatedAmount)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new DomainException("Name is required.");
+
+        if (estimatedAmount < 0)
+            throw new DomainException("Estimated amount cannot be negative.");
+
+        Title = title;
+        EstimatedAmount = estimatedAmount;
+    }
 }
