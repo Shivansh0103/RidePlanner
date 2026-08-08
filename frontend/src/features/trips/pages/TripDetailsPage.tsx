@@ -90,6 +90,7 @@ export default function TripDetailsPage() {
           tripId={trip.id}
           selectedStopId={selectedStopId}
           onStopSelect={setSelectedStopId}
+          routeLegs={route?.legs}
         />
 
         <BudgetSection tripId={trip.id} routeDistanceKm={routeDistanceKm} />

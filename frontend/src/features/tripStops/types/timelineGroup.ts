@@ -5,4 +5,6 @@ export interface TimelineGroup {
     date: Date;
     stops: TripStop[];
     stopCount: number;
+    totalDistanceMeters?: number;
+    totalDurationMillis?: number;
 }

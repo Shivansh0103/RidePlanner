@@ -2,6 +2,7 @@ import { Box, Fade } from "@mui/material";
 import { useState } from "react";
 
 import type { TripStop } from "@/features/tripStops/types/tripStop";
+import type { RouteLeg } from "@/shared/maps/types/route";
 
 import type { TripStopsViewMode } from "../types/tripStopsViewMode";
 import TripStopsListView from "./TripStopsListView";
@@ -14,12 +15,13 @@ type TripStopsViewProps = {
   onDelete: (stop: TripStop) => void;
   onReorder?: (orderedStopIds: string[]) => void;
   headerAction?: React.ReactNode;
+  routeLegs?: RouteLeg[];
 
   selectedStopId?: string | null;
   onStopSelect?: (stopId: string) => void;
 };
 
-export default function TripStopsView({ headerAction, ...props }: TripStopsViewProps) {
+export default function TripStopsView({ headerAction, routeLegs, ...props }: TripStopsViewProps) {
   const [viewMode, setViewMode] = useState<TripStopsViewMode>("list");
 
   return (
@@ -45,6 +47,7 @@ export default function TripStopsView({ headerAction, ...props }: TripStopsViewP
               stops={props.stops}
               onEdit={props.onEdit}
               onDelete={props.onDelete}
+              routeLegs={routeLegs}
               selectedStopId={props.selectedStopId}
               onStopSelect={props.onStopSelect}
             />
@@ -54,6 +57,7 @@ export default function TripStopsView({ headerAction, ...props }: TripStopsViewP
               onEdit={props.onEdit}
               onDelete={props.onDelete}
               onReorder={props.onReorder}
+              routeLegs={routeLegs}
               selectedStopId={props.selectedStopId}
               onStopSelect={props.onStopSelect}
             />

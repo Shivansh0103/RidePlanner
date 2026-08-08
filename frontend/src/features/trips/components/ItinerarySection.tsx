@@ -13,27 +13,31 @@ import {
 import { useState } from "react";
 
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
+import TripStopsView from "@/features/tripStops/components/TripStopsView";
 import { useDeleteTripStop } from "@/features/tripStops/hooks/useDeleteTripStop";
 import { useReorderTripStops } from "@/features/tripStops/hooks/useReorderTripStops";
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import type { TripStop } from "@/features/tripStops/types/tripStop";
 import { TripStopCategory } from "@/features/tripStops/types/tripStopCategory";
+import { useRoute } from "@/shared/maps";
+import type { RouteLeg } from "@/shared/maps/types/route";
 import ConfirmDialog from "@/shared/components/ConfirmDialog";
 import EmptyState from "@/shared/ui/EmptyState";
 import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
-import TripStopsView from "@/features/tripStops/components/TripStopsView";
 
 type ItinerarySectionProps = {
   tripId: string;
   selectedStopId?: string | null;
   onStopSelect?: (stopId: string) => void;
+  routeLegs?: RouteLeg[];
 };
 
 export default function ItinerarySection({
   tripId,
   selectedStopId,
   onStopSelect,
+  routeLegs: propsRouteLegs,
 }: ItinerarySectionProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedStop, setSelectedStop] = useState<TripStop | null>(null);
@@ -42,6 +46,10 @@ export default function ItinerarySection({
   const { data: stops = [], isLoading, isError } = useTripStops(tripId);
   const deleteTripStopMutation = useDeleteTripStop(tripId);
   const reorderTripStopsMutation = useReorderTripStops(tripId);
+
+  const validStops = stops.filter((stop) => stop.latitude !== null && stop.longitude !== null);
+  const { route } = useRoute(validStops);
+  const routeLegs = propsRouteLegs ?? route?.legs ?? [];
 
   const nextDisplayOrder = Math.max(0, ...stops.map((stop) => stop.displayOrder)) + 1;
 
@@ -160,6 +168,7 @@ export default function ItinerarySection({
               onDelete={handleDeleteStop}
               onReorder={handleReorderStops}
               headerAction={addStopButton}
+              routeLegs={routeLegs}
               selectedStopId={selectedStopId}
               onStopSelect={onStopSelect}
             />

@@ -1,12 +1,16 @@
+import BedtimeIcon from "@mui/icons-material/Bedtime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import NotesIcon from "@mui/icons-material/Notes";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import {
   Box,
   Card,
   CardContent,
+  Chip,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -20,6 +24,7 @@ import { forwardRef, useState } from "react";
 import { formatDate } from "@/shared/utils/date";
 
 import type { TripStop } from "../types/tripStop";
+import { getStayDurationInfo } from "../utils/stayDurationUtils";
 import TripStopCategoryChip from "./TripStopCategoryChip";
 
 type TripStopCardProps = {
@@ -40,6 +45,8 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
     const open = Boolean(anchorEl);
     const menuId = `stop-menu-${stop.id}`;
     const buttonId = `stop-menu-button-${stop.id}`;
+
+    const stayInfo = getStayDurationInfo(stop.arrivalDate, stop.departureDate);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
       event.stopPropagation();
@@ -81,6 +88,7 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
           }}
         >
           <Stack spacing={1.5}>
+            {/* Category & Menu Header */}
             <Stack
               direction="row"
               sx={{
@@ -93,6 +101,8 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                 spacing={1}
                 sx={{
                   alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 0.5,
                 }}
               >
                 {dragHandleProps && (
@@ -127,6 +137,25 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                 )}
 
                 <TripStopCategoryChip category={stop.category} />
+
+                {stayInfo.isOvernight ? (
+                  <Chip
+                    icon={<BedtimeIcon sx={{ fontSize: "0.85rem !important" }} />}
+                    label={stayInfo.label}
+                    size="small"
+                    color="secondary"
+                    variant="outlined"
+                    sx={{ height: 22, fontSize: "0.75rem", fontWeight: 600 }}
+                  />
+                ) : (
+                  <Chip
+                    icon={<WbSunnyIcon sx={{ fontSize: "0.85rem !important" }} />}
+                    label={stayInfo.label}
+                    size="small"
+                    variant="outlined"
+                    sx={{ height: 22, fontSize: "0.75rem", color: "text.secondary" }}
+                  />
+                )}
               </Stack>
 
               <IconButton
@@ -196,6 +225,7 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
               </Menu>
             </Stack>
 
+            {/* Stop Title */}
             <Typography
               component="h4"
               variant="h6"
@@ -211,6 +241,7 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
               {stop.name}
             </Typography>
 
+            {/* Dates */}
             <Stack
               direction="row"
               spacing={1}
@@ -235,16 +266,37 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
               </Typography>
             </Stack>
 
+            {/* Clean Notes Container */}
             {stop.notes && (
-              <Typography
-                variant="body2"
-                color="text.secondary"
+              <Box
                 sx={{
-                  wordBreak: "break-word",
+                  p: 1.25,
+                  borderRadius: 1.5,
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.04)"
+                      : "rgba(0, 0, 0, 0.02)",
+                  borderLeft: "3px solid",
+                  borderColor: "primary.light",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 1,
+                  mt: 0.5,
                 }}
               >
-                {stop.notes}
-              </Typography>
+                <NotesIcon fontSize="small" color="action" sx={{ mt: 0.2 }} />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    wordBreak: "break-word",
+                    fontSize: "0.85rem",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {stop.notes}
+                </Typography>
+              </Box>
             )}
           </Stack>
         </CardContent>
