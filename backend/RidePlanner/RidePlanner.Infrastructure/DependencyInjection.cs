@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RidePlanner.Application.Abstractions.Persistence;
@@ -19,6 +19,7 @@ public static class DependencyInjection
 
         services.AddScoped<ITripRepository, TripRepository>();
         services.AddScoped<ITripStopRepository, TripStopRepository>();
+        services.AddScoped<IChecklistRepository, ChecklistRepository>();
         return services;
     }
 }

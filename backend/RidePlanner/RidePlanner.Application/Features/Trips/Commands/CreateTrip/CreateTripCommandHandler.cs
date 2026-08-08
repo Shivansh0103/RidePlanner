@@ -23,6 +23,7 @@ public sealed class CreateTripCommandHandler
             command.EndDate);
 
         trip.InitializeBudget();
+        trip.InitializeDefaultChecklist();
 
         _tripRepository.Add(trip);
 

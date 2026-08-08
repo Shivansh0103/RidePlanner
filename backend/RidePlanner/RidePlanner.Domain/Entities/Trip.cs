@@ -2,9 +2,12 @@ using RidePlanner.Domain.Common;
 using RidePlanner.Domain.Exceptions;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Entities.Budget;
+using RidePlanner.Domain.Entities.Checklist;
 
 public class Trip : Entity
 {
+    private readonly List<ChecklistCategory> _checklistCategories = [];
+
     public string Name { get; private set; }
 
     public string? Description { get; private set; }
@@ -20,6 +23,9 @@ public class Trip : Entity
     public ICollection<TripStop> Stops { get; private set; } = [];
 
     public TripBudget Budget { get; private set; } = null!;
+
+    public IReadOnlyCollection<ChecklistCategory> ChecklistCategories =>
+        _checklistCategories.AsReadOnly();
 
     private Trip(
         Guid id,
@@ -85,9 +91,17 @@ public class Trip : Entity
         Budget ??= new TripBudget(Id);
     }
 
+    public void InitializeDefaultChecklist()
+    {
+        if (_checklistCategories.Count == 0)
+        {
+            _checklistCategories.AddRange(ChecklistDefaults.CreateDefaultCategories(Id));
+        }
+    }
+
     private Trip()
     {
         Name = null!;
         Stops = [];
     }
-}
+}

@@ -15,6 +15,14 @@ using RidePlanner.Application.Features.Budgets.Commands.DeleteBudgetEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.UpdateBudgetEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.UpdateTripBudget;
 using RidePlanner.Application.Features.Budgets.Queries.GetTripBudget;
+using RidePlanner.Application.Features.Checklists.Commands.CreateCategory;
+using RidePlanner.Application.Features.Checklists.Commands.CreateItem;
+using RidePlanner.Application.Features.Checklists.Commands.DeleteCategory;
+using RidePlanner.Application.Features.Checklists.Commands.DeleteItem;
+using RidePlanner.Application.Features.Checklists.Commands.ToggleItem;
+using RidePlanner.Application.Features.Checklists.Commands.UpdateCategory;
+using RidePlanner.Application.Features.Checklists.Commands.UpdateItem;
+using RidePlanner.Application.Features.Checklists.Queries.GetTripChecklist;
 
 namespace RidePlanner.Application;
 
@@ -39,6 +47,14 @@ public static class DependencyInjection
         services.AddScoped<UpdateBudgetEstimateCommandHandler>();
         services.AddScoped<DeleteBudgetEstimateCommandHandler>();
         services.AddScoped<CalculateFuelEstimateCommandHandler>();
+        services.AddScoped<GetTripChecklistQueryHandler>();
+        services.AddScoped<CreateChecklistCategoryCommandHandler>();
+        services.AddScoped<UpdateChecklistCategoryCommandHandler>();
+        services.AddScoped<DeleteChecklistCategoryCommandHandler>();
+        services.AddScoped<CreateChecklistItemCommandHandler>();
+        services.AddScoped<UpdateChecklistItemCommandHandler>();
+        services.AddScoped<ToggleChecklistItemCommandHandler>();
+        services.AddScoped<DeleteChecklistItemCommandHandler>();
         return services;
     }
-}
+}
