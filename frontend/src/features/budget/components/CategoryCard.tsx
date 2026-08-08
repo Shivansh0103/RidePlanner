@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 
 import { formatCurrency } from "@/shared/utils/formatters";
+
 import { CATEGORY_LABELS } from "../constants/categoryLabels";
 import type {
   BudgetCategory,

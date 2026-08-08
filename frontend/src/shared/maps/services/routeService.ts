@@ -1,5 +1,5 @@
 import type { MapStop } from "../types/map";
-import { TravelMode, type RouteLeg, type RouteResult } from "../types/route";
+import { type RouteLeg, type RouteResult,TravelMode } from "../types/route";
 
 interface ComputeDrivingRouteParams {
   Route: typeof google.maps.routes.Route;

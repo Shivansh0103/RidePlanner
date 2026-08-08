@@ -16,7 +16,6 @@ import { useUpdateChecklistItem } from "../hooks/useUpdateChecklistItem";
 import type { CreateCategoryRequest, UpdateCategoryRequest } from "../schemas/categorySchema";
 import type { CreateItemRequest, UpdateItemRequest } from "../schemas/itemSchema";
 import type { ChecklistCategory, ChecklistItem } from "../types/checklist";
-
 import AddCategoryDialog from "./AddCategoryDialog";
 import AddItemDialog from "./AddItemDialog";
 import ChecklistCategoryCard from "./ChecklistCategoryCard";

@@ -1,9 +1,7 @@
+import { Autocomplete, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { Autocomplete, TextField } from "@mui/material";
-
 import { usePlacesAutocomplete } from "../hooks/usePlacesAutocomplete";
-
 import type { PlaceLocation, PlaceSuggestion } from "../types";
 
 interface PlaceAutocompleteProps {

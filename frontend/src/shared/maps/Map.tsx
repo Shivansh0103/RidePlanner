@@ -1,11 +1,9 @@
 import { Map as GoogleMap } from "@vis.gl/react-google-maps";
 
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "./constants";
-
 import MapCameraController from "./MapCameraController";
-import StopMarkerLayer from "./StopMarkerLayer";
 import RouteLayer from "./RouteLayer";
-
+import StopMarkerLayer from "./StopMarkerLayer";
 import type { MapStop } from "./types/map";
 
 export type { MapStop };

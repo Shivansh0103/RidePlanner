@@ -1,4 +1,5 @@
 import type { RouteLeg } from "@/shared/maps/types/route";
+
 import type { TimelineGroup } from "../types/timelineGroup";
 import type { TripStop } from "../types/tripStop";
 

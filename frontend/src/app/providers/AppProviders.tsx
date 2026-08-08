@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 
 import queryClient from "@/app/providers/queryClient";
 import theme from "@/app/theme/theme";
-
 import { MapProvider } from "@/shared/maps";
 
 interface AppProvidersProps {

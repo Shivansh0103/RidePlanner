@@ -19,9 +19,9 @@ import { useReorderTripStops } from "@/features/tripStops/hooks/useReorderTripSt
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import type { TripStop } from "@/features/tripStops/types/tripStop";
 import { TripStopCategory } from "@/features/tripStops/types/tripStopCategory";
+import ConfirmDialog from "@/shared/components/ConfirmDialog";
 import { useRoute } from "@/shared/maps";
 import type { RouteLeg } from "@/shared/maps/types/route";
-import ConfirmDialog from "@/shared/components/ConfirmDialog";
 import EmptyState from "@/shared/ui/EmptyState";
 import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";

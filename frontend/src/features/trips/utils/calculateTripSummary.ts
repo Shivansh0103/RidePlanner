@@ -1,5 +1,5 @@
-import { TripStopCategory } from "@/features/tripStops/types/tripStopCategory";
 import type { TripStop } from "@/features/tripStops/types/tripStop";
+import { TripStopCategory } from "@/features/tripStops/types/tripStopCategory";
 
 export type TripSummaryMetrics = {
   totalStops: number;

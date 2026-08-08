@@ -1,6 +1,5 @@
-import { mapGooglePlaceToPlaceLocation } from "./placeMapper";
-
 import type { PlaceLocation, PlaceSuggestion } from "../types";
+import { mapGooglePlaceToPlaceLocation } from "./placeMapper";
 
 export class PlacesService {
   async searchSuggestions(

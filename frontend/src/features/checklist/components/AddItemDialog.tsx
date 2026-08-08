@@ -12,8 +12,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import {
-  createItemSchema,
   type CreateItemRequest,
+  createItemSchema,
 } from "../schemas/itemSchema";
 import type { ChecklistCategory } from "../types/checklist";
 

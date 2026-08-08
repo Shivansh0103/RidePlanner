@@ -3,6 +3,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 
 import { formatCurrency } from "@/shared/utils/formatters";
+
 import type { BudgetEstimate } from "../types/budget";
 
 interface EstimateItemProps {

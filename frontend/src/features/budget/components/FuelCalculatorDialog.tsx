@@ -14,8 +14,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import {
-  fuelCalculatorSchema,
   type FuelCalculatorRequest,
+  fuelCalculatorSchema,
 } from "../schemas/fuelCalculatorSchema";
 
 interface FuelCalculatorDialogProps {

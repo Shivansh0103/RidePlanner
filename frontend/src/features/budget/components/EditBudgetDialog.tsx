@@ -11,8 +11,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import {
-  updateBudgetSchema,
   type UpdateBudgetRequest,
+  updateBudgetSchema,
 } from "../schemas/updateBudgetSchema";
 
 interface EditBudgetDialogProps {

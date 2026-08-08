@@ -1,5 +1,5 @@
-import { TRIP_STOP_CATEGORY_METADATA } from "./tripStopCategoryMetadata";
 import type { TripStopCategory } from "../types/tripStopCategory";
+import { TRIP_STOP_CATEGORY_METADATA } from "./tripStopCategoryMetadata";
 
 export type TripStopCategoryOption = {
   value: TripStopCategory;
