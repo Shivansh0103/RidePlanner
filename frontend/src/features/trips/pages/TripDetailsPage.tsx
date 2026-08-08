@@ -9,6 +9,7 @@ import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 
 import BudgetSection from "@/features/budget/components/BudgetSection";
+import ChecklistSection from "@/features/checklist/components/ChecklistSection";
 import ItinerarySection from "../components/ItinerarySection";
 import TripSummary from "../components/TripSummary";
 import { useTrip } from "../hooks/useTrip";
@@ -92,6 +93,8 @@ export default function TripDetailsPage() {
         />
 
         <BudgetSection tripId={trip.id} routeDistanceKm={routeDistanceKm} />
+
+        <ChecklistSection tripId={trip.id} />
       </Stack>
     </Box>
   );
