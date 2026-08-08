@@ -96,9 +96,9 @@ The long-term vision for Ride Planner includes:
 
 ## Current Status
 
-Ride Planner is currently in the planning and architecture phase.
+Ride Planner is actively being developed (Version v0.6.0).
 
-The focus is on building a strong product vision, defining the system architecture, and designing a scalable foundation before implementation begins.
+Completed core features include Trip Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Preparation Checklists, Overview Command Center Dashboard, and Tabbed Layout Navigation. The current focus is **Sprint 7 – Accommodation & Stay Planning**.
 
 ---
 

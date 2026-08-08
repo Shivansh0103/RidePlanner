@@ -1,8 +1,8 @@
 # Sprint 6 -- Trip Planning Intelligence
 
-**Status:** Planned\
-**Estimated Duration:** 2 Weeks\
-**Version:** 1.0
+**Status:** Completed  
+**Estimated Duration:** 2 Weeks  
+**Version:** 0.6.0  
 
 ------------------------------------------------------------------------
 

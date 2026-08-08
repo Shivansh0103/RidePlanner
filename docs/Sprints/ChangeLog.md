@@ -6,6 +6,47 @@ The project follows an incremental sprint-based development approach.
 
 ---
 
+# [v0.6.0] - Sprint 6 Complete
+
+Release Date: August 2026
+
+## Overview
+
+Sprint 6 introduced **Trip Planning Intelligence**, transforming RidePlanner from a route visualization tool into a complete road trip planning platform.
+
+Key capabilities delivered include Budget Planning & Smart Fuel Calculator, Preparation Checklists with auto-seeding, Trip Overview Command Center Dashboard, and Tabbed Layout Navigation with bi-directional Map ↔ Itinerary selection synchronization.
+
+---
+
+## Added
+
+### Budget & Financial Intelligence (`features/budget`)
+- Overall target budget management and remaining buffer calculation.
+- Category-wise expense estimates (Fuel, Accommodation, Food, Tolls/Permits, Miscellaneous).
+- Smart Fuel Cost Calculator using route distance (`km / mileage * rate`).
+- Financial overview cards and category breakdown.
+
+### Trip Preparation Checklist (`features/checklist`)
+- Auto-seeded default categories (*Riding Gear*, *Motorcycle*, *Documents*).
+- Custom categories and checklist item CRUD.
+- Completion percentage tracking and interactive item toggling.
+
+### Trip Overview Command Center (`features/trips/components/overview`)
+- Command header with date ranges, status/countdown badge, and quick metric chips (Days, Stops, Distance, Driving Time).
+- Conservative smart alert banners (Target budget exceeded, unfinished preparation, itinerary attention).
+- Transparent planning progress breakdown (Checklist %, Budget %, Route %).
+- Deterministic Next Stop snapshot (for Upcoming, Ongoing, and Completed trips).
+- Compact preparation snapshot with interactive quick check-off checkboxes.
+
+### Tabbed Layout Navigation & Map Sync (`TripDetailsPage`)
+- Responsive 4-tab layout (*Overview*, *Itinerary & Route*, *Budget & Costs*, *Checklist & Gear*).
+- URL search parameter state synchronization (`?tab=`) supporting deep-linking and browser history navigation.
+- Bi-directional Map ↔ Itinerary selection synchronization:
+  - Map marker click auto-scrolls to the stop card in Timeline/List view.
+  - Timeline stop card selection pans Map camera to center marker.
+
+---
+
 # [v0.2.0] - Sprint 2 Complete
 
 Release Date: July 2026
