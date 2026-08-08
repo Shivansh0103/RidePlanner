@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RidePlanner.Api.Middleware;
 using RidePlanner.Application;
 using RidePlanner.Infrastructure;
+using RidePlanner.Infrastructure.Persistence;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 
@@ -38,6 +39,12 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<RidePlannerDbContext>();
+        await dbContext.Database.MigrateAsync();
+    }
+
     app.MapOpenApi();
 
     app.MapScalarApiReference();
