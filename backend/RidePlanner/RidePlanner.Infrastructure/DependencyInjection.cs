@@ -20,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<ITripRepository, TripRepository>();
         services.AddScoped<ITripStopRepository, TripStopRepository>();
         services.AddScoped<IChecklistRepository, ChecklistRepository>();
+        services.AddScoped<IAccommodationRepository, AccommodationRepository>();
         return services;
     }
 }

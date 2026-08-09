@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RidePlanner.Domain.Entities.Budget;
 
@@ -25,6 +25,11 @@ public class BudgetEstimateConfiguration : IEntityTypeConfiguration<BudgetEstima
         builder.HasOne(x => x.TripBudget)
             .WithMany(x => x.Estimates)
             .HasForeignKey(x => x.TripBudgetId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Accommodation)
+            .WithOne(a => a.BudgetEstimate)
+            .HasForeignKey<BudgetEstimate>(x => x.AccommodationId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

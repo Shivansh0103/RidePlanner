@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RidePlanner.Domain.Entities;
 
@@ -15,8 +15,8 @@ public class TripStopConfiguration : IEntityTypeConfiguration<TripStop>
             .HasMaxLength(200);
 
         builder.Property(s => s.PlaceId)
-    .IsRequired()
-    .HasMaxLength(255);
+            .IsRequired(false)
+            .HasMaxLength(255);
 
         builder.Property(s => s.FormattedAddress)
             .IsRequired()
