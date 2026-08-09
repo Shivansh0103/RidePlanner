@@ -1,6 +1,7 @@
+import HotelIcon from "@mui/icons-material/Hotel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Chip, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 
 import { formatCurrency } from "@/shared/utils/formatters";
 
@@ -17,6 +18,8 @@ export default function EstimateItem({
   onEdit,
   onDelete,
 }: EstimateItemProps) {
+  const isSyncedStay = !!estimate.accommodationId;
+
   return (
     <Box
       sx={{
@@ -34,9 +37,21 @@ export default function EstimateItem({
       }}
     >
       <Box sx={{ minWidth: 0, mr: 1 }}>
-        <Typography variant="body2" noWrap sx={{ fontWeight: 600 }}>
-          {estimate.title}
-        </Typography>
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+          <Typography variant="body2" noWrap sx={{ fontWeight: 600 }}>
+            {estimate.title}
+          </Typography>
+          {isSyncedStay && (
+            <Chip
+              icon={<HotelIcon fontSize="small" />}
+              label="Synced Stay"
+              size="small"
+              variant="outlined"
+              color="primary"
+              sx={{ height: 20, fontSize: "0.7rem", "& .MuiChip-icon": { fontSize: "0.85rem" } }}
+            />
+          )}
+        </Stack>
         <Typography variant="caption" color="text.secondary">
           {formatCurrency(estimate.estimatedAmount)}
         </Typography>

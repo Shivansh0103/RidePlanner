@@ -9,6 +9,7 @@ export interface BudgetEstimate {
   id: string;
   title: string;
   estimatedAmount: number;
+  accommodationId?: string | null;
 }
 
 export interface BudgetCategory {

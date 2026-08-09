@@ -7,6 +7,8 @@ import { Box, Button, Paper, Stack, Tab, Tabs, Typography } from "@mui/material"
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
+import HotelIcon from "@mui/icons-material/Hotel";
+import AccommodationsSection from "@/features/accommodations/components/AccommodationsSection";
 import BudgetSection from "@/features/budget/components/BudgetSection";
 import ChecklistSection from "@/features/checklist/components/ChecklistSection";
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
@@ -18,7 +20,7 @@ import ItinerarySection from "../components/ItinerarySection";
 import TripOverview from "../components/overview/TripOverview";
 import { useTrip } from "../hooks/useTrip";
 
-const TAB_KEYS = ["overview", "itinerary", "budget", "checklist"] as const;
+const TAB_KEYS = ["overview", "itinerary", "accommodation", "budget", "checklist"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
 
 export default function TripDetailsPage() {
@@ -133,6 +135,14 @@ export default function TripDetailsPage() {
               aria-controls="trip-tabpanel-itinerary"
             />
             <Tab
+              icon={<HotelIcon fontSize="small" />}
+              iconPosition="start"
+              label="Accommodation"
+              value="accommodation"
+              id="trip-tab-accommodation"
+              aria-controls="trip-tabpanel-accommodation"
+            />
+            <Tab
               icon={<AccountBalanceWalletIcon fontSize="small" />}
               iconPosition="start"
               label="Budget & Costs"
@@ -154,7 +164,11 @@ export default function TripDetailsPage() {
         {/* Tab Panel 0: Overview Dashboard */}
         {activeTab === "overview" && (
           <Stack spacing={3} role="tabpanel" id="trip-tabpanel-overview" aria-labelledby="trip-tab-overview">
-            <TripOverview trip={trip} onEditBudgetClick={() => setSearchParams({ tab: "budget" })} />
+            <TripOverview
+              trip={trip}
+              onEditBudgetClick={() => setSearchParams({ tab: "budget" })}
+              onViewAccommodationsClick={() => setSearchParams({ tab: "accommodation" })}
+            />
 
             <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
@@ -199,14 +213,21 @@ export default function TripDetailsPage() {
           </Stack>
         )}
 
-        {/* Tab Panel 2: Budget */}
+        {/* Tab Panel 2: Accommodation */}
+        {activeTab === "accommodation" && (
+          <Box role="tabpanel" id="trip-tabpanel-accommodation" aria-labelledby="trip-tab-accommodation">
+            <AccommodationsSection tripId={trip.id} />
+          </Box>
+        )}
+
+        {/* Tab Panel 3: Budget */}
         {activeTab === "budget" && (
           <Box role="tabpanel" id="trip-tabpanel-budget" aria-labelledby="trip-tab-budget">
             <BudgetSection tripId={trip.id} routeDistanceKm={routeDistanceKm} />
           </Box>
         )}
 
-        {/* Tab Panel 3: Checklist */}
+        {/* Tab Panel 4: Checklist */}
         {activeTab === "checklist" && (
           <Box role="tabpanel" id="trip-tabpanel-checklist" aria-labelledby="trip-tab-checklist">
             <ChecklistSection tripId={trip.id} />

@@ -11,6 +11,7 @@ import {
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import { useRoute } from "@/shared/maps";
 
+import OverviewAccommodationCard from "./OverviewAccommodationCard";
 import OverviewAlerts from "./OverviewAlerts";
 import OverviewBudgetCard from "./OverviewBudgetCard";
 import OverviewHeader from "./OverviewHeader";
@@ -21,9 +22,14 @@ import OverviewProgressCard from "./OverviewProgressCard";
 interface TripOverviewProps {
   trip: Trip;
   onEditBudgetClick?: () => void;
+  onViewAccommodationsClick?: () => void;
 }
 
-export default function TripOverview({ trip, onEditBudgetClick }: TripOverviewProps) {
+export default function TripOverview({
+  trip,
+  onEditBudgetClick,
+  onViewAccommodationsClick,
+}: TripOverviewProps) {
   const { data: stops = [] } = useTripStops(trip.id);
   const { data: budget } = useTripBudget(trip.id);
   const { data: checklist } = useTripChecklist(trip.id);
@@ -76,13 +82,21 @@ export default function TripOverview({ trip, onEditBudgetClick }: TripOverviewPr
             />
           </Grid>
 
-          {/* Row 2, Col 1: Preparation Action Items Snapshot */}
+          {/* Row 2, Col 1: Accommodation Snapshot */}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <OverviewAccommodationCard
+              tripId={trip.id}
+              onViewAccommodations={onViewAccommodationsClick}
+            />
+          </Grid>
+
+          {/* Row 2, Col 2: Preparation Action Items Snapshot */}
           <Grid size={{ xs: 12, md: 6 }}>
             <OverviewPreparationCard tripId={trip.id} checklist={checklist} />
           </Grid>
 
-          {/* Row 2, Col 2: Budget Overview Snapshot */}
-          <Grid size={{ xs: 12, md: 6 }}>
+          {/* Row 3: Budget Overview Snapshot */}
+          <Grid size={{ xs: 12 }}>
             <OverviewBudgetCard budget={budget} onEditBudget={onEditBudgetClick} />
           </Grid>
         </Grid>

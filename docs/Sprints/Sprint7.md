@@ -2,7 +2,7 @@
 
 **Goal:** Make accommodation a first-class trip-planning capability while keeping RidePlanner's domain independent of external accommodation providers.
 
-**Status:** Planned  
+**Status:** Completed  
 **Sprint:** 7  
 **Theme:** Accommodation & Stay Planning
 
