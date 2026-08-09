@@ -1,10 +1,10 @@
-﻿using RidePlanner.Domain.Enums;
+using RidePlanner.Domain.Enums;
 
 namespace RidePlanner.Application.Features.TripStops.DTOs;
 
 public sealed record CreateTripStopRequest(
     string Name,
-    string PlaceId,
+    string? PlaceId,
 string FormattedAddress,
 double Latitude,
 double Longitude,

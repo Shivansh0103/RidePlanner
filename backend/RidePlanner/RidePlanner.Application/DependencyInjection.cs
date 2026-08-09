@@ -23,6 +23,11 @@ using RidePlanner.Application.Features.Checklists.Commands.ToggleItem;
 using RidePlanner.Application.Features.Checklists.Commands.UpdateCategory;
 using RidePlanner.Application.Features.Checklists.Commands.UpdateItem;
 using RidePlanner.Application.Features.Checklists.Queries.GetTripChecklist;
+using RidePlanner.Application.Features.Accommodations.Commands.CreateAccommodation;
+using RidePlanner.Application.Features.Accommodations.Commands.DeleteAccommodation;
+using RidePlanner.Application.Features.Accommodations.Commands.UpdateAccommodation;
+using RidePlanner.Application.Features.Accommodations.Queries.GetAccommodationById;
+using RidePlanner.Application.Features.Accommodations.Queries.GetAccommodationsByTripId;
 
 namespace RidePlanner.Application;
 
@@ -55,6 +60,11 @@ public static class DependencyInjection
         services.AddScoped<UpdateChecklistItemCommandHandler>();
         services.AddScoped<ToggleChecklistItemCommandHandler>();
         services.AddScoped<DeleteChecklistItemCommandHandler>();
+        services.AddScoped<CreateAccommodationCommandHandler>();
+        services.AddScoped<UpdateAccommodationCommandHandler>();
+        services.AddScoped<DeleteAccommodationCommandHandler>();
+        services.AddScoped<GetAccommodationsByTripIdQueryHandler>();
+        services.AddScoped<GetAccommodationByIdQueryHandler>();
         return services;
     }
 }

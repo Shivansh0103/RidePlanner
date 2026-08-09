@@ -1,4 +1,4 @@
-﻿using RidePlanner.Application.Features.Budgets.DTOs;
+using RidePlanner.Application.Features.Budgets.DTOs;
 using RidePlanner.Domain.Entities.Budget;
 using RidePlanner.Domain.Enums;
 
@@ -23,7 +23,8 @@ public static class BudgetMappings
                     {
                         Id = x.Id,
                         Title = x.Title,
-                        EstimatedAmount = x.EstimatedAmount
+                        EstimatedAmount = x.EstimatedAmount,
+                        AccommodationId = x.AccommodationId
                     })
                     .ToList()
             })

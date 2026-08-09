@@ -1,4 +1,4 @@
-﻿namespace RidePlanner.Application.Features.Budgets.DTOs;
+namespace RidePlanner.Application.Features.Budgets.DTOs;
 
 public sealed class BudgetEstimateDto
 {
@@ -7,4 +7,6 @@ public sealed class BudgetEstimateDto
     public string Title { get; init; } = string.Empty;
 
     public decimal EstimatedAmount { get; init; }
+
+    public Guid? AccommodationId { get; init; }
 }
