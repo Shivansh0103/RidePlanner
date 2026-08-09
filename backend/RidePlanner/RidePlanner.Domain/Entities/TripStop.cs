@@ -10,7 +10,7 @@ public class TripStop : Entity
 
     public string Name { get; private set; }
 
-    public string PlaceId { get; private set; }
+    public string? PlaceId { get; private set; }
 
     public string FormattedAddress { get; private set; }
 
@@ -30,19 +30,21 @@ public class TripStop : Entity
 
     public Trip Trip { get; private set; } = null!;
 
+    public Accommodation? Accommodation { get; private set; }
+
     private TripStop(
-    Guid id,
-    Guid tripId,
-    string name,
-    string placeId,
-    string formattedAddress,
-    double latitude,
-    double longitude,
-    TripStopCategory category,
-    DateOnly arrivalDate,
-    DateOnly departureDate,
-    string? notes,
-    int displayOrder)
+        Guid id,
+        Guid tripId,
+        string name,
+        string? placeId,
+        string formattedAddress,
+        double latitude,
+        double longitude,
+        TripStopCategory category,
+        DateOnly arrivalDate,
+        DateOnly departureDate,
+        string? notes,
+        int displayOrder)
     {
         Id = id;
         TripId = tripId;
@@ -59,49 +61,12 @@ public class TripStop : Entity
     }
 
     public static TripStop Create(
-    Guid tripId,
-    string name,
-    string placeId,
-    string formattedAddress,
-    double latitude,
-    double longitude,
-    TripStopCategory category,
-    DateOnly arrivalDate,
-    DateOnly departureDate,
-    string? notes,
-    int displayOrder)
-    {
-        Validate(
-    name,
-    placeId,
-    formattedAddress,
-    latitude,
-    longitude,
-    category,
-    arrivalDate,
-    departureDate);
-
-        return new TripStop(
-            Guid.NewGuid(),
-            tripId,
-            name,
-            placeId,
-    formattedAddress,
-    latitude,
-    longitude,
-            category,
-            arrivalDate,
-            departureDate,
-            notes,
-            displayOrder);
-    }
-
-    public void Update(
+        Guid tripId,
         string name,
-        string placeId,
-    string formattedAddress,
-    double latitude,
-    double longitude,
+        string? placeId,
+        string formattedAddress,
+        double latitude,
+        double longitude,
         TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate,
@@ -111,20 +76,55 @@ public class TripStop : Entity
         Validate(
             name,
             placeId,
-    formattedAddress,
-    latitude,
-    longitude,
+            formattedAddress,
+            latitude,
+            longitude,
+            category,
+            arrivalDate,
+            departureDate);
+
+        return new TripStop(
+            Guid.NewGuid(),
+            tripId,
+            name,
+            placeId,
+            formattedAddress,
+            latitude,
+            longitude,
+            category,
+            arrivalDate,
+            departureDate,
+            notes,
+            displayOrder);
+    }
+
+    public void Update(
+        string name,
+        string? placeId,
+        string formattedAddress,
+        double latitude,
+        double longitude,
+        TripStopCategory category,
+        DateOnly arrivalDate,
+        DateOnly departureDate,
+        string? notes,
+        int displayOrder)
+    {
+        Validate(
+            name,
+            placeId,
+            formattedAddress,
+            latitude,
+            longitude,
             category,
             arrivalDate,
             departureDate);
 
         Name = name;
-
         PlaceId = placeId;
         FormattedAddress = formattedAddress;
         Latitude = latitude;
         Longitude = longitude;
-
         Category = category;
         ArrivalDate = arrivalDate;
         DepartureDate = departureDate;
@@ -142,10 +142,10 @@ public class TripStop : Entity
 
     private static void Validate(
         string name,
-         string placeId,
-    string formattedAddress,
-    double latitude,
-    double longitude,
+        string? placeId,
+        string formattedAddress,
+        double latitude,
+        double longitude,
         TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate)
@@ -158,8 +158,6 @@ public class TripStop : Entity
 
         if (departureDate < arrivalDate)
             throw new DomainException("Departure date cannot be before arrival date.");
-        if (string.IsNullOrWhiteSpace(placeId))
-            throw new DomainException("Place ID cannot be empty.");
 
         if (string.IsNullOrWhiteSpace(formattedAddress))
             throw new DomainException("Formatted address cannot be empty.");
@@ -174,7 +172,6 @@ public class TripStop : Entity
     private TripStop()
     {
         Name = null!;
-        PlaceId = null!;
         FormattedAddress = null!;
     }
 }

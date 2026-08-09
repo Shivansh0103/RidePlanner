@@ -103,6 +103,48 @@ public class TripBudget
         return true;
     }
 
+    public BudgetEstimate? SyncAccommodationEstimate(
+        Guid accommodationId,
+        string title,
+        decimal cost)
+    {
+        var existingEstimate = _estimates.FirstOrDefault(x => x.AccommodationId == accommodationId);
+
+        if (cost <= 0)
+        {
+            if (existingEstimate is not null)
+            {
+                _estimates.Remove(existingEstimate);
+            }
+            return null;
+        }
+
+        if (existingEstimate is not null)
+        {
+            existingEstimate.Update(title, cost);
+            return existingEstimate;
+        }
+
+        var newEstimate = new BudgetEstimate(
+            Id,
+            BudgetCategoryType.Accommodation,
+            title,
+            cost,
+            accommodationId);
+
+        _estimates.Add(newEstimate);
+        return newEstimate;
+    }
+
+    public void RemoveAccommodationEstimate(Guid accommodationId)
+    {
+        var existingEstimate = _estimates.FirstOrDefault(x => x.AccommodationId == accommodationId);
+        if (existingEstimate is not null)
+        {
+            _estimates.Remove(existingEstimate);
+        }
+    }
+
     public BudgetEstimate CalculateFuelEstimate(
         decimal routeDistanceKm,
         decimal vehicleMileage,

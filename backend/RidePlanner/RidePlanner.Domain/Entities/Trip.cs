@@ -22,6 +22,8 @@ public class Trip : Entity
 
     public ICollection<TripStop> Stops { get; private set; } = [];
 
+    public ICollection<Accommodation> Accommodations { get; private set; } = [];
+
     public TripBudget Budget { get; private set; } = null!;
 
     public IReadOnlyCollection<ChecklistCategory> ChecklistCategories =>

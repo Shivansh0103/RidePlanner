@@ -13,7 +13,8 @@ public class BudgetEstimate
         Guid tripBudgetId,
         BudgetCategoryType category,
         string title,
-        decimal estimatedAmount)
+        decimal estimatedAmount,
+        Guid? accommodationId = null)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new DomainException("Name is required.");
@@ -28,6 +29,7 @@ public class BudgetEstimate
         Category = category;
         Title = title;
         EstimatedAmount = estimatedAmount;
+        AccommodationId = accommodationId;
     }
 
     public Guid Id { get; private set; }
@@ -40,7 +42,11 @@ public class BudgetEstimate
 
     public decimal EstimatedAmount { get; private set; }
 
+    public Guid? AccommodationId { get; private set; }
+
     public TripBudget TripBudget { get; private set; } = null!;
+
+    public Accommodation? Accommodation { get; private set; }
 
     public void Update(string title, decimal estimatedAmount)
     {
