@@ -33,7 +33,12 @@ export default function TripDetailsPage() {
   const { data: trip, isLoading, isError } = useTrip(tripId ?? "");
   const { data: stops = [] } = useTripStops(tripId ?? "");
 
-  const validStops = stops.filter((stop) => stop.latitude !== null && stop.longitude !== null);
+  const validStops = stops.filter(
+    (stop) =>
+      stop.latitude !== null &&
+      stop.longitude !== null &&
+      (stop.latitude !== 0 || stop.longitude !== 0)
+  );
   const { route } = useRoute(validStops);
 
   const routeDistanceKm = (route?.summary?.distanceMeters ?? 0) / 1000;

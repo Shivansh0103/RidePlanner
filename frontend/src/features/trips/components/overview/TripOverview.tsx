@@ -34,7 +34,12 @@ export default function TripOverview({
   const { data: budget } = useTripBudget(trip.id);
   const { data: checklist } = useTripChecklist(trip.id);
 
-  const validStops = stops.filter((stop) => stop.latitude !== null && stop.longitude !== null);
+  const validStops = stops.filter(
+    (stop) =>
+      stop.latitude !== null &&
+      stop.longitude !== null &&
+      (stop.latitude !== 0 || stop.longitude !== 0)
+  );
   const { route } = useRoute(validStops);
 
   // Derived selectors

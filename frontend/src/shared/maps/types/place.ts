@@ -1,10 +1,10 @@
 export interface Coordinates {
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 export interface PlaceLocation {
-  placeId: string;
+  placeId: string | null;
   displayName: string;
   formattedAddress: string;
   coordinates: Coordinates;

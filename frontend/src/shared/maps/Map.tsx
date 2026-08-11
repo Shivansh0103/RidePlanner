@@ -29,7 +29,12 @@ export function Map({
   selectedStopId,
   onStopSelect,
 }: MapProps) {
-  const validStops = stops.filter((stop) => stop.latitude !== null && stop.longitude !== null);
+  const validStops = stops.filter(
+    (stop) =>
+      stop.latitude !== null &&
+      stop.longitude !== null &&
+      (stop.latitude !== 0 || stop.longitude !== 0)
+  );
 
   return (
     <GoogleMap

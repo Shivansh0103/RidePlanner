@@ -14,10 +14,12 @@ export default function RouteLayer({ stops }: RouteLayerProps) {
     return null;
   }
 
-  const path = route.geometry.path.map((point) => ({
-    lat: point.latitude,
-    lng: point.longitude,
-  }));
+  const path = route.geometry.path
+    .filter((point) => point.latitude !== null && point.longitude !== null)
+    .map((point) => ({
+      lat: point.latitude!,
+      lng: point.longitude!,
+    }));
 
   if (path.length === 0) {
     return null;

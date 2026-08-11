@@ -156,6 +156,16 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                     sx={{ height: 22, fontSize: "0.75rem", color: "text.secondary" }}
                   />
                 )}
+
+                {(stop.latitude === null || (stop.latitude === 0 && stop.longitude === 0)) && (
+                  <Chip
+                    label="Address Only"
+                    size="small"
+                    variant="outlined"
+                    color="default"
+                    sx={{ height: 22, fontSize: "0.75rem", fontStyle: "italic" }}
+                  />
+                )}
               </Stack>
 
               <IconButton
