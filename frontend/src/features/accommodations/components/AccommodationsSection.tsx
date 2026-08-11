@@ -69,13 +69,18 @@ export default function AccommodationsSection({
   };
 
   const handleFormSubmit = async (values: AccommodationFormValues) => {
+    const payload = {
+      ...values,
+      latitude: values.latitude ?? null,
+      longitude: values.longitude ?? null,
+    };
     if (editingAccommodation) {
       await updateMutation.mutateAsync({
         id: editingAccommodation.id,
-        payload: values,
+        payload,
       });
     } else {
-      await createMutation.mutateAsync(values);
+      await createMutation.mutateAsync(payload);
     }
   };
 

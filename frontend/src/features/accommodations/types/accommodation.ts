@@ -18,8 +18,8 @@ export interface Accommodation {
   checkOutTime?: string | null;
   nights: number;
   formattedAddress: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   placeId?: string | null;
   confirmationNumber?: string | null;
   contactName?: string | null;
@@ -38,8 +38,8 @@ export interface CreateAccommodationRequest {
   checkInTime?: string | null;
   checkOutTime?: string | null;
   formattedAddress: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number | null;
+  longitude?: number | null;
   placeId?: string | null;
   confirmationNumber?: string | null;
   contactName?: string | null;
@@ -47,7 +47,7 @@ export interface CreateAccommodationRequest {
   website?: string | null;
   bookingNotes?: string | null;
   cost: number;
-  displayOrder: number;
+  displayOrder?: number;
 }
 
 export interface UpdateAccommodationRequest {
@@ -58,8 +58,8 @@ export interface UpdateAccommodationRequest {
   checkInTime?: string | null;
   checkOutTime?: string | null;
   formattedAddress: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number | null;
+  longitude?: number | null;
   placeId?: string | null;
   confirmationNumber?: string | null;
   contactName?: string | null;
@@ -67,5 +67,5 @@ export interface UpdateAccommodationRequest {
   website?: string | null;
   bookingNotes?: string | null;
   cost: number;
-  displayOrder: number;
+  displayOrder?: number;
 }

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { PlaceAutocomplete } from "@/shared/maps";
+import type { PlaceLocation } from "@/shared/maps/types/place";
 
 import { TRIP_STOP_CATEGORY_OPTIONS } from "../constants/tripStopCategoryOptions";
 import type { TripStopFormValues } from "../validation/tripStopSchema";
@@ -32,15 +33,15 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const selectedLocation =
+  const selectedLocation: PlaceLocation | null =
     watch("placeId") && watch("formattedAddress")
       ? {
-          placeId: watch("placeId"),
+          placeId: watch("placeId") ?? null,
           displayName: watch("name"),
           formattedAddress: watch("formattedAddress"),
           coordinates: {
-            latitude: watch("latitude"),
-            longitude: watch("longitude"),
+            latitude: watch("latitude") ?? null,
+            longitude: watch("longitude") ?? null,
           },
         }
       : null;
@@ -61,10 +62,10 @@ export default function TripStopForm({ defaultValues, onSubmit }: TripStopFormPr
           value={selectedLocation}
           onPlaceSelected={(place) => {
             if (!place) {
-              setValue("placeId", "");
+              setValue("placeId", null);
               setValue("formattedAddress", "");
-              setValue("latitude", 0);
-              setValue("longitude", 0);
+              setValue("latitude", null);
+              setValue("longitude", null);
               return;
             }
 

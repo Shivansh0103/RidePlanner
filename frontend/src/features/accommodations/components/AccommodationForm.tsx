@@ -63,7 +63,10 @@ export default function AccommodationForm({
           placeId,
           displayName: name,
           formattedAddress,
-          coordinates: { latitude, longitude },
+          coordinates: {
+            latitude: latitude ?? null,
+            longitude: longitude ?? null,
+          },
         }
       : null;
 
@@ -71,8 +74,8 @@ export default function AccommodationForm({
     if (!place) {
       setValue("placeId", null);
       setValue("formattedAddress", "");
-      setValue("latitude", 0);
-      setValue("longitude", 0);
+      setValue("latitude", null);
+      setValue("longitude", null);
       return;
     }
 
@@ -289,15 +292,6 @@ export default function AccommodationForm({
               "Automatically synchronizes into Budget under Accommodation category."
             }
             {...register("cost", { valueAsNumber: true })}
-          />
-
-          <TextField
-            label="Itinerary Sequence Order"
-            type="number"
-            fullWidth
-            error={!!errors.displayOrder}
-            helperText={errors.displayOrder?.message}
-            {...register("displayOrder", { valueAsNumber: true })}
           />
         </Stack>
 

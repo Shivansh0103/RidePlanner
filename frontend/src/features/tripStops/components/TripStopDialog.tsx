@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/
 
 import { useCreateTripStop } from "../hooks/useCreateTripStop";
 import { useUpdateTripStop } from "../hooks/useUpdateTripStop";
+import { TripStopCategory } from "../types/tripStopCategory";
 import type { TripStopFormValues } from "../validation/tripStopSchema";
 import TripStopForm from "./TripStopForm";
 
@@ -12,6 +13,7 @@ type TripStopDialogProps = {
   defaultValues: TripStopFormValues;
   stopId?: string;
   onClose: () => void;
+  onRedirectToAccommodation?: (values: TripStopFormValues) => void;
 };
 
 export default function TripStopDialog({
@@ -21,6 +23,7 @@ export default function TripStopDialog({
   defaultValues,
   stopId,
   onClose,
+  onRedirectToAccommodation,
 }: TripStopDialogProps) {
   const createTripStopMutation = useCreateTripStop(tripId);
   const updateTripStopMutation = useUpdateTripStop(tripId);
@@ -28,6 +31,12 @@ export default function TripStopDialog({
   const isSubmitting = createTripStopMutation.isPending || updateTripStopMutation.isPending;
 
   function handleSubmit(values: TripStopFormValues) {
+    if (values.category === TripStopCategory.Hotel && onRedirectToAccommodation) {
+      onClose();
+      onRedirectToAccommodation(values);
+      return;
+    }
+
     if (mode === "create") {
       createTripStopMutation.mutate(values, {
         onSuccess: () => {

@@ -3,13 +3,13 @@ import { TripStopCategory } from "./tripStopCategory";
 export type CreateTripStop = {
   name: string;
 
-  placeId: string;
+  placeId?: string | null;
 
   formattedAddress: string;
 
-  latitude: number;
+  latitude?: number | null;
 
-  longitude: number;
+  longitude?: number | null;
 
   category: TripStopCategory;
 
