@@ -14,9 +14,9 @@ public class TripStop : Entity
 
     public string FormattedAddress { get; private set; }
 
-    public double Latitude { get; private set; }
+    public double? Latitude { get; private set; }
 
-    public double Longitude { get; private set; }
+    public double? Longitude { get; private set; }
 
     public TripStopCategory Category { get; private set; }
 
@@ -38,8 +38,8 @@ public class TripStop : Entity
         string name,
         string? placeId,
         string formattedAddress,
-        double latitude,
-        double longitude,
+        double? latitude,
+        double? longitude,
         TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate,
@@ -65,8 +65,8 @@ public class TripStop : Entity
         string name,
         string? placeId,
         string formattedAddress,
-        double latitude,
-        double longitude,
+        double? latitude,
+        double? longitude,
         TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate,
@@ -102,8 +102,8 @@ public class TripStop : Entity
         string name,
         string? placeId,
         string formattedAddress,
-        double latitude,
-        double longitude,
+        double? latitude,
+        double? longitude,
         TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate,
@@ -144,8 +144,8 @@ public class TripStop : Entity
         string name,
         string? placeId,
         string formattedAddress,
-        double latitude,
-        double longitude,
+        double? latitude,
+        double? longitude,
         TripStopCategory category,
         DateOnly arrivalDate,
         DateOnly departureDate)
@@ -162,10 +162,10 @@ public class TripStop : Entity
         if (string.IsNullOrWhiteSpace(formattedAddress))
             throw new DomainException("Formatted address cannot be empty.");
 
-        if (latitude < -90 || latitude > 90)
+        if (latitude.HasValue && (latitude.Value < -90 || latitude.Value > 90))
             throw new DomainException("Latitude must be between -90 and 90.");
 
-        if (longitude < -180 || longitude > 180)
+        if (longitude.HasValue && (longitude.Value < -180 || longitude.Value > 180))
             throw new DomainException("Longitude must be between -180 and 180.");
     }
 

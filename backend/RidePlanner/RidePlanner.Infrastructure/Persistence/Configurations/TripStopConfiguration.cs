@@ -23,10 +23,10 @@ public class TripStopConfiguration : IEntityTypeConfiguration<TripStop>
             .HasMaxLength(500);
 
         builder.Property(s => s.Latitude)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(s => s.Longitude)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(s => s.Notes)
             .HasMaxLength(2000);
