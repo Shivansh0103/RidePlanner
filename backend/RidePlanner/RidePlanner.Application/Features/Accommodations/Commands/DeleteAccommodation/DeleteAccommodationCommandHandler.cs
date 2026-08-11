@@ -42,6 +42,10 @@ public sealed class DeleteAccommodationCommandHandler
         _tripStopRepository.Remove(accommodation.TripStop);
         _accommodationRepository.Remove(accommodation);
 
+        var remainingStops = (await _tripStopRepository.GetByTripIdAsync(command.TripId, cancellationToken))
+            .Where(s => s.Id != accommodation.TripStopId);
+        RidePlanner.Application.Features.TripStops.Services.TripStopSequenceReconciler.Reconcile(remainingStops);
+
         await _tripRepository.SaveChangesAsync(cancellationToken);
     }
 }

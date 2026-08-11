@@ -1,6 +1,7 @@
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Accommodations.DTOs;
 using RidePlanner.Application.Features.Accommodations.Mappings;
+using RidePlanner.Application.Features.TripStops.Services;
 using RidePlanner.Domain.Enums;
 using RidePlanner.Domain.Exceptions;
 
@@ -42,6 +43,8 @@ public sealed class UpdateAccommodationCommandHandler
 
         trip.InitializeBudget();
 
+        int orderToUse = command.DisplayOrder > 0 ? command.DisplayOrder : accommodation.TripStop.DisplayOrder;
+
         // 1. Update linked TripStop
         accommodation.TripStop.Update(
             command.Name,
@@ -53,7 +56,10 @@ public sealed class UpdateAccommodationCommandHandler
             command.CheckInDate,
             command.CheckOutDate,
             command.BookingNotes,
-            command.DisplayOrder);
+            orderToUse);
+
+        var allStops = await _tripStopRepository.GetByTripIdAsync(command.TripId, cancellationToken);
+        TripStopSequenceReconciler.Reconcile(allStops);
 
         // 2. Update Accommodation
         accommodation.Update(
