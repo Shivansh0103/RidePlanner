@@ -6,6 +6,47 @@ The project follows an incremental sprint-based development approach.
 
 ---
 
+# [v0.7.0] - Sprint 7 Complete
+
+Release Date: August 2026
+
+## Overview
+
+Sprint 7 delivered **Accommodation & Stay Planning**, introducing accommodation as a first-class planning concept while integrating it naturally with existing Itinerary, Map, Budget, and Overview Dashboard features.
+
+Key capabilities delivered include accommodation CRUD, stay dates & derived nights calculation, optional Google Places enrichment, manual location-less stay support ("Address Only"), automatic 1:1 Budget estimate synchronization, canonical Accommodation Dialog in Itinerary, auto-redirect workflow for Hotel category stops, and authoritative chronological sequence reconciliation.
+
+---
+
+## Added
+
+### Accommodation Domain & Aggregate (`features/accommodations`)
+- `Accommodation` domain aggregate entity tied 1:1 to `TripStop` with `Nights` calculation (`CheckOutDate - CheckInDate`).
+- Support for 6 accommodation types (`Hotel`, `Hostel`, `Homestay`, `Resort`, `Campsite`, `Other`).
+- Reservation and contact metadata (`ConfirmationNumber`, `ContactName`, `ContactPhone`, `Website`, `BookingNotes`, `Cost`).
+
+### Google Places Enrichment & Manual Entry
+- Optional prefill from Google Places Autocomplete without making Google the source of truth.
+- Full manual entry support for stays without Google Places lookup ("Address Only" stays with nullable `Latitude`/`Longitude`).
+- Map and route polyline filtering to exclude unlocated stops without distorting route navigation or placing markers at Null Island `(0, 0)`.
+
+### Automatic Budget & Title Synchronization
+- Automatic bi-directional synchronization of accommodation costs into the `Accommodation` category of `TripBudget`.
+- `BudgetEstimate.Title` automatic sync from `TripStop.Name`.
+- Zero-cost rules: `Cost > 0` creates/updates estimate; `Cost == 0` removes estimate; `0 → Cost > 0` creates new estimate.
+
+### Itinerary ↔ Accommodation Integration & Auto-Refresh
+- Dedicated **"Add Stay"** button in Itinerary header.
+- Canonical `AccommodationDialog` integrated directly into Itinerary tab.
+- **Hotel Category Auto-Redirect**: Selecting `Hotel` in generic "Add Trip Stop" dialog seamlessly redirects to `AccommodationDialog` prefilling name, location, stay dates, and notes.
+- Instant query cache auto-refresh across Itinerary, Map, and Budget tabs on stay creation, modification, or deletion.
+
+### Authoritative Chronological Sequence Reconciliation
+- Automatic `DisplayOrder` re-indexing across all trip stops based on `ArrivalDate` / `CheckInDate` ascending with deterministic tie-breaking.
+- Removed manual `DisplayOrder` numeric text inputs from UI forms.
+
+---
+
 # [v0.6.0] - Sprint 6 Complete
 
 Release Date: August 2026

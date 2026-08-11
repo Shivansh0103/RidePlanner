@@ -96,9 +96,9 @@ The long-term vision for Ride Planner includes:
 
 ## Current Status
 
-Ride Planner is actively being developed (Version v0.6.0).
+Ride Planner is actively being developed (Version v0.7.0).
 
-Completed core features include Trip Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Preparation Checklists, Overview Command Center Dashboard, and Tabbed Layout Navigation. The current focus is **Sprint 7 – Accommodation & Stay Planning**.
+Completed core features include Trip Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Preparation Checklists, Overview Command Center Dashboard, Tabbed Layout Navigation, and Accommodation & Stay Planning (Sprint 7).
 
 ---
 
