@@ -12,6 +12,9 @@ public class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever();
+
         builder.Property(x => x.Title)
             .HasMaxLength(200)
             .IsRequired();
