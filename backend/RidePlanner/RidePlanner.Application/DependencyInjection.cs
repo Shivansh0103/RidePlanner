@@ -28,6 +28,10 @@ using RidePlanner.Application.Features.Accommodations.Commands.DeleteAccommodati
 using RidePlanner.Application.Features.Accommodations.Commands.UpdateAccommodation;
 using RidePlanner.Application.Features.Accommodations.Queries.GetAccommodationById;
 using RidePlanner.Application.Features.Accommodations.Queries.GetAccommodationsByTripId;
+using RidePlanner.Application.Features.Expenses.Commands.CreateExpense;
+using RidePlanner.Application.Features.Expenses.Commands.DeleteExpense;
+using RidePlanner.Application.Features.Expenses.Commands.UpdateExpense;
+using RidePlanner.Application.Features.Expenses.Queries.GetTripExpenses;
 
 namespace RidePlanner.Application;
 
@@ -65,6 +69,11 @@ public static class DependencyInjection
         services.AddScoped<DeleteAccommodationCommandHandler>();
         services.AddScoped<GetAccommodationsByTripIdQueryHandler>();
         services.AddScoped<GetAccommodationByIdQueryHandler>();
+
+        services.AddScoped<CreateExpenseCommandHandler>();
+        services.AddScoped<UpdateExpenseCommandHandler>();
+        services.AddScoped<DeleteExpenseCommandHandler>();
+        services.AddScoped<GetTripExpensesQueryHandler>();
         return services;
     }
 }
