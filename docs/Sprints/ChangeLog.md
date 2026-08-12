@@ -6,6 +6,46 @@ The project follows an incremental sprint-based development approach.
 
 ---
 
+# [v0.8.0] - Sprint 8 Complete
+
+Release Date: August 2026
+
+## Overview
+
+Sprint 8 delivered **Actual Expense Tracking & Budget vs Actual Analysis**, enabling riders to log real cash, UPI, and card transactions incurred for a trip, and compare them against their planned budget estimates (`BudgetEstimate`) and target budget (`TargetBudget`).
+
+Key capabilities delivered include Expense domain aggregate entity, PaymentMethod enum, zero-persisted-redundancy derived financial calculations, accommodation safety safeguards preventing double-counting, CQRS application commands & query handlers, REST API endpoints (`/api/trips/{tripId}/expenses`), dedicated Expense Log Data Table with category/payment filters, Budget vs Actual visual comparison matrix, and trip Overview Dashboard spending metrics.
+
+---
+
+## Added
+
+### Expense Domain & Aggregate (`RidePlanner.Domain.Entities.Budget.Expense`)
+- `Expense` domain entity owned by `TripBudget` aggregate root with domain validation invariants (`Amount > 0`, non-empty title max 200, notes max 1000).
+- `PaymentMethod` enum (`Cash`, `UPI`, `CreditCard`, `DebitCard`, `Other`).
+- Encapsulated domain operations: `AddExpense`, `UpdateExpense`, `RemoveExpense`.
+- Dynamic derived calculations (**zero persisted database redundancy**): `ActualCost`, `GetCategoryActualTotal`, `RemainingTargetBuffer` (`TargetBudget - ActualCost`), and `Variance` (`ActualCost - EstimatedCost`).
+
+### EF Core Persistence & Database Migration
+- `ExpenseConfiguration` mapping to `"Expenses"` table with precision `numeric(18, 2)`, cascade delete from `TripBudget`, and optional set-null references to `Accommodation` and `TripStop`.
+- Database Migration `20260812190048_AddActualExpenseTracking` and `ExpenseRepository` implementation.
+
+### CQRS Application Layer & API Controller (`RidePlanner.Api`)
+- `ExpenseDto`, `CreateExpenseRequest`, `UpdateExpenseRequest`, and `ExpenseMappings`.
+- CQRS commands (`CreateExpenseCommand`, `UpdateExpenseCommand`, `DeleteExpenseCommand`) and queries (`GetTripExpensesQuery`).
+- REST `ExpensesController` under `/api/trips/{tripId}/expenses` (`GET`, `POST`, `PUT`, `DELETE`).
+
+### Frontend Expense Log & Budget vs Actual Visual Analytics (`frontend/src/features/budget`)
+- TypeScript types and Zod `expenseSchema` validation.
+- TanStack Query hooks (`useTripExpenses`, `useCreateExpense`, `useUpdateExpense`, `useDeleteExpense`).
+- **Sub-navigation View Switcher** in `BudgetSection.tsx`: `[ Budget vs Actual Analysis | Planned Estimates | Expense Log ]`.
+- `ExpenseLogTable` with category and payment mode filter dropdowns.
+- `BudgetVsActualBreakdown` matrix comparing Planned Estimates vs Actual Spent per category with progress bars and color-coded variance chips.
+- `LogExpenseDialog` & `DeleteExpenseDialog` modals.
+- Updated `OverviewBudgetCard.tsx` displaying Actual Spent and Remaining Target Buffer on the Overview Dashboard.
+
+---
+
 # [v0.7.0] - Sprint 7 Complete
 
 Release Date: August 2026
