@@ -27,12 +27,14 @@ public sealed class TripRepository : ITripRepository
     }
 
     public async Task<Trip?> GetWithBudgetAsync(
-    Guid id,
-    CancellationToken cancellationToken = default)
+        Guid id,
+        CancellationToken cancellationToken = default)
     {
         return await _dbContext.Trips
             .Include(t => t.Budget)
             .ThenInclude(b => b.Estimates)
+            .Include(t => t.Budget)
+            .ThenInclude(b => b.Expenses)
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
     }
 

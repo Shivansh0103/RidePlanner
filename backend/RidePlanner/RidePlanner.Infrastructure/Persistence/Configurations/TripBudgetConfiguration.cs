@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RidePlanner.Domain.Entities.Budget;
 
@@ -21,6 +21,9 @@ public class TripBudgetConfiguration : IEntityTypeConfiguration<TripBudget>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Navigation(x => x.Estimates)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Navigation(x => x.Expenses)
             .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

@@ -21,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<ITripStopRepository, TripStopRepository>();
         services.AddScoped<IChecklistRepository, ChecklistRepository>();
         services.AddScoped<IAccommodationRepository, AccommodationRepository>();
+        services.AddScoped<IExpenseRepository, ExpenseRepository>();
         return services;
     }
 }

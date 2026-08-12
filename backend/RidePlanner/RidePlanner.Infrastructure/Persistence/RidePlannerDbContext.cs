@@ -17,6 +17,7 @@ public class RidePlannerDbContext : DbContext
     public DbSet<Accommodation> Accommodations => Set<Accommodation>();
     public DbSet<TripBudget> TripBudgets => Set<TripBudget>();
     public DbSet<BudgetEstimate> BudgetEstimates => Set<BudgetEstimate>();
+    public DbSet<Expense> Expenses => Set<Expense>();
     public DbSet<ChecklistCategory> ChecklistCategories => Set<ChecklistCategory>();
     public DbSet<ChecklistItem> ChecklistItems => Set<ChecklistItem>();
 
