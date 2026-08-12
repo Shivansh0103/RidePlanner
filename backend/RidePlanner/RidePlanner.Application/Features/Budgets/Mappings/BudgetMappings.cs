@@ -1,4 +1,5 @@
 using RidePlanner.Application.Features.Budgets.DTOs;
+using RidePlanner.Application.Features.Expenses.Mappings;
 using RidePlanner.Domain.Entities.Budget;
 using RidePlanner.Domain.Enums;
 
@@ -13,9 +14,9 @@ public static class BudgetMappings
             .Select(category => new BudgetCategoryDto
             {
                 Category = category,
-
                 EstimatedAmount = budget.GetCategoryTotal(category),
-
+                ActualAmount = budget.GetCategoryActualTotal(category),
+                Variance = budget.GetCategoryVariance(category),
                 Estimates = budget.Estimates
                     .Where(x => x.Category == category)
                     .OrderBy(x => x.Title)
@@ -26,6 +27,12 @@ public static class BudgetMappings
                         EstimatedAmount = x.EstimatedAmount,
                         AccommodationId = x.AccommodationId
                     })
+                    .ToList(),
+                Expenses = budget.Expenses
+                    .Where(x => x.Category == category)
+                    .OrderByDescending(x => x.ExpenseDate)
+                    .ThenByDescending(x => x.CreatedAt)
+                    .Select(x => x.ToDto())
                     .ToList()
             })
             .ToList();
@@ -34,7 +41,10 @@ public static class BudgetMappings
         {
             TargetBudget = budget.TargetBudget,
             EstimatedCost = budget.EstimatedCost,
+            ActualCost = budget.ActualCost,
             RemainingBuffer = budget.RemainingBuffer,
+            RemainingTargetBuffer = budget.RemainingTargetBuffer,
+            Variance = budget.Variance,
             Categories = categories
         };
     }
