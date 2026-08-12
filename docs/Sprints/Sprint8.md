@@ -2,7 +2,7 @@
 
 **Goal:** Provide actual expense logging and real-time Budget vs Actual financial analysis for RidePlanner trips while keeping planned estimates (`BudgetEstimate`) and actual transactions (`Expense`) strictly independent.
 
-**Status:** In Progress  
+**Status:** Completed  
 **Sprint:** 8  
 **Theme:** Actual Expense Tracking & Budget vs Actual
 
