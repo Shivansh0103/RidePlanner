@@ -107,7 +107,13 @@ export default function LogExpenseDialog({
   }, [open, expense, defaultCategory, reset]);
 
   const handleFormSubmit = async (data: ExpenseFormValues) => {
-    await onSubmit(data);
+    const sanitizedData: ExpenseFormValues = {
+      ...data,
+      accommodationId: data.accommodationId && data.accommodationId.trim() !== "" ? data.accommodationId : null,
+      tripStopId: data.tripStopId && data.tripStopId.trim() !== "" ? data.tripStopId : null,
+      notes: data.notes && data.notes.trim() !== "" ? data.notes : null,
+    };
+    await onSubmit(sanitizedData);
     onClose();
   };
 
