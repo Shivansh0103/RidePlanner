@@ -1,10 +1,11 @@
 import { apiClient } from "@/api/axios";
 
 import type { CreateEstimateRequest } from "../schemas/createEstimateSchema";
+import type { ExpenseFormValues } from "../schemas/expenseSchemas";
 import type { FuelCalculatorRequest } from "../schemas/fuelCalculatorSchema";
 import type { UpdateBudgetRequest } from "../schemas/updateBudgetSchema";
 import type { UpdateEstimateRequest } from "../schemas/updateEstimateSchema";
-import type { TripBudget } from "../types/budget";
+import type { Expense, TripBudget } from "../types/budget";
 
 export async function getTripBudget(tripId: string): Promise<TripBudget> {
   const response = await apiClient.get<TripBudget>(`/trips/${tripId}/budget`);
@@ -64,4 +65,41 @@ export async function calculateFuelEstimate(
     request
   );
   return response.data;
+}
+
+export async function getTripExpenses(tripId: string): Promise<Expense[]> {
+  const response = await apiClient.get<Expense[]>(
+    `/trips/${tripId}/expenses`
+  );
+  return response.data;
+}
+
+export async function createExpense(
+  tripId: string,
+  request: ExpenseFormValues
+): Promise<Expense> {
+  const response = await apiClient.post<Expense>(
+    `/trips/${tripId}/expenses`,
+    request
+  );
+  return response.data;
+}
+
+export async function updateExpense(
+  tripId: string,
+  expenseId: string,
+  request: ExpenseFormValues
+): Promise<Expense> {
+  const response = await apiClient.put<Expense>(
+    `/trips/${tripId}/expenses/${expenseId}`,
+    request
+  );
+  return response.data;
+}
+
+export async function deleteExpense(
+  tripId: string,
+  expenseId: string
+): Promise<void> {
+  await apiClient.delete(`/trips/${tripId}/expenses/${expenseId}`);
 }
