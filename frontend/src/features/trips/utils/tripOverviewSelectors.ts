@@ -164,31 +164,45 @@ export function calculateBudgetMetrics(budget?: TripBudget | null) {
     return {
       targetBudget: 0,
       estimatedCost: 0,
+      actualCost: 0,
       remainingBuffer: 0,
+      remainingTargetBuffer: 0,
       utilizationPercentage: 0,
       isOverBudget: false,
       topCategory: null as { name: string; amount: number } | null,
     };
   }
 
-  const { targetBudget, estimatedCost, remainingBuffer, categories = [] } = budget;
+  const {
+    targetBudget,
+    estimatedCost,
+    actualCost = 0,
+    remainingBuffer = 0,
+    remainingTargetBuffer = 0,
+    categories = [],
+  } = budget;
 
   const utilizationPercentage =
-    targetBudget > 0 ? Math.min(100, Math.round((estimatedCost / targetBudget) * 100)) : 0;
+    targetBudget > 0
+      ? Math.min(100, Math.round((actualCost / targetBudget) * 100))
+      : 0;
 
-  const isOverBudget = remainingBuffer < 0;
+  const isOverBudget = remainingTargetBuffer < 0;
 
   let topCategory: { name: string; amount: number } | null = null;
   for (const cat of categories) {
-    if (cat.estimatedAmount > 0 && (!topCategory || cat.estimatedAmount > topCategory.amount)) {
-      topCategory = { name: cat.category, amount: cat.estimatedAmount };
+    const amountToUse = (cat.actualAmount ?? 0) > 0 ? cat.actualAmount : cat.estimatedAmount;
+    if (amountToUse > 0 && (!topCategory || amountToUse > topCategory.amount)) {
+      topCategory = { name: cat.category, amount: amountToUse };
     }
   }
 
   return {
     targetBudget,
     estimatedCost,
+    actualCost,
     remainingBuffer,
+    remainingTargetBuffer,
     utilizationPercentage,
     isOverBudget,
     topCategory,

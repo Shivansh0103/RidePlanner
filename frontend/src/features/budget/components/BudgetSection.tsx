@@ -1,32 +1,45 @@
-import { Box } from "@mui/material";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 
 import ErrorState from "@/shared/ui/ErrorState";
 
 import { useCalculateFuelEstimate } from "../hooks/useCalculateFuelEstimate";
 import { useCreateBudgetEstimate } from "../hooks/useCreateBudgetEstimate";
+import { useCreateExpense } from "../hooks/useCreateExpense";
 import { useDeleteBudgetEstimate } from "../hooks/useDeleteBudgetEstimate";
+import { useDeleteExpense } from "../hooks/useDeleteExpense";
 import { useTripBudget } from "../hooks/useTripBudget";
 import { useUpdateBudgetEstimate } from "../hooks/useUpdateBudgetEstimate";
+import { useUpdateExpense } from "../hooks/useUpdateExpense";
 import { useUpdateTripBudget } from "../hooks/useUpdateTripBudget";
 import type { CreateEstimateRequest } from "../schemas/createEstimateSchema";
+import type { ExpenseFormValues } from "../schemas/expenseSchemas";
 import type { FuelCalculatorRequest } from "../schemas/fuelCalculatorSchema";
 import type { UpdateBudgetRequest } from "../schemas/updateBudgetSchema";
 import type { UpdateEstimateRequest } from "../schemas/updateEstimateSchema";
-import type { BudgetCategoryType, BudgetEstimate } from "../types/budget";
+import type { BudgetCategoryType, BudgetEstimate, Expense } from "../types/budget";
 import BudgetSkeleton from "./BudgetSkeleton";
 import BudgetSummaryCards from "./BudgetSummaryCards";
+import BudgetVsActualBreakdown from "./BudgetVsActualBreakdown";
 import CategoryBreakdown from "./CategoryBreakdown";
 import CreateEstimateDialog from "./CreateEstimateDialog";
 import DeleteEstimateDialog from "./DeleteEstimateDialog";
+import DeleteExpenseDialog from "./DeleteExpenseDialog";
 import EditBudgetDialog from "./EditBudgetDialog";
 import EditEstimateDialog from "./EditEstimateDialog";
+import ExpenseLogTable from "./ExpenseLogTable";
 import FuelCalculatorDialog from "./FuelCalculatorDialog";
+import LogExpenseDialog from "./LogExpenseDialog";
 
 interface BudgetSectionProps {
   tripId: string;
   routeDistanceKm?: number;
 }
+
+type BudgetSubTab = "analysis" | "estimates" | "expenses";
 
 export default function BudgetSection({
   tripId,
@@ -34,13 +47,22 @@ export default function BudgetSection({
 }: BudgetSectionProps) {
   const { data: budget, isLoading, isError } = useTripBudget(tripId);
 
+  // Sub-tab view state
+  const [activeTab, setActiveTab] = useState<BudgetSubTab>("analysis");
+
+  // Budget mutations
   const updateBudgetMutation = useUpdateTripBudget(tripId);
   const createEstimateMutation = useCreateBudgetEstimate(tripId);
   const updateEstimateMutation = useUpdateBudgetEstimate(tripId);
   const deleteEstimateMutation = useDeleteBudgetEstimate(tripId);
   const calculateFuelMutation = useCalculateFuelEstimate(tripId);
 
-  // Dialog states
+  // Expense mutations
+  const createExpenseMutation = useCreateExpense(tripId);
+  const updateExpenseMutation = useUpdateExpense(tripId);
+  const deleteExpenseMutation = useDeleteExpense(tripId);
+
+  // Budget Dialog states
   const [isEditBudgetOpen, setIsEditBudgetOpen] = useState(false);
 
   const [isCreateEstimateOpen, setIsCreateEstimateOpen] = useState(false);
@@ -57,6 +79,16 @@ export default function BudgetSection({
 
   const [isFuelCalculatorOpen, setIsFuelCalculatorOpen] = useState(false);
 
+  // Expense Dialog states
+  const [isLogExpenseOpen, setIsLogExpenseOpen] = useState(false);
+  const [logExpenseCategory, setLogExpenseCategory] =
+    useState<BudgetCategoryType>("Fuel");
+
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+
+  const [isDeleteExpenseOpen, setIsDeleteExpenseOpen] = useState(false);
+  const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
+
   if (isLoading) {
     return <BudgetSkeleton />;
   }
@@ -65,7 +97,12 @@ export default function BudgetSection({
     return <ErrorState message="Unable to load trip budget." />;
   }
 
-  // Handlers raised by presentation components
+  // Extract all expenses across categories
+  const allExpenses: Expense[] = budget.categories
+    ? budget.categories.flatMap((cat) => cat.expenses || [])
+    : [];
+
+  // Handlers for Estimates
   const handleOpenAddEstimate = (categoryType: BudgetCategoryType) => {
     setCreateEstimateCategory(categoryType);
     setIsCreateEstimateOpen(true);
@@ -81,7 +118,24 @@ export default function BudgetSection({
     setIsDeleteEstimateOpen(true);
   };
 
-  // Form Submission handlers
+  // Handlers for Expenses
+  const handleOpenAddExpense = (categoryType: BudgetCategoryType = "Fuel") => {
+    setLogExpenseCategory(categoryType);
+    setEditingExpense(null);
+    setIsLogExpenseOpen(true);
+  };
+
+  const handleOpenEditExpense = (expense: Expense) => {
+    setEditingExpense(expense);
+    setIsLogExpenseOpen(true);
+  };
+
+  const handleOpenDeleteExpense = (expense: Expense) => {
+    setDeletingExpense(expense);
+    setIsDeleteExpenseOpen(true);
+  };
+
+  // Form Submissions
   const handleUpdateBudget = async (data: UpdateBudgetRequest) => {
     await updateBudgetMutation.mutateAsync(data);
   };
@@ -105,24 +159,90 @@ export default function BudgetSection({
     await calculateFuelMutation.mutateAsync(data);
   };
 
+  const handleSaveExpense = async (data: ExpenseFormValues) => {
+    if (editingExpense) {
+      await updateExpenseMutation.mutateAsync({
+        expenseId: editingExpense.id,
+        request: data,
+      });
+    } else {
+      await createExpenseMutation.mutateAsync(data);
+    }
+  };
+
+  const handleDeleteExpense = async (expenseId: string) => {
+    await deleteExpenseMutation.mutateAsync(expenseId);
+  };
+
   return (
     <Box sx={{ mt: 4 }}>
       {/* Summary Cards */}
       <BudgetSummaryCards
         targetBudget={budget.targetBudget}
         estimatedCost={budget.estimatedCost}
-        remainingBuffer={budget.remainingBuffer}
+        actualCost={budget.actualCost}
+        remainingTargetBuffer={budget.remainingTargetBuffer}
         onEditBudget={() => setIsEditBudgetOpen(true)}
         onCalculateFuel={() => setIsFuelCalculatorOpen(true)}
       />
 
-      {/* Category Breakdown */}
-      <CategoryBreakdown
-        categories={budget.categories}
-        onAddEstimate={handleOpenAddEstimate}
-        onEditEstimate={handleOpenEditEstimate}
-        onDeleteEstimate={handleOpenDeleteEstimate}
-      />
+      {/* View Switcher Sub-tabs */}
+      <Paper variant="outlined" sx={{ borderRadius: 2, mt: 3 }}>
+        <Tabs
+          value={activeTab}
+          onChange={(_, newValue) => setActiveTab(newValue)}
+          variant="fullWidth"
+          indicatorColor="primary"
+          textColor="primary"
+        >
+          <Tab
+            icon={<AnalyticsIcon />}
+            iconPosition="start"
+            label="Budget vs Actual Analysis"
+            value="analysis"
+            sx={{ fontWeight: 700 }}
+          />
+          <Tab
+            icon={<FormatListBulletedIcon />}
+            iconPosition="start"
+            label="Planned Estimates"
+            value="estimates"
+            sx={{ fontWeight: 700 }}
+          />
+          <Tab
+            icon={<ReceiptLongIcon />}
+            iconPosition="start"
+            label={`Expense Log (${allExpenses.length})`}
+            value="expenses"
+            sx={{ fontWeight: 700 }}
+          />
+        </Tabs>
+      </Paper>
+
+      {/* Tab 1: Budget vs Actual Analysis */}
+      {activeTab === "analysis" && (
+        <BudgetVsActualBreakdown categories={budget.categories} />
+      )}
+
+      {/* Tab 2: Planned Estimates */}
+      {activeTab === "estimates" && (
+        <CategoryBreakdown
+          categories={budget.categories}
+          onAddEstimate={handleOpenAddEstimate}
+          onEditEstimate={handleOpenEditEstimate}
+          onDeleteEstimate={handleOpenDeleteEstimate}
+        />
+      )}
+
+      {/* Tab 3: Actual Expense Log */}
+      {activeTab === "expenses" && (
+        <ExpenseLogTable
+          expenses={allExpenses}
+          onAddExpense={() => handleOpenAddExpense("Fuel")}
+          onEditExpense={handleOpenEditExpense}
+          onDeleteExpense={handleOpenDeleteExpense}
+        />
+      )}
 
       {/* Modals owned by BudgetSection */}
       <EditBudgetDialog
@@ -169,6 +289,32 @@ export default function BudgetSection({
         onClose={() => setIsFuelCalculatorOpen(false)}
         onSubmit={handleCalculateFuel}
         isLoading={calculateFuelMutation.isPending}
+      />
+
+      {/* Expense Modals */}
+      <LogExpenseDialog
+        open={isLogExpenseOpen}
+        expense={editingExpense}
+        defaultCategory={logExpenseCategory}
+        onClose={() => {
+          setIsLogExpenseOpen(false);
+          setEditingExpense(null);
+        }}
+        onSubmit={handleSaveExpense}
+        isLoading={
+          createExpenseMutation.isPending || updateExpenseMutation.isPending
+        }
+      />
+
+      <DeleteExpenseDialog
+        open={isDeleteExpenseOpen}
+        expense={deletingExpense}
+        onClose={() => {
+          setIsDeleteExpenseOpen(false);
+          setDeletingExpense(null);
+        }}
+        onConfirm={handleDeleteExpense}
+        isLoading={deleteExpenseMutation.isPending}
       />
     </Box>
   );

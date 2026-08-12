@@ -19,7 +19,7 @@ export default function OverviewBudgetCard({ budget, onEditBudget }: OverviewBud
         <Stack spacing={2}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Budget Overview
+              Budget & Expenses Overview
             </Typography>
             {onEditBudget && (
               <IconButton size="small" onClick={onEditBudget} aria-label="Edit Budget">
@@ -40,10 +40,10 @@ export default function OverviewBudgetCard({ budget, onEditBudget }: OverviewBud
 
             <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: "action.hover" }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                Estimated Cost
+                Actual Spent
               </Typography>
-              <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
-                {formatCurrency(metrics.estimatedCost)}
+              <Typography variant="subtitle1" color="info.main" sx={{ fontWeight: 800 }}>
+                {formatCurrency(metrics.actualCost)}
               </Typography>
             </Box>
           </Box>
@@ -68,7 +68,7 @@ export default function OverviewBudgetCard({ budget, onEditBudget }: OverviewBud
                 color: metrics.isOverBudget ? "error.dark" : "success.dark",
               }}
             >
-              {metrics.isOverBudget ? "Over Budget" : "Remaining Buffer"}
+              {metrics.isOverBudget ? "Target Exceeded" : "Remaining Target Buffer"}
             </Typography>
             <Typography
               variant="subtitle2"
@@ -77,14 +77,14 @@ export default function OverviewBudgetCard({ budget, onEditBudget }: OverviewBud
                 color: metrics.isOverBudget ? "error.dark" : "success.dark",
               }}
             >
-              {formatCurrency(metrics.remainingBuffer)}
+              {formatCurrency(metrics.remainingTargetBuffer)}
             </Typography>
           </Box>
 
           {metrics.topCategory && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Typography variant="caption" color="text.secondary">
-                Top Spending:
+                Top Category:
               </Typography>
               <Chip
                 label={`${metrics.topCategory.name} (${formatCurrency(metrics.topCategory.amount)})`}
