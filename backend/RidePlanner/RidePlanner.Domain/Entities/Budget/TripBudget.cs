@@ -6,6 +6,7 @@ namespace RidePlanner.Domain.Entities.Budget;
 public class TripBudget
 {
     private readonly List<BudgetEstimate> _estimates = [];
+    private readonly List<Expense> _expenses = [];
 
     private TripBudget()
     {
@@ -37,19 +38,43 @@ public class TripBudget
     public IReadOnlyCollection<BudgetEstimate> Estimates =>
         _estimates.AsReadOnly();
 
+    public IReadOnlyCollection<Expense> Expenses =>
+        _expenses.AsReadOnly();
+
     public Trip Trip { get; private set; } = null!;
 
     public decimal EstimatedCost =>
         _estimates.Sum(x => x.EstimatedAmount);
 
+    public decimal ActualCost =>
+        _expenses.Sum(x => x.Amount);
+
     public decimal RemainingBuffer =>
         TargetBudget - EstimatedCost;
+
+    public decimal RemainingTargetBuffer =>
+        TargetBudget - ActualCost;
+
+    public decimal Variance =>
+        ActualCost - EstimatedCost;
 
     public decimal GetCategoryTotal(BudgetCategoryType category)
     {
         return _estimates
             .Where(x => x.Category == category)
             .Sum(x => x.EstimatedAmount);
+    }
+
+    public decimal GetCategoryActualTotal(BudgetCategoryType category)
+    {
+        return _expenses
+            .Where(x => x.Category == category)
+            .Sum(x => x.Amount);
+    }
+
+    public decimal GetCategoryVariance(BudgetCategoryType category)
+    {
+        return GetCategoryActualTotal(category) - GetCategoryTotal(category);
     }
 
     public void UpdateTargetBudget(decimal targetBudget)
@@ -100,6 +125,74 @@ public class TripBudget
         }
 
         _estimates.Remove(estimate);
+        return true;
+    }
+
+    public Expense AddExpense(
+        BudgetCategoryType category,
+        string title,
+        decimal amount,
+        DateOnly expenseDate,
+        PaymentMethod? paymentMethod = null,
+        string? notes = null,
+        Guid? accommodationId = null,
+        Guid? tripStopId = null)
+    {
+        var expense = new Expense(
+            Id,
+            category,
+            title,
+            amount,
+            expenseDate,
+            paymentMethod,
+            notes,
+            accommodationId,
+            tripStopId);
+
+        _expenses.Add(expense);
+
+        return expense;
+    }
+
+    public bool UpdateExpense(
+        Guid expenseId,
+        BudgetCategoryType category,
+        string title,
+        decimal amount,
+        DateOnly expenseDate,
+        PaymentMethod? paymentMethod = null,
+        string? notes = null,
+        Guid? accommodationId = null,
+        Guid? tripStopId = null)
+    {
+        var expense = _expenses.FirstOrDefault(x => x.Id == expenseId);
+        if (expense is null)
+        {
+            return false;
+        }
+
+        expense.Update(
+            category,
+            title,
+            amount,
+            expenseDate,
+            paymentMethod,
+            notes,
+            accommodationId,
+            tripStopId);
+
+        return true;
+    }
+
+    public bool RemoveExpense(Guid expenseId)
+    {
+        var expense = _expenses.FirstOrDefault(x => x.Id == expenseId);
+        if (expense is null)
+        {
+            return false;
+        }
+
+        _expenses.Remove(expense);
         return true;
     }
 
