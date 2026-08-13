@@ -24,8 +24,12 @@ import { useTrip } from "../hooks/useTrip";
 import { useStartTrip } from "../hooks/useStartTrip";
 import { useCompleteTrip } from "../hooks/useCompleteTrip";
 
-const TAB_KEYS = ["overview", "itinerary", "accommodation", "budget", "checklist"] as const;
+import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
+import DocumentsSection from "@/features/documents/components/DocumentsSection";
+
+const TAB_KEYS = ["overview", "itinerary", "accommodation", "budget", "checklist", "documents"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
+
 
 const STATUS_COLOR_MAP = {
   Planning: "info",
@@ -213,6 +217,14 @@ export default function TripDetailsPage() {
               id="trip-tab-checklist"
               aria-controls="trip-tabpanel-checklist"
             />
+            <Tab
+              icon={<FolderSpecialIcon fontSize="small" />}
+              iconPosition="start"
+              label="Documents"
+              value="documents"
+              id="trip-tab-documents"
+              aria-controls="trip-tabpanel-documents"
+            />
           </Tabs>
         </Paper>
 
@@ -288,6 +300,14 @@ export default function TripDetailsPage() {
             <ChecklistSection tripId={trip.id} />
           </Box>
         )}
+
+        {/* Tab Panel 5: Documents */}
+        {activeTab === "documents" && (
+          <Box role="tabpanel" id="trip-tabpanel-documents" aria-labelledby="trip-tab-documents">
+            <DocumentsSection tripId={trip.id} />
+          </Box>
+        )}
+
       </Stack>
     </Box>
   );
