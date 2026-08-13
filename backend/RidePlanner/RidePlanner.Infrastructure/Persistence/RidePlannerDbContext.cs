@@ -20,6 +20,8 @@ public class RidePlannerDbContext : DbContext
     public DbSet<Expense> Expenses => Set<Expense>();
     public DbSet<ChecklistCategory> ChecklistCategories => Set<ChecklistCategory>();
     public DbSet<ChecklistItem> ChecklistItems => Set<ChecklistItem>();
+    public DbSet<TripDocument> TripDocuments => Set<TripDocument>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
