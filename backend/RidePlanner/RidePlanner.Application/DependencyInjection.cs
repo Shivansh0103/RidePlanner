@@ -4,6 +4,8 @@ using RidePlanner.Application.Features.TripStops.Commands.DeleteTripStop;
 using RidePlanner.Application.Features.TripStops.Commands.UpdateTripStop;
 using RidePlanner.Application.Features.TripStops.Queries.GetTripStops;
 using RidePlanner.Application.Features.Trips.Commands.CreateTrip;
+using RidePlanner.Application.Features.Trips.Commands.StartTrip;
+using RidePlanner.Application.Features.Trips.Commands.CompleteTrip;
 using RidePlanner.Application.Features.Trips.Commands.DeleteTrip;
 using RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
 using RidePlanner.Application.Features.Trips.Queries.GetTrip;
@@ -43,6 +45,8 @@ public static class DependencyInjection
         services.AddScoped<CreateTripCommandHandler>();
         services.AddScoped<UpdateTripCommandHandler>();
         services.AddScoped<DeleteTripCommandHandler>();
+        services.AddScoped<StartTripCommandHandler>();
+        services.AddScoped<CompleteTripCommandHandler>();
         services.AddScoped<GetTripQueryHandler>();
         services.AddScoped<GetTripsQueryHandler>();
         services.AddScoped<CreateTripStopCommandHandler>();

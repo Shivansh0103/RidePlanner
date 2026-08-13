@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Trips.Commands.CreateTrip;
+using RidePlanner.Application.Features.Trips.Commands.StartTrip;
+using RidePlanner.Application.Features.Trips.Commands.CompleteTrip;
 using RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
 using RidePlanner.Application.Features.Trips.Commands.DeleteTrip;
 using RidePlanner.Application.Features.Trips.DTOs;
@@ -16,6 +18,8 @@ public class TripsController : ControllerBase
     private readonly CreateTripCommandHandler _createTripCommandHandler;
     private readonly UpdateTripCommandHandler _updateTripCommandHandler;
     private readonly DeleteTripCommandHandler _deleteTripCommandHandler;
+    private readonly StartTripCommandHandler _startTripCommandHandler;
+    private readonly CompleteTripCommandHandler _completeTripCommandHandler;
     private readonly GetTripQueryHandler _getTripQueryHandler;
     private readonly GetTripsQueryHandler _getTripsQueryHandler;
 
@@ -23,12 +27,16 @@ public class TripsController : ControllerBase
         CreateTripCommandHandler createTripCommandHandler,
         UpdateTripCommandHandler updateTripCommandHandler,
         DeleteTripCommandHandler deleteTripCommandHandler,
+        StartTripCommandHandler startTripCommandHandler,
+        CompleteTripCommandHandler completeTripCommandHandler,
         GetTripQueryHandler getTripQueryHandler,
         GetTripsQueryHandler getTripsQueryHandler)
     {
         _createTripCommandHandler = createTripCommandHandler;
         _updateTripCommandHandler = updateTripCommandHandler;
         _deleteTripCommandHandler = deleteTripCommandHandler;
+        _startTripCommandHandler = startTripCommandHandler;
+        _completeTripCommandHandler = completeTripCommandHandler;
         _getTripQueryHandler = getTripQueryHandler;
         _getTripsQueryHandler = getTripsQueryHandler;
     }
@@ -98,6 +106,30 @@ public class TripsController : ControllerBase
         return Ok(trip.ToResponse());
     }
 
+    [HttpPost("{id:guid}/start")]
+    public async Task<ActionResult<TripResponse>> StartTrip(
+        Guid id,
+        [FromBody] StartTripRequest? request,
+        CancellationToken cancellationToken)
+    {
+        var command = new StartTripCommand(id, request?.ActualStart);
+        var trip = await _startTripCommandHandler.Handle(command, cancellationToken);
+
+        return Ok(trip.ToResponse());
+    }
+
+    [HttpPost("{id:guid}/complete")]
+    public async Task<ActionResult<TripResponse>> CompleteTrip(
+        Guid id,
+        [FromBody] CompleteTripRequest? request,
+        CancellationToken cancellationToken)
+    {
+        var command = new CompleteTripCommand(id, request?.ActualCompletion);
+        var trip = await _completeTripCommandHandler.Handle(command, cancellationToken);
+
+        return Ok(trip.ToResponse());
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteTrip(
     Guid id,
@@ -110,4 +142,4 @@ public class TripsController : ControllerBase
 
         return NoContent();
     }
-}
+}
