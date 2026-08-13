@@ -13,7 +13,10 @@ public static class TripMappings
             trip.Description,
             trip.StartDate,
             trip.EndDate,
+            trip.Status.ToString(),
+            trip.StartedAt,
+            trip.CompletedAt,
             trip.CreatedAt,
             trip.UpdatedAt);
     }
-}
+}

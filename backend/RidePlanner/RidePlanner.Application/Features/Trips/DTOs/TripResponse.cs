@@ -6,5 +6,8 @@ public record TripResponse(
     string? Description,
     DateOnly StartDate,
     DateOnly EndDate,
+    string Status,
+    DateTimeOffset? StartedAt,
+    DateTimeOffset? CompletedAt,
     DateTimeOffset CreatedAt,
-    DateTimeOffset UpdatedAt);
+    DateTimeOffset UpdatedAt);

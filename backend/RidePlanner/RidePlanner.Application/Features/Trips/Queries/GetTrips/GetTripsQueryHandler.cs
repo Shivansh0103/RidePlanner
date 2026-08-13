@@ -1,4 +1,5 @@
 using RidePlanner.Application.Abstractions.Persistence;
+using RidePlanner.Application.Features.Trips.Services;
 using RidePlanner.Domain.Entities;
 
 namespace RidePlanner.Application.Features.Trips.Queries.GetTrips;
@@ -15,7 +16,9 @@ public sealed class GetTripsQueryHandler
     public async Task<IReadOnlyList<Trip>> Handle(
         CancellationToken cancellationToken = default)
     {
-        return await _tripRepository.GetAllAsync(
-            cancellationToken);
+        var trips = await _tripRepository.GetAllAsync(cancellationToken);
+        TripLifecycleService.SynchronizeLifecycle(trips, DateOnly.FromDateTime(DateTime.UtcNow));
+
+        return trips;
     }
-}
+}
