@@ -1,3 +1,5 @@
+using RidePlanner.Domain.Entities;
+
 public interface ITripRepository
 {
     void Add(Trip trip);
@@ -13,4 +15,4 @@ public interface ITripRepository
     Task DeleteAsync(Trip trip, CancellationToken cancellationToken = default);
 
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
-}
+}
