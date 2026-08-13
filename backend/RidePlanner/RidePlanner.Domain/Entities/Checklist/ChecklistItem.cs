@@ -11,6 +11,8 @@ public class ChecklistItem : Entity
 
     public bool IsCompleted { get; private set; }
 
+    public bool IsRequired { get; private set; } = true;
+
     public int DisplayOrder { get; private set; }
 
     public ChecklistCategory Category { get; private set; } = null!;
@@ -23,7 +25,8 @@ public class ChecklistItem : Entity
         Guid categoryId,
         string title,
         int displayOrder,
-        bool isCompleted = false)
+        bool isCompleted = false,
+        bool isRequired = true)
     {
         Validate(title, displayOrder);
 
@@ -32,14 +35,16 @@ public class ChecklistItem : Entity
         Title = title;
         DisplayOrder = displayOrder;
         IsCompleted = isCompleted;
+        IsRequired = isRequired;
     }
 
-    public void Update(string title, int displayOrder)
+    public void Update(string title, int displayOrder, bool isRequired = true)
     {
         Validate(title, displayOrder);
 
         Title = title;
         DisplayOrder = displayOrder;
+        IsRequired = isRequired;
     }
 
     public void ToggleCompletion()
@@ -52,6 +57,11 @@ public class ChecklistItem : Entity
         IsCompleted = isCompleted;
     }
 
+    public void SetRequired(bool isRequired)
+    {
+        IsRequired = isRequired;
+    }
+
     private static void Validate(string title, int displayOrder)
     {
         if (string.IsNullOrWhiteSpace(title))
@@ -61,3 +71,4 @@ public class ChecklistItem : Entity
             throw new DomainException("Display order must be greater than zero.");
     }
 }
+

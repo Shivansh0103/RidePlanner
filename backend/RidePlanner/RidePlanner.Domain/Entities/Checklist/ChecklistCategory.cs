@@ -42,12 +42,13 @@ public class ChecklistCategory : Entity
         DisplayOrder = displayOrder;
     }
 
-    public ChecklistItem AddItem(string title, int displayOrder, bool isCompleted = false)
+    public ChecklistItem AddItem(string title, int displayOrder, bool isCompleted = false, bool isRequired = true)
     {
-        var item = new ChecklistItem(Id, title, displayOrder, isCompleted);
+        var item = new ChecklistItem(Id, title, displayOrder, isCompleted, isRequired);
         _items.Add(item);
         return item;
     }
+
 
     public bool RemoveItem(Guid itemId)
     {
