@@ -3,6 +3,7 @@ export interface ChecklistItem {
   categoryId: string;
   title: string;
   isCompleted: boolean;
+  isRequired: boolean;
   displayOrder: number;
 }
 
@@ -20,6 +21,9 @@ export interface ChecklistSummary {
   tripId: string;
   totalItemsCount: number;
   completedItemsCount: number;
+  requiredItemsCount: number;
+  completedRequiredItemsCount: number;
   completionPercentage: number;
   categories: ChecklistCategory[];
 }
+

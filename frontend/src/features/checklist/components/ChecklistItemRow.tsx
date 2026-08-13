@@ -1,6 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Box, Checkbox, IconButton, ListItem, Typography } from "@mui/material";
+import { Box, Checkbox, Chip, IconButton, ListItem, Typography } from "@mui/material";
 
 import type { ChecklistItem } from "../types/checklist";
 
@@ -59,11 +59,22 @@ export default function ChecklistItemRow({
             fontWeight: item.isCompleted ? 400 : 500,
             transition: "color 0.2s ease, text-decoration 0.2s ease",
             wordBreak: "break-word",
+            mr: 1,
           }}
         >
           {item.title}
         </Typography>
+
+        {!item.isRequired && (
+          <Chip
+            label="Optional"
+            size="small"
+            variant="outlined"
+            sx={{ height: 20, fontSize: "0.68rem", color: "text.secondary" }}
+          />
+        )}
       </Box>
+
 
       <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
         <IconButton

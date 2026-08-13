@@ -1,10 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   MenuItem,
   TextField,
 } from "@mui/material";
@@ -46,10 +48,12 @@ export default function AddItemDialog({
     defaultValues: {
       categoryId: defaultCategoryId ?? (categories[0]?.id || ""),
       title: "",
+      isRequired: true,
     },
   });
 
   const selectedCategory = watch("categoryId");
+  const isRequiredValue = watch("isRequired");
 
   useEffect(() => {
     if (open) {
@@ -57,6 +61,7 @@ export default function AddItemDialog({
       reset({
         categoryId: initialCatId,
         title: "",
+        isRequired: true,
       });
     }
   }, [open, defaultCategoryId, categories, reset]);
@@ -102,8 +107,21 @@ export default function AddItemDialog({
             error={Boolean(errors.title)}
             helperText={errors.title?.message}
             disabled={isLoading}
+            sx={{ mb: 1.5 }}
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isRequiredValue ?? true}
+                onChange={(e) => setValue("isRequired", e.target.checked)}
+                disabled={isLoading}
+              />
+            }
+            label="Required Item (affects trip readiness)"
           />
         </DialogContent>
+
         <DialogActions sx={{ px: 3, pb: 2.5, pt: 1 }}>
           <Button onClick={onClose} disabled={isLoading}>
             Cancel

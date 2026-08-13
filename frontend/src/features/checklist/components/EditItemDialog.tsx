@@ -1,10 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   TextField,
 } from "@mui/material";
 import { useEffect } from "react";
@@ -35,17 +37,22 @@ export default function EditItemDialog({
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<UpdateItemRequest>({
     resolver: zodResolver(updateItemSchema),
     defaultValues: {
       title: "",
+      isRequired: true,
     },
   });
 
+  const isRequiredValue = watch("isRequired");
+
   useEffect(() => {
     if (open && item) {
-      reset({ title: item.title });
+      reset({ title: item.title, isRequired: item.isRequired });
     }
   }, [open, item, reset]);
 
@@ -70,9 +77,21 @@ export default function EditItemDialog({
             error={Boolean(errors.title)}
             helperText={errors.title?.message}
             disabled={isLoading}
-            sx={{ mt: 1 }}
+            sx={{ mt: 1, mb: 1.5 }}
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isRequiredValue ?? true}
+                onChange={(e) => setValue("isRequired", e.target.checked)}
+                disabled={isLoading}
+              />
+            }
+            label="Required Item (affects trip readiness)"
           />
         </DialogContent>
+
         <DialogActions sx={{ px: 3, pb: 2.5, pt: 1 }}>
           <Button onClick={onClose} disabled={isLoading}>
             Cancel
