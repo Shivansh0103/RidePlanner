@@ -19,8 +19,13 @@ public class ChecklistItemConfiguration : IEntityTypeConfiguration<ChecklistItem
         builder.Property(x => x.IsCompleted)
             .IsRequired();
 
+        builder.Property(x => x.IsRequired)
+            .IsRequired()
+            .HasDefaultValue(true);
+
         builder.Property(x => x.DisplayOrder)
             .IsRequired();
+
 
         builder.HasOne(x => x.Category)
             .WithMany(x => x.Items)
