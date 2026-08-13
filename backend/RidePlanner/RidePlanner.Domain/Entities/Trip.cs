@@ -32,10 +32,13 @@ public class Trip : Entity
 
     public ICollection<Accommodation> Accommodations { get; private set; } = [];
 
+    public ICollection<TripDocument> Documents { get; private set; } = [];
+
     public TripBudget Budget { get; private set; } = null!;
 
     public IReadOnlyCollection<ChecklistCategory> ChecklistCategories =>
         _checklistCategories.AsReadOnly();
+
 
     private Trip(
         Guid id,
