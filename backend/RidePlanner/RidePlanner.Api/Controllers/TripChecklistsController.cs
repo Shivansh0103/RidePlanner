@@ -123,7 +123,7 @@ public sealed class TripChecklistsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _createItemHandler.Handle(
-            new CreateChecklistItemCommand(tripId, request.CategoryId, request.Title),
+            new CreateChecklistItemCommand(tripId, request.CategoryId, request.Title, request.IsRequired),
             cancellationToken);
 
         if (result is null)
@@ -142,7 +142,7 @@ public sealed class TripChecklistsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _updateItemHandler.Handle(
-            new UpdateChecklistItemCommand(tripId, itemId, request.Title),
+            new UpdateChecklistItemCommand(tripId, itemId, request.Title, request.IsRequired),
             cancellationToken);
 
         if (result is null)
@@ -152,6 +152,7 @@ public sealed class TripChecklistsController : ControllerBase
 
         return Ok(result);
     }
+
 
     [HttpPatch("items/{itemId:guid}/toggle")]
     public async Task<IActionResult> ToggleItem(
