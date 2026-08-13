@@ -1,9 +1,11 @@
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ChecklistRtlIcon from "@mui/icons-material/ChecklistRtl";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import { Box, Button, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { Box, Button, Chip, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
@@ -19,9 +21,17 @@ import LoadingSpinner from "@/shared/ui/LoadingSpinner";
 import ItinerarySection from "../components/ItinerarySection";
 import TripOverview from "../components/overview/TripOverview";
 import { useTrip } from "../hooks/useTrip";
+import { useStartTrip } from "../hooks/useStartTrip";
+import { useCompleteTrip } from "../hooks/useCompleteTrip";
 
 const TAB_KEYS = ["overview", "itinerary", "accommodation", "budget", "checklist"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
+
+const STATUS_COLOR_MAP = {
+  Planning: "info",
+  Active: "success",
+  Completed: "secondary",
+} as const;
 
 export default function TripDetailsPage() {
   const navigate = useNavigate();
@@ -32,6 +42,8 @@ export default function TripDetailsPage() {
 
   const { data: trip, isLoading, isError } = useTrip(tripId ?? "");
   const { data: stops = [] } = useTripStops(tripId ?? "");
+  const startTripMutation = useStartTrip();
+  const completeTripMutation = useCompleteTrip();
 
   const validStops = stops.filter(
     (stop) =>
@@ -83,18 +95,56 @@ export default function TripDetailsPage() {
           Back to Trips
         </Button>
 
-        <Stack spacing={0.5}>
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 700,
-            }}
-          >
-            {trip.name}
-          </Typography>
+        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
+          <Stack spacing={0.5}>
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 700,
+                }}
+              >
+                {trip.name}
+              </Typography>
+              <Chip
+                label={trip.status}
+                color={STATUS_COLOR_MAP[trip.status] ?? "default"}
+                size="small"
+                sx={{ fontWeight: 700, textTransform: "uppercase", fontSize: "0.75rem" }}
+              />
+            </Stack>
 
-          {trip.description && <Typography color="text.secondary">{trip.description}</Typography>}
+
+            {trip.description && <Typography color="text.secondary">{trip.description}</Typography>}
+          </Stack>
+
+          <Stack direction="row" spacing={1}>
+            {trip.status === "Planning" && (
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={<PlayArrowIcon />}
+                disabled={startTripMutation.isPending}
+                onClick={() => startTripMutation.mutate({ id: trip.id })}
+              >
+                Start Trip Early
+              </Button>
+            )}
+
+            {trip.status === "Active" && (
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<CheckCircleIcon />}
+                disabled={completeTripMutation.isPending}
+                onClick={() => completeTripMutation.mutate({ id: trip.id })}
+              >
+                Complete Trip
+              </Button>
+            )}
+          </Stack>
         </Stack>
+
 
         {/* Tab Navigation Header */}
         <Paper

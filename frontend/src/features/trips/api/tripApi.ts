@@ -44,3 +44,25 @@ export async function updateTrip(
 export async function deleteTrip(id: string): Promise<void> {
   await apiClient.delete(`/trips/${id}`);
 }
+
+export async function startTrip(
+  id: string,
+  actualStart?: string
+): Promise<Trip> {
+  const response = await apiClient.post<Trip>(`/trips/${id}/start`, {
+    actualStart,
+  });
+
+  return response.data;
+}
+
+export async function completeTrip(
+  id: string,
+  actualCompletion?: string
+): Promise<Trip> {
+  const response = await apiClient.post<Trip>(`/trips/${id}/complete`, {
+    actualCompletion,
+  });
+
+  return response.data;
+}

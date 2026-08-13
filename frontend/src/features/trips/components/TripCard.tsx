@@ -8,6 +8,7 @@ import {
   CardActionArea,
   CardActions,
   CardContent,
+  Chip,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -28,6 +29,12 @@ type TripCardProps = {
   onEdit: (trip: Trip) => void;
   onDelete: (trip: Trip) => void;
 };
+
+const STATUS_COLOR_MAP = {
+  Planning: "info",
+  Active: "success",
+  Completed: "secondary",
+} as const;
 
 export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -72,15 +79,25 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         >
           <Stack spacing={2} sx={{ flexGrow: 1 }}>
             <Box>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 600,
-                  lineHeight: 1.3,
-                }}
-              >
-                {trip.name}
-              </Typography>
+              <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 600,
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {trip.name}
+                </Typography>
+                <Chip
+                  label={trip.status}
+                  size="small"
+                  color={STATUS_COLOR_MAP[trip.status] ?? "default"}
+                  variant="outlined"
+                  sx={{ fontWeight: 600, textTransform: "capitalize" }}
+                />
+              </Stack>
+
 
               {trip.description && (
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
@@ -88,6 +105,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
                 </Typography>
               )}
             </Box>
+
 
             <Stack
               direction="row"
