@@ -23,8 +23,9 @@ public sealed class UpdateChecklistItemCommandHandler
             return null;
         }
 
-        item.Update(command.Title, item.DisplayOrder);
+        item.Update(command.Title, item.DisplayOrder, command.IsRequired);
         await _checklistRepository.SaveChangesAsync(cancellationToken);
+
 
         var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(command.TripId, cancellationToken);
         return updatedCategories.ToSummaryDto(command.TripId);

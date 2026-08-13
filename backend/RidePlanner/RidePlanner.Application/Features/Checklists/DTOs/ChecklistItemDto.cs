@@ -6,5 +6,7 @@ public sealed class ChecklistItemDto
     public Guid CategoryId { get; set; }
     public string Title { get; set; } = string.Empty;
     public bool IsCompleted { get; set; }
+    public bool IsRequired { get; set; } = true;
     public int DisplayOrder { get; set; }
 }
+

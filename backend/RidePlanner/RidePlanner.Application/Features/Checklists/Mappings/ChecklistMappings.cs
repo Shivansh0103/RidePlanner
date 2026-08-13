@@ -12,8 +12,11 @@ public static class ChecklistMappings
             .Select(c => c.ToDto())
             .ToList();
 
-        var totalItems = categoryDtos.Sum(c => c.TotalItemsCount);
-        var completedItems = categoryDtos.Sum(c => c.CompletedItemsCount);
+        var allItems = categories.SelectMany(c => c.Items).ToList();
+        var totalItems = allItems.Count;
+        var completedItems = allItems.Count(i => i.IsCompleted);
+        var requiredItems = allItems.Count(i => i.IsRequired);
+        var completedRequiredItems = allItems.Count(i => i.IsRequired && i.IsCompleted);
         var percentage = totalItems > 0 ? Math.Round((double)completedItems / totalItems * 100, 1) : 0;
 
         return new ChecklistSummaryDto
@@ -21,6 +24,8 @@ public static class ChecklistMappings
             TripId = tripId,
             TotalItemsCount = totalItems,
             CompletedItemsCount = completedItems,
+            RequiredItemsCount = requiredItems,
+            CompletedRequiredItemsCount = completedRequiredItems,
             CompletionPercentage = percentage,
             Categories = categoryDtos
         };
@@ -56,7 +61,9 @@ public static class ChecklistMappings
             CategoryId = item.CategoryId,
             Title = item.Title,
             IsCompleted = item.IsCompleted,
+            IsRequired = item.IsRequired,
             DisplayOrder = item.DisplayOrder
         };
     }
 }
+
