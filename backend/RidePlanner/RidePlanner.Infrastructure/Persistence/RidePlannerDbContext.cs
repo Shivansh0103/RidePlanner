@@ -22,6 +22,8 @@ public class RidePlannerDbContext : DbContext
     public DbSet<ChecklistItem> ChecklistItems => Set<ChecklistItem>();
     public DbSet<TripDocument> TripDocuments => Set<TripDocument>();
     public DbSet<EmergencyContact> EmergencyContacts => Set<EmergencyContact>();
+    public DbSet<TripMemory> TripMemories => Set<TripMemory>();
+
 
 
 
