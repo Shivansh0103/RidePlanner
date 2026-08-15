@@ -11,6 +11,8 @@ import {
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import { useRoute } from "@/shared/maps";
 
+import ReadinessWidget from "@/features/readiness/components/ReadinessWidget";
+
 import OverviewAccommodationCard from "./OverviewAccommodationCard";
 import OverviewAlerts from "./OverviewAlerts";
 import OverviewBudgetCard from "./OverviewBudgetCard";
@@ -18,6 +20,7 @@ import OverviewHeader from "./OverviewHeader";
 import OverviewItineraryCard from "./OverviewItineraryCard";
 import OverviewPreparationCard from "./OverviewPreparationCard";
 import OverviewProgressCard from "./OverviewProgressCard";
+
 
 interface TripOverviewProps {
   trip: Trip;
@@ -58,8 +61,12 @@ export default function TripOverview({
           routeDurationMillis={route?.summary?.durationMillis}
         />
 
+        {/* Pre-Ride Readiness Health Score Widget */}
+        <ReadinessWidget tripId={trip.id} />
+
         {/* Conservative Smart Alerts */}
         <OverviewAlerts alerts={alerts} />
+
 
         {/* Compact Overview Widgets Grid */}
         <Grid container spacing={2.5}>

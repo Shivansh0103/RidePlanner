@@ -24,13 +24,16 @@ import { useTrip } from "../hooks/useTrip";
 import { useStartTrip } from "../hooks/useStartTrip";
 import { useCompleteTrip } from "../hooks/useCompleteTrip";
 
+import SpeedIcon from "@mui/icons-material/Speed";
 import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import DocumentsSection from "@/features/documents/components/DocumentsSection";
 import EmergencyContactsSection from "@/features/contacts/components/EmergencyContactsSection";
+import ReadinessSection from "@/features/readiness/components/ReadinessSection";
 
-const TAB_KEYS = ["overview", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts"] as const;
+const TAB_KEYS = ["overview", "readiness", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
+
 
 
 
@@ -189,6 +192,14 @@ export default function TripDetailsPage() {
               aria-controls="trip-tabpanel-overview"
             />
             <Tab
+              icon={<SpeedIcon fontSize="small" />}
+              iconPosition="start"
+              label="Readiness"
+              value="readiness"
+              id="trip-tab-readiness"
+              aria-controls="trip-tabpanel-readiness"
+            />
+            <Tab
               icon={<AltRouteIcon fontSize="small" />}
               iconPosition="start"
               label="Itinerary & Route"
@@ -196,6 +207,7 @@ export default function TripDetailsPage() {
               id="trip-tab-itinerary"
               aria-controls="trip-tabpanel-itinerary"
             />
+
             <Tab
               icon={<HotelIcon fontSize="small" />}
               iconPosition="start"
@@ -265,7 +277,15 @@ export default function TripDetailsPage() {
           </Stack>
         )}
 
-        {/* Tab Panel 1: Itinerary & Map with Bi-Directional Selection Sync */}
+        {/* Tab Panel 1: Readiness Health Score */}
+        {activeTab === "readiness" && (
+          <Box role="tabpanel" id="trip-tabpanel-readiness" aria-labelledby="trip-tab-readiness">
+            <ReadinessSection tripId={trip.id} />
+          </Box>
+        )}
+
+        {/* Tab Panel 2: Itinerary & Map with Bi-Directional Selection Sync */}
+
         {activeTab === "itinerary" && (
           <Stack spacing={3} role="tabpanel" id="trip-tabpanel-itinerary" aria-labelledby="trip-tab-itinerary">
             <Box
