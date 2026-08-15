@@ -24,15 +24,18 @@ import { useTrip } from "../hooks/useTrip";
 import { useStartTrip } from "../hooks/useStartTrip";
 import { useCompleteTrip } from "../hooks/useCompleteTrip";
 
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import SpeedIcon from "@mui/icons-material/Speed";
 import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import DocumentsSection from "@/features/documents/components/DocumentsSection";
 import EmergencyContactsSection from "@/features/contacts/components/EmergencyContactsSection";
 import ReadinessSection from "@/features/readiness/components/ReadinessSection";
+import TripSummarySection from "@/features/summary/components/TripSummarySection";
 
-const TAB_KEYS = ["overview", "readiness", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts"] as const;
+const TAB_KEYS = ["overview", "readiness", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts", "summary"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
+
 
 
 
@@ -248,8 +251,17 @@ export default function TripDetailsPage() {
               id="trip-tab-contacts"
               aria-controls="trip-tabpanel-contacts"
             />
+            <Tab
+              icon={<AssessmentIcon fontSize="small" />}
+              iconPosition="start"
+              label="Summary"
+              value="summary"
+              id="trip-tab-summary"
+              aria-controls="trip-tabpanel-summary"
+            />
           </Tabs>
         </Paper>
+
 
         {/* Tab Panel 0: Overview Dashboard */}
         {activeTab === "overview" && (
@@ -345,6 +357,14 @@ export default function TripDetailsPage() {
             <EmergencyContactsSection tripId={trip.id} />
           </Box>
         )}
+
+        {/* Tab Panel 7: Trip Summary Report */}
+        {activeTab === "summary" && (
+          <Box role="tabpanel" id="trip-tabpanel-summary" aria-labelledby="trip-tab-summary">
+            <TripSummarySection tripId={trip.id} />
+          </Box>
+        )}
+
 
 
       </Stack>
