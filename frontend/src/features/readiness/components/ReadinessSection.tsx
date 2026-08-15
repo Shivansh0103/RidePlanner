@@ -37,6 +37,7 @@ const CHECK_ICON_MAP: Record<string, React.ReactNode> = {
   Documents: <FolderSpecialIcon color="primary" />,
   Contacts: <ContactPhoneIcon color="primary" />,
   Accommodations: <HotelIcon color="primary" />,
+  Budget: <AccountBalanceWalletIcon color="primary" />,
 };
 
 const CHECK_TAB_MAP: Record<string, string> = {
@@ -45,7 +46,9 @@ const CHECK_TAB_MAP: Record<string, string> = {
   Documents: "documents",
   Contacts: "contacts",
   Accommodations: "accommodation",
+  Budget: "budget",
 };
+
 
 export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
   const { data: readiness, isLoading, isError } = useTripReadiness(tripId);

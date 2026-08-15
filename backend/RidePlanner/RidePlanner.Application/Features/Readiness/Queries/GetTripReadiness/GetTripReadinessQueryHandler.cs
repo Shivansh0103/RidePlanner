@@ -101,7 +101,7 @@ public sealed class GetTripReadinessQueryHandler
             "Contacts",
             "Emergency Contacts",
             isPassed: hasContacts,
-            isRequired: true,
+            isRequired: false,
             message: !hasContacts
                 ? "No emergency contacts added."
                 : primaryContact != null
@@ -122,7 +122,21 @@ public sealed class GetTripReadinessQueryHandler
                     ? "Single day ride - no accommodation required."
                     : "Multi-day ride - no stay reservations booked yet."));
 
+        // 6. Budget Target
+        var targetBudget = trip.Budget?.TargetBudget ?? 0m;
+        var hasBudgetDefined = targetBudget > 0m;
+
+        items.Add(new ReadinessItem(
+            "Budget",
+            "Budget Target",
+            isPassed: hasBudgetDefined,
+            isRequired: false,
+            message: hasBudgetDefined
+                ? $"Target budget set to ₹{targetBudget.ToString("N0")}."
+                : "No target budget set for trip."));
+
         var domainReadiness = new TripReadiness(items);
+
 
         return new TripReadinessDto
         {
