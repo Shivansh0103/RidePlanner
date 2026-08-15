@@ -36,7 +36,10 @@ public class Trip : Entity
 
     public ICollection<EmergencyContact> EmergencyContacts { get; private set; } = [];
 
+    public ICollection<TripMemory> Memories { get; private set; } = [];
+
     public TripBudget Budget { get; private set; } = null!;
+
 
 
     public IReadOnlyCollection<ChecklistCategory> ChecklistCategories =>
