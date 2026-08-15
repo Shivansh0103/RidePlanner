@@ -90,8 +90,11 @@ public static class DependencyInjection
         services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Commands.DeleteEmergencyContact.DeleteEmergencyContactCommandHandler>();
         services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Queries.GetEmergencyContacts.GetEmergencyContactsQueryHandler>();
         services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Queries.GetEmergencyContact.GetEmergencyContactQueryHandler>();
+
+        services.AddScoped<RidePlanner.Application.Features.Readiness.Queries.GetTripReadiness.GetTripReadinessQueryHandler>();
         return services;
     }
 }
+
 
 
