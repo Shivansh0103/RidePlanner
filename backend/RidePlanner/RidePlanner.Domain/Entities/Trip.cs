@@ -34,7 +34,10 @@ public class Trip : Entity
 
     public ICollection<TripDocument> Documents { get; private set; } = [];
 
+    public ICollection<EmergencyContact> EmergencyContacts { get; private set; } = [];
+
     public TripBudget Budget { get; private set; } = null!;
+
 
     public IReadOnlyCollection<ChecklistCategory> ChecklistCategories =>
         _checklistCategories.AsReadOnly();
