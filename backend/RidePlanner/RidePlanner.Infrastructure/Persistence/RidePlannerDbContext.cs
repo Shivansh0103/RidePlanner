@@ -21,6 +21,8 @@ public class RidePlannerDbContext : DbContext
     public DbSet<ChecklistCategory> ChecklistCategories => Set<ChecklistCategory>();
     public DbSet<ChecklistItem> ChecklistItems => Set<ChecklistItem>();
     public DbSet<TripDocument> TripDocuments => Set<TripDocument>();
+    public DbSet<EmergencyContact> EmergencyContacts => Set<EmergencyContact>();
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
