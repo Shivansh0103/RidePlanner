@@ -24,6 +24,7 @@ import { useTrip } from "../hooks/useTrip";
 import { useStartTrip } from "../hooks/useStartTrip";
 import { useCompleteTrip } from "../hooks/useCompleteTrip";
 
+import CollectionsIcon from "@mui/icons-material/Collections";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import SpeedIcon from "@mui/icons-material/Speed";
 import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
@@ -32,9 +33,11 @@ import DocumentsSection from "@/features/documents/components/DocumentsSection";
 import EmergencyContactsSection from "@/features/contacts/components/EmergencyContactsSection";
 import ReadinessSection from "@/features/readiness/components/ReadinessSection";
 import TripSummarySection from "@/features/summary/components/TripSummarySection";
+import MemoriesSection from "@/features/memories/components/MemoriesSection";
 
-const TAB_KEYS = ["overview", "readiness", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts", "summary"] as const;
+const TAB_KEYS = ["overview", "readiness", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts", "summary", "memories"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
+
 
 
 
@@ -259,8 +262,17 @@ export default function TripDetailsPage() {
               id="trip-tab-summary"
               aria-controls="trip-tabpanel-summary"
             />
+            <Tab
+              icon={<CollectionsIcon fontSize="small" />}
+              iconPosition="start"
+              label="Memories"
+              value="memories"
+              id="trip-tab-memories"
+              aria-controls="trip-tabpanel-memories"
+            />
           </Tabs>
         </Paper>
+
 
 
         {/* Tab Panel 0: Overview Dashboard */}
@@ -364,6 +376,14 @@ export default function TripDetailsPage() {
             <TripSummarySection tripId={trip.id} />
           </Box>
         )}
+
+        {/* Tab Panel 8: Memories & Journal */}
+        {activeTab === "memories" && (
+          <Box role="tabpanel" id="trip-tabpanel-memories" aria-labelledby="trip-tab-memories">
+            <MemoriesSection tripId={trip.id} />
+          </Box>
+        )}
+
 
 
 
