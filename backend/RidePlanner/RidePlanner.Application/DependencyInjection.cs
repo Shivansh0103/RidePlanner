@@ -84,7 +84,14 @@ public static class DependencyInjection
         services.AddScoped<RidePlanner.Application.Features.TravelDocuments.Commands.DeleteTripDocument.DeleteTripDocumentCommandHandler>();
         services.AddScoped<RidePlanner.Application.Features.TravelDocuments.Queries.GetTripDocuments.GetTripDocumentsQueryHandler>();
         services.AddScoped<RidePlanner.Application.Features.TravelDocuments.Queries.GetTripDocument.GetTripDocumentQueryHandler>();
+
+        services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Commands.CreateEmergencyContact.CreateEmergencyContactCommandHandler>();
+        services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Commands.UpdateEmergencyContact.UpdateEmergencyContactCommandHandler>();
+        services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Commands.DeleteEmergencyContact.DeleteEmergencyContactCommandHandler>();
+        services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Queries.GetEmergencyContacts.GetEmergencyContactsQueryHandler>();
+        services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Queries.GetEmergencyContact.GetEmergencyContactQueryHandler>();
         return services;
     }
 }
+
 
