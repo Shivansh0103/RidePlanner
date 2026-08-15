@@ -25,10 +25,13 @@ import { useStartTrip } from "../hooks/useStartTrip";
 import { useCompleteTrip } from "../hooks/useCompleteTrip";
 
 import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
+import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import DocumentsSection from "@/features/documents/components/DocumentsSection";
+import EmergencyContactsSection from "@/features/contacts/components/EmergencyContactsSection";
 
-const TAB_KEYS = ["overview", "itinerary", "accommodation", "budget", "checklist", "documents"] as const;
+const TAB_KEYS = ["overview", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
+
 
 
 const STATUS_COLOR_MAP = {
@@ -225,6 +228,14 @@ export default function TripDetailsPage() {
               id="trip-tab-documents"
               aria-controls="trip-tabpanel-documents"
             />
+            <Tab
+              icon={<ContactPhoneIcon fontSize="small" />}
+              iconPosition="start"
+              label="Contacts"
+              value="contacts"
+              id="trip-tab-contacts"
+              aria-controls="trip-tabpanel-contacts"
+            />
           </Tabs>
         </Paper>
 
@@ -307,6 +318,14 @@ export default function TripDetailsPage() {
             <DocumentsSection tripId={trip.id} />
           </Box>
         )}
+
+        {/* Tab Panel 6: Emergency Contacts */}
+        {activeTab === "contacts" && (
+          <Box role="tabpanel" id="trip-tabpanel-contacts" aria-labelledby="trip-tab-contacts">
+            <EmergencyContactsSection tripId={trip.id} />
+          </Box>
+        )}
+
 
       </Stack>
     </Box>
