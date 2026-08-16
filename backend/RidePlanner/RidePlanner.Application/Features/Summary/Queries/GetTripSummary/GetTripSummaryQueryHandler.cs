@@ -31,7 +31,7 @@ public sealed class GetTripSummaryQueryHandler : IRequestHandler<GetTripSummaryQ
         GetTripSummaryQuery request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(request.TripId, cancellationToken);
+        var trip = await _tripRepository.GetWithBudgetAsync(request.TripId, cancellationToken);
         if (trip is null)
         {
             return null;
