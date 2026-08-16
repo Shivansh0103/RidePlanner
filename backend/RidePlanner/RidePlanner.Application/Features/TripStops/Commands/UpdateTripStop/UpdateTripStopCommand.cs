@@ -1,3 +1,4 @@
+using MediatR;
 using RidePlanner.Domain.Enums;
 
 namespace RidePlanner.Application.Features.TripStops.Commands.UpdateTripStop;
@@ -14,4 +15,4 @@ public sealed record UpdateTripStopCommand(
     DateOnly ArrivalDate,
     DateOnly DepartureDate,
     string? Notes,
-    int DisplayOrder);
+    int DisplayOrder) : IRequest;

@@ -1,8 +1,9 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 
 namespace RidePlanner.Application.Features.TripStops.Commands.ReorderTripStops;
 
-public sealed class ReorderTripStopsCommandHandler
+public sealed class ReorderTripStopsCommandHandler : IRequestHandler<ReorderTripStopsCommand>
 {
     private readonly ITripStopRepository _tripStopRepository;
 
@@ -12,12 +13,12 @@ public sealed class ReorderTripStopsCommandHandler
     }
 
     public async Task Handle(
-        ReorderTripStopsCommand command,
+        ReorderTripStopsCommand request,
         CancellationToken cancellationToken = default)
     {
         await _tripStopRepository.ReorderAsync(
-            command.TripId,
-            command.OrderedStopIds,
+            request.TripId,
+            request.OrderedStopIds,
             cancellationToken);
     }
 }

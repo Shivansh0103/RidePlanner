@@ -1,9 +1,10 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 
 namespace RidePlanner.Application.Features.Trips.Commands.CreateTrip;
 
-public sealed class CreateTripCommandHandler
+public sealed class CreateTripCommandHandler : IRequestHandler<CreateTripCommand, Trip>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -13,14 +14,14 @@ public sealed class CreateTripCommandHandler
     }
 
     public async Task<Trip> Handle(
-        CreateTripCommand command,
+        CreateTripCommand request,
         CancellationToken cancellationToken = default)
     {
         var trip = Trip.Create(
-            command.Name,
-            command.Description,
-            command.StartDate,
-            command.EndDate);
+            request.Name,
+            request.Description,
+            request.StartDate,
+            request.EndDate);
 
         trip.InitializeBudget();
         trip.InitializeDefaultChecklist();

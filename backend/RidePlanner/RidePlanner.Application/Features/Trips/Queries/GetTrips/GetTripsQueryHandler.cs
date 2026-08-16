@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Trips.Services;
 using RidePlanner.Domain.Entities;
 
 namespace RidePlanner.Application.Features.Trips.Queries.GetTrips;
 
-public sealed class GetTripsQueryHandler
+public sealed class GetTripsQueryHandler : IRequestHandler<GetTripsQuery, IReadOnlyList<Trip>>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -14,6 +15,7 @@ public sealed class GetTripsQueryHandler
     }
 
     public async Task<IReadOnlyList<Trip>> Handle(
+        GetTripsQuery request,
         CancellationToken cancellationToken = default)
     {
         var trips = await _tripRepository.GetAllAsync(cancellationToken);
@@ -21,4 +23,4 @@ public sealed class GetTripsQueryHandler
 
         return trips;
     }
-}
+}

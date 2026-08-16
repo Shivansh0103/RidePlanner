@@ -1,3 +1,6 @@
+using MediatR;
+using RidePlanner.Domain.Entities;
+
 namespace RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
 
 public sealed record UpdateTripCommand(
@@ -5,4 +8,4 @@ public sealed record UpdateTripCommand(
     string Name,
     string? Description,
     DateOnly StartDate,
-    DateOnly EndDate);
+    DateOnly EndDate) : IRequest<Trip?>;

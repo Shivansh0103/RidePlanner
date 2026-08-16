@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.TripStops.Services;
 using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.TripStops.Commands.UpdateTripStop;
 
-public sealed class UpdateTripStopCommandHandler
+public sealed class UpdateTripStopCommandHandler : IRequestHandler<UpdateTripStopCommand>
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
@@ -18,38 +19,38 @@ public sealed class UpdateTripStopCommandHandler
     }
 
     public async Task Handle(
-        UpdateTripStopCommand command,
-        CancellationToken cancellationToken)
+        UpdateTripStopCommand request,
+        CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetByIdAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null)
             throw new DomainException("Trip not found.");
 
         var stop = await _tripStopRepository.GetByIdAsync(
-            command.StopId,
+            request.StopId,
             cancellationToken);
 
-        if (stop is null || stop.TripId != command.TripId)
+        if (stop is null || stop.TripId != request.TripId)
             throw new DomainException("Trip stop not found.");
 
-        int orderToUse = command.DisplayOrder > 0 ? command.DisplayOrder : stop.DisplayOrder;
+        int orderToUse = request.DisplayOrder > 0 ? request.DisplayOrder : stop.DisplayOrder;
 
         stop.Update(
-            command.Name,
-            command.PlaceId,
-            command.FormattedAddress,
-            command.Latitude,
-            command.Longitude,
-            command.Category,
-            command.ArrivalDate,
-            command.DepartureDate,
-            command.Notes,
+            request.Name,
+            request.PlaceId,
+            request.FormattedAddress,
+            request.Latitude,
+            request.Longitude,
+            request.Category,
+            request.ArrivalDate,
+            request.DepartureDate,
+            request.Notes,
             orderToUse);
 
-        var allStops = await _tripStopRepository.GetByTripIdAsync(command.TripId, cancellationToken);
+        var allStops = await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
         TripStopSequenceReconciler.Reconcile(allStops);
 
         await _tripStopRepository.SaveChangesAsync(cancellationToken);

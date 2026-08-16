@@ -1,9 +1,10 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.TripStops.Commands.DeleteTripStop;
 
-public sealed class DeleteTripStopCommandHandler
+public sealed class DeleteTripStopCommandHandler : IRequestHandler<DeleteTripStopCommand>
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
@@ -17,27 +18,27 @@ public sealed class DeleteTripStopCommandHandler
     }
 
     public async Task Handle(
-        DeleteTripStopCommand command,
-        CancellationToken cancellationToken)
+        DeleteTripStopCommand request,
+        CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetByIdAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null)
             throw new DomainException("Trip not found.");
 
         var stop = await _tripStopRepository.GetByIdAsync(
-            command.StopId,
+            request.StopId,
             cancellationToken);
 
-        if (stop is null || stop.TripId != command.TripId)
+        if (stop is null || stop.TripId != request.TripId)
             throw new DomainException("Trip stop not found.");
 
         _tripStopRepository.Remove(stop);
 
-        var remainingStops = (await _tripStopRepository.GetByTripIdAsync(command.TripId, cancellationToken))
-            .Where(s => s.Id != command.StopId);
+        var remainingStops = (await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken))
+            .Where(s => s.Id != request.StopId);
         RidePlanner.Application.Features.TripStops.Services.TripStopSequenceReconciler.Reconcile(remainingStops);
 
         await _tripStopRepository.SaveChangesAsync(cancellationToken);

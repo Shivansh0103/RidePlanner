@@ -1,11 +1,12 @@
-﻿using RidePlanner.Application.Abstractions.Persistence;
+using MediatR;
+using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.TripStops.DTOs;
 using RidePlanner.Application.Features.TripStops.Mappings;
 using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.TripStops.Queries.GetTripStops;
 
-public sealed class GetTripStopsQueryHandler
+public sealed class GetTripStopsQueryHandler : IRequestHandler<GetTripStopsQuery, IReadOnlyList<TripStopResponse>>
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
@@ -19,18 +20,18 @@ public sealed class GetTripStopsQueryHandler
     }
 
     public async Task<IReadOnlyList<TripStopResponse>> Handle(
-        GetTripStopsQuery query,
-        CancellationToken cancellationToken)
+        GetTripStopsQuery request,
+        CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetByIdAsync(
-            query.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null)
             throw new DomainException("Trip not found.");
 
         var stops = await _tripStopRepository.GetByTripIdAsync(
-            query.TripId,
+            request.TripId,
             cancellationToken);
 
         return stops

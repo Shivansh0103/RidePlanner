@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Trips.Commands.CreateTrip;
 using RidePlanner.Application.Features.Trips.Commands.StartTrip;
@@ -15,36 +16,17 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/[controller]")]
 public class TripsController : ControllerBase
 {
-    private readonly CreateTripCommandHandler _createTripCommandHandler;
-    private readonly UpdateTripCommandHandler _updateTripCommandHandler;
-    private readonly DeleteTripCommandHandler _deleteTripCommandHandler;
-    private readonly StartTripCommandHandler _startTripCommandHandler;
-    private readonly CompleteTripCommandHandler _completeTripCommandHandler;
-    private readonly GetTripQueryHandler _getTripQueryHandler;
-    private readonly GetTripsQueryHandler _getTripsQueryHandler;
+    private readonly ISender _sender;
 
-    public TripsController(
-        CreateTripCommandHandler createTripCommandHandler,
-        UpdateTripCommandHandler updateTripCommandHandler,
-        DeleteTripCommandHandler deleteTripCommandHandler,
-        StartTripCommandHandler startTripCommandHandler,
-        CompleteTripCommandHandler completeTripCommandHandler,
-        GetTripQueryHandler getTripQueryHandler,
-        GetTripsQueryHandler getTripsQueryHandler)
+    public TripsController(ISender sender)
     {
-        _createTripCommandHandler = createTripCommandHandler;
-        _updateTripCommandHandler = updateTripCommandHandler;
-        _deleteTripCommandHandler = deleteTripCommandHandler;
-        _startTripCommandHandler = startTripCommandHandler;
-        _completeTripCommandHandler = completeTripCommandHandler;
-        _getTripQueryHandler = getTripQueryHandler;
-        _getTripsQueryHandler = getTripsQueryHandler;
+        _sender = sender;
     }
 
     [HttpPost]
     public async Task<ActionResult<TripResponse>> CreateTrip(
-    CreateTripRequest request,
-    CancellationToken cancellationToken)
+        CreateTripRequest request,
+        CancellationToken cancellationToken)
     {
         var command = new CreateTripCommand(
             request.Name,
@@ -52,19 +34,15 @@ public class TripsController : ControllerBase
             request.StartDate,
             request.EndDate);
 
-        var trip = await _createTripCommandHandler.Handle(
-            command,
-            cancellationToken);
+        var trip = await _sender.Send(command, cancellationToken);
 
         return CreatedAtAction(nameof(GetTrip), new { id = trip.Id }, trip.ToResponse());
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<TripResponse>> GetTrip(Guid id,CancellationToken cancellationToken)
+    public async Task<ActionResult<TripResponse>> GetTrip(Guid id, CancellationToken cancellationToken)
     {
-        var trip = await _getTripQueryHandler.Handle(
-                            new GetTripQuery(id),
-                            cancellationToken);
+        var trip = await _sender.Send(new GetTripQuery(id), cancellationToken);
 
         if (trip == null)
             return NotFound();
@@ -75,8 +53,7 @@ public class TripsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TripResponse>>> GetTrips(CancellationToken cancellationToken)
     {
-        var trips = await _getTripsQueryHandler.Handle(
-            cancellationToken);
+        var trips = await _sender.Send(new GetTripsQuery(), cancellationToken);
 
         IEnumerable<TripResponse> response = trips.Select(trip => trip.ToResponse());
 
@@ -85,9 +62,9 @@ public class TripsController : ControllerBase
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<TripResponse>> UpdateTrip(
-    Guid id,
-    UpdateTripRequest request,
-    CancellationToken cancellationToken)
+        Guid id,
+        UpdateTripRequest request,
+        CancellationToken cancellationToken)
     {
         var command = new UpdateTripCommand(
             id,
@@ -96,9 +73,7 @@ public class TripsController : ControllerBase
             request.StartDate,
             request.EndDate);
 
-        var trip = await _updateTripCommandHandler.Handle(
-            command,
-            cancellationToken);
+        var trip = await _sender.Send(command, cancellationToken);
 
         if (trip is null)
             return NotFound();
@@ -113,7 +88,7 @@ public class TripsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new StartTripCommand(id, request?.ActualStart);
-        var trip = await _startTripCommandHandler.Handle(command, cancellationToken);
+        var trip = await _sender.Send(command, cancellationToken);
 
         return Ok(trip.ToResponse());
     }
@@ -125,21 +100,19 @@ public class TripsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new CompleteTripCommand(id, request?.ActualCompletion);
-        var trip = await _completeTripCommandHandler.Handle(command, cancellationToken);
+        var trip = await _sender.Send(command, cancellationToken);
 
         return Ok(trip.ToResponse());
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteTrip(
-    Guid id,
-    CancellationToken cancellationToken)
+        Guid id,
+        CancellationToken cancellationToken)
     {
         var command = new DeleteTripCommand(id);
-        await _deleteTripCommandHandler.Handle(
-            command,
-            cancellationToken);
+        await _sender.Send(command, cancellationToken);
 
         return NoContent();
     }
-}
+}

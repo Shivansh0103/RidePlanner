@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.Trips.Commands.StartTrip;
 
-public sealed class StartTripCommandHandler
+public sealed class StartTripCommandHandler : IRequestHandler<StartTripCommand, Trip>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -14,16 +15,16 @@ public sealed class StartTripCommandHandler
     }
 
     public async Task<Trip> Handle(
-        StartTripCommand command,
+        StartTripCommand request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(command.TripId, cancellationToken);
+        var trip = await _tripRepository.GetByIdAsync(request.TripId, cancellationToken);
         if (trip is null)
         {
-            throw new DomainException($"Trip with ID {command.TripId} was not found.");
+            throw new DomainException($"Trip with ID {request.TripId} was not found.");
         }
 
-        trip.Start(command.ActualStart);
+        trip.Start(request.ActualStart);
         await _tripRepository.SaveChangesAsync(cancellationToken);
 
         return trip;

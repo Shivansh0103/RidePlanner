@@ -1,9 +1,10 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Entities;
 
 namespace RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
 
-public sealed class UpdateTripCommandHandler
+public sealed class UpdateTripCommandHandler : IRequestHandler<UpdateTripCommand, Trip?>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -13,19 +14,19 @@ public sealed class UpdateTripCommandHandler
     }
 
     public async Task<Trip?> Handle(
-        UpdateTripCommand command,
+        UpdateTripCommand request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(command.Id, cancellationToken);
+        var trip = await _tripRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (trip == null)
             return null;
 
         trip.Update(
-            command.Name,
-            command.Description,
-            command.StartDate,
-            command.EndDate);
+            request.Name,
+            request.Description,
+            request.StartDate,
+            request.EndDate);
 
         await _tripRepository.SaveChangesAsync(cancellationToken);
 

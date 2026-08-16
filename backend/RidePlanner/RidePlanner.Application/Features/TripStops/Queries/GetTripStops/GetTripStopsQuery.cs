@@ -1,4 +1,7 @@
-﻿namespace RidePlanner.Application.Features.TripStops.Queries.GetTripStops;
+using MediatR;
+using RidePlanner.Application.Features.TripStops.DTOs;
+
+namespace RidePlanner.Application.Features.TripStops.Queries.GetTripStops;
 
 public sealed record GetTripStopsQuery(
-    Guid TripId);
+    Guid TripId) : IRequest<IReadOnlyList<TripStopResponse>>;

@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.TripStops.Commands.CreateTripStop;
 using RidePlanner.Application.Features.TripStops.Commands.DeleteTripStop;
@@ -12,24 +13,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/stops")]
 public class TripStopsController : ControllerBase
 {
-    private readonly CreateTripStopCommandHandler _createTripStopCommandHandler;
-    private readonly UpdateTripStopCommandHandler _updateTripStopCommandHandler;
-    private readonly DeleteTripStopCommandHandler _deleteTripStopCommandHandler;
-    private readonly ReorderTripStopsCommandHandler _reorderTripStopsCommandHandler;
-    private readonly GetTripStopsQueryHandler _getTripStopsQueryHandler;
+    private readonly ISender _sender;
 
-    public TripStopsController(
-        CreateTripStopCommandHandler createTripStopCommandHandler,
-        UpdateTripStopCommandHandler updateTripStopCommandHandler,
-        DeleteTripStopCommandHandler deleteTripStopCommandHandler,
-        ReorderTripStopsCommandHandler reorderTripStopsCommandHandler,
-        GetTripStopsQueryHandler getTripStopsQueryHandler)
+    public TripStopsController(ISender sender)
     {
-        _createTripStopCommandHandler = createTripStopCommandHandler;
-        _updateTripStopCommandHandler = updateTripStopCommandHandler;
-        _deleteTripStopCommandHandler = deleteTripStopCommandHandler;
-        _reorderTripStopsCommandHandler = reorderTripStopsCommandHandler;
-        _getTripStopsQueryHandler = getTripStopsQueryHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -37,7 +25,7 @@ public class TripStopsController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var stops = await _getTripStopsQueryHandler.Handle(
+        var stops = await _sender.Send(
             new GetTripStopsQuery(tripId),
             cancellationToken);
 
@@ -54,16 +42,16 @@ public class TripStopsController : ControllerBase
             tripId,
             request.Name,
             request.PlaceId,
-request.FormattedAddress,
-request.Latitude,
-request.Longitude,
+            request.FormattedAddress,
+            request.Latitude,
+            request.Longitude,
             request.Category,
             request.ArrivalDate,
             request.DepartureDate,
             request.Notes,
             request.DisplayOrder);
 
-        var stopId = await _createTripStopCommandHandler.Handle(
+        var stopId = await _sender.Send(
             command,
             cancellationToken);
 
@@ -83,7 +71,7 @@ request.Longitude,
             tripId,
             request.OrderedStopIds);
 
-        await _reorderTripStopsCommandHandler.Handle(
+        await _sender.Send(
             command,
             cancellationToken);
 
@@ -102,16 +90,16 @@ request.Longitude,
             stopId,
             request.Name,
             request.PlaceId,
-request.FormattedAddress,
-request.Latitude,
-request.Longitude,
+            request.FormattedAddress,
+            request.Latitude,
+            request.Longitude,
             request.Category,
             request.ArrivalDate,
             request.DepartureDate,
             request.Notes,
             request.DisplayOrder);
 
-        await _updateTripStopCommandHandler.Handle(
+        await _sender.Send(
             command,
             cancellationToken);
 
@@ -128,7 +116,7 @@ request.Longitude,
             tripId,
             stopId);
 
-        await _deleteTripStopCommandHandler.Handle(
+        await _sender.Send(
             command,
             cancellationToken);
 
