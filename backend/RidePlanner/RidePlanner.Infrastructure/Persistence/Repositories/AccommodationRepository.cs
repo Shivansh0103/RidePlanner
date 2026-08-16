@@ -18,6 +18,7 @@ public sealed class AccommodationRepository : IAccommodationRepository
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Accommodations
+            .AsNoTracking()
             .Include(a => a.TripStop)
             .Include(a => a.BudgetEstimate)
             .Where(a => a.TripId == tripId)

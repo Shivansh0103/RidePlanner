@@ -16,6 +16,7 @@ public class TripDocumentRepository : ITripDocumentRepository
     public async Task<IReadOnlyList<TripDocument>> GetByTripIdAsync(Guid tripId, CancellationToken cancellationToken = default)
     {
         return await _context.TripDocuments
+            .AsNoTracking()
             .Where(x => x.TripId == tripId)
             .OrderBy(x => x.Title)
             .ToListAsync(cancellationToken);

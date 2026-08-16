@@ -16,6 +16,7 @@ public class TripMemoryRepository : ITripMemoryRepository
     public async Task<IReadOnlyList<TripMemory>> GetByTripIdAsync(Guid tripId, CancellationToken cancellationToken = default)
     {
         return await _context.TripMemories
+            .AsNoTracking()
             .Where(x => x.TripId == tripId)
             .OrderByDescending(x => x.MemoryDate)
             .ToListAsync(cancellationToken);

@@ -28,6 +28,7 @@ public sealed class ExpenseRepository : IExpenseRepository
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Expenses
+            .AsNoTracking()
             .Include(e => e.Accommodation)
             .Include(e => e.TripStop)
             .Where(e => e.TripBudgetId == tripBudgetId)

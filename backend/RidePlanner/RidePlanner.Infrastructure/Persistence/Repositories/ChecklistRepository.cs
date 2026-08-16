@@ -18,6 +18,7 @@ public sealed class ChecklistRepository : IChecklistRepository
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.ChecklistCategories
+            .AsNoTracking()
             .Include(c => c.Items)
             .Where(c => c.TripId == tripId)
             .OrderBy(c => c.DisplayOrder)
