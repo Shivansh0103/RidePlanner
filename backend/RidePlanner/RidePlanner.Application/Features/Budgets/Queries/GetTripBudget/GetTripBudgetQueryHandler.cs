@@ -1,9 +1,11 @@
-﻿using RidePlanner.Application.Features.Budgets.DTOs;
+using MediatR;
+using RidePlanner.Application.Abstractions.Persistence;
+using RidePlanner.Application.Features.Budgets.DTOs;
 using RidePlanner.Application.Features.Budgets.Mapping;
 
 namespace RidePlanner.Application.Features.Budgets.Queries.GetTripBudget;
 
-public sealed class GetTripBudgetQueryHandler
+public sealed class GetTripBudgetQueryHandler : IRequestHandler<GetTripBudgetQuery, TripBudgetDto?>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -13,11 +15,11 @@ public sealed class GetTripBudgetQueryHandler
     }
 
     public async Task<TripBudgetDto?> Handle(
-    GetTripBudgetQuery query,
-    CancellationToken cancellationToken = default)
+        GetTripBudgetQuery request,
+        CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetWithBudgetAsync(
-            query.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null)

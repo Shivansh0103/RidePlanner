@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Expenses.Commands.CreateExpense;
 using RidePlanner.Application.Features.Expenses.Commands.DeleteExpense;
@@ -11,21 +12,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/expenses")]
 public sealed class ExpensesController : ControllerBase
 {
-    private readonly GetTripExpensesQueryHandler _getTripExpensesHandler;
-    private readonly CreateExpenseCommandHandler _createExpenseHandler;
-    private readonly UpdateExpenseCommandHandler _updateExpenseHandler;
-    private readonly DeleteExpenseCommandHandler _deleteExpenseHandler;
+    private readonly ISender _sender;
 
-    public ExpensesController(
-        GetTripExpensesQueryHandler getTripExpensesHandler,
-        CreateExpenseCommandHandler createExpenseHandler,
-        UpdateExpenseCommandHandler updateExpenseHandler,
-        DeleteExpenseCommandHandler deleteExpenseHandler)
+    public ExpensesController(ISender sender)
     {
-        _getTripExpensesHandler = getTripExpensesHandler;
-        _createExpenseHandler = createExpenseHandler;
-        _updateExpenseHandler = updateExpenseHandler;
-        _deleteExpenseHandler = deleteExpenseHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -33,7 +24,7 @@ public sealed class ExpensesController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var expenses = await _getTripExpensesHandler.Handle(
+        var expenses = await _sender.Send(
             new GetTripExpensesQuery(tripId),
             cancellationToken);
 
@@ -51,7 +42,7 @@ public sealed class ExpensesController : ControllerBase
         [FromBody] CreateExpenseRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _createExpenseHandler.Handle(
+        var result = await _sender.Send(
             new CreateExpenseCommand(
                 tripId,
                 request.Category,
@@ -79,7 +70,7 @@ public sealed class ExpensesController : ControllerBase
         [FromBody] UpdateExpenseRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _updateExpenseHandler.Handle(
+        var result = await _sender.Send(
             new UpdateExpenseCommand(
                 tripId,
                 expenseId,
@@ -107,7 +98,7 @@ public sealed class ExpensesController : ControllerBase
         Guid expenseId,
         CancellationToken cancellationToken)
     {
-        var result = await _deleteExpenseHandler.Handle(
+        var result = await _sender.Send(
             new DeleteExpenseCommand(tripId, expenseId),
             cancellationToken);
 

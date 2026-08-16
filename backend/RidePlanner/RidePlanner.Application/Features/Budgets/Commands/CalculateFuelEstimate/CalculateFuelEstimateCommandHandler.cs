@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Budgets.DTOs;
 using RidePlanner.Application.Features.Budgets.Mapping;
 
 namespace RidePlanner.Application.Features.Budgets.Commands.CalculateFuelEstimate;
 
-public sealed class CalculateFuelEstimateCommandHandler
+public sealed class CalculateFuelEstimateCommandHandler : IRequestHandler<CalculateFuelEstimateCommand, TripBudgetDto?>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -14,11 +15,11 @@ public sealed class CalculateFuelEstimateCommandHandler
     }
 
     public async Task<TripBudgetDto?> Handle(
-        CalculateFuelEstimateCommand command,
+        CalculateFuelEstimateCommand request,
         CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetWithBudgetAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null)
@@ -29,9 +30,9 @@ public sealed class CalculateFuelEstimateCommandHandler
         trip.InitializeBudget();
 
         trip.Budget.CalculateFuelEstimate(
-            command.RouteDistanceKm,
-            command.VehicleMileage,
-            command.FuelPricePerLiter);
+            request.RouteDistanceKm,
+            request.VehicleMileage,
+            request.FuelPricePerLiter);
 
         await _tripRepository.SaveChangesAsync(cancellationToken);
 

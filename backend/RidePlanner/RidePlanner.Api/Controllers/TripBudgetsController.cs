@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Budgets.Commands.CalculateFuelEstimate;
 using RidePlanner.Application.Features.Budgets.Commands.CreateBudgetEstimate;
@@ -13,34 +14,19 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/budget")]
 public sealed class TripBudgetsController : ControllerBase
 {
-    private readonly GetTripBudgetQueryHandler _getTripBudgetHandler;
-    private readonly UpdateTripBudgetCommandHandler _updateTripBudgetHandler;
-    private readonly CreateBudgetEstimateCommandHandler _createBudgetEstimateHandler;
-    private readonly UpdateBudgetEstimateCommandHandler _updateBudgetEstimateHandler;
-    private readonly DeleteBudgetEstimateCommandHandler _deleteBudgetEstimateHandler;
-    private readonly CalculateFuelEstimateCommandHandler _calculateFuelEstimateHandler;
+    private readonly ISender _sender;
 
-    public TripBudgetsController(
-        GetTripBudgetQueryHandler getTripBudgetHandler,
-        UpdateTripBudgetCommandHandler updateTripBudgetHandler,
-        CreateBudgetEstimateCommandHandler createBudgetEstimateHandler,
-        UpdateBudgetEstimateCommandHandler updateBudgetEstimateHandler,
-        DeleteBudgetEstimateCommandHandler deleteBudgetEstimateHandler,
-        CalculateFuelEstimateCommandHandler calculateFuelEstimateHandler)
+    public TripBudgetsController(ISender sender)
     {
-        _getTripBudgetHandler = getTripBudgetHandler;
-        _updateTripBudgetHandler = updateTripBudgetHandler;
-        _createBudgetEstimateHandler = createBudgetEstimateHandler;
-        _updateBudgetEstimateHandler = updateBudgetEstimateHandler;
-        _deleteBudgetEstimateHandler = deleteBudgetEstimateHandler;
-        _calculateFuelEstimateHandler = calculateFuelEstimateHandler;
+        _sender = sender;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetBudget(Guid tripId)
+    public async Task<IActionResult> GetBudget(Guid tripId, CancellationToken cancellationToken)
     {
-        var result = await _getTripBudgetHandler.Handle(
-            new GetTripBudgetQuery(tripId));
+        var result = await _sender.Send(
+            new GetTripBudgetQuery(tripId),
+            cancellationToken);
 
         if (result is null)
         {
@@ -56,7 +42,7 @@ public sealed class TripBudgetsController : ControllerBase
         [FromBody] UpdateTripBudgetRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _updateTripBudgetHandler.Handle(
+        var result = await _sender.Send(
             new UpdateTripBudgetCommand(
                 tripId,
                 request.TargetBudget),
@@ -76,7 +62,7 @@ public sealed class TripBudgetsController : ControllerBase
         [FromBody] CreateBudgetEstimateRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _createBudgetEstimateHandler.Handle(
+        var result = await _sender.Send(
             new CreateBudgetEstimateCommand(
                 tripId,
                 request.Category,
@@ -99,7 +85,7 @@ public sealed class TripBudgetsController : ControllerBase
         [FromBody] UpdateBudgetEstimateRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _updateBudgetEstimateHandler.Handle(
+        var result = await _sender.Send(
             new UpdateBudgetEstimateCommand(
                 tripId,
                 estimateId,
@@ -121,7 +107,7 @@ public sealed class TripBudgetsController : ControllerBase
         Guid estimateId,
         CancellationToken cancellationToken)
     {
-        var result = await _deleteBudgetEstimateHandler.Handle(
+        var result = await _sender.Send(
             new DeleteBudgetEstimateCommand(
                 tripId,
                 estimateId),
@@ -141,7 +127,7 @@ public sealed class TripBudgetsController : ControllerBase
         [FromBody] CalculateFuelEstimateRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _calculateFuelEstimateHandler.Handle(
+        var result = await _sender.Send(
             new CalculateFuelEstimateCommand(
                 tripId,
                 request.RouteDistanceKm,

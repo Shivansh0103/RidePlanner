@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Accommodations.Commands.CreateAccommodation;
 using RidePlanner.Application.Features.Accommodations.Commands.DeleteAccommodation;
@@ -12,24 +13,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/accommodations")]
 public class TripAccommodationsController : ControllerBase
 {
-    private readonly CreateAccommodationCommandHandler _createAccommodationCommandHandler;
-    private readonly UpdateAccommodationCommandHandler _updateAccommodationCommandHandler;
-    private readonly DeleteAccommodationCommandHandler _deleteAccommodationCommandHandler;
-    private readonly GetAccommodationsByTripIdQueryHandler _getAccommodationsByTripIdQueryHandler;
-    private readonly GetAccommodationByIdQueryHandler _getAccommodationByIdQueryHandler;
+    private readonly ISender _sender;
 
-    public TripAccommodationsController(
-        CreateAccommodationCommandHandler createAccommodationCommandHandler,
-        UpdateAccommodationCommandHandler updateAccommodationCommandHandler,
-        DeleteAccommodationCommandHandler deleteAccommodationCommandHandler,
-        GetAccommodationsByTripIdQueryHandler getAccommodationsByTripIdQueryHandler,
-        GetAccommodationByIdQueryHandler getAccommodationByIdQueryHandler)
+    public TripAccommodationsController(ISender sender)
     {
-        _createAccommodationCommandHandler = createAccommodationCommandHandler;
-        _updateAccommodationCommandHandler = updateAccommodationCommandHandler;
-        _deleteAccommodationCommandHandler = deleteAccommodationCommandHandler;
-        _getAccommodationsByTripIdQueryHandler = getAccommodationsByTripIdQueryHandler;
-        _getAccommodationByIdQueryHandler = getAccommodationByIdQueryHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -37,7 +25,7 @@ public class TripAccommodationsController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var accommodations = await _getAccommodationsByTripIdQueryHandler.Handle(
+        var accommodations = await _sender.Send(
             new GetAccommodationsByTripIdQuery(tripId),
             cancellationToken);
 
@@ -50,7 +38,7 @@ public class TripAccommodationsController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        var accommodation = await _getAccommodationByIdQueryHandler.Handle(
+        var accommodation = await _sender.Send(
             new GetAccommodationByIdQuery(tripId, id),
             cancellationToken);
 
@@ -83,7 +71,7 @@ public class TripAccommodationsController : ControllerBase
             request.Cost,
             request.DisplayOrder);
 
-        var accommodation = await _createAccommodationCommandHandler.Handle(
+        var accommodation = await _sender.Send(
             command,
             cancellationToken);
 
@@ -121,7 +109,7 @@ public class TripAccommodationsController : ControllerBase
             request.Cost,
             request.DisplayOrder);
 
-        var accommodation = await _updateAccommodationCommandHandler.Handle(
+        var accommodation = await _sender.Send(
             command,
             cancellationToken);
 
@@ -138,7 +126,7 @@ public class TripAccommodationsController : ControllerBase
             tripId,
             id);
 
-        await _deleteAccommodationCommandHandler.Handle(
+        await _sender.Send(
             command,
             cancellationToken);
 

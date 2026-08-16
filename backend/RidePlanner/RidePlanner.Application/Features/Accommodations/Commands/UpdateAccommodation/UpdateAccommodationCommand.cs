@@ -1,3 +1,4 @@
+using MediatR;
 using RidePlanner.Application.Features.Accommodations.DTOs;
 using RidePlanner.Domain.Enums;
 
@@ -22,4 +23,4 @@ public sealed record UpdateAccommodationCommand(
     string? Website,
     string? BookingNotes,
     decimal Cost,
-    int DisplayOrder);
+    int DisplayOrder) : IRequest<AccommodationResponse>;

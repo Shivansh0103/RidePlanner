@@ -1,9 +1,10 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.Accommodations.Commands.DeleteAccommodation;
 
-public sealed class DeleteAccommodationCommandHandler
+public sealed class DeleteAccommodationCommandHandler : IRequestHandler<DeleteAccommodationCommand>
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
@@ -20,18 +21,18 @@ public sealed class DeleteAccommodationCommandHandler
     }
 
     public async Task Handle(
-        DeleteAccommodationCommand command,
-        CancellationToken cancellationToken)
+        DeleteAccommodationCommand request,
+        CancellationToken cancellationToken = default)
     {
         var accommodation = await _accommodationRepository.GetWithDetailsByIdAsync(
-            command.Id,
+            request.Id,
             cancellationToken);
 
-        if (accommodation is null || accommodation.TripId != command.TripId)
+        if (accommodation is null || accommodation.TripId != request.TripId)
             throw new DomainException("Accommodation stay not found.");
 
         var trip = await _tripRepository.GetWithBudgetAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is not null && trip.Budget is not null)
@@ -42,7 +43,7 @@ public sealed class DeleteAccommodationCommandHandler
         _tripStopRepository.Remove(accommodation.TripStop);
         _accommodationRepository.Remove(accommodation);
 
-        var remainingStops = (await _tripStopRepository.GetByTripIdAsync(command.TripId, cancellationToken))
+        var remainingStops = (await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken))
             .Where(s => s.Id != accommodation.TripStopId);
         RidePlanner.Application.Features.TripStops.Services.TripStopSequenceReconciler.Reconcile(remainingStops);
 

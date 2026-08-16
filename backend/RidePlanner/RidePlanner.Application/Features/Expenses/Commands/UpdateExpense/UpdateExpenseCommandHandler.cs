@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Expenses.DTOs;
 using RidePlanner.Application.Features.Expenses.Mappings;
 
 namespace RidePlanner.Application.Features.Expenses.Commands.UpdateExpense;
 
-public sealed class UpdateExpenseCommandHandler
+public sealed class UpdateExpenseCommandHandler : IRequestHandler<UpdateExpenseCommand, ExpenseDto?>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -14,11 +15,11 @@ public sealed class UpdateExpenseCommandHandler
     }
 
     public async Task<ExpenseDto?> Handle(
-        UpdateExpenseCommand command,
+        UpdateExpenseCommand request,
         CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetWithBudgetAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null || trip.Budget is null)
@@ -27,15 +28,15 @@ public sealed class UpdateExpenseCommandHandler
         }
 
         bool success = trip.Budget.UpdateExpense(
-            command.ExpenseId,
-            command.Category,
-            command.Title,
-            command.Amount,
-            command.ExpenseDate,
-            command.PaymentMethod,
-            command.Notes,
-            command.AccommodationId,
-            command.TripStopId);
+            request.ExpenseId,
+            request.Category,
+            request.Title,
+            request.Amount,
+            request.ExpenseDate,
+            request.PaymentMethod,
+            request.Notes,
+            request.AccommodationId,
+            request.TripStopId);
 
         if (!success)
         {
@@ -44,7 +45,7 @@ public sealed class UpdateExpenseCommandHandler
 
         await _tripRepository.SaveChangesAsync(cancellationToken);
 
-        var updatedExpense = trip.Budget.Expenses.First(x => x.Id == command.ExpenseId);
+        var updatedExpense = trip.Budget.Expenses.First(x => x.Id == request.ExpenseId);
         return updatedExpense.ToDto();
     }
 }

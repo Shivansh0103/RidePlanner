@@ -1,3 +1,4 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Accommodations.DTOs;
 using RidePlanner.Application.Features.Accommodations.Mappings;
@@ -5,7 +6,7 @@ using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.Accommodations.Queries.GetAccommodationById;
 
-public sealed class GetAccommodationByIdQueryHandler
+public sealed class GetAccommodationByIdQueryHandler : IRequestHandler<GetAccommodationByIdQuery, AccommodationResponse>
 {
     private readonly IAccommodationRepository _accommodationRepository;
 
@@ -15,14 +16,14 @@ public sealed class GetAccommodationByIdQueryHandler
     }
 
     public async Task<AccommodationResponse> Handle(
-        GetAccommodationByIdQuery query,
-        CancellationToken cancellationToken)
+        GetAccommodationByIdQuery request,
+        CancellationToken cancellationToken = default)
     {
         var accommodation = await _accommodationRepository.GetWithDetailsByIdAsync(
-            query.Id,
+            request.Id,
             cancellationToken);
 
-        if (accommodation is null || accommodation.TripId != query.TripId)
+        if (accommodation is null || accommodation.TripId != request.TripId)
             throw new DomainException("Accommodation stay not found.");
 
         return accommodation.ToResponse();

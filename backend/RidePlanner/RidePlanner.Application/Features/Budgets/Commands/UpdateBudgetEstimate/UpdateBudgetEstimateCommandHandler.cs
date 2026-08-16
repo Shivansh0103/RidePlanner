@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Budgets.DTOs;
 using RidePlanner.Application.Features.Budgets.Mapping;
 
 namespace RidePlanner.Application.Features.Budgets.Commands.UpdateBudgetEstimate;
 
-public sealed class UpdateBudgetEstimateCommandHandler
+public sealed class UpdateBudgetEstimateCommandHandler : IRequestHandler<UpdateBudgetEstimateCommand, TripBudgetDto?>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -14,11 +15,11 @@ public sealed class UpdateBudgetEstimateCommandHandler
     }
 
     public async Task<TripBudgetDto?> Handle(
-        UpdateBudgetEstimateCommand command,
+        UpdateBudgetEstimateCommand request,
         CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetWithBudgetAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null || trip.Budget is null)
@@ -27,9 +28,9 @@ public sealed class UpdateBudgetEstimateCommandHandler
         }
 
         var updated = trip.Budget.UpdateEstimate(
-            command.EstimateId,
-            command.Name,
-            command.EstimatedAmount);
+            request.EstimateId,
+            request.Name,
+            request.EstimatedAmount);
 
         if (!updated)
         {

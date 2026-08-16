@@ -1,3 +1,4 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Accommodations.DTOs;
 using RidePlanner.Application.Features.Accommodations.Mappings;
@@ -8,7 +9,7 @@ using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.Accommodations.Commands.CreateAccommodation;
 
-public sealed class CreateAccommodationCommandHandler
+public sealed class CreateAccommodationCommandHandler : IRequestHandler<CreateAccommodationCommand, AccommodationResponse>
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
@@ -25,11 +26,11 @@ public sealed class CreateAccommodationCommandHandler
     }
 
     public async Task<AccommodationResponse> Handle(
-        CreateAccommodationCommand command,
-        CancellationToken cancellationToken)
+        CreateAccommodationCommand request,
+        CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetWithBudgetAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null)
@@ -37,20 +38,20 @@ public sealed class CreateAccommodationCommandHandler
 
         trip.InitializeBudget();
 
-        var existingStops = await _tripStopRepository.GetByTripIdAsync(command.TripId, cancellationToken);
-        int initialOrder = command.DisplayOrder > 0 ? command.DisplayOrder : existingStops.Count + 1;
+        var existingStops = await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
+        int initialOrder = request.DisplayOrder > 0 ? request.DisplayOrder : existingStops.Count + 1;
 
         var tripStop = TripStop.Create(
-            command.TripId,
-            command.Name,
-            command.PlaceId,
-            command.FormattedAddress,
-            command.Latitude,
-            command.Longitude,
+            request.TripId,
+            request.Name,
+            request.PlaceId,
+            request.FormattedAddress,
+            request.Latitude,
+            request.Longitude,
             TripStopCategory.Hotel,
-            command.CheckInDate,
-            command.CheckOutDate,
-            command.BookingNotes,
+            request.CheckInDate,
+            request.CheckOutDate,
+            request.BookingNotes,
             initialOrder);
 
         _tripStopRepository.Add(tripStop);
@@ -59,26 +60,26 @@ public sealed class CreateAccommodationCommandHandler
         TripStopSequenceReconciler.Reconcile(allStops);
 
         var accommodation = Accommodation.Create(
-            command.TripId,
+            request.TripId,
             tripStop.Id,
-            command.Type,
-            command.CheckInDate,
-            command.CheckOutDate,
-            command.CheckInTime,
-            command.CheckOutTime,
-            command.ConfirmationNumber,
-            command.ContactName,
-            command.ContactPhone,
-            command.Website,
-            command.BookingNotes,
-            command.Cost);
+            request.Type,
+            request.CheckInDate,
+            request.CheckOutDate,
+            request.CheckInTime,
+            request.CheckOutTime,
+            request.ConfirmationNumber,
+            request.ContactName,
+            request.ContactPhone,
+            request.Website,
+            request.BookingNotes,
+            request.Cost);
 
         _accommodationRepository.Add(accommodation);
 
         trip.Budget.SyncAccommodationEstimate(
             accommodation.Id,
-            command.Name,
-            command.Cost);
+            request.Name,
+            request.Cost);
 
         await _tripRepository.SaveChangesAsync(cancellationToken);
 

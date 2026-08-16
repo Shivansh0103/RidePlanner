@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Accommodations.DTOs;
 using RidePlanner.Application.Features.Accommodations.Mappings;
 
 namespace RidePlanner.Application.Features.Accommodations.Queries.GetAccommodationsByTripId;
 
-public sealed class GetAccommodationsByTripIdQueryHandler
+public sealed class GetAccommodationsByTripIdQueryHandler : IRequestHandler<GetAccommodationsByTripIdQuery, IReadOnlyList<AccommodationResponse>>
 {
     private readonly IAccommodationRepository _accommodationRepository;
 
@@ -14,11 +15,11 @@ public sealed class GetAccommodationsByTripIdQueryHandler
     }
 
     public async Task<IReadOnlyList<AccommodationResponse>> Handle(
-        GetAccommodationsByTripIdQuery query,
-        CancellationToken cancellationToken)
+        GetAccommodationsByTripIdQuery request,
+        CancellationToken cancellationToken = default)
     {
         var accommodations = await _accommodationRepository.GetByTripIdAsync(
-            query.TripId,
+            request.TripId,
             cancellationToken);
 
         return accommodations

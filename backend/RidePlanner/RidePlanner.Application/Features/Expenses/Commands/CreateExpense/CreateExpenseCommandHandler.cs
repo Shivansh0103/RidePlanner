@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Expenses.DTOs;
 using RidePlanner.Application.Features.Expenses.Mappings;
 
 namespace RidePlanner.Application.Features.Expenses.Commands.CreateExpense;
 
-public sealed class CreateExpenseCommandHandler
+public sealed class CreateExpenseCommandHandler : IRequestHandler<CreateExpenseCommand, ExpenseDto?>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -14,11 +15,11 @@ public sealed class CreateExpenseCommandHandler
     }
 
     public async Task<ExpenseDto?> Handle(
-        CreateExpenseCommand command,
+        CreateExpenseCommand request,
         CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetWithBudgetAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null)
@@ -29,14 +30,14 @@ public sealed class CreateExpenseCommandHandler
         trip.InitializeBudget();
 
         var expense = trip.Budget.AddExpense(
-            command.Category,
-            command.Title,
-            command.Amount,
-            command.ExpenseDate,
-            command.PaymentMethod,
-            command.Notes,
-            command.AccommodationId,
-            command.TripStopId);
+            request.Category,
+            request.Title,
+            request.Amount,
+            request.ExpenseDate,
+            request.PaymentMethod,
+            request.Notes,
+            request.AccommodationId,
+            request.TripStopId);
 
         await _tripRepository.SaveChangesAsync(cancellationToken);
 

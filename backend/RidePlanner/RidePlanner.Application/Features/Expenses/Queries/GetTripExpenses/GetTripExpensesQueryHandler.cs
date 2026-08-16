@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Expenses.DTOs;
 using RidePlanner.Application.Features.Expenses.Mappings;
 
 namespace RidePlanner.Application.Features.Expenses.Queries.GetTripExpenses;
 
-public sealed class GetTripExpensesQueryHandler
+public sealed class GetTripExpensesQueryHandler : IRequestHandler<GetTripExpensesQuery, IReadOnlyList<ExpenseDto>?>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -14,11 +15,11 @@ public sealed class GetTripExpensesQueryHandler
     }
 
     public async Task<IReadOnlyList<ExpenseDto>?> Handle(
-        GetTripExpensesQuery query,
+        GetTripExpensesQuery request,
         CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetWithBudgetAsync(
-            query.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null)

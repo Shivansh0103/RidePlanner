@@ -1,8 +1,9 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 
 namespace RidePlanner.Application.Features.Expenses.Commands.DeleteExpense;
 
-public sealed class DeleteExpenseCommandHandler
+public sealed class DeleteExpenseCommandHandler : IRequestHandler<DeleteExpenseCommand, bool?>
 {
     private readonly ITripRepository _tripRepository;
 
@@ -12,11 +13,11 @@ public sealed class DeleteExpenseCommandHandler
     }
 
     public async Task<bool?> Handle(
-        DeleteExpenseCommand command,
+        DeleteExpenseCommand request,
         CancellationToken cancellationToken = default)
     {
         var trip = await _tripRepository.GetWithBudgetAsync(
-            command.TripId,
+            request.TripId,
             cancellationToken);
 
         if (trip is null || trip.Budget is null)
@@ -24,7 +25,7 @@ public sealed class DeleteExpenseCommandHandler
             return null;
         }
 
-        bool removed = trip.Budget.RemoveExpense(command.ExpenseId);
+        bool removed = trip.Budget.RemoveExpense(request.ExpenseId);
         if (!removed)
         {
             return false;
