@@ -13,15 +13,18 @@ public sealed class UpdateAccommodationCommandHandler : IRequestHandler<UpdateAc
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
     private readonly IAccommodationRepository _accommodationRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UpdateAccommodationCommandHandler(
         ITripRepository tripRepository,
         ITripStopRepository tripStopRepository,
-        IAccommodationRepository accommodationRepository)
+        IAccommodationRepository accommodationRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
         _tripStopRepository = tripStopRepository;
         _accommodationRepository = accommodationRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<AccommodationResponse> Handle(
@@ -82,7 +85,7 @@ public sealed class UpdateAccommodationCommandHandler : IRequestHandler<UpdateAc
             request.Name,
             request.Cost);
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return accommodation.ToResponse();
     }

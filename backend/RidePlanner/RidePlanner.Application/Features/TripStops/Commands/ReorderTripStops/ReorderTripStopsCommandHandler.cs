@@ -6,10 +6,14 @@ namespace RidePlanner.Application.Features.TripStops.Commands.ReorderTripStops;
 public sealed class ReorderTripStopsCommandHandler : IRequestHandler<ReorderTripStopsCommand>
 {
     private readonly ITripStopRepository _tripStopRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ReorderTripStopsCommandHandler(ITripStopRepository tripStopRepository)
+    public ReorderTripStopsCommandHandler(
+        ITripStopRepository tripStopRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripStopRepository = tripStopRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task Handle(
@@ -20,5 +24,7 @@ public sealed class ReorderTripStopsCommandHandler : IRequestHandler<ReorderTrip
             request.TripId,
             request.OrderedStopIds,
             cancellationToken);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

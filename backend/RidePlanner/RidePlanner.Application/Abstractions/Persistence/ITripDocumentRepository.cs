@@ -8,5 +8,4 @@ public interface ITripDocumentRepository
     Task<TripDocument?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task AddAsync(TripDocument document, CancellationToken cancellationToken = default);
     void Delete(TripDocument document);
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

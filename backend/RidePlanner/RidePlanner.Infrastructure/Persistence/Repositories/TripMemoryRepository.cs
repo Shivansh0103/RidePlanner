@@ -36,9 +36,4 @@ public class TripMemoryRepository : ITripMemoryRepository
     {
         _context.TripMemories.Remove(memory);
     }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await _context.SaveChangesAsync(cancellationToken);
-    }
 }

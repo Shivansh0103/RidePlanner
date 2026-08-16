@@ -53,10 +53,4 @@ public sealed class TripRepository : ITripRepository
 
         return Task.CompletedTask;
     }
-
-    public async Task SaveChangesAsync(
-        CancellationToken cancellationToken = default)
-    {
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
 }

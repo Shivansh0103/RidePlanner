@@ -52,9 +52,4 @@ public sealed class AccommodationRepository : IAccommodationRepository
     {
         _dbContext.Accommodations.Remove(accommodation);
     }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
 }

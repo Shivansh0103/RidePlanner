@@ -19,6 +19,4 @@ public interface IAccommodationRepository
     void Add(Accommodation accommodation);
 
     void Remove(Accommodation accommodation);
-
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

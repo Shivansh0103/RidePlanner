@@ -7,10 +7,14 @@ namespace RidePlanner.Application.Features.Trips.Commands.UpdateTrip;
 public sealed class UpdateTripCommandHandler : IRequestHandler<UpdateTripCommand, Trip?>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateTripCommandHandler(ITripRepository tripRepository)
+    public UpdateTripCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Trip?> Handle(
@@ -28,7 +32,7 @@ public sealed class UpdateTripCommandHandler : IRequestHandler<UpdateTripCommand
             request.StartDate,
             request.EndDate);
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return trip;
     }

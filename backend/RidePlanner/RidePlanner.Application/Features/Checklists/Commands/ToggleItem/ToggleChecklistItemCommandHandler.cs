@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Checklists.Commands.ToggleItem;
 public sealed class ToggleChecklistItemCommandHandler : IRequestHandler<ToggleChecklistItemCommand, ChecklistSummaryDto?>
 {
     private readonly IChecklistRepository _checklistRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ToggleChecklistItemCommandHandler(IChecklistRepository checklistRepository)
+    public ToggleChecklistItemCommandHandler(
+        IChecklistRepository checklistRepository,
+        IUnitOfWork unitOfWork)
     {
         _checklistRepository = checklistRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ChecklistSummaryDto?> Handle(
@@ -33,7 +37,7 @@ public sealed class ToggleChecklistItemCommandHandler : IRequestHandler<ToggleCh
             item.ToggleCompletion();
         }
 
-        await _checklistRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
         return updatedCategories.ToSummaryDto(request.TripId);

@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Budgets.Commands.CreateBudgetEstimate
 public sealed class CreateBudgetEstimateCommandHandler : IRequestHandler<CreateBudgetEstimateCommand, TripBudgetDto?>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CreateBudgetEstimateCommandHandler(ITripRepository tripRepository)
+    public CreateBudgetEstimateCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<TripBudgetDto?> Handle(
@@ -34,7 +38,7 @@ public sealed class CreateBudgetEstimateCommandHandler : IRequestHandler<CreateB
             request.Name,
             request.EstimatedAmount);
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return trip.Budget.ToDto();
     }

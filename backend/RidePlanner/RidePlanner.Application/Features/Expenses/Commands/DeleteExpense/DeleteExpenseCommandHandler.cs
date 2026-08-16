@@ -6,10 +6,14 @@ namespace RidePlanner.Application.Features.Expenses.Commands.DeleteExpense;
 public sealed class DeleteExpenseCommandHandler : IRequestHandler<DeleteExpenseCommand, bool?>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteExpenseCommandHandler(ITripRepository tripRepository)
+    public DeleteExpenseCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<bool?> Handle(
@@ -31,7 +35,7 @@ public sealed class DeleteExpenseCommandHandler : IRequestHandler<DeleteExpenseC
             return false;
         }
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return true;
     }

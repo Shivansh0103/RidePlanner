@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Expenses.Commands.UpdateExpense;
 public sealed class UpdateExpenseCommandHandler : IRequestHandler<UpdateExpenseCommand, ExpenseDto?>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateExpenseCommandHandler(ITripRepository tripRepository)
+    public UpdateExpenseCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ExpenseDto?> Handle(
@@ -43,7 +47,7 @@ public sealed class UpdateExpenseCommandHandler : IRequestHandler<UpdateExpenseC
             return null;
         }
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var updatedExpense = trip.Budget.Expenses.First(x => x.Id == request.ExpenseId);
         return updatedExpense.ToDto();

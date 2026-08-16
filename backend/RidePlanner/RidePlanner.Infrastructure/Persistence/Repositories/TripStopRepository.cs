@@ -62,13 +62,5 @@ public sealed class TripStopRepository : ITripStopRepository
                 stop.SetDisplayOrder(i + 1);
             }
         }
-
-        await _context.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task SaveChangesAsync(
-        CancellationToken cancellationToken = default)
-    {
-        await _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Memories.Commands.UpdateTripMemory;
 public sealed class UpdateTripMemoryCommandHandler : IRequestHandler<UpdateTripMemoryCommand, TripMemoryDto?>
 {
     private readonly ITripMemoryRepository _memoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateTripMemoryCommandHandler(ITripMemoryRepository memoryRepository)
+    public UpdateTripMemoryCommandHandler(
+        ITripMemoryRepository memoryRepository,
+        IUnitOfWork unitOfWork)
     {
         _memoryRepository = memoryRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<TripMemoryDto?> Handle(
@@ -31,7 +35,7 @@ public sealed class UpdateTripMemoryCommandHandler : IRequestHandler<UpdateTripM
             request.OdometerReadingKm,
             request.MemoryDate);
 
-        await _memoryRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return memory.ToDto();
     }

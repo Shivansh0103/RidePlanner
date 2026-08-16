@@ -49,9 +49,4 @@ public class EmergencyContactRepository : IEmergencyContactRepository
             c.SetPrimary(false);
         }
     }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await _context.SaveChangesAsync(cancellationToken);
-    }
 }

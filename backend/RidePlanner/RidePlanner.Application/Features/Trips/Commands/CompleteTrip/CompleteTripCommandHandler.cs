@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Trips.Commands.CompleteTrip;
 public sealed class CompleteTripCommandHandler : IRequestHandler<CompleteTripCommand, Trip>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CompleteTripCommandHandler(ITripRepository tripRepository)
+    public CompleteTripCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Trip> Handle(
@@ -25,7 +29,7 @@ public sealed class CompleteTripCommandHandler : IRequestHandler<CompleteTripCom
         }
 
         trip.Complete(request.ActualCompletion);
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return trip;
     }

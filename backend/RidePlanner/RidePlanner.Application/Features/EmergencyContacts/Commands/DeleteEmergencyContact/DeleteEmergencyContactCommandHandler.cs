@@ -6,10 +6,14 @@ namespace RidePlanner.Application.Features.EmergencyContacts.Commands.DeleteEmer
 public sealed class DeleteEmergencyContactCommandHandler : IRequestHandler<DeleteEmergencyContactCommand, bool>
 {
     private readonly IEmergencyContactRepository _contactRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteEmergencyContactCommandHandler(IEmergencyContactRepository contactRepository)
+    public DeleteEmergencyContactCommandHandler(
+        IEmergencyContactRepository contactRepository,
+        IUnitOfWork unitOfWork)
     {
         _contactRepository = contactRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<bool> Handle(
@@ -24,7 +28,6 @@ public sealed class DeleteEmergencyContactCommandHandler : IRequestHandler<Delet
 
         var wasPrimary = contact.IsPrimary;
         _contactRepository.Delete(contact);
-        await _contactRepository.SaveChangesAsync(cancellationToken);
 
         if (wasPrimary)
         {
@@ -32,9 +35,10 @@ public sealed class DeleteEmergencyContactCommandHandler : IRequestHandler<Delet
             if (remaining.Count > 0 && !remaining.Any(x => x.IsPrimary))
             {
                 remaining[0].SetPrimary(true);
-                await _contactRepository.SaveChangesAsync(cancellationToken);
             }
         }
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return true;
     }

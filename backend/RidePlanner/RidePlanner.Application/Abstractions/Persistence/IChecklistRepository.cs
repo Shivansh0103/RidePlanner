@@ -23,6 +23,4 @@ public interface IChecklistRepository
     void AddItem(ChecklistItem item);
 
     void RemoveItem(ChecklistItem item);
-
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

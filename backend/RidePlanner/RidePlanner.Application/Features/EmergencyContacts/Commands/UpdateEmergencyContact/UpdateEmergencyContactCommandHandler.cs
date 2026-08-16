@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.EmergencyContacts.Commands.UpdateEmer
 public sealed class UpdateEmergencyContactCommandHandler : IRequestHandler<UpdateEmergencyContactCommand, EmergencyContactDto?>
 {
     private readonly IEmergencyContactRepository _contactRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateEmergencyContactCommandHandler(IEmergencyContactRepository contactRepository)
+    public UpdateEmergencyContactCommandHandler(
+        IEmergencyContactRepository contactRepository,
+        IUnitOfWork unitOfWork)
     {
         _contactRepository = contactRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<EmergencyContactDto?> Handle(
@@ -37,7 +41,7 @@ public sealed class UpdateEmergencyContactCommandHandler : IRequestHandler<Updat
             request.Email,
             request.IsPrimary);
 
-        await _contactRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return contact.ToDto();
     }

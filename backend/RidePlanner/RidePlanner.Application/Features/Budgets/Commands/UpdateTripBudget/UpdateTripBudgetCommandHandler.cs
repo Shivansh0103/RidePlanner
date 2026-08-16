@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Budgets.Commands.UpdateTripBudget;
 public sealed class UpdateTripBudgetCommandHandler : IRequestHandler<UpdateTripBudgetCommand, TripBudgetDto?>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateTripBudgetCommandHandler(ITripRepository tripRepository)
+    public UpdateTripBudgetCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<TripBudgetDto?> Handle(
@@ -31,7 +35,7 @@ public sealed class UpdateTripBudgetCommandHandler : IRequestHandler<UpdateTripB
 
         trip.Budget.UpdateTargetBudget(request.TargetBudget);
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return trip.Budget.ToDto();
     }

@@ -36,9 +36,4 @@ public class TripDocumentRepository : ITripDocumentRepository
     {
         _context.TripDocuments.Remove(document);
     }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await _context.SaveChangesAsync(cancellationToken);
-    }
 }

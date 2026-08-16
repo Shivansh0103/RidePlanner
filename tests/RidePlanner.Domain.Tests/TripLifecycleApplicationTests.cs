@@ -5,13 +5,13 @@ using RidePlanner.Application.Features.Trips.Mappings;
 using RidePlanner.Application.Features.Trips.Services;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Enums;
-using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Domain.Tests;
 
 public class TripLifecycleApplicationTests
 {
     private readonly InMemoryTripRepository _repository = new();
+    private readonly FakeUnitOfWork _unitOfWork = new();
 
     [Fact]
     public async Task StartTripCommandHandler_Starts_Trip_Early()
@@ -19,13 +19,14 @@ public class TripLifecycleApplicationTests
         var trip = Trip.Create("Manali Trip", "Riding", new DateOnly(2026, 9, 10), new DateOnly(2026, 9, 20));
         _repository.Add(trip);
 
-        var handler = new StartTripCommandHandler(_repository);
+        var handler = new StartTripCommandHandler(_repository, _unitOfWork);
         var actualStart = new DateTimeOffset(2026, 9, 5, 10, 0, 0, TimeSpan.Zero);
 
         var result = await handler.Handle(new StartTripCommand(trip.Id, actualStart));
 
         Assert.Equal(TripStatus.Active, result.Status);
         Assert.Equal(actualStart, result.StartedAt);
+        Assert.True(_unitOfWork.SaveChangesCalled);
     }
 
     [Fact]
@@ -35,13 +36,14 @@ public class TripLifecycleApplicationTests
         trip.Start();
         _repository.Add(trip);
 
-        var handler = new CompleteTripCommandHandler(_repository);
+        var handler = new CompleteTripCommandHandler(_repository, _unitOfWork);
         var actualCompletion = new DateTimeOffset(2026, 8, 10, 18, 0, 0, TimeSpan.Zero);
 
         var result = await handler.Handle(new CompleteTripCommand(trip.Id, actualCompletion));
 
         Assert.Equal(TripStatus.Completed, result.Status);
         Assert.Equal(actualCompletion, result.CompletedAt);
+        Assert.True(_unitOfWork.SaveChangesCalled);
     }
 
     [Fact]
@@ -53,7 +55,7 @@ public class TripLifecycleApplicationTests
         TripLifecycleService.SynchronizeLifecycle(trip, new DateOnly(2026, 8, 13));
 
         Assert.Equal(TripStatus.Active, trip.Status);
-        Assert.Null(trip.StartedAt); // Auto-activation does not invent manual start time
+        Assert.Null(trip.StartedAt);
     }
 
     [Fact]
@@ -90,8 +92,16 @@ public class TripLifecycleApplicationTests
             _trips.Remove(trip);
             return Task.CompletedTask;
         }
+    }
 
-        public Task SaveChangesAsync(CancellationToken cancellationToken = default)
-            => Task.CompletedTask;
+    private class FakeUnitOfWork : IUnitOfWork
+    {
+        public bool SaveChangesCalled { get; private set; }
+
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            SaveChangesCalled = true;
+            return Task.FromResult(1);
+        }
     }
 }

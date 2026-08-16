@@ -10,13 +10,16 @@ public sealed class CreateTripDocumentCommandHandler : IRequestHandler<CreateTri
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripDocumentRepository _documentRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateTripDocumentCommandHandler(
         ITripRepository tripRepository,
-        ITripDocumentRepository documentRepository)
+        ITripDocumentRepository documentRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
         _documentRepository = documentRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<TripDocumentDto?> Handle(
@@ -39,7 +42,7 @@ public sealed class CreateTripDocumentCommandHandler : IRequestHandler<CreateTri
             request.Notes);
 
         await _documentRepository.AddAsync(document, cancellationToken);
-        await _documentRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return document.ToDto();
     }

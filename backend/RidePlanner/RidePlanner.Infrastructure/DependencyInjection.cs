@@ -17,6 +17,8 @@ public static class DependencyInjection
             options.UseNpgsql(
                 configuration.GetConnectionString("RidePlannerDatabase")));
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         services.AddScoped<ITripRepository, TripRepository>();
         services.AddScoped<ITripStopRepository, TripStopRepository>();
         services.AddScoped<IChecklistRepository, ChecklistRepository>();
@@ -26,8 +28,5 @@ public static class DependencyInjection
         services.AddScoped<IEmergencyContactRepository, EmergencyContactRepository>();
         services.AddScoped<ITripMemoryRepository, TripMemoryRepository>();
         return services;
-
-
-
     }
 }

@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Budgets.Commands.DeleteBudgetEstimate
 public sealed class DeleteBudgetEstimateCommandHandler : IRequestHandler<DeleteBudgetEstimateCommand, TripBudgetDto?>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteBudgetEstimateCommandHandler(ITripRepository tripRepository)
+    public DeleteBudgetEstimateCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<TripBudgetDto?> Handle(
@@ -33,7 +37,7 @@ public sealed class DeleteBudgetEstimateCommandHandler : IRequestHandler<DeleteB
             return null;
         }
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return trip.Budget.ToDto();
     }

@@ -9,13 +9,16 @@ public sealed class UpdateTripStopCommandHandler : IRequestHandler<UpdateTripSto
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UpdateTripStopCommandHandler(
         ITripRepository tripRepository,
-        ITripStopRepository tripStopRepository)
+        ITripStopRepository tripStopRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
         _tripStopRepository = tripStopRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task Handle(
@@ -53,6 +56,6 @@ public sealed class UpdateTripStopCommandHandler : IRequestHandler<UpdateTripSto
         var allStops = await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
         TripStopSequenceReconciler.Reconcile(allStops);
 
-        await _tripStopRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

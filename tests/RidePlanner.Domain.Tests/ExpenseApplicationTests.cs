@@ -13,7 +13,6 @@ public class ExpenseApplicationTests
     private class FakeTripRepository : ITripRepository
     {
         public List<Trip> Trips { get; } = [];
-        public bool SaveChangesCalled { get; private set; }
 
         public void Add(Trip trip) => Trips.Add(trip);
 
@@ -31,11 +30,16 @@ public class ExpenseApplicationTests
             Trips.Remove(trip);
             return Task.CompletedTask;
         }
+    }
 
-        public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    private class FakeUnitOfWork : IUnitOfWork
+    {
+        public bool SaveChangesCalled { get; private set; }
+
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             SaveChangesCalled = true;
-            return Task.CompletedTask;
+            return Task.FromResult(1);
         }
     }
 
@@ -43,11 +47,12 @@ public class ExpenseApplicationTests
     public async Task CreateExpenseCommandHandler_Creates_Expense_And_Returns_Dto()
     {
         var repository = new FakeTripRepository();
+        var unitOfWork = new FakeUnitOfWork();
         var trip = Trip.Create("Leh Ladakh Ride", "Mountain trip", new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 15));
         trip.InitializeBudget();
         repository.Add(trip);
 
-        var handler = new CreateExpenseCommandHandler(repository);
+        var handler = new CreateExpenseCommandHandler(repository, unitOfWork);
 
         var command = new CreateExpenseCommand(
             trip.Id,
@@ -65,13 +70,14 @@ public class ExpenseApplicationTests
         Assert.Equal(2800m, result.Amount);
         Assert.Equal(BudgetCategoryType.Fuel, result.Category);
         Assert.Equal(PaymentMethod.UPI, result.PaymentMethod);
-        Assert.True(repository.SaveChangesCalled);
+        Assert.True(unitOfWork.SaveChangesCalled);
     }
 
     [Fact]
     public async Task UpdateExpenseCommandHandler_Updates_Existing_Expense()
     {
         var repository = new FakeTripRepository();
+        var unitOfWork = new FakeUnitOfWork();
         var trip = Trip.Create("Goa Ride", "Beach road trip", new DateOnly(2026, 9, 1), new DateOnly(2026, 9, 5));
         trip.InitializeBudget();
 
@@ -84,7 +90,7 @@ public class ExpenseApplicationTests
 
         repository.Add(trip);
 
-        var handler = new UpdateExpenseCommandHandler(repository);
+        var handler = new UpdateExpenseCommandHandler(repository, unitOfWork);
 
         var command = new UpdateExpenseCommand(
             trip.Id,
@@ -102,13 +108,14 @@ public class ExpenseApplicationTests
         Assert.Equal("Beach Shack Seafood Dinner", result.Title);
         Assert.Equal(2200m, result.Amount);
         Assert.Equal(PaymentMethod.CreditCard, result.PaymentMethod);
-        Assert.True(repository.SaveChangesCalled);
+        Assert.True(unitOfWork.SaveChangesCalled);
     }
 
     [Fact]
     public async Task DeleteExpenseCommandHandler_Removes_Expense()
     {
         var repository = new FakeTripRepository();
+        var unitOfWork = new FakeUnitOfWork();
         var trip = Trip.Create("South Tour", "Coastal trip", new DateOnly(2026, 10, 1), new DateOnly(2026, 10, 10));
         trip.InitializeBudget();
 
@@ -121,7 +128,7 @@ public class ExpenseApplicationTests
 
         repository.Add(trip);
 
-        var handler = new DeleteExpenseCommandHandler(repository);
+        var handler = new DeleteExpenseCommandHandler(repository, unitOfWork);
         var command = new DeleteExpenseCommand(trip.Id, expense.Id);
 
         var result = await handler.Handle(command, CancellationToken.None);
@@ -129,7 +136,7 @@ public class ExpenseApplicationTests
         Assert.NotNull(result);
         Assert.True(result);
         Assert.Empty(trip.Budget.Expenses);
-        Assert.True(repository.SaveChangesCalled);
+        Assert.True(unitOfWork.SaveChangesCalled);
     }
 
     [Fact]

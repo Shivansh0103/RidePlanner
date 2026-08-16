@@ -8,5 +8,4 @@ public interface ITripMemoryRepository
     Task<TripMemory?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task AddAsync(TripMemory memory, CancellationToken cancellationToken = default);
     void Delete(TripMemory memory);
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

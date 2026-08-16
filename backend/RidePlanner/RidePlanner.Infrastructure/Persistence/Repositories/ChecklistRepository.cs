@@ -61,9 +61,4 @@ public sealed class ChecklistRepository : IChecklistRepository
     {
         _dbContext.ChecklistItems.Remove(item);
     }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
 }

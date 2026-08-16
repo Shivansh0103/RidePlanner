@@ -10,13 +10,16 @@ public sealed class CreateTripStopCommandHandler : IRequestHandler<CreateTripSto
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateTripStopCommandHandler(
         ITripRepository tripRepository,
-        ITripStopRepository tripStopRepository)
+        ITripStopRepository tripStopRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
         _tripStopRepository = tripStopRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> Handle(
@@ -51,7 +54,7 @@ public sealed class CreateTripStopCommandHandler : IRequestHandler<CreateTripSto
         var allStops = existingStops.Concat(new[] { tripStop });
         TripStopSequenceReconciler.Reconcile(allStops);
 
-        await _tripStopRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return tripStop.Id;
     }

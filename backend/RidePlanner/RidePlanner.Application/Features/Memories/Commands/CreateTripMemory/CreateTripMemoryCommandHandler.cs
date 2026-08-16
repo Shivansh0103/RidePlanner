@@ -10,13 +10,16 @@ public sealed class CreateTripMemoryCommandHandler : IRequestHandler<CreateTripM
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripMemoryRepository _memoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateTripMemoryCommandHandler(
         ITripRepository tripRepository,
-        ITripMemoryRepository memoryRepository)
+        ITripMemoryRepository memoryRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
         _memoryRepository = memoryRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<TripMemoryDto?> Handle(
@@ -38,7 +41,7 @@ public sealed class CreateTripMemoryCommandHandler : IRequestHandler<CreateTripM
             request.MemoryDate);
 
         await _memoryRepository.AddAsync(memory, cancellationToken);
-        await _memoryRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return memory.ToDto();
     }

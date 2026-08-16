@@ -6,10 +6,14 @@ namespace RidePlanner.Application.Features.Trips.Commands.DeleteTrip;
 public sealed class DeleteTripCommandHandler : IRequestHandler<DeleteTripCommand>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteTripCommandHandler(ITripRepository tripRepository)
+    public DeleteTripCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task Handle(
@@ -23,6 +27,6 @@ public sealed class DeleteTripCommandHandler : IRequestHandler<DeleteTripCommand
 
         await _tripRepository.DeleteAsync(trip, cancellationToken);
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

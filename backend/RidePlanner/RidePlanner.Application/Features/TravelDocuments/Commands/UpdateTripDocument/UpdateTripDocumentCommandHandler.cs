@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.TravelDocuments.Commands.UpdateTripDo
 public sealed class UpdateTripDocumentCommandHandler : IRequestHandler<UpdateTripDocumentCommand, TripDocumentDto?>
 {
     private readonly ITripDocumentRepository _documentRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateTripDocumentCommandHandler(ITripDocumentRepository documentRepository)
+    public UpdateTripDocumentCommandHandler(
+        ITripDocumentRepository documentRepository,
+        IUnitOfWork unitOfWork)
     {
         _documentRepository = documentRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<TripDocumentDto?> Handle(
@@ -32,7 +36,7 @@ public sealed class UpdateTripDocumentCommandHandler : IRequestHandler<UpdateTri
             request.FilePath,
             request.Notes);
 
-        await _documentRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return document.ToDto();
     }

@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Checklists.Commands.DeleteItem;
 public sealed class DeleteChecklistItemCommandHandler : IRequestHandler<DeleteChecklistItemCommand, ChecklistSummaryDto?>
 {
     private readonly IChecklistRepository _checklistRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteChecklistItemCommandHandler(IChecklistRepository checklistRepository)
+    public DeleteChecklistItemCommandHandler(
+        IChecklistRepository checklistRepository,
+        IUnitOfWork unitOfWork)
     {
         _checklistRepository = checklistRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ChecklistSummaryDto?> Handle(
@@ -25,7 +29,7 @@ public sealed class DeleteChecklistItemCommandHandler : IRequestHandler<DeleteCh
         }
 
         _checklistRepository.RemoveItem(item);
-        await _checklistRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
         return updatedCategories.ToSummaryDto(request.TripId);

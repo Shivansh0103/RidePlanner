@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Budgets.Commands.CalculateFuelEstimat
 public sealed class CalculateFuelEstimateCommandHandler : IRequestHandler<CalculateFuelEstimateCommand, TripBudgetDto?>
 {
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CalculateFuelEstimateCommandHandler(ITripRepository tripRepository)
+    public CalculateFuelEstimateCommandHandler(
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<TripBudgetDto?> Handle(
@@ -34,7 +38,7 @@ public sealed class CalculateFuelEstimateCommandHandler : IRequestHandler<Calcul
             request.VehicleMileage,
             request.FuelPricePerLiter);
 
-        await _tripRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return trip.Budget.ToDto();
     }

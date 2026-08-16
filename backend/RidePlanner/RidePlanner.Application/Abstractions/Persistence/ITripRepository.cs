@@ -1,5 +1,7 @@
 using RidePlanner.Domain.Entities;
 
+namespace RidePlanner.Application.Abstractions.Persistence;
+
 public interface ITripRepository
 {
     void Add(Trip trip);
@@ -13,6 +15,4 @@ public interface ITripRepository
     Task<IReadOnlyList<Trip>> GetAllAsync(CancellationToken cancellationToken = default);
 
     Task DeleteAsync(Trip trip, CancellationToken cancellationToken = default);
-
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
-}
+}

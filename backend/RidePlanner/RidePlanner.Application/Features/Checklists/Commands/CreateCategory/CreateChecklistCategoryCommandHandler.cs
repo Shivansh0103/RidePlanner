@@ -10,13 +10,16 @@ public sealed class CreateChecklistCategoryCommandHandler : IRequestHandler<Crea
 {
     private readonly IChecklistRepository _checklistRepository;
     private readonly ITripRepository _tripRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateChecklistCategoryCommandHandler(
         IChecklistRepository checklistRepository,
-        ITripRepository tripRepository)
+        ITripRepository tripRepository,
+        IUnitOfWork unitOfWork)
     {
         _checklistRepository = checklistRepository;
         _tripRepository = tripRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ChecklistSummaryDto?> Handle(
@@ -36,7 +39,7 @@ public sealed class CreateChecklistCategoryCommandHandler : IRequestHandler<Crea
 
         var category = new ChecklistCategory(request.TripId, request.Name, nextDisplayOrder);
         _checklistRepository.AddCategory(category);
-        await _checklistRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
         return updatedCategories.ToSummaryDto(request.TripId);

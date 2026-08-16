@@ -15,6 +15,4 @@ public interface IExpenseRepository
     void Add(Expense expense);
 
     void Remove(Expense expense);
-
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

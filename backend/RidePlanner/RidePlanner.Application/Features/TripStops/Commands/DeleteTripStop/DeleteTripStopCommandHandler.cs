@@ -8,13 +8,16 @@ public sealed class DeleteTripStopCommandHandler : IRequestHandler<DeleteTripSto
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _tripStopRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public DeleteTripStopCommandHandler(
         ITripRepository tripRepository,
-        ITripStopRepository tripStopRepository)
+        ITripStopRepository tripStopRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
         _tripStopRepository = tripStopRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task Handle(
@@ -41,6 +44,6 @@ public sealed class DeleteTripStopCommandHandler : IRequestHandler<DeleteTripSto
             .Where(s => s.Id != request.StopId);
         RidePlanner.Application.Features.TripStops.Services.TripStopSequenceReconciler.Reconcile(remainingStops);
 
-        await _tripStopRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

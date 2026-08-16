@@ -45,9 +45,4 @@ public sealed class ExpenseRepository : IExpenseRepository
     {
         _dbContext.Expenses.Remove(expense);
     }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
 }

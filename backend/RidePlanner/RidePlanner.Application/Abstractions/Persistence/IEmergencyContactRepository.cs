@@ -9,5 +9,4 @@ public interface IEmergencyContactRepository
     Task AddAsync(EmergencyContact contact, CancellationToken cancellationToken = default);
     void Delete(EmergencyContact contact);
     Task UnsetPrimaryContactsForTripAsync(Guid tripId, CancellationToken cancellationToken = default);
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

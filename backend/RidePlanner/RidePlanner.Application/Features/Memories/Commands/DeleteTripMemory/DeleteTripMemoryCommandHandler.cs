@@ -6,10 +6,14 @@ namespace RidePlanner.Application.Features.Memories.Commands.DeleteTripMemory;
 public sealed class DeleteTripMemoryCommandHandler : IRequestHandler<DeleteTripMemoryCommand, bool>
 {
     private readonly ITripMemoryRepository _memoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteTripMemoryCommandHandler(ITripMemoryRepository memoryRepository)
+    public DeleteTripMemoryCommandHandler(
+        ITripMemoryRepository memoryRepository,
+        IUnitOfWork unitOfWork)
     {
         _memoryRepository = memoryRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<bool> Handle(
@@ -23,7 +27,7 @@ public sealed class DeleteTripMemoryCommandHandler : IRequestHandler<DeleteTripM
         }
 
         _memoryRepository.Delete(memory);
-        await _memoryRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return true;
     }

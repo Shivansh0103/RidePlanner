@@ -10,13 +10,16 @@ public sealed class CreateEmergencyContactCommandHandler : IRequestHandler<Creat
 {
     private readonly ITripRepository _tripRepository;
     private readonly IEmergencyContactRepository _contactRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateEmergencyContactCommandHandler(
         ITripRepository tripRepository,
-        IEmergencyContactRepository contactRepository)
+        IEmergencyContactRepository contactRepository,
+        IUnitOfWork unitOfWork)
     {
         _tripRepository = tripRepository;
         _contactRepository = contactRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<EmergencyContactDto?> Handle(
@@ -47,7 +50,7 @@ public sealed class CreateEmergencyContactCommandHandler : IRequestHandler<Creat
             isPrimary: shouldBePrimary);
 
         await _contactRepository.AddAsync(contact, cancellationToken);
-        await _contactRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return contact.ToDto();
     }

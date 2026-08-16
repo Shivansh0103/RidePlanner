@@ -8,10 +8,14 @@ namespace RidePlanner.Application.Features.Checklists.Commands.UpdateItem;
 public sealed class UpdateChecklistItemCommandHandler : IRequestHandler<UpdateChecklistItemCommand, ChecklistSummaryDto?>
 {
     private readonly IChecklistRepository _checklistRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateChecklistItemCommandHandler(IChecklistRepository checklistRepository)
+    public UpdateChecklistItemCommandHandler(
+        IChecklistRepository checklistRepository,
+        IUnitOfWork unitOfWork)
     {
         _checklistRepository = checklistRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ChecklistSummaryDto?> Handle(
@@ -25,7 +29,7 @@ public sealed class UpdateChecklistItemCommandHandler : IRequestHandler<UpdateCh
         }
 
         item.Update(request.Title, item.DisplayOrder, request.IsRequired);
-        await _checklistRepository.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
         return updatedCategories.ToSummaryDto(request.TripId);
