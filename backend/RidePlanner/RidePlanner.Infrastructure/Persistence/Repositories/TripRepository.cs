@@ -42,6 +42,7 @@ public sealed class TripRepository : ITripRepository
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Trips
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
