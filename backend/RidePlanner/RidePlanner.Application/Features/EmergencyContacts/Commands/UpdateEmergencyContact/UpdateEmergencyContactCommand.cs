@@ -1,3 +1,6 @@
+using MediatR;
+using RidePlanner.Application.Features.EmergencyContacts.DTOs;
+
 namespace RidePlanner.Application.Features.EmergencyContacts.Commands.UpdateEmergencyContact;
 
 public sealed record UpdateEmergencyContactCommand(
@@ -8,4 +11,4 @@ public sealed record UpdateEmergencyContactCommand(
     string Phone,
     string? AlternatePhone = null,
     string? Email = null,
-    bool IsPrimary = false);
+    bool IsPrimary = false) : IRequest<EmergencyContactDto?>;

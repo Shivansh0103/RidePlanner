@@ -1,8 +1,9 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 
 namespace RidePlanner.Application.Features.EmergencyContacts.Commands.DeleteEmergencyContact;
 
-public sealed class DeleteEmergencyContactCommandHandler
+public sealed class DeleteEmergencyContactCommandHandler : IRequestHandler<DeleteEmergencyContactCommand, bool>
 {
     private readonly IEmergencyContactRepository _contactRepository;
 
@@ -12,11 +13,11 @@ public sealed class DeleteEmergencyContactCommandHandler
     }
 
     public async Task<bool> Handle(
-        DeleteEmergencyContactCommand command,
+        DeleteEmergencyContactCommand request,
         CancellationToken cancellationToken = default)
     {
-        var contact = await _contactRepository.GetByIdAsync(command.ContactId, cancellationToken);
-        if (contact is null || contact.TripId != command.TripId)
+        var contact = await _contactRepository.GetByIdAsync(request.ContactId, cancellationToken);
+        if (contact is null || contact.TripId != request.TripId)
         {
             return false;
         }
@@ -27,7 +28,7 @@ public sealed class DeleteEmergencyContactCommandHandler
 
         if (wasPrimary)
         {
-            var remaining = await _contactRepository.GetByTripIdAsync(command.TripId, cancellationToken);
+            var remaining = await _contactRepository.GetByTripIdAsync(request.TripId, cancellationToken);
             if (remaining.Count > 0 && !remaining.Any(x => x.IsPrimary))
             {
                 remaining[0].SetPrimary(true);

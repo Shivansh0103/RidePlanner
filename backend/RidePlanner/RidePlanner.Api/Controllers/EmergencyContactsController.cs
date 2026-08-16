@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.EmergencyContacts.Commands.CreateEmergencyContact;
 using RidePlanner.Application.Features.EmergencyContacts.Commands.DeleteEmergencyContact;
@@ -12,24 +13,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/contacts")]
 public sealed class EmergencyContactsController : ControllerBase
 {
-    private readonly GetEmergencyContactsQueryHandler _getContactsHandler;
-    private readonly GetEmergencyContactQueryHandler _getContactHandler;
-    private readonly CreateEmergencyContactCommandHandler _createContactHandler;
-    private readonly UpdateEmergencyContactCommandHandler _updateContactHandler;
-    private readonly DeleteEmergencyContactCommandHandler _deleteContactHandler;
+    private readonly ISender _sender;
 
-    public EmergencyContactsController(
-        GetEmergencyContactsQueryHandler getContactsHandler,
-        GetEmergencyContactQueryHandler getContactHandler,
-        CreateEmergencyContactCommandHandler createContactHandler,
-        UpdateEmergencyContactCommandHandler updateContactHandler,
-        DeleteEmergencyContactCommandHandler deleteContactHandler)
+    public EmergencyContactsController(ISender sender)
     {
-        _getContactsHandler = getContactsHandler;
-        _getContactHandler = getContactHandler;
-        _createContactHandler = createContactHandler;
-        _updateContactHandler = updateContactHandler;
-        _deleteContactHandler = deleteContactHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -37,7 +25,7 @@ public sealed class EmergencyContactsController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var result = await _getContactsHandler.Handle(
+        var result = await _sender.Send(
             new GetEmergencyContactsQuery(tripId),
             cancellationToken);
 
@@ -55,7 +43,7 @@ public sealed class EmergencyContactsController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        var result = await _getContactHandler.Handle(
+        var result = await _sender.Send(
             new GetEmergencyContactQuery(tripId, id),
             cancellationToken);
 
@@ -73,7 +61,7 @@ public sealed class EmergencyContactsController : ControllerBase
         [FromBody] CreateEmergencyContactRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _createContactHandler.Handle(
+        var result = await _sender.Send(
             new CreateEmergencyContactCommand(
                 tripId,
                 request.Name,
@@ -102,7 +90,7 @@ public sealed class EmergencyContactsController : ControllerBase
         [FromBody] UpdateEmergencyContactRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _updateContactHandler.Handle(
+        var result = await _sender.Send(
             new UpdateEmergencyContactCommand(
                 tripId,
                 id,
@@ -128,7 +116,7 @@ public sealed class EmergencyContactsController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        var success = await _deleteContactHandler.Handle(
+        var success = await _sender.Send(
             new DeleteEmergencyContactCommand(tripId, id),
             cancellationToken);
 

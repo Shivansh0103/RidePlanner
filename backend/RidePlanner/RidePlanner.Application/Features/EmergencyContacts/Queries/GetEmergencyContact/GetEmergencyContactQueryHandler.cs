@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.EmergencyContacts.DTOs;
 using RidePlanner.Application.Features.EmergencyContacts.Mappings;
 
 namespace RidePlanner.Application.Features.EmergencyContacts.Queries.GetEmergencyContact;
 
-public sealed class GetEmergencyContactQueryHandler
+public sealed class GetEmergencyContactQueryHandler : IRequestHandler<GetEmergencyContactQuery, EmergencyContactDto?>
 {
     private readonly IEmergencyContactRepository _contactRepository;
 
@@ -14,11 +15,11 @@ public sealed class GetEmergencyContactQueryHandler
     }
 
     public async Task<EmergencyContactDto?> Handle(
-        GetEmergencyContactQuery query,
+        GetEmergencyContactQuery request,
         CancellationToken cancellationToken = default)
     {
-        var contact = await _contactRepository.GetByIdAsync(query.ContactId, cancellationToken);
-        if (contact is null || contact.TripId != query.TripId)
+        var contact = await _contactRepository.GetByIdAsync(request.ContactId, cancellationToken);
+        if (contact is null || contact.TripId != request.TripId)
         {
             return null;
         }

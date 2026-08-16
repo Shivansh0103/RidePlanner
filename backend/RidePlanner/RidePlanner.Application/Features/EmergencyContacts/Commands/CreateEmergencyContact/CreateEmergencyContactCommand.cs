@@ -1,3 +1,6 @@
+using MediatR;
+using RidePlanner.Application.Features.EmergencyContacts.DTOs;
+
 namespace RidePlanner.Application.Features.EmergencyContacts.Commands.CreateEmergencyContact;
 
 public sealed record CreateEmergencyContactCommand(
@@ -7,4 +10,4 @@ public sealed record CreateEmergencyContactCommand(
     string Phone,
     string? AlternatePhone = null,
     string? Email = null,
-    bool IsPrimary = false);
+    bool IsPrimary = false) : IRequest<EmergencyContactDto?>;
