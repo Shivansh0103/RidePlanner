@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Readiness.Queries.GetTripReadiness;
 
@@ -7,11 +8,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/readiness")]
 public sealed class TripReadinessController : ControllerBase
 {
-    private readonly GetTripReadinessQueryHandler _getReadinessHandler;
+    private readonly ISender _sender;
 
-    public TripReadinessController(GetTripReadinessQueryHandler getReadinessHandler)
+    public TripReadinessController(ISender sender)
     {
-        _getReadinessHandler = getReadinessHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -19,7 +20,7 @@ public sealed class TripReadinessController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var result = await _getReadinessHandler.Handle(
+        var result = await _sender.Send(
             new GetTripReadinessQuery(tripId),
             cancellationToken);
 

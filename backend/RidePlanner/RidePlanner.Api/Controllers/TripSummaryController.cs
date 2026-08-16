@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Summary.Queries.GetTripSummary;
 
@@ -7,11 +8,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/summary")]
 public sealed class TripSummaryController : ControllerBase
 {
-    private readonly GetTripSummaryQueryHandler _getSummaryHandler;
+    private readonly ISender _sender;
 
-    public TripSummaryController(GetTripSummaryQueryHandler getSummaryHandler)
+    public TripSummaryController(ISender sender)
     {
-        _getSummaryHandler = getSummaryHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -19,7 +20,7 @@ public sealed class TripSummaryController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var result = await _getSummaryHandler.Handle(
+        var result = await _sender.Send(
             new GetTripSummaryQuery(tripId),
             cancellationToken);
 

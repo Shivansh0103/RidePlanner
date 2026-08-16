@@ -14,12 +14,6 @@ public static class DependencyInjection
             cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
         });
 
-
-
-        services.AddScoped<RidePlanner.Application.Features.Readiness.Queries.GetTripReadiness.GetTripReadinessQueryHandler>();
-        services.AddScoped<RidePlanner.Application.Features.Summary.Queries.GetTripSummary.GetTripSummaryQueryHandler>();
-
-
         return services;
     }
 }

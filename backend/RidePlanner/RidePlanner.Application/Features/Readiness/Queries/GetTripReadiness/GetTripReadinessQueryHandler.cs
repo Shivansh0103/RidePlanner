@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Readiness.DTOs;
 using RidePlanner.Domain.ValueObjects;
 
 namespace RidePlanner.Application.Features.Readiness.Queries.GetTripReadiness;
 
-public sealed class GetTripReadinessQueryHandler
+public sealed class GetTripReadinessQueryHandler : IRequestHandler<GetTripReadinessQuery, TripReadinessDto?>
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _stopRepository;
@@ -30,21 +31,21 @@ public sealed class GetTripReadinessQueryHandler
     }
 
     public async Task<TripReadinessDto?> Handle(
-        GetTripReadinessQuery query,
+        GetTripReadinessQuery request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(query.TripId, cancellationToken);
+        var trip = await _tripRepository.GetByIdAsync(request.TripId, cancellationToken);
         if (trip is null)
         {
             return null;
         }
 
-        var stops = await _stopRepository.GetByTripIdAsync(query.TripId, cancellationToken);
-        var categories = await _checklistRepository.GetCategoriesByTripIdAsync(query.TripId, cancellationToken);
-        var documents = await _documentRepository.GetByTripIdAsync(query.TripId, cancellationToken);
+        var stops = await _stopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
+        var categories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
+        var documents = await _documentRepository.GetByTripIdAsync(request.TripId, cancellationToken);
 
-        var contacts = await _contactRepository.GetByTripIdAsync(query.TripId, cancellationToken);
-        var accommodations = await _accommodationRepository.GetByTripIdAsync(query.TripId, cancellationToken);
+        var contacts = await _contactRepository.GetByTripIdAsync(request.TripId, cancellationToken);
+        var accommodations = await _accommodationRepository.GetByTripIdAsync(request.TripId, cancellationToken);
 
         var items = new List<ReadinessItem>();
 
@@ -75,7 +76,6 @@ public sealed class GetTripReadinessQueryHandler
                 : isChecklistPassed
                     ? $"All {requiredChecklistItems.Count} required gear items packed."
                     : $"{packedCount} of {requiredChecklistItems.Count} required items packed."));
-
 
         // 3. Travel Documents
         var hasDocuments = documents.Count > 0;
@@ -137,10 +137,9 @@ public sealed class GetTripReadinessQueryHandler
 
         var domainReadiness = new TripReadiness(items);
 
-
         return new TripReadinessDto
         {
-            TripId = query.TripId,
+            TripId = request.TripId,
             ScorePercentage = domainReadiness.ScorePercentage,
             IsReady = domainReadiness.IsReady,
             Items = domainReadiness.Items.Select(i => new ReadinessItemDto

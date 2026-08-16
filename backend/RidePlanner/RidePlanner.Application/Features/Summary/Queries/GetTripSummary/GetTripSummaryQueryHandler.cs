@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Summary.DTOs;
 using RidePlanner.Domain.ValueObjects;
 
 namespace RidePlanner.Application.Features.Summary.Queries.GetTripSummary;
 
-public sealed class GetTripSummaryQueryHandler
+public sealed class GetTripSummaryQueryHandler : IRequestHandler<GetTripSummaryQuery, TripSummaryDto?>
 {
     private readonly ITripRepository _tripRepository;
     private readonly ITripStopRepository _stopRepository;
@@ -27,28 +28,27 @@ public sealed class GetTripSummaryQueryHandler
     }
 
     public async Task<TripSummaryDto?> Handle(
-        GetTripSummaryQuery query,
+        GetTripSummaryQuery request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(query.TripId, cancellationToken);
+        var trip = await _tripRepository.GetByIdAsync(request.TripId, cancellationToken);
         if (trip is null)
         {
             return null;
         }
 
-        var stops = await _stopRepository.GetByTripIdAsync(query.TripId, cancellationToken);
+        var stops = await _stopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
         var expenses = trip.Budget != null
             ? await _expenseRepository.GetByTripBudgetIdAsync(trip.Budget.Id, cancellationToken)
             : Array.Empty<RidePlanner.Domain.Entities.Budget.Expense>();
-        var accommodations = await _accommodationRepository.GetByTripIdAsync(query.TripId, cancellationToken);
-        var categories = await _checklistRepository.GetCategoriesByTripIdAsync(query.TripId, cancellationToken);
+        var accommodations = await _accommodationRepository.GetByTripIdAsync(request.TripId, cancellationToken);
+        var categories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
 
         var totalExpenses = expenses.Sum(e => e.Amount);
         var targetBudget = trip.Budget?.TargetBudget ?? 0m;
 
         var totalNights = accommodations.Sum(a => a.Nights);
         var totalAccommodationCost = accommodations.Sum(a => a.Cost);
-
 
         var allItems = categories.SelectMany(c => c.Items).ToList();
         var completedItems = allItems.Count(i => i.IsCompleted);
@@ -60,7 +60,7 @@ public sealed class GetTripSummaryQueryHandler
             trip.StartedAt,
             trip.CompletedAt,
             totalStops: stops.Count,
-            totalDistanceKm: 0, // Computed dynamically or from route summary
+            totalDistanceKm: 0,
             targetBudget: targetBudget,
             totalExpenses: totalExpenses,
             totalAccommodations: accommodations.Count,
