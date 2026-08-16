@@ -36,11 +36,13 @@ Responsible for creating and managing trips.
 
 ### Features
 
-* 🟢 Create Trip
-* 🟢 Edit Trip
+* 🔵 Create Trip
+* 🔵 Edit Trip
+* 🔵 Delete Trip
+* 🔵 Trip Status & Lifecycle (`Planning`, `Active`, `Completed`)
+* 🔵 Actual Lifecycle Timestamps (`StartedAt`, `CompletedAt`)
 * 🟢 Duplicate Trip
 * 🟢 Archive Trip
-* 🟢 Delete Trip
 * 🟢 Trip Templates
 * 🟢 Favorite Trips
 
@@ -52,12 +54,12 @@ Responsible for organizing journeys throughout their duration.
 
 ### Features
 
-* 🟢 Multi-day itineraries
-* 🟢 Daily schedules
-* 🟢 Destinations
-* 🟢 Stops
+* 🔵 Multi-day itineraries
+* 🔵 Daily schedules & arrival date ordering
+* 🔵 Destinations & Stops management
+* 🔵 Interactive Timeline view
+* 🔵 Bi-directional Map ↔ Itinerary selection sync
 * 🟢 Activities
-* 🟢 Timeline
 * 🟢 Trip notes
 
 ---
@@ -68,12 +70,12 @@ Responsible for planning and organizing travel routes.
 
 ### Features
 
-* 🟢 Route Builder
-* 🟢 Waypoints
+* 🔵 Route Builder & Google Places Autocomplete
+* 🔵 Waypoints & Stop Markers
+* 🔵 Distance estimation
+* 🔵 Duration estimation
 * 🟢 Scenic routes
 * 🟢 Alternative routes
-* 🟢 Distance estimation
-* 🟢 Duration estimation
 * 🟢 GPX Import
 * 🟢 GPX Export
 
@@ -85,14 +87,12 @@ Responsible for estimating, tracking, and reviewing travel expenses.
 
 ### Features
 
-* 🟢 Fuel estimation
-* 🟢 Fuel expenses
-* 🟢 Toll estimation
-* 🟢 Accommodation expenses
-* 🟢 Food expenses
-* 🟢 Miscellaneous expenses
+* 🔵 Smart Fuel Cost Calculator
+* 🔵 Category Planned Estimates (Fuel, Accommodation, Food, Tolls, Misc)
+* 🔵 Actual Expense Log Data Table
+* 🔵 Payment Method Tagging (`Cash`, `UPI`, `CreditCard`, `DebitCard`, `Other`)
+* 🔵 Budget vs Actual Visual Comparison Matrix & Variance Analysis
 * 🟢 Shared expenses
-* 🟢 Budget summary
 
 ---
 
@@ -122,10 +122,10 @@ Helping travelers prepare before departure.
 
 ### Features
 
-* 🟢 Packing lists
-* 🟢 Vehicle checklist
-* 🟢 Travel documents
-* 🟢 Emergency contacts
+* 🔵 Preparation Checklists with Required vs Optional classification
+* 🔵 Travel Documents Metadata Registry (expiry dates & 30-day alerts)
+* 🔵 Emergency Contacts Registry (primary contact enforcement)
+* 🔵 Derived Pre-Ride Trip Readiness Health Score & 6-category breakdown
 * 🟢 Personal reminders
 
 ---
@@ -136,28 +136,26 @@ Helping travelers organize accommodation information.
 
 ### Features
 
-* 🟢 Accommodation planning
-* 🟢 Reservation details
-* 🟢 Booking references
-* 🟢 Check-in schedule
-* 🟢 Check-out schedule
+* 🔵 Accommodation & Stay Planning
+* 🔵 1:1 TripStop binding & stay dates/nights calculation
+* 🔵 Automatic Budget Estimate Synchronization
+* 🔵 Hotel category auto-redirect workflow
+* 🔵 Manual address-only stay support
+* 🔵 Reservation & Contact details (`ConfirmationNumber`, `ContactPhone`, `Website`)
 
 ---
 
-## Trip Memories
+## Trip Memories & Summary Report
 
-Ride Planner manages the context of travel memories rather than acting as a cloud storage platform.
+Surfacing post-ride summaries and personal memories.
 
 ### Features
 
-* 🟢 Trip highlights
-* 🟢 Timeline
-* 🟢 Places visited
-* 🟢 Notes
-* 🟢 Photo references
-* 🟢 Video references
-* 🟢 Trip summary
-* 🟢 Trip statistics
+* 🔵 Post-Ride Trip Summary Report Dashboard
+* 🔵 Printable Summary Report Generator
+* 🔵 Trip Memories & Journal Log (photos, notes, odometer readings)
+* 🔵 Chronological Memory Timeline (newest first)
+* 🟢 Photo albums / Cloud media storage
 
 ---
 
@@ -197,108 +195,14 @@ Ride Planner integrates with specialized services rather than replacing them.
 
 ### Features
 
-* 🟢 Maps providers
+* 🔵 Google Maps & Places Autocomplete
 * 🟢 Navigation applications
 * 🟢 Calendar integration
 * 🟢 Weather providers
 * 🟢 Cloud storage providers
-* 🟢 Photo libraries
-* 🟢 Booking references
-
----
-
-## User Profile
-
-### Features
-
-* 🟢 User profile
-* 🟢 Preferences
-* 🟢 Saved locations
-* 🟢 Favorite destinations
-* 🟢 Travel history
-
----
-
-## Settings
-
-### Features
-
-* 🟢 Theme
-* 🟢 Units
-* 🟢 Privacy settings
-* 🟢 Notification preferences
-* 🟢 Connected services
-
----
-
-# Future Domains
-
-These domains align with the long-term product vision but are intentionally outside the scope of the initial releases.
-
----
-
-## AI Assistance
-
-### Potential Features
-
-* ⚪ AI itinerary suggestions
-* ⚪ Route optimization
-* ⚪ Budget recommendations
-* ⚪ Smart packing suggestions
-
----
-
-## Community
-
-### Potential Features
-
-* ⚪ Public trips
-* ⚪ Community routes
-* ⚪ Travel recommendations
-* ⚪ Shared itineraries
-
----
-
-## Vehicle Management
-
-### Potential Features
-
-* ⚪ Multiple vehicles
-* ⚪ Vehicle profiles
-* ⚪ Maintenance reminders
-* ⚪ Fuel efficiency tracking
-* ⚪ EV trip planning
-
----
-
-## Analytics
-
-### Potential Features
-
-* ⚪ Travel dashboard
-* ⚪ Distance travelled
-* ⚪ Expense insights
-* ⚪ Annual travel summaries
-* ⚪ Travel achievements
-
----
-
-# Guiding Principles
-
-The Feature Catalogue should evolve alongside the product.
-
-When introducing new features, consider the following principles:
-
-* Solve a genuine user problem.
-* Align with the product vision and scope.
-* Strengthen existing workflows before introducing new ones.
-* Prefer thoughtful integrations over replacing specialized services.
-* Keep the product focused on planning and managing road trips.
 
 ---
 
 # Notes
 
-This catalogue is intended to be a living document.
-
-Features may be added, reorganized, reprioritized, or removed as Ride Planner evolves. The catalogue should always reflect the current understanding of the product and serve as the foundation for roadmap planning, feature specifications, and future architectural decisions.
+This catalogue is a living document and reflects the complete state of Ride Planner as of **v0.9.0**.

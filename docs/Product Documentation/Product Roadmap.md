@@ -31,7 +31,7 @@ Ride Planner is expected to evolve through the following milestones.
 
 ## Current Project Status
 
-**Version:** v0.6.0
+**Version:** v0.9.0
 
 ### Completed
 
@@ -42,12 +42,15 @@ Ride Planner is expected to evolve through the following milestones.
 - ✅ Sprint 4 – Places Search & Route Visualization
 - ✅ Sprint 5 – Itinerary Management & Stops
 - ✅ Sprint 6 – Trip Planning Intelligence (Budget, Fuel Calculator, Checklist, Overview, Tabbed Layout)
+- ✅ Sprint 7 – Accommodation & Stay Planning
+- ✅ Sprint 8 – Actual Expense Tracking & Budget vs Actual Analysis
+- ✅ Sprint 9 – Core Trip Polish, Readiness, Completion & Memories
 
 ### Current Focus
 
-Sprint 7 – Accommodation & Stay Planning
+Milestone 1 Completed – Delivering the Core Trip Lifecycle Experience.
+Future development will focus on Collaborative Planning, Weather Integration, and Smart Travel Reminders.
 
-The project has now completed trip intelligence and budget planning. Future development will focus on rich accommodation planning, stay reservations, and cost integration.
 
 ---
 

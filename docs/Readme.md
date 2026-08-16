@@ -77,28 +77,28 @@ Different journey types may unlock specialized planning tools while maintaining 
 
 ## Key Features
 
-The long-term vision for Ride Planner includes:
+The core capabilities of Ride Planner include:
 
-* Intelligent trip planning
-* Interactive route management
-* Multi-day itinerary planning
-* Fuel and travel cost estimation
-* Accommodation planning
-* Expense tracking
-* Packing checklists
-* Travel document management
-* Weather integration
-* Group collaboration
-* Offline trip information
-* Trip history and memories
+* ✅ Intelligent trip planning & lifecycle management (`Planning`, `Active`, `Completed`)
+* ✅ Interactive route management & Google Places search
+* ✅ Multi-day itinerary planning & accommodation stay reservation tracking
+* ✅ Budget planning, smart fuel calculator & actual expense tracking (Budget vs Actual)
+* ✅ Preparation checklists with required vs optional item classification
+* ✅ Derived pre-ride Trip Readiness health score & 6-category breakdown
+* ✅ Travel documents metadata registry with 30-day expiration alerts
+* ✅ Trip emergency contacts registry with primary contact management
+* ✅ Post-ride Trip Summary dashboard with printable summary report generator
+* ✅ Trip memories & journal log registry (photos, notes, odometer readings)
+* ⏳ Weather integration
+* ⏳ Group collaboration & offline trip information
 
 ---
 
 ## Current Status
 
-Ride Planner is actively being developed (Version v0.7.0).
+Ride Planner is actively being developed (Version **v0.9.0**).
 
-Completed core features include Trip Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Preparation Checklists, Overview Command Center Dashboard, Tabbed Layout Navigation, and Accommodation & Stay Planning (Sprint 7).
+Completed core features include Trip Lifecycle Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Actual Expense Log & Budget vs Actual Analysis (Sprint 8), Preparation Checklists, Overview Command Center Dashboard, Accommodation & Stay Planning (Sprint 7), Travel Documents, Emergency Contacts, Derived Trip Readiness Score, Printable Trip Summary Report, and Trip Memories (Sprint 9).
 
 ---
 

@@ -1,44 +1,66 @@
-# Domain Modeling Principles
+# Data Modeling & Persistence Principles
 
-## Entities
+## Database Architecture
 
-Objects with identity.
+RidePlanner uses **PostgreSQL** as its primary relational database via **Entity Framework Core**.
 
-Examples:
-- User
-- Ride
-- Vehicle
+---
 
-## Value Objects
+## Core Entities & Relational Mappings
 
-Objects defined by value.
+### 1. `Trips`
+Primary table representing road trips.
+- `Id`: `uuid` (Primary Key)
+- `Name`: `varchar(100)`, required
+- `Description`: `varchar(500)`
+- `StartDate`: `date`, required
+- `EndDate`: `date`, required
+- `Status`: `integer` (`1 = Planning`, `2 = Active`, `3 = Completed`)
+- `StartedAt`: `timestamp with time zone` (nullable)
+- `CompletedAt`: `timestamp with time zone` (nullable)
+- `CreatedAt`, `UpdatedAt`: `timestamp with time zone`
 
-Examples:
-- Email
-- Coordinates
-- Distance
-- PhoneNumber
+### 2. `TripStops`
+Itinerary destinations and route waypoints.
+- Foreign key `TripId` ➔ `Trips(Id)` (Cascade Delete)
+- `DisplayOrder`: `integer` (re-indexed automatically by `ArrivalDate`)
 
-## Guideline
+### 3. `Accommodations`
+Stay reservations.
+- Foreign key `TripId` ➔ `Trips(Id)` (Cascade Delete)
+- Foreign key `TripStopId` ➔ `TripStops(Id)` (Cascade Delete)
 
-Prefer Value Objects when identity is unnecessary.
-Use Entities when lifecycle and identity matter.
+### 4. `TripBudgets`, `BudgetEstimates`, `Expenses`
+Financial planning and actual transaction logs.
+- `Expenses` table mapped with precision `numeric(18, 2)`
+- Foreign key `TripBudgetId` ➔ `TripBudgets(Id)` (Cascade Delete)
 
-## Modelling Principles
+### 5. `ChecklistCategories`, `ChecklistItems`
+Preparation packing lists.
+- `ChecklistItems` includes `IsRequired` (`boolean`, defaults to `true`)
 
-- Model the business before the database.
-- Prefer Value Objects when identity is unnecessary.
-- Generate entity identifiers in the application.
-- Keep domain entities valid by design.
+### 6. `TripDocuments`
+Travel document metadata.
+- Foreign key `TripId` ➔ `Trips(Id)` (Cascade Delete)
+- `Title`: `varchar(100)`, `Type`: `varchar(50)`, `ExpiryDate`: `timestamp with time zone`
 
-## Domain Evolution
+### 7. `EmergencyContacts`
+Emergency support contacts.
+- Foreign key `TripId` ➔ `Trips(Id)` (Cascade Delete)
+- `Name`: `varchar(100)`, `Phone`: `varchar(30)`, `IsPrimary`: `boolean`
 
-The project intentionally starts with a simple technical folder structure.
+### 8. `TripMemories`
+Personal trip journal entries and photo references.
+- Foreign key `TripId` ➔ `Trips(Id)` (Cascade Delete)
+- `Title`: `varchar(100)`, `Content`: `text`, `OdometerReadingKm`: `integer`
 
-Aggregate-based organization will be introduced only when domain complexity justifies it.
+---
 
-Reason:
+## Derived Unpersisted Value Objects
 
-Avoid premature abstraction.
+To enforce clean architecture and prevent stale snapshot data, **no database tables or redundant columns** are persisted for:
+- Readiness scores (`TripReadiness`)
+- Post-ride summaries (`TripSummary`)
+- Total distance / spend calculations
 
-Follow YAGNI.
+All derived statistics are projected on demand via CQRS read queries.
