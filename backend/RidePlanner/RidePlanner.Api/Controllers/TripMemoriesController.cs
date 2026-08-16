@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Memories.Commands.CreateTripMemory;
 using RidePlanner.Application.Features.Memories.Commands.DeleteTripMemory;
@@ -12,24 +13,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/memories")]
 public sealed class TripMemoriesController : ControllerBase
 {
-    private readonly GetTripMemoriesQueryHandler _getMemoriesHandler;
-    private readonly GetTripMemoryQueryHandler _getMemoryHandler;
-    private readonly CreateTripMemoryCommandHandler _createMemoryHandler;
-    private readonly UpdateTripMemoryCommandHandler _updateMemoryHandler;
-    private readonly DeleteTripMemoryCommandHandler _deleteMemoryHandler;
+    private readonly ISender _sender;
 
-    public TripMemoriesController(
-        GetTripMemoriesQueryHandler getMemoriesHandler,
-        GetTripMemoryQueryHandler getMemoryHandler,
-        CreateTripMemoryCommandHandler createMemoryHandler,
-        UpdateTripMemoryCommandHandler updateMemoryHandler,
-        DeleteTripMemoryCommandHandler deleteMemoryHandler)
+    public TripMemoriesController(ISender sender)
     {
-        _getMemoriesHandler = getMemoriesHandler;
-        _getMemoryHandler = getMemoryHandler;
-        _createMemoryHandler = createMemoryHandler;
-        _updateMemoryHandler = updateMemoryHandler;
-        _deleteMemoryHandler = deleteMemoryHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -37,7 +25,7 @@ public sealed class TripMemoriesController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var result = await _getMemoriesHandler.Handle(
+        var result = await _sender.Send(
             new GetTripMemoriesQuery(tripId),
             cancellationToken);
 
@@ -55,7 +43,7 @@ public sealed class TripMemoriesController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        var result = await _getMemoryHandler.Handle(
+        var result = await _sender.Send(
             new GetTripMemoryQuery(tripId, id),
             cancellationToken);
 
@@ -73,7 +61,7 @@ public sealed class TripMemoriesController : ControllerBase
         [FromBody] CreateTripMemoryRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _createMemoryHandler.Handle(
+        var result = await _sender.Send(
             new CreateTripMemoryCommand(
                 tripId,
                 request.Title,
@@ -101,7 +89,7 @@ public sealed class TripMemoriesController : ControllerBase
         [FromBody] UpdateTripMemoryRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _updateMemoryHandler.Handle(
+        var result = await _sender.Send(
             new UpdateTripMemoryCommand(
                 tripId,
                 id,
@@ -126,7 +114,7 @@ public sealed class TripMemoriesController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        var success = await _deleteMemoryHandler.Handle(
+        var success = await _sender.Send(
             new DeleteTripMemoryCommand(tripId, id),
             cancellationToken);
 

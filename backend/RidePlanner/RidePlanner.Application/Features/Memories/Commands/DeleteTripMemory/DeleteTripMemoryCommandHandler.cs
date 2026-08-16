@@ -1,8 +1,9 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 
 namespace RidePlanner.Application.Features.Memories.Commands.DeleteTripMemory;
 
-public sealed class DeleteTripMemoryCommandHandler
+public sealed class DeleteTripMemoryCommandHandler : IRequestHandler<DeleteTripMemoryCommand, bool>
 {
     private readonly ITripMemoryRepository _memoryRepository;
 
@@ -12,11 +13,11 @@ public sealed class DeleteTripMemoryCommandHandler
     }
 
     public async Task<bool> Handle(
-        DeleteTripMemoryCommand command,
+        DeleteTripMemoryCommand request,
         CancellationToken cancellationToken = default)
     {
-        var memory = await _memoryRepository.GetByIdAsync(command.MemoryId, cancellationToken);
-        if (memory is null || memory.TripId != command.TripId)
+        var memory = await _memoryRepository.GetByIdAsync(request.MemoryId, cancellationToken);
+        if (memory is null || memory.TripId != request.TripId)
         {
             return false;
         }

@@ -1,3 +1,6 @@
+using MediatR;
+using RidePlanner.Application.Features.Memories.DTOs;
+
 namespace RidePlanner.Application.Features.Memories.Commands.UpdateTripMemory;
 
 public sealed record UpdateTripMemoryCommand(
@@ -7,4 +10,4 @@ public sealed record UpdateTripMemoryCommand(
     string? Content = null,
     string? ImageUrl = null,
     int? OdometerReadingKm = null,
-    DateTimeOffset? MemoryDate = null);
+    DateTimeOffset? MemoryDate = null) : IRequest<TripMemoryDto?>;
