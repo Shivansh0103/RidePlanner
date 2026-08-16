@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Checklists.DTOs;
 using RidePlanner.Application.Features.Checklists.Mappings;
 
 namespace RidePlanner.Application.Features.Checklists.Commands.ToggleItem;
 
-public sealed class ToggleChecklistItemCommandHandler
+public sealed class ToggleChecklistItemCommandHandler : IRequestHandler<ToggleChecklistItemCommand, ChecklistSummaryDto?>
 {
     private readonly IChecklistRepository _checklistRepository;
 
@@ -14,18 +15,18 @@ public sealed class ToggleChecklistItemCommandHandler
     }
 
     public async Task<ChecklistSummaryDto?> Handle(
-        ToggleChecklistItemCommand command,
+        ToggleChecklistItemCommand request,
         CancellationToken cancellationToken = default)
     {
-        var item = await _checklistRepository.GetItemByIdAsync(command.ItemId, cancellationToken);
-        if (item is null || item.Category.TripId != command.TripId)
+        var item = await _checklistRepository.GetItemByIdAsync(request.ItemId, cancellationToken);
+        if (item is null || item.Category.TripId != request.TripId)
         {
             return null;
         }
 
-        if (command.IsCompleted.HasValue)
+        if (request.IsCompleted.HasValue)
         {
-            item.SetCompleted(command.IsCompleted.Value);
+            item.SetCompleted(request.IsCompleted.Value);
         }
         else
         {
@@ -34,7 +35,7 @@ public sealed class ToggleChecklistItemCommandHandler
 
         await _checklistRepository.SaveChangesAsync(cancellationToken);
 
-        var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(command.TripId, cancellationToken);
-        return updatedCategories.ToSummaryDto(command.TripId);
+        var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
+        return updatedCategories.ToSummaryDto(request.TripId);
     }
 }

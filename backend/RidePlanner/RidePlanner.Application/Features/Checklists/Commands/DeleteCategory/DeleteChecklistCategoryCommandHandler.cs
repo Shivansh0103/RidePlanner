@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Checklists.DTOs;
 using RidePlanner.Application.Features.Checklists.Mappings;
 
 namespace RidePlanner.Application.Features.Checklists.Commands.DeleteCategory;
 
-public sealed class DeleteChecklistCategoryCommandHandler
+public sealed class DeleteChecklistCategoryCommandHandler : IRequestHandler<DeleteChecklistCategoryCommand, ChecklistSummaryDto?>
 {
     private readonly IChecklistRepository _checklistRepository;
 
@@ -14,11 +15,11 @@ public sealed class DeleteChecklistCategoryCommandHandler
     }
 
     public async Task<ChecklistSummaryDto?> Handle(
-        DeleteChecklistCategoryCommand command,
+        DeleteChecklistCategoryCommand request,
         CancellationToken cancellationToken = default)
     {
-        var category = await _checklistRepository.GetCategoryByIdAsync(command.CategoryId, cancellationToken);
-        if (category is null || category.TripId != command.TripId)
+        var category = await _checklistRepository.GetCategoryByIdAsync(request.CategoryId, cancellationToken);
+        if (category is null || category.TripId != request.TripId)
         {
             return null;
         }
@@ -26,7 +27,7 @@ public sealed class DeleteChecklistCategoryCommandHandler
         _checklistRepository.RemoveCategory(category);
         await _checklistRepository.SaveChangesAsync(cancellationToken);
 
-        var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(command.TripId, cancellationToken);
-        return updatedCategories.ToSummaryDto(command.TripId);
+        var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
+        return updatedCategories.ToSummaryDto(request.TripId);
     }
 }

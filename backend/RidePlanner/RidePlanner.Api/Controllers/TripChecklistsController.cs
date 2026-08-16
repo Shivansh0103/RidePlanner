@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Checklists.Commands.CreateCategory;
 using RidePlanner.Application.Features.Checklists.Commands.CreateItem;
@@ -15,33 +16,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/checklist")]
 public sealed class TripChecklistsController : ControllerBase
 {
-    private readonly GetTripChecklistQueryHandler _getTripChecklistHandler;
-    private readonly CreateChecklistCategoryCommandHandler _createCategoryHandler;
-    private readonly UpdateChecklistCategoryCommandHandler _updateCategoryHandler;
-    private readonly DeleteChecklistCategoryCommandHandler _deleteCategoryHandler;
-    private readonly CreateChecklistItemCommandHandler _createItemHandler;
-    private readonly UpdateChecklistItemCommandHandler _updateItemHandler;
-    private readonly ToggleChecklistItemCommandHandler _toggleItemHandler;
-    private readonly DeleteChecklistItemCommandHandler _deleteItemHandler;
+    private readonly ISender _sender;
 
-    public TripChecklistsController(
-        GetTripChecklistQueryHandler getTripChecklistHandler,
-        CreateChecklistCategoryCommandHandler createCategoryHandler,
-        UpdateChecklistCategoryCommandHandler updateCategoryHandler,
-        DeleteChecklistCategoryCommandHandler deleteCategoryHandler,
-        CreateChecklistItemCommandHandler createItemHandler,
-        UpdateChecklistItemCommandHandler updateItemHandler,
-        ToggleChecklistItemCommandHandler toggleItemHandler,
-        DeleteChecklistItemCommandHandler deleteItemHandler)
+    public TripChecklistsController(ISender sender)
     {
-        _getTripChecklistHandler = getTripChecklistHandler;
-        _createCategoryHandler = createCategoryHandler;
-        _updateCategoryHandler = updateCategoryHandler;
-        _deleteCategoryHandler = deleteCategoryHandler;
-        _createItemHandler = createItemHandler;
-        _updateItemHandler = updateItemHandler;
-        _toggleItemHandler = toggleItemHandler;
-        _deleteItemHandler = deleteItemHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -49,7 +28,7 @@ public sealed class TripChecklistsController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var result = await _getTripChecklistHandler.Handle(
+        var result = await _sender.Send(
             new GetTripChecklistQuery(tripId),
             cancellationToken);
 
@@ -67,7 +46,7 @@ public sealed class TripChecklistsController : ControllerBase
         [FromBody] CreateChecklistCategoryRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _createCategoryHandler.Handle(
+        var result = await _sender.Send(
             new CreateChecklistCategoryCommand(tripId, request.Name),
             cancellationToken);
 
@@ -86,7 +65,7 @@ public sealed class TripChecklistsController : ControllerBase
         [FromBody] UpdateChecklistCategoryRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _updateCategoryHandler.Handle(
+        var result = await _sender.Send(
             new UpdateChecklistCategoryCommand(tripId, categoryId, request.Name),
             cancellationToken);
 
@@ -104,7 +83,7 @@ public sealed class TripChecklistsController : ControllerBase
         Guid categoryId,
         CancellationToken cancellationToken)
     {
-        var result = await _deleteCategoryHandler.Handle(
+        var result = await _sender.Send(
             new DeleteChecklistCategoryCommand(tripId, categoryId),
             cancellationToken);
 
@@ -122,7 +101,7 @@ public sealed class TripChecklistsController : ControllerBase
         [FromBody] CreateChecklistItemRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _createItemHandler.Handle(
+        var result = await _sender.Send(
             new CreateChecklistItemCommand(tripId, request.CategoryId, request.Title, request.IsRequired),
             cancellationToken);
 
@@ -141,7 +120,7 @@ public sealed class TripChecklistsController : ControllerBase
         [FromBody] UpdateChecklistItemRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _updateItemHandler.Handle(
+        var result = await _sender.Send(
             new UpdateChecklistItemCommand(tripId, itemId, request.Title, request.IsRequired),
             cancellationToken);
 
@@ -153,7 +132,6 @@ public sealed class TripChecklistsController : ControllerBase
         return Ok(result);
     }
 
-
     [HttpPatch("items/{itemId:guid}/toggle")]
     public async Task<IActionResult> ToggleItem(
         Guid tripId,
@@ -161,7 +139,7 @@ public sealed class TripChecklistsController : ControllerBase
         [FromBody] ToggleChecklistItemRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _toggleItemHandler.Handle(
+        var result = await _sender.Send(
             new ToggleChecklistItemCommand(tripId, itemId, request.IsCompleted),
             cancellationToken);
 
@@ -179,7 +157,7 @@ public sealed class TripChecklistsController : ControllerBase
         Guid itemId,
         CancellationToken cancellationToken)
     {
-        var result = await _deleteItemHandler.Handle(
+        var result = await _sender.Send(
             new DeleteChecklistItemCommand(tripId, itemId),
             cancellationToken);
 

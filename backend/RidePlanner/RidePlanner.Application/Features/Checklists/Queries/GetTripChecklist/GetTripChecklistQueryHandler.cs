@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Checklists.DTOs;
 using RidePlanner.Application.Features.Checklists.Mappings;
 
 namespace RidePlanner.Application.Features.Checklists.Queries.GetTripChecklist;
 
-public sealed class GetTripChecklistQueryHandler
+public sealed class GetTripChecklistQueryHandler : IRequestHandler<GetTripChecklistQuery, ChecklistSummaryDto?>
 {
     private readonly IChecklistRepository _checklistRepository;
     private readonly ITripRepository _tripRepository;
@@ -18,16 +19,16 @@ public sealed class GetTripChecklistQueryHandler
     }
 
     public async Task<ChecklistSummaryDto?> Handle(
-        GetTripChecklistQuery query,
+        GetTripChecklistQuery request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(query.TripId, cancellationToken);
+        var trip = await _tripRepository.GetByIdAsync(request.TripId, cancellationToken);
         if (trip is null)
         {
             return null;
         }
 
-        var categories = await _checklistRepository.GetCategoriesByTripIdAsync(query.TripId, cancellationToken);
-        return categories.ToSummaryDto(query.TripId);
+        var categories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);
+        return categories.ToSummaryDto(request.TripId);
     }
 }
