@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.TravelDocuments.DTOs;
 using RidePlanner.Application.Features.TravelDocuments.Mappings;
 
 namespace RidePlanner.Application.Features.TravelDocuments.Commands.UpdateTripDocument;
 
-public sealed class UpdateTripDocumentCommandHandler
+public sealed class UpdateTripDocumentCommandHandler : IRequestHandler<UpdateTripDocumentCommand, TripDocumentDto?>
 {
     private readonly ITripDocumentRepository _documentRepository;
 
@@ -14,22 +15,22 @@ public sealed class UpdateTripDocumentCommandHandler
     }
 
     public async Task<TripDocumentDto?> Handle(
-        UpdateTripDocumentCommand command,
+        UpdateTripDocumentCommand request,
         CancellationToken cancellationToken = default)
     {
-        var document = await _documentRepository.GetByIdAsync(command.DocumentId, cancellationToken);
-        if (document is null || document.TripId != command.TripId)
+        var document = await _documentRepository.GetByIdAsync(request.DocumentId, cancellationToken);
+        if (document is null || document.TripId != request.TripId)
         {
             return null;
         }
 
         document.Update(
-            command.Title,
-            command.Type,
-            command.DocumentNumber,
-            command.ExpiryDate,
-            command.FilePath,
-            command.Notes);
+            request.Title,
+            request.Type,
+            request.DocumentNumber,
+            request.ExpiryDate,
+            request.FilePath,
+            request.Notes);
 
         await _documentRepository.SaveChangesAsync(cancellationToken);
 

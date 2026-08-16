@@ -1,10 +1,11 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.TravelDocuments.DTOs;
 using RidePlanner.Application.Features.TravelDocuments.Mappings;
 
 namespace RidePlanner.Application.Features.TravelDocuments.Queries.GetTripDocument;
 
-public sealed class GetTripDocumentQueryHandler
+public sealed class GetTripDocumentQueryHandler : IRequestHandler<GetTripDocumentQuery, TripDocumentDto?>
 {
     private readonly ITripDocumentRepository _documentRepository;
 
@@ -14,11 +15,11 @@ public sealed class GetTripDocumentQueryHandler
     }
 
     public async Task<TripDocumentDto?> Handle(
-        GetTripDocumentQuery query,
+        GetTripDocumentQuery request,
         CancellationToken cancellationToken = default)
     {
-        var document = await _documentRepository.GetByIdAsync(query.DocumentId, cancellationToken);
-        if (document is null || document.TripId != query.TripId)
+        var document = await _documentRepository.GetByIdAsync(request.DocumentId, cancellationToken);
+        if (document is null || document.TripId != request.TripId)
         {
             return null;
         }

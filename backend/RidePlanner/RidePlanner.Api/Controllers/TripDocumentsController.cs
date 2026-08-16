@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.TravelDocuments.Commands.CreateTripDocument;
 using RidePlanner.Application.Features.TravelDocuments.Commands.DeleteTripDocument;
@@ -12,24 +13,11 @@ namespace RidePlanner.Api.Controllers;
 [Route("api/trips/{tripId:guid}/documents")]
 public sealed class TripDocumentsController : ControllerBase
 {
-    private readonly GetTripDocumentsQueryHandler _getDocumentsHandler;
-    private readonly GetTripDocumentQueryHandler _getDocumentHandler;
-    private readonly CreateTripDocumentCommandHandler _createDocumentHandler;
-    private readonly UpdateTripDocumentCommandHandler _updateDocumentHandler;
-    private readonly DeleteTripDocumentCommandHandler _deleteDocumentHandler;
+    private readonly ISender _sender;
 
-    public TripDocumentsController(
-        GetTripDocumentsQueryHandler getDocumentsHandler,
-        GetTripDocumentQueryHandler getDocumentHandler,
-        CreateTripDocumentCommandHandler createDocumentHandler,
-        UpdateTripDocumentCommandHandler updateDocumentHandler,
-        DeleteTripDocumentCommandHandler deleteDocumentHandler)
+    public TripDocumentsController(ISender sender)
     {
-        _getDocumentsHandler = getDocumentsHandler;
-        _getDocumentHandler = getDocumentHandler;
-        _createDocumentHandler = createDocumentHandler;
-        _updateDocumentHandler = updateDocumentHandler;
-        _deleteDocumentHandler = deleteDocumentHandler;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -37,7 +25,7 @@ public sealed class TripDocumentsController : ControllerBase
         Guid tripId,
         CancellationToken cancellationToken)
     {
-        var result = await _getDocumentsHandler.Handle(
+        var result = await _sender.Send(
             new GetTripDocumentsQuery(tripId),
             cancellationToken);
 
@@ -55,7 +43,7 @@ public sealed class TripDocumentsController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        var result = await _getDocumentHandler.Handle(
+        var result = await _sender.Send(
             new GetTripDocumentQuery(tripId, id),
             cancellationToken);
 
@@ -73,7 +61,7 @@ public sealed class TripDocumentsController : ControllerBase
         [FromBody] CreateTripDocumentRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _createDocumentHandler.Handle(
+        var result = await _sender.Send(
             new CreateTripDocumentCommand(
                 tripId,
                 request.Title,
@@ -102,7 +90,7 @@ public sealed class TripDocumentsController : ControllerBase
         [FromBody] UpdateTripDocumentRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _updateDocumentHandler.Handle(
+        var result = await _sender.Send(
             new UpdateTripDocumentCommand(
                 tripId,
                 id,
@@ -128,7 +116,7 @@ public sealed class TripDocumentsController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        var success = await _deleteDocumentHandler.Handle(
+        var success = await _sender.Send(
             new DeleteTripDocumentCommand(tripId, id),
             cancellationToken);
 

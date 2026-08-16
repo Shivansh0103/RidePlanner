@@ -14,11 +14,6 @@ public static class DependencyInjection
             cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
         });
 
-        services.AddScoped<RidePlanner.Application.Features.TravelDocuments.Commands.CreateTripDocument.CreateTripDocumentCommandHandler>();
-        services.AddScoped<RidePlanner.Application.Features.TravelDocuments.Commands.UpdateTripDocument.UpdateTripDocumentCommandHandler>();
-        services.AddScoped<RidePlanner.Application.Features.TravelDocuments.Commands.DeleteTripDocument.DeleteTripDocumentCommandHandler>();
-        services.AddScoped<RidePlanner.Application.Features.TravelDocuments.Queries.GetTripDocuments.GetTripDocumentsQueryHandler>();
-        services.AddScoped<RidePlanner.Application.Features.TravelDocuments.Queries.GetTripDocument.GetTripDocumentQueryHandler>();
 
         services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Commands.CreateEmergencyContact.CreateEmergencyContactCommandHandler>();
         services.AddScoped<RidePlanner.Application.Features.EmergencyContacts.Commands.UpdateEmergencyContact.UpdateEmergencyContactCommandHandler>();

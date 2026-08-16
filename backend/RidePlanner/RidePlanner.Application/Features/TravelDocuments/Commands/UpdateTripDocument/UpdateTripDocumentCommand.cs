@@ -1,3 +1,6 @@
+using MediatR;
+using RidePlanner.Application.Features.TravelDocuments.DTOs;
+
 namespace RidePlanner.Application.Features.TravelDocuments.Commands.UpdateTripDocument;
 
 public sealed record UpdateTripDocumentCommand(
@@ -8,4 +11,4 @@ public sealed record UpdateTripDocumentCommand(
     string? DocumentNumber = null,
     DateTimeOffset? ExpiryDate = null,
     string? FilePath = null,
-    string? Notes = null);
+    string? Notes = null) : IRequest<TripDocumentDto?>;

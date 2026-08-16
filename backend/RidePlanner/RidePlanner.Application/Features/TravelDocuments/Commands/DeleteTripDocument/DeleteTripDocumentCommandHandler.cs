@@ -1,8 +1,9 @@
+using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 
 namespace RidePlanner.Application.Features.TravelDocuments.Commands.DeleteTripDocument;
 
-public sealed class DeleteTripDocumentCommandHandler
+public sealed class DeleteTripDocumentCommandHandler : IRequestHandler<DeleteTripDocumentCommand, bool>
 {
     private readonly ITripDocumentRepository _documentRepository;
 
@@ -12,11 +13,11 @@ public sealed class DeleteTripDocumentCommandHandler
     }
 
     public async Task<bool> Handle(
-        DeleteTripDocumentCommand command,
+        DeleteTripDocumentCommand request,
         CancellationToken cancellationToken = default)
     {
-        var document = await _documentRepository.GetByIdAsync(command.DocumentId, cancellationToken);
-        if (document is null || document.TripId != command.TripId)
+        var document = await _documentRepository.GetByIdAsync(request.DocumentId, cancellationToken);
+        if (document is null || document.TripId != request.TripId)
         {
             return false;
         }
