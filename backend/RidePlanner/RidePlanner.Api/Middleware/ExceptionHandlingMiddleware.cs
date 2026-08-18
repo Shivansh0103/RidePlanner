@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RidePlanner.Application.Exceptions;
 using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Api.Middleware;
@@ -28,6 +29,10 @@ public class ExceptionHandlingMiddleware
             {
                 _logger.LogWarning(exception, "Resource not found: {Message}", exception.Message);
             }
+            else if (exception is ValidationException validationException)
+            {
+                _logger.LogWarning(exception, "Validation failures: {Count}", validationException.Errors.Count);
+            }
             else if (exception is DomainException)
             {
                 _logger.LogWarning(exception, "Domain validation exception: {Message}", exception.Message);
@@ -40,6 +45,7 @@ public class ExceptionHandlingMiddleware
             var statusCode = exception switch
             {
                 NotFoundException => StatusCodes.Status404NotFound,
+                ValidationException => StatusCodes.Status400BadRequest,
                 DomainException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
@@ -47,6 +53,7 @@ public class ExceptionHandlingMiddleware
             var title = exception switch
             {
                 NotFoundException => "Not Found",
+                ValidationException => "One or more validation errors occurred.",
                 DomainException => "Bad Request",
                 _ => "Internal Server Error"
             };
@@ -54,6 +61,7 @@ public class ExceptionHandlingMiddleware
             var detail = exception switch
             {
                 NotFoundException => exception.Message,
+                ValidationException => exception.Message,
                 DomainException => exception.Message,
                 _ => "An unexpected error occurred."
             };
@@ -65,14 +73,31 @@ public class ExceptionHandlingMiddleware
                 _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
             };
 
-            var problemDetails = new ProblemDetails
+            ProblemDetails problemDetails;
+
+            if (exception is ValidationException valEx)
             {
-                Status = statusCode,
-                Title = title,
-                Detail = detail,
-                Type = type,
-                Instance = context.Request.Path
-            };
+                var valProblemDetails = new HttpValidationProblemDetails(valEx.Errors)
+                {
+                    Status = statusCode,
+                    Title = title,
+                    Detail = detail,
+                    Type = type,
+                    Instance = context.Request.Path
+                };
+                problemDetails = valProblemDetails;
+            }
+            else
+            {
+                problemDetails = new ProblemDetails
+                {
+                    Status = statusCode,
+                    Title = title,
+                    Detail = detail,
+                    Type = type,
+                    Instance = context.Request.Path
+                };
+            }
 
             context.Response.StatusCode = statusCode;
             context.Response.ContentType = "application/problem+json";
