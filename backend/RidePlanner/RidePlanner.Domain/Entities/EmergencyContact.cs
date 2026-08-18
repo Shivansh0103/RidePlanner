@@ -3,7 +3,7 @@ using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Domain.Entities;
 
-public class EmergencyContact : Entity
+public class EmergencyContact : Entity, IAuditableEntity
 {
     public Guid TripId { get; private set; }
 

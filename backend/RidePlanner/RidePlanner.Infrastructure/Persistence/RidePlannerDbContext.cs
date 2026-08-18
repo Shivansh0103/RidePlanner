@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RidePlanner.Domain.Common;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Entities.Budget;
 using RidePlanner.Domain.Entities.Checklist;
@@ -24,8 +25,35 @@ public class RidePlannerDbContext : DbContext
     public DbSet<EmergencyContact> EmergencyContacts => Set<EmergencyContact>();
     public DbSet<TripMemory> TripMemories => Set<TripMemory>();
 
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        UpdateAuditableEntities();
+        return base.SaveChangesAsync(cancellationToken);
+    }
 
+    public override int SaveChanges()
+    {
+        UpdateAuditableEntities();
+        return base.SaveChanges();
+    }
 
+    private void UpdateAuditableEntities()
+    {
+        var now = DateTimeOffset.UtcNow;
+
+        foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Property(nameof(IAuditableEntity.CreatedAt)).CurrentValue = now;
+                entry.Property(nameof(IAuditableEntity.UpdatedAt)).CurrentValue = now;
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                entry.Property(nameof(IAuditableEntity.UpdatedAt)).CurrentValue = now;
+            }
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

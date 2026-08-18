@@ -6,7 +6,7 @@ using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Domain.Entities;
 
-public class Trip : Entity
+public class Trip : Entity, IAuditableEntity
 {
     private readonly List<ChecklistCategory> _checklistCategories = [];
 
