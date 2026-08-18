@@ -45,6 +45,8 @@ public class AccommodationConfiguration : IEntityTypeConfiguration<Accommodation
             .HasForeignKey(a => a.TripId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasIndex(a => a.TripId);
+
         builder.HasOne(a => a.TripStop)
             .WithOne(s => s.Accommodation)
             .HasForeignKey<Accommodation>(a => a.TripStopId)

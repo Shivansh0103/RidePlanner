@@ -9,6 +9,8 @@ public class TripConfiguration : IEntityTypeConfiguration<Trip>
 {
     public void Configure(EntityTypeBuilder<Trip> builder)
     {
+        builder.ToTable("Trips");
+
         builder.HasKey(t => t.Id);
 
         builder.Property(t => t.Name)
@@ -37,4 +39,4 @@ public class TripConfiguration : IEntityTypeConfiguration<Trip>
         builder.HasOne(x => x.Budget)
             .WithOne(x => x.Trip);
     }
-}
+}

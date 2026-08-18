@@ -8,6 +8,8 @@ public class TripStopConfiguration : IEntityTypeConfiguration<TripStop>
 {
     public void Configure(EntityTypeBuilder<TripStop> builder)
     {
+        builder.ToTable("TripStops");
+
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Name)
