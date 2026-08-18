@@ -31,7 +31,7 @@ public sealed class CreateTripStopCommandHandler : IRequestHandler<CreateTripSto
             cancellationToken);
 
         if (trip is null)
-            throw new DomainException("Trip not found.");
+            throw new NotFoundException("Trip", request.TripId);
 
         var existingStops = await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
         int initialOrder = request.DisplayOrder > 0 ? request.DisplayOrder : existingStops.Count + 1;

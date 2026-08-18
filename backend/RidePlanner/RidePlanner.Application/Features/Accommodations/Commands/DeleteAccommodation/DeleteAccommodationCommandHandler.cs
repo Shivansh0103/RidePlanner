@@ -33,7 +33,7 @@ public sealed class DeleteAccommodationCommandHandler : IRequestHandler<DeleteAc
             cancellationToken);
 
         if (accommodation is null || accommodation.TripId != request.TripId)
-            throw new DomainException("Accommodation stay not found.");
+            throw new NotFoundException("Accommodation stay", request.Id);
 
         var trip = await _tripRepository.GetWithBudgetAsync(
             request.TripId,

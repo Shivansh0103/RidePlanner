@@ -30,14 +30,14 @@ public sealed class UpdateTripStopCommandHandler : IRequestHandler<UpdateTripSto
             cancellationToken);
 
         if (trip is null)
-            throw new DomainException("Trip not found.");
+            throw new NotFoundException("Trip", request.TripId);
 
         var stop = await _tripStopRepository.GetByIdAsync(
             request.StopId,
             cancellationToken);
 
         if (stop is null || stop.TripId != request.TripId)
-            throw new DomainException("Trip stop not found.");
+            throw new NotFoundException("TripStop", request.StopId);
 
         int orderToUse = request.DisplayOrder > 0 ? request.DisplayOrder : stop.DisplayOrder;
 

@@ -36,14 +36,14 @@ public sealed class UpdateAccommodationCommandHandler : IRequestHandler<UpdateAc
             cancellationToken);
 
         if (accommodation is null || accommodation.TripId != request.TripId)
-            throw new DomainException("Accommodation stay not found.");
+            throw new NotFoundException("Accommodation stay", request.Id);
 
         var trip = await _tripRepository.GetWithBudgetAsync(
             request.TripId,
             cancellationToken);
 
         if (trip is null)
-            throw new DomainException("Trip not found.");
+            throw new NotFoundException("Trip", request.TripId);
 
         trip.InitializeBudget();
 

@@ -37,7 +37,7 @@ public sealed class CreateAccommodationCommandHandler : IRequestHandler<CreateAc
             cancellationToken);
 
         if (trip is null)
-            throw new DomainException("Trip not found.");
+            throw new NotFoundException("Trip", request.TripId);
 
         trip.InitializeBudget();
 
