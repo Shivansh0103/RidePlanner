@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RidePlanner.Domain.Exceptions;
 
@@ -23,9 +24,13 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception exception)
         {
-            if (exception is DomainException)
+            if (exception is NotFoundException)
             {
-                _logger.LogWarning(exception, "A domain exception occurred: {Message}", exception.Message);
+                _logger.LogWarning(exception, "Resource not found: {Message}", exception.Message);
+            }
+            else if (exception is DomainException)
+            {
+                _logger.LogWarning(exception, "Domain validation exception: {Message}", exception.Message);
             }
             else
             {
@@ -34,25 +39,45 @@ public class ExceptionHandlingMiddleware
 
             var statusCode = exception switch
             {
+                NotFoundException => StatusCodes.Status404NotFound,
                 DomainException => StatusCodes.Status400BadRequest,
-
                 _ => StatusCodes.Status500InternalServerError
             };
 
-            var message = exception switch
+            var title = exception switch
             {
-                DomainException => exception.Message,
+                NotFoundException => "Not Found",
+                DomainException => "Bad Request",
+                _ => "Internal Server Error"
+            };
 
+            var detail = exception switch
+            {
+                NotFoundException => exception.Message,
+                DomainException => exception.Message,
                 _ => "An unexpected error occurred."
             };
 
-            context.Response.StatusCode = statusCode;
-            context.Response.ContentType = "application/json";
-
-            await context.Response.WriteAsJsonAsync(new
+            var type = statusCode switch
             {
-                Error = message
-            });
+                StatusCodes.Status404NotFound => "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                StatusCodes.Status400BadRequest => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
+            };
+
+            var problemDetails = new ProblemDetails
+            {
+                Status = statusCode,
+                Title = title,
+                Detail = detail,
+                Type = type,
+                Instance = context.Request.Path
+            };
+
+            context.Response.StatusCode = statusCode;
+            context.Response.ContentType = "application/problem+json";
+
+            await context.Response.WriteAsJsonAsync(problemDetails);
         }
     }
 }
