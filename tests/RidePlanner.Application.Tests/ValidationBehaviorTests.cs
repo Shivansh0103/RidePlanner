@@ -1,10 +1,9 @@
 using FluentValidation;
-using FluentValidation.Results;
 using MediatR;
 using RidePlanner.Application.Behaviors;
-using RidePlanner.Application.Exceptions;
 using RidePlanner.Application.Features.Trips.Commands.CreateTrip;
 using RidePlanner.Domain.Entities;
+using ValidationException = RidePlanner.Application.Exceptions.ValidationException;
 
 namespace RidePlanner.Application.Tests;
 
@@ -24,7 +23,7 @@ public class ValidationBehaviorTests
             new DateOnly(2026, 8, 10),
             new DateOnly(2026, 8, 5));
 
-        RequestHandlerDelegate<Trip> next = () => Task.FromResult(Trip.Create("Valid", null, new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 5)));
+        RequestHandlerDelegate<Trip> next = (ct) => Task.FromResult(Trip.Create("Valid", null, new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 5)));
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ValidationException>(() =>
@@ -50,7 +49,7 @@ public class ValidationBehaviorTests
 
         var expectedTrip = Trip.Create("Ladakh Ride", "Tour", new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 10));
         bool nextCalled = false;
-        RequestHandlerDelegate<Trip> next = () =>
+        RequestHandlerDelegate<Trip> next = (ct) =>
         {
             nextCalled = true;
             return Task.FromResult(expectedTrip);
