@@ -101,7 +101,7 @@ public class ExceptionHandlingMiddleware
 
             context.Response.StatusCode = statusCode;
 
-            await context.Response.WriteAsJsonAsync(problemDetails, problemDetails.GetType(), null, "application/problem+json");
+            await context.Response.WriteAsJsonAsync(problemDetails, problemDetails.GetType(), options: null, contentType: "application/problem+json");
         }
     }
 }
