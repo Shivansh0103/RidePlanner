@@ -5,7 +5,7 @@ using RidePlanner.Application.Features.Trips.Mappings;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Enums;
 
-namespace RidePlanner.Domain.Tests;
+namespace RidePlanner.Application.Tests;
 
 public class TripLifecycleApplicationTests
 {

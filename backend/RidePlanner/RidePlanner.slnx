@@ -3,4 +3,6 @@
   <Project Path="RidePlanner.Application/RidePlanner.Application.csproj" />
   <Project Path="RidePlanner.Domain/RidePlanner.Domain.csproj" />
   <Project Path="RidePlanner.Infrastructure/RidePlanner.Infrastructure.csproj" />
+  <Project Path="../../tests/RidePlanner.Domain.Tests/RidePlanner.Domain.Tests.csproj" />
+  <Project Path="../../tests/RidePlanner.Application.Tests/RidePlanner.Application.Tests.csproj" />
 </Solution>

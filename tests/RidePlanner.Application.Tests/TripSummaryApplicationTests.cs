@@ -5,7 +5,7 @@ using RidePlanner.Domain.Entities.Budget;
 using RidePlanner.Domain.Entities.Checklist;
 using RidePlanner.Domain.Enums;
 
-namespace RidePlanner.Domain.Tests;
+namespace RidePlanner.Application.Tests;
 
 public class TripSummaryApplicationTests
 {

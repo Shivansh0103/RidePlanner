@@ -6,7 +6,7 @@ using RidePlanner.Application.Features.Expenses.Queries.GetTripExpenses;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Enums;
 
-namespace RidePlanner.Domain.Tests;
+namespace RidePlanner.Application.Tests;
 
 public class ExpenseApplicationTests
 {
