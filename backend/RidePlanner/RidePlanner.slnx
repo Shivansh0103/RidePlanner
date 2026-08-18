@@ -5,4 +5,5 @@
   <Project Path="RidePlanner.Infrastructure/RidePlanner.Infrastructure.csproj" />
   <Project Path="../../tests/RidePlanner.Domain.Tests/RidePlanner.Domain.Tests.csproj" />
   <Project Path="../../tests/RidePlanner.Application.Tests/RidePlanner.Application.Tests.csproj" />
+  <Project Path="../../tests/RidePlanner.Api.IntegrationTests/RidePlanner.Api.IntegrationTests.csproj" />
 </Solution>
