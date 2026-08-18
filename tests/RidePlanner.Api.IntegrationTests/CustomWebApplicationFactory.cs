@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using RidePlanner.Infrastructure.Persistence;
 
 namespace RidePlanner.Api.IntegrationTests;
@@ -16,16 +17,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // Remove existing DbContext registration
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<RidePlannerDbContext>));
+            services.RemoveAll<DbContextOptions<RidePlannerDbContext>>();
+            services.RemoveAll<DbContextOptions>();
+            services.RemoveAll<RidePlannerDbContext>();
 
-            if (descriptor != null)
-            {
-                services.Remove(descriptor);
-            }
-
-            // Add InMemory database for isolated integration tests
             services.AddDbContext<RidePlannerDbContext>(options =>
             {
                 options.UseInMemoryDatabase(_dbName);
