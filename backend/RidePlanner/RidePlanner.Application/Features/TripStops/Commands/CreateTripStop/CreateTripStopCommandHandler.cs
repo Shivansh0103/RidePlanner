@@ -1,8 +1,8 @@
 using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
-using RidePlanner.Application.Features.TripStops.Services;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Exceptions;
+using RidePlanner.Domain.Services;
 
 namespace RidePlanner.Application.Features.TripStops.Commands.CreateTripStop;
 
@@ -52,7 +52,7 @@ public sealed class CreateTripStopCommandHandler : IRequestHandler<CreateTripSto
         _tripStopRepository.Add(tripStop);
 
         var allStops = existingStops.Concat(new[] { tripStop });
-        TripStopSequenceReconciler.Reconcile(allStops);
+        TripStopReconciler.Reconcile(allStops);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

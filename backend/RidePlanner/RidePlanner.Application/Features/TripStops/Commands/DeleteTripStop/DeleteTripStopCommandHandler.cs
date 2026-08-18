@@ -1,6 +1,7 @@
 using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Exceptions;
+using RidePlanner.Domain.Services;
 
 namespace RidePlanner.Application.Features.TripStops.Commands.DeleteTripStop;
 
@@ -42,7 +43,7 @@ public sealed class DeleteTripStopCommandHandler : IRequestHandler<DeleteTripSto
 
         var remainingStops = (await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken))
             .Where(s => s.Id != request.StopId);
-        RidePlanner.Application.Features.TripStops.Services.TripStopSequenceReconciler.Reconcile(remainingStops);
+        TripStopReconciler.Reconcile(remainingStops);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }

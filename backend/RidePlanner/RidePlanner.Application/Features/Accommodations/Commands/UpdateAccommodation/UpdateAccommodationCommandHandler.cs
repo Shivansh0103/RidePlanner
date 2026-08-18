@@ -2,9 +2,9 @@ using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Accommodations.DTOs;
 using RidePlanner.Application.Features.Accommodations.Mappings;
-using RidePlanner.Application.Features.TripStops.Services;
 using RidePlanner.Domain.Enums;
 using RidePlanner.Domain.Exceptions;
+using RidePlanner.Domain.Services;
 
 namespace RidePlanner.Application.Features.Accommodations.Commands.UpdateAccommodation;
 
@@ -63,7 +63,7 @@ public sealed class UpdateAccommodationCommandHandler : IRequestHandler<UpdateAc
             orderToUse);
 
         var allStops = await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
-        TripStopSequenceReconciler.Reconcile(allStops);
+        TripStopReconciler.Reconcile(allStops);
 
         // 2. Update Accommodation
         accommodation.Update(

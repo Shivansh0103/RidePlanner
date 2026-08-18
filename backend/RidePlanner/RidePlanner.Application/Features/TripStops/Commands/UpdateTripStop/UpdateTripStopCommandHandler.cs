@@ -1,7 +1,7 @@
 using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
-using RidePlanner.Application.Features.TripStops.Services;
 using RidePlanner.Domain.Exceptions;
+using RidePlanner.Domain.Services;
 
 namespace RidePlanner.Application.Features.TripStops.Commands.UpdateTripStop;
 
@@ -54,7 +54,7 @@ public sealed class UpdateTripStopCommandHandler : IRequestHandler<UpdateTripSto
             orderToUse);
 
         var allStops = await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
-        TripStopSequenceReconciler.Reconcile(allStops);
+        TripStopReconciler.Reconcile(allStops);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }

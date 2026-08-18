@@ -1,6 +1,7 @@
 using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Domain.Exceptions;
+using RidePlanner.Domain.Services;
 
 namespace RidePlanner.Application.Features.Accommodations.Commands.DeleteAccommodation;
 
@@ -48,7 +49,7 @@ public sealed class DeleteAccommodationCommandHandler : IRequestHandler<DeleteAc
 
         var remainingStops = (await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken))
             .Where(s => s.Id != accommodation.TripStopId);
-        RidePlanner.Application.Features.TripStops.Services.TripStopSequenceReconciler.Reconcile(remainingStops);
+        TripStopReconciler.Reconcile(remainingStops);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }

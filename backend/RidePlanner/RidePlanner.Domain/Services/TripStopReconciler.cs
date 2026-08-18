@@ -1,8 +1,8 @@
 using RidePlanner.Domain.Entities;
 
-namespace RidePlanner.Application.Features.TripStops.Services;
+namespace RidePlanner.Domain.Services;
 
-public static class TripStopSequenceReconciler
+public static class TripStopReconciler
 {
     public static void Reconcile(IEnumerable<TripStop> stops)
     {

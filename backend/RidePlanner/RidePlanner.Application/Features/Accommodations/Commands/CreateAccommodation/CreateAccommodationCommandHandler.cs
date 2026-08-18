@@ -2,10 +2,10 @@ using MediatR;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Accommodations.DTOs;
 using RidePlanner.Application.Features.Accommodations.Mappings;
-using RidePlanner.Application.Features.TripStops.Services;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Enums;
 using RidePlanner.Domain.Exceptions;
+using RidePlanner.Domain.Services;
 
 namespace RidePlanner.Application.Features.Accommodations.Commands.CreateAccommodation;
 
@@ -60,7 +60,7 @@ public sealed class CreateAccommodationCommandHandler : IRequestHandler<CreateAc
         _tripStopRepository.Add(tripStop);
 
         var allStops = existingStops.Concat(new[] { tripStop });
-        TripStopSequenceReconciler.Reconcile(allStops);
+        TripStopReconciler.Reconcile(allStops);
 
         var accommodation = Accommodation.Create(
             request.TripId,

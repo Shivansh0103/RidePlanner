@@ -2,6 +2,7 @@ using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Entities.Budget;
 using RidePlanner.Domain.Enums;
 using RidePlanner.Domain.Exceptions;
+using RidePlanner.Domain.Services;
 
 namespace RidePlanner.Domain.Tests;
 
@@ -111,7 +112,7 @@ public class AccommodationDomainTests
     }
 
     [Fact]
-    public void TripStopSequenceReconciler_Sorts_Stops_Chronologically_With_Tiebreaker()
+    public void TripStopReconciler_Sorts_Stops_Chronologically_With_Tiebreaker()
     {
         var tripId = Guid.NewGuid();
         var stopLate = TripStop.Create(tripId, "Late Stop", null, "Addr", 10, 10, TripStopCategory.Destination, new DateOnly(2026, 8, 20), new DateOnly(2026, 8, 21), null, 1);
@@ -119,7 +120,7 @@ public class AccommodationDomainTests
         var stopSameDay = TripStop.Create(tripId, "Same Day Stop", null, "Addr", 10, 10, TripStopCategory.Destination, new DateOnly(2026, 8, 10), new DateOnly(2026, 8, 11), null, 3);
 
         var list = new List<TripStop> { stopLate, stopEarly, stopSameDay };
-        RidePlanner.Application.Features.TripStops.Services.TripStopSequenceReconciler.Reconcile(list);
+        TripStopReconciler.Reconcile(list);
 
         Assert.Equal(1, stopSameDay.DisplayOrder); // 2026-08-10, departure 08-11
         Assert.Equal(2, stopEarly.DisplayOrder);   // 2026-08-10, departure 08-12
