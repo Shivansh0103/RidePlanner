@@ -2,7 +2,7 @@
 
 **Goal:** Harden and consolidate the RidePlanner backend after completion of Milestone 1 by addressing the majority of findings from the Sprint 10 Backend Refactoring Audit, improving correctness, consistency, performance, testability, and maintainability.
 
-**Status:** Planned  
+**Status:** Completed  
 **Sprint:** 10  
 **Theme:** Backend Architecture Hardening
 
@@ -572,72 +572,72 @@ Sprint 10 is complete when:
 
 ## MediatR / CQRS
 
-- [ ] MediatR is integrated using the appropriate current package/version.
-- [ ] Commands and Queries use MediatR request abstractions.
-- [ ] Handlers implement MediatR handler interfaces.
-- [ ] Controllers use `ISender` rather than injecting multiple concrete handlers.
-- [ ] Manual handler registration is removed.
-- [ ] Logging pipeline behavior is implemented.
-- [ ] Validation pipeline behavior is implemented where appropriate.
+- [x] MediatR is integrated using the appropriate current package/version.
+- [x] Commands and Queries use MediatR request abstractions.
+- [x] Handlers implement MediatR handler interfaces.
+- [x] Controllers use `ISender` rather than injecting multiple concrete handlers.
+- [x] Manual handler registration is removed.
+- [x] Logging pipeline behavior is implemented.
+- [x] Validation pipeline behavior is implemented where appropriate.
 
 ## Persistence
 
-- [ ] `IUnitOfWork` exists and is used consistently.
-- [ ] Repository `SaveChangesAsync` methods are removed.
-- [ ] Repository-level commits are removed.
-- [ ] Stop reordering uses the surrounding persistence boundary.
-- [ ] Repository mutation/query conventions are standardized.
-- [ ] Expense persistence responsibility is clarified.
+- [x] `IUnitOfWork` exists and is used consistently.
+- [x] Repository `SaveChangesAsync` methods are removed.
+- [x] Repository-level commits are removed.
+- [x] Stop reordering uses the surrounding persistence boundary.
+- [x] Repository mutation/query conventions are standardized.
+- [x] Expense persistence responsibility is clarified.
 
 ## Correctness / Queries
 
-- [ ] Trip Summary correctly calculates actual expenses.
-- [ ] Regression test exists for the expense-summary bug.
-- [ ] GET queries are side-effect free.
-- [ ] Lifecycle behavior remains correct.
-- [ ] Appropriate read models/DTO projections are used.
-- [ ] Read-only queries use `AsNoTracking` where appropriate.
-- [ ] Major unnecessary aggregate loading is removed.
-- [ ] Readiness/Summary query performance is improved without blindly forcing single-query implementations.
+- [x] Trip Summary correctly calculates actual expenses.
+- [x] Regression test exists for the expense-summary bug.
+- [x] GET queries are side-effect free.
+- [x] Lifecycle behavior remains correct.
+- [x] Appropriate read models/DTO projections are used.
+- [x] Read-only queries use `AsNoTracking` where appropriate.
+- [x] Major unnecessary aggregate loading is removed.
+- [x] Readiness/Summary query performance is improved without blindly forcing single-query implementations.
 
 ## Domain
 
-- [ ] Lifecycle business rules have an appropriate Domain boundary.
-- [ ] Trip stop ordering invariants have an appropriate Domain boundary.
-- [ ] Application services coordinate use cases rather than owning core invariants.
+- [x] Lifecycle business rules have an appropriate Domain boundary.
+- [x] Trip stop ordering invariants have an appropriate Domain boundary.
+- [x] Application services coordinate use cases rather than owning core invariants.
 
 ## API
 
-- [ ] API errors use standardized ProblemDetails.
-- [ ] Missing resources consistently return 404.
-- [ ] Validation behavior is standardized.
-- [ ] Existing frontend API compatibility is verified.
+- [x] API errors use standardized ProblemDetails.
+- [x] Missing resources consistently return 404.
+- [x] Validation behavior is standardized.
+- [x] Existing frontend API compatibility is verified.
 
 ## Database / Infrastructure
 
-- [ ] Relevant missing indexes are added.
-- [ ] EF Core table configuration is consistent where appropriate.
-- [ ] Audit timestamp strategy is reviewed and implemented where justified.
-- [ ] CORS origins are configuration-driven.
-- [ ] Startup migration behavior is reviewed.
+- [x] Relevant missing indexes are added.
+- [x] EF Core table configuration is consistent where appropriate.
+- [x] Audit timestamp strategy is reviewed and implemented where justified.
+- [x] CORS origins are configuration-driven.
+- [x] Startup migration behavior is reviewed.
 
 ## Testing
 
-- [ ] Domain.Tests contains Domain tests.
-- [ ] Application.Tests contains Application tests.
-- [ ] API integration tests exist.
-- [ ] Critical Sprint 10 regression scenarios are covered.
-- [ ] Backend build succeeds.
-- [ ] Relevant automated tests pass.
+- [x] Domain.Tests contains Domain tests.
+- [x] Application.Tests contains Application tests.
+- [x] API integration tests exist.
+- [x] Critical Sprint 10 regression scenarios are covered.
+- [x] Backend build succeeds.
+- [x] Relevant automated tests pass.
 
 ## Final Verification
 
-- [ ] Existing Sprint 9 functionality remains intact.
-- [ ] No Sprint 9 lifecycle/readiness/summary/memory regressions are introduced.
-- [ ] Backend API behavior is verified.
-- [ ] Database migrations are verified where applicable.
-- [ ] Documentation is updated.
-- [ ] Sprint 10 changes are committed.
+- [x] Existing Sprint 9 functionality remains intact.
+- [x] No Sprint 9 lifecycle/readiness/summary/memory regressions are introduced.
+- [x] Backend API behavior is verified.
+- [x] Database migrations are verified where applicable.
+- [x] Documentation is updated.
+- [x] Sprint 10 changes are committed.
 
 ---
 

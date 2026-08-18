@@ -96,9 +96,11 @@ The core capabilities of Ride Planner include:
 
 ## Current Status
 
-Ride Planner is actively being developed (Version **v0.9.0**).
+Ride Planner is actively being developed (Version **v0.10.0**).
 
-Completed core features include Trip Lifecycle Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Actual Expense Log & Budget vs Actual Analysis (Sprint 8), Preparation Checklists, Overview Command Center Dashboard, Accommodation & Stay Planning (Sprint 7), Travel Documents, Emergency Contacts, Derived Trip Readiness Score, Printable Trip Summary Report, and Trip Memories (Sprint 9).
+Completed milestones include:
+* **Product Features (Sprints 1–9)**: Trip Lifecycle Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Actual Expense Log & Budget vs Actual Analysis, Preparation Checklists, Overview Command Center Dashboard, Accommodation & Stay Planning, Travel Documents, Emergency Contacts, Derived Trip Readiness Score, Printable Trip Summary Report, and Trip Memories.
+* **Backend Architecture Hardening (Sprint 10)**: MediatR & CQRS Standardization with `ISender`, Application-level `IUnitOfWork` and Transaction Boundaries, Read-Model Projections with `AsNoTracking`, Domain-Driven Design boundary refinement (`Trip.SynchronizeLifecycle`, `TripStopReconciler`), RFC 7807 `ProblemDetails` and `FluentValidation` MediatR pipeline, Explicit EF Core configurations & Foreign Key Indexing, Centralized `IAuditableEntity` timestamps in `DbContext`, Configuration-Driven CORS, and a multi-tier Testing Architecture (`Domain.Tests`, `Application.Tests`, `Api.IntegrationTests`).
 
 ---
 

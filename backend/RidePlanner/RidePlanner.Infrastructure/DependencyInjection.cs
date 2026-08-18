@@ -13,9 +13,18 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<RidePlannerDbContext>(options =>
-            options.UseNpgsql(
-                configuration.GetConnectionString("RidePlannerDatabase")));
+        var connectionString = configuration.GetConnectionString("RidePlannerDatabase");
+
+        if (string.IsNullOrWhiteSpace(connectionString) || string.Equals(connectionString, "InMemory", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddDbContext<RidePlannerDbContext>(options =>
+                options.UseInMemoryDatabase("RidePlannerDb"));
+        }
+        else
+        {
+            services.AddDbContext<RidePlannerDbContext>(options =>
+                options.UseNpgsql(connectionString));
+        }
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
