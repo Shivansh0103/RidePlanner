@@ -2,7 +2,6 @@ using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Trips.Commands.CompleteTrip;
 using RidePlanner.Application.Features.Trips.Commands.StartTrip;
 using RidePlanner.Application.Features.Trips.Mappings;
-using RidePlanner.Application.Features.Trips.Services;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Enums;
 
@@ -47,12 +46,12 @@ public class TripLifecycleApplicationTests
     }
 
     [Fact]
-    public void TripLifecycleService_AutoActivates_Planning_Trip_When_StartDate_Reached()
+    public void SynchronizeLifecycle_AutoActivates_Planning_Trip_When_StartDate_Reached()
     {
         var trip = Trip.Create("Current Trip", "Riding", new DateOnly(2026, 8, 10), new DateOnly(2026, 8, 20));
         Assert.Equal(TripStatus.Planning, trip.Status);
 
-        TripLifecycleService.SynchronizeLifecycle(trip, new DateOnly(2026, 8, 13));
+        trip.SynchronizeLifecycle(new DateOnly(2026, 8, 13));
 
         Assert.Equal(TripStatus.Active, trip.Status);
         Assert.Null(trip.StartedAt);

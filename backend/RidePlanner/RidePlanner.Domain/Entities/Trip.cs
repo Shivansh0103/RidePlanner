@@ -40,11 +40,8 @@ public class Trip : Entity
 
     public TripBudget Budget { get; private set; } = null!;
 
-
-
     public IReadOnlyCollection<ChecklistCategory> ChecklistCategories =>
         _checklistCategories.AsReadOnly();
-
 
     private Trip(
         Guid id,
@@ -113,6 +110,14 @@ public class Trip : Entity
         }
     }
 
+    public void SynchronizeLifecycle(DateOnly currentDate)
+    {
+        if (Status == TripStatus.Planning && StartDate <= currentDate)
+        {
+            AutoActivate();
+        }
+    }
+
     public void Complete(DateTimeOffset? actualCompletion = null)
     {
         if (Status == TripStatus.Completed)
@@ -155,4 +160,3 @@ public class Trip : Entity
         Status = TripStatus.Planning;
     }
 }
-
