@@ -43,8 +43,9 @@ export class ApiError extends Error {
    * Priority:
    * 1. First validation error in `errors`
    * 2. `detail`
-   * 3. `title`
-   * 4. Fallback string
+   * 3. `message`
+   * 4. `title`
+   * 5. Fallback string
    */
   public getDisplayMessage(fallback = "An unexpected error occurred."): string {
     if (this.errors && Object.keys(this.errors).length > 0) {
@@ -53,6 +54,6 @@ export class ApiError extends Error {
       if (firstMsg) return firstMsg;
     }
 
-    return this.detail || this.title || this.message || fallback;
+    return this.detail || this.message || this.title || fallback;
   }
 }
