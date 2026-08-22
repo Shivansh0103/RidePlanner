@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+
 import * as memoryApi from "../api/memoryApi";
 import { memoryKeys } from "../api/memoryKeys";
 
@@ -13,10 +14,10 @@ export function useDeleteTripMemory(tripId: string) {
       queryClient.invalidateQueries({
         queryKey: memoryKeys.tripMemories(tripId),
       });
-      toast.success("Ride memory deleted.");
+      toast.success("Ride memory deleted successfully.");
     },
-    onError: () => {
-      toast.error("Failed to delete memory.");
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to delete memory.");
     },
   });
 }

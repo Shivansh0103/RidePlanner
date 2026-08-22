@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+
+import { readinessKeys } from "@/features/readiness/api/readinessKeys";
+
 import * as documentApi from "../api/documentApi";
 import { documentKeys } from "../api/documentKeys";
 
@@ -13,10 +16,13 @@ export function useDeleteTripDocument(tripId: string) {
       queryClient.invalidateQueries({
         queryKey: documentKeys.tripDocuments(tripId),
       });
-      toast.success("Document deleted.");
+      queryClient.invalidateQueries({
+        queryKey: readinessKeys.tripReadiness(tripId),
+      });
+      toast.success("Document deleted successfully.");
     },
-    onError: () => {
-      toast.error("Failed to delete document.");
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to delete document.");
     },
   });
 }

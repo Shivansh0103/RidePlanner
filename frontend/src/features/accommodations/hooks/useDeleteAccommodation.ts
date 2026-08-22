@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { budgetKeys } from "@/features/budget/api/budgetKeys";
+import { readinessKeys } from "@/features/readiness/api/readinessKeys";
+import { summaryKeys } from "@/features/summary/api/summaryKeys";
 import { tripStopKeys } from "@/features/tripStops/api/tripStopKeys";
 
 import { accommodationKeys } from "../api/accommodationKeys";
@@ -17,7 +19,9 @@ export function useDeleteAccommodation(tripId: string) {
       queryClient.invalidateQueries({ queryKey: accommodationKeys.all(tripId) });
       queryClient.invalidateQueries({ queryKey: tripStopKeys.all(tripId) });
       queryClient.invalidateQueries({ queryKey: budgetKeys.detail(tripId) });
-      toast.success("Accommodation stay removed.");
+      queryClient.invalidateQueries({ queryKey: readinessKeys.tripReadiness(tripId) });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.tripSummary(tripId) });
+      toast.success("Accommodation stay deleted successfully.");
     },
 
     onError: (error: Error) => {

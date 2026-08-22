@@ -17,5 +17,8 @@ export function useCreateTrip() {
 
       toast.success("Trip created successfully.");
     },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to create trip.");
+    },
   });
-}
+}

@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { summaryKeys } from "@/features/summary/api/summaryKeys";
+
 import { tripStopKeys } from "../api/tripStopKeys";
 import { reorderTripStops } from "../api/tripStopsApi";
 
@@ -14,10 +16,13 @@ export function useReorderTripStops(tripId: string) {
       queryClient.invalidateQueries({
         queryKey: tripStopKeys.all(tripId),
       });
+      queryClient.invalidateQueries({
+        queryKey: summaryKeys.tripSummary(tripId),
+      });
     },
 
-    onError: () => {
-      toast.error("Failed to reorder stops.");
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to reorder stops.");
       queryClient.invalidateQueries({
         queryKey: tripStopKeys.all(tripId),
       });

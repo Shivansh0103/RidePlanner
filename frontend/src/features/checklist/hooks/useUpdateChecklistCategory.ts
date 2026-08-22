@@ -5,25 +5,23 @@ import { updateChecklistCategory } from "../api/checklistApi";
 import { checklistKeys } from "../api/checklistKeys";
 import type { UpdateCategoryRequest } from "../schemas/categorySchema";
 
+interface UpdateCategoryParams {
+  categoryId: string;
+  request: UpdateCategoryRequest;
+}
+
 export function useUpdateChecklistCategory(tripId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      categoryId,
-      request,
-    }: {
-      categoryId: string;
-      request: UpdateCategoryRequest;
-    }) => updateChecklistCategory(tripId, categoryId, request),
+    mutationFn: ({ categoryId, request }: UpdateCategoryParams) =>
+      updateChecklistCategory(tripId, categoryId, request),
     onSuccess: (data) => {
       queryClient.setQueryData(checklistKeys.detail(tripId), data);
       toast.success("Category updated successfully.");
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.Error || "Failed to update category.";
-      toast.error(message);
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update category.");
     },
   });
 }

@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { readinessKeys } from "@/features/readiness/api/readinessKeys";
+
 import { toggleChecklistItem } from "../api/checklistApi";
 import { checklistKeys } from "../api/checklistKeys";
 import type { ChecklistSummary } from "../types/checklist";
@@ -68,16 +70,14 @@ export function useToggleChecklistItem(tripId: string) {
 
       return { previousChecklist };
     },
-    onError: (error: any, _variables, context) => {
+    onError: (error: Error, _variables, context) => {
       if (context?.previousChecklist) {
         queryClient.setQueryData(
           checklistKeys.detail(tripId),
           context.previousChecklist
         );
       }
-      const message =
-        error?.response?.data?.Error || "Failed to update item state.";
-      toast.error(message);
+      toast.error(error.message || "Failed to update item state.");
     },
     onSettled: (data) => {
       if (data) {
@@ -85,6 +85,7 @@ export function useToggleChecklistItem(tripId: string) {
       } else {
         queryClient.invalidateQueries({ queryKey: checklistKeys.detail(tripId) });
       }
+      queryClient.invalidateQueries({ queryKey: readinessKeys.tripReadiness(tripId) });
     },
   });
 }

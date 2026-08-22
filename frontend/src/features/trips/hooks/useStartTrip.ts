@@ -21,8 +21,8 @@ export function useStartTrip() {
 
       toast.success("Trip started! Have a safe journey.");
     },
-    onError: () => {
-      toast.error("Failed to start trip.");
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to start trip.");
     },
   });
 }

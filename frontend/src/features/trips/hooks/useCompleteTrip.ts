@@ -21,8 +21,8 @@ export function useCompleteTrip() {
 
       toast.success("Trip marked as completed! Congratulations.");
     },
-    onError: () => {
-      toast.error("Failed to complete trip.");
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to complete trip.");
     },
   });
 }

@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { summaryKeys } from "@/features/summary/api/summaryKeys";
+
 import { deleteExpense } from "../api/budgetApi";
 import { budgetKeys } from "../api/budgetKeys";
 
@@ -12,12 +14,11 @@ export function useDeleteExpense(tripId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: budgetKeys.detail(tripId) });
       queryClient.invalidateQueries({ queryKey: budgetKeys.expenses(tripId) });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.tripSummary(tripId) });
       toast.success("Expense deleted successfully.");
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.Error || "Failed to delete expense.";
-      toast.error(message);
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to delete expense.");
     },
   });
 }

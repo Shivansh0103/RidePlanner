@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { summaryKeys } from "@/features/summary/api/summaryKeys";
+
 import { deleteBudgetEstimate } from "../api/budgetApi";
 import { budgetKeys } from "../api/budgetKeys";
 
@@ -10,14 +12,13 @@ export function useDeleteBudgetEstimate(tripId: string) {
   return useMutation({
     mutationFn: (estimateId: string) =>
       deleteBudgetEstimate(tripId, estimateId),
-    onSuccess: (data) => {
-      queryClient.setQueryData(budgetKeys.detail(tripId), data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: budgetKeys.detail(tripId) });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.tripSummary(tripId) });
       toast.success("Estimate deleted successfully.");
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.Error || "Failed to delete budget estimate.";
-      toast.error(message);
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to delete estimate.");
     },
   });
 }

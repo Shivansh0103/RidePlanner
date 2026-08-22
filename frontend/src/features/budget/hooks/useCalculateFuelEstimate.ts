@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { summaryKeys } from "@/features/summary/api/summaryKeys";
+
 import { calculateFuelEstimate } from "../api/budgetApi";
 import { budgetKeys } from "../api/budgetKeys";
 import type { FuelCalculatorRequest } from "../schemas/fuelCalculatorSchema";
@@ -11,14 +13,13 @@ export function useCalculateFuelEstimate(tripId: string) {
   return useMutation({
     mutationFn: (request: FuelCalculatorRequest) =>
       calculateFuelEstimate(tripId, request),
-    onSuccess: (data) => {
-      queryClient.setQueryData(budgetKeys.detail(tripId), data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: budgetKeys.detail(tripId) });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.tripSummary(tripId) });
       toast.success("Fuel cost calculated and estimate updated.");
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.Error || "Failed to calculate fuel cost.";
-      toast.error(message);
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to calculate fuel estimate.");
     },
   });
 }

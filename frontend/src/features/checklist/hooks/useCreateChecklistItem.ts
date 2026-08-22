@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { readinessKeys } from "@/features/readiness/api/readinessKeys";
+
 import { createChecklistItem } from "../api/checklistApi";
 import { checklistKeys } from "../api/checklistKeys";
 import type { CreateItemRequest } from "../schemas/itemSchema";
@@ -13,12 +15,11 @@ export function useCreateChecklistItem(tripId: string) {
       createChecklistItem(tripId, request),
     onSuccess: (data) => {
       queryClient.setQueryData(checklistKeys.detail(tripId), data);
+      queryClient.invalidateQueries({ queryKey: readinessKeys.tripReadiness(tripId) });
       toast.success("Item added successfully.");
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.Error || "Failed to add item.";
-      toast.error(message);
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to add item.");
     },
   });
 }
