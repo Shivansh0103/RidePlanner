@@ -1,4 +1,5 @@
 export * from "./components/PlaceAutocomplete";
+export * from "./components/MapFallback";
 export { default as RouteSummary } from "./components/RouteSummary";
 export * from "./hooks/usePlacesAutocomplete";
 export * from "./hooks/useRoute";

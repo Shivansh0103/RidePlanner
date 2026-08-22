@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import queryClient from "@/app/providers/queryClient";
 import theme from "@/app/theme/theme";
+import { ErrorBoundary } from "@/shared/components";
 import { MapProvider } from "@/shared/maps";
 
 interface AppProvidersProps {
@@ -12,12 +13,14 @@ interface AppProvidersProps {
 
 export default function AppProviders({ children }: AppProvidersProps) {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
 
-      <QueryClientProvider client={queryClient}>
-        <MapProvider>{children}</MapProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <MapProvider>{children}</MapProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

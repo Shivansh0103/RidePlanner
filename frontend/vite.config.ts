@@ -1,7 +1,6 @@
-/// <reference types="vitest" />
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react()],
@@ -14,7 +13,6 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
-    threads: true,
     fileParallelism: false,
   },
 });

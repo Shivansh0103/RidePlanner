@@ -22,10 +22,10 @@ describe("calculateTripSummary utilities", () => {
   describe("calculateTripSummaryMetrics", () => {
     it("aggregates stop categories correctly", () => {
       const mockStops = [
-        { id: "1", tripId: "t1", name: "Hotel 1", category: TripStopCategory.Hotel, arrivalDate: "2026-08-20", departureDate: "2026-08-21", displayOrder: 1, formattedAddress: "Address", latitude: 12, longitude: 77, notes: "" },
-        { id: "2", tripId: "t1", name: "Fuel 1", category: TripStopCategory.Fuel, arrivalDate: "2026-08-21", departureDate: "2026-08-21", displayOrder: 2, formattedAddress: "Address", latitude: 12, longitude: 77, notes: "" },
-        { id: "3", tripId: "t1", name: "Food 1", category: TripStopCategory.Food, arrivalDate: "2026-08-21", departureDate: "2026-08-21", displayOrder: 3, formattedAddress: "Address", latitude: 12, longitude: 77, notes: "" },
-        { id: "4", tripId: "t1", name: "Attraction 1", category: TripStopCategory.Attraction, arrivalDate: "2026-08-22", departureDate: "2026-08-22", displayOrder: 4, formattedAddress: "Address", latitude: 12, longitude: 77, notes: "" },
+        { id: "1", tripId: "t1", name: "Hotel 1", placeId: null, category: TripStopCategory.Hotel, arrivalDate: "2026-08-20", departureDate: "2026-08-21", displayOrder: 1, formattedAddress: "Address", latitude: 12, longitude: 77, notes: null },
+        { id: "2", tripId: "t1", name: "Fuel 1", placeId: null, category: TripStopCategory.Fuel, arrivalDate: "2026-08-21", departureDate: "2026-08-21", displayOrder: 2, formattedAddress: "Address", latitude: 12, longitude: 77, notes: null },
+        { id: "3", tripId: "t1", name: "Food 1", placeId: null, category: TripStopCategory.Food, arrivalDate: "2026-08-21", departureDate: "2026-08-21", displayOrder: 3, formattedAddress: "Address", latitude: 12, longitude: 77, notes: null },
+        { id: "4", tripId: "t1", name: "Attraction 1", placeId: null, category: TripStopCategory.Attraction, arrivalDate: "2026-08-22", departureDate: "2026-08-22", displayOrder: 4, formattedAddress: "Address", latitude: 12, longitude: 77, notes: null },
       ];
 
       const metrics = calculateTripSummaryMetrics("2026-08-20", "2026-08-22", mockStops);
