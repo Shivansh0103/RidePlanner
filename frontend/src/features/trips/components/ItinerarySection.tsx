@@ -18,7 +18,7 @@ import { useAccommodations } from "@/features/accommodations/hooks/useAccommodat
 import { useCreateAccommodation } from "@/features/accommodations/hooks/useCreateAccommodation";
 import { useUpdateAccommodation } from "@/features/accommodations/hooks/useUpdateAccommodation";
 import type { Accommodation } from "@/features/accommodations/types/accommodation";
-import type { AccommodationFormValues } from "@/features/accommodations/validation/accommodationSchema";
+import type { AccommodationFormValues } from "@/features/accommodations/schemas/accommodationSchema";
 
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
 import TripStopsView from "@/features/tripStops/components/TripStopsView";
@@ -27,7 +27,7 @@ import { useReorderTripStops } from "@/features/tripStops/hooks/useReorderTripSt
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import type { TripStop } from "@/features/tripStops/types/tripStop";
 import { TripStopCategory } from "@/features/tripStops/types/tripStopCategory";
-import type { TripStopFormValues } from "@/features/tripStops/validation/tripStopSchema";
+import type { TripStopFormValues } from "@/features/tripStops/schemas/tripStopSchema";
 import ConfirmDialog from "@/shared/components/ConfirmDialog";
 import { useRoute } from "@/shared/maps";
 import type { RouteLeg } from "@/shared/maps/types/route";

@@ -17,8 +17,8 @@ import { PlaceAutocomplete } from "@/shared/maps";
 import type { PlaceLocation } from "@/shared/maps/types";
 
 import { ACCOMMODATION_TYPE_OPTIONS } from "../constants/accommodationTypeOptions";
-import type { AccommodationFormValues } from "../validation/accommodationSchema";
-import { accommodationSchema } from "../validation/accommodationSchema";
+import type { AccommodationFormValues } from "../schemas/accommodationSchema";
+import { accommodationSchema } from "../schemas/accommodationSchema";
 
 interface AccommodationFormProps {
   defaultValues: AccommodationFormValues;

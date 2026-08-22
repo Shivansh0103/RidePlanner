@@ -7,8 +7,8 @@ import { PlaceAutocomplete } from "@/shared/maps";
 import type { PlaceLocation } from "@/shared/maps/types/place";
 
 import { TRIP_STOP_CATEGORY_OPTIONS } from "../constants/tripStopCategoryOptions";
-import type { TripStopFormValues } from "../validation/tripStopSchema";
-import { tripStopSchema } from "../validation/tripStopSchema";
+import type { TripStopFormValues } from "../schemas/tripStopSchema";
+import { tripStopSchema } from "../schemas/tripStopSchema";
 
 type TripStopFormProps = {
   defaultValues: TripStopFormValues;

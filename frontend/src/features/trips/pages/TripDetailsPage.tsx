@@ -1,39 +1,32 @@
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ChecklistRtlIcon from "@mui/icons-material/ChecklistRtl";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
+import HotelIcon from "@mui/icons-material/Hotel";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import SpeedIcon from "@mui/icons-material/Speed";
 import { Box, Button, Chip, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import HotelIcon from "@mui/icons-material/Hotel";
-import AccommodationsSection from "@/features/accommodations/components/AccommodationsSection";
-import BudgetSection from "@/features/budget/components/BudgetSection";
-import ChecklistSection from "@/features/checklist/components/ChecklistSection";
-import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
+import { AccommodationsSection } from "@/features/accommodations";
+import { BudgetSection } from "@/features/budget";
+import { ChecklistSection } from "@/features/checklist";
+import { EmergencyContactsSection } from "@/features/contacts";
+import { DocumentsSection } from "@/features/documents";
+import { MemoriesSection } from "@/features/memories";
+import { ReadinessSection } from "@/features/readiness";
+import { TripSummarySection } from "@/features/summary";
+import { useTripStops } from "@/features/tripStops";
+import { ItinerarySection, TripOverview, useCompleteTrip, useStartTrip, useTrip } from "@/features/trips";
 import { Map, RouteSummary, useRoute } from "@/shared/maps";
-import ErrorState from "@/shared/ui/ErrorState";
-import LoadingSpinner from "@/shared/ui/LoadingSpinner";
-
-import ItinerarySection from "../components/ItinerarySection";
-import TripOverview from "../components/overview/TripOverview";
-import { useTrip } from "../hooks/useTrip";
-import { useStartTrip } from "../hooks/useStartTrip";
-import { useCompleteTrip } from "../hooks/useCompleteTrip";
-
-import CollectionsIcon from "@mui/icons-material/Collections";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import SpeedIcon from "@mui/icons-material/Speed";
-import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
-import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
-import DocumentsSection from "@/features/documents/components/DocumentsSection";
-import EmergencyContactsSection from "@/features/contacts/components/EmergencyContactsSection";
-import ReadinessSection from "@/features/readiness/components/ReadinessSection";
-import TripSummarySection from "@/features/summary/components/TripSummarySection";
-import MemoriesSection from "@/features/memories/components/MemoriesSection";
+import { ErrorState, LoadingSpinner } from "@/shared/ui";
 
 const TAB_KEYS = ["overview", "readiness", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts", "summary", "memories"] as const;
 type TabKey = (typeof TAB_KEYS)[number];

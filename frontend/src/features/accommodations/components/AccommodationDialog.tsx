@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 
 import type { Accommodation } from "../types/accommodation";
-import type { AccommodationFormValues } from "../validation/accommodationSchema";
+import type { AccommodationFormValues } from "../schemas/accommodationSchema";
 import AccommodationForm from "./AccommodationForm";
 
 interface AccommodationDialogProps {

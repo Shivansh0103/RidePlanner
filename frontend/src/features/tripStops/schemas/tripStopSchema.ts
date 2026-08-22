@@ -30,12 +30,9 @@ export const tripStopSchema = z
 
     displayOrder: z.number().optional(),
   })
-  .refine(
-    (data) => data.departureDate >= data.arrivalDate,
-    {
-      message: "Departure date cannot be before arrival date",
-      path: ["departureDate"],
-    }
-  );
+  .refine((data) => data.departureDate >= data.arrivalDate, {
+    message: "Departure date cannot be before arrival date",
+    path: ["departureDate"],
+  });
 
 export type TripStopFormValues = z.infer<typeof tripStopSchema>;

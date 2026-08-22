@@ -25,7 +25,7 @@ import { useCreateAccommodation } from "../hooks/useCreateAccommodation";
 import { useDeleteAccommodation } from "../hooks/useDeleteAccommodation";
 import { useUpdateAccommodation } from "../hooks/useUpdateAccommodation";
 import type { Accommodation } from "../types/accommodation";
-import type { AccommodationFormValues } from "../validation/accommodationSchema";
+import type { AccommodationFormValues } from "../schemas/accommodationSchema";
 import AccommodationCard from "./AccommodationCard";
 import AccommodationDialog from "./AccommodationDialog";
 
