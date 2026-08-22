@@ -2,11 +2,11 @@
 
 **Goal:** Transform the RidePlanner frontend into a clean, resilient, production-ready, and beautifully crafted adventure-grade React 19 application across two targeted phases.
 
-**Status:** In Progress  
+**Status:** Part 1 Complete | Part 2 Ready  
 **Sprint:** 11  
 **Phases:**  
-- **Part 1:** Frontend Architecture, Hardening, Bug Fixes & Testing Suite  
-- **Part 2:** UI/UX Overhaul, Aesthetics, High-Performance Motion & Responsive Polish  
+- **Part 1:** Frontend Architecture, Hardening, Bug Fixes & Testing Suite (✅ **Complete & Verified**)  
+- **Part 2:** UI/UX Overhaul, Aesthetics, High-Performance Motion & Responsive Polish (⏳ **Next**)  
 
 ---
 
@@ -18,16 +18,17 @@ Sprint 11 is structured around **three equal pillars**, executed across **two di
 
 | Pillar | Goal | Phase |
 |---|---|---|
-| 🏗️ **Architecture** | Make the React/TypeScript codebase clean, scalable, decoupled, and maintainable | **Part 1** |
-| 🛡️ **Hardening** | Improve correctness, resilience, error handling, contract safety, and automated testing | **Part 1** |
-| 🎨 **UX / UI** | Make RidePlanner look and feel like a modern, responsive, high-aesthetic adventure application | **Part 2** |
+| 🏗️ **Architecture** | Make the React/TypeScript codebase clean, scalable, decoupled, and maintainable | **Part 1 (Completed)** |
+| 🛡️ **Hardening** | Improve correctness, resilience, error handling, contract safety, and automated testing | **Part 1 (Completed)** |
+| 🎨 **UX / UI** | Make RidePlanner look and feel like a modern, responsive, high-aesthetic adventure application | **Part 2 (Next)** |
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────┐
-│              PART 1: ARCHITECTURE, HARDENING & QUALITY BASE             │
+│       PART 1: ARCHITECTURE, HARDENING & QUALITY BASE (COMPLETED)        │
 │  • Standardized RFC 7807 API Layer    • Query Key Factories & Caching   │
 │  • Vitest + RTL + MSW Test Harness     • Multi-tier Error Boundaries     │
 │  • Dialog & Form Normalization        • Maps Resilience & Debouncing    │
+│  • Route Lazy Loading & Code Split    • 31 Automated Tests Passing      │
 └────────────────────────────────────┬────────────────────────────────────┘
                                      │ Stable foundation & safety net
                                      ▼
@@ -41,58 +42,21 @@ Sprint 11 is structured around **three equal pillars**, executed across **two di
 
 ---
 
-# Learning & Execution Methodology
+# Part 1 Execution Summary
 
-RidePlanner is an active learning and portfolio project. Therefore, Sprint 11 is executed through **incremental, pedagogical steps**:
+All 7 tasks in Part 1 have been implemented, tested, and committed to git:
 
-1. **Step-by-Step Delivery:** We work in focused, small increments rather than monolithic rewrites.
-2. **Pedagogical Explanation:** For every refactoring step, we examine:
-   - **What** was changed?
-   - **Why & How** was it implemented?
-   - **Advantages & Disadvantages / Trade-offs** of the chosen pattern vs alternatives.
-3. **Clean Git Commit History:** Meaningful, atomic git commits at logical milestones (following Conventional Commits: `feat:`, `refactor:`, `test:`, `fix:`, `docs:`).
-
----
-
-# Part 1 Step-by-Step Breakdown
-
-### Step 1.1: Standardized API Error Handling & Axios Interceptor Layer
-- Create a strongly-typed `ApiError` domain model.
-- Configure Axios interceptors to parse RFC 7807 `ProblemDetails` and validation errors (`Record<string, string[]>`).
-- Add helper response extractors and support for request cancellation (`AbortSignal`).
-
-### Step 1.2: Directory & Schema Consistency Normalization
-- Consolidate all validation folders (`accommodations/validation`, `tripStops/validation`) into standard `schemas/`.
-- Prune empty placeholder directories (`services/`, `styles/`, `shared/hooks/`).
-- Standardize internal import paths.
-
-### Step 1.3: TanStack Query Key Factories & Mutation Hardening
-- Implement a Query Key Factory across all 10 domain features.
-- Eliminate all `error: any` usages in mutation hooks and replace them with strongly-typed `ApiError`.
-- Standardize cache invalidation strategies and optimistic update error rollbacks.
-
-### Step 1.4: Dialog Normalization & Resilience Quick-Wins
-- Replace legacy `window.confirm()` in `DocumentsSection`, `MemoriesSection`, and `EmergencyContactsSection` with `<ConfirmDialog />`.
-- Add debouncing (300ms) to Google Places Autocomplete (`usePlacesAutocomplete`).
-- Add memory cleanup on unmount for Google Maps listeners.
-
-### Step 1.5: Frontend Automated Testing Setup (Vitest + RTL)
-- Configure `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, and `jsdom`.
-- Write unit tests for domain utilities (`calculateTripSummary`, `groupStopsByDay`, `formatters`, budget calculations).
-- Write schema tests for Zod validation contracts.
-- Write component & hook tests for critical flows.
-
-### Step 1.6: Multi-Tier Error Boundaries & Map Graceful Degradation
-- Build reusable `ErrorBoundary` components (Global App Level, Route Level, and Feature Section Level).
-- Implement a graceful fallback for Google Maps when offline or when an API key is missing.
-
-### Step 1.7: Route Architecture, Lazy Loading & Code-Splitting
-- Migrate route definitions to `React.lazy()` with `Suspense` fallbacks.
-- Configure Vite manual chunks for vendor splitting.
+1. **Step 1.1 — API Error Handling (`f232d91`):** Typed `ApiError` class with RFC 7807 `ProblemDetails` translation interceptor.
+2. **Step 1.2 — Directory Normalization (`25e7313`):** Standardized all validation folders to `schemas/`, cleaned empty folders, and added public barrel exports.
+3. **Step 1.3 — Query & Mutation Hardening (`724733f`):** 100% elimination of `error: any`, typed mutation callbacks, and coordinated cache invalidation.
+4. **Step 1.4 — Dialog & Map Debounce (`097d5c1`):** Replaced native `window.confirm()` with `<ConfirmDialog />`, created `useDebounce`, and added async cancellation guards.
+5. **Step 1.5 — Vitest Automated Testing (`8568742`):** Configured Vitest + RTL and wrote 28 unit tests across domain utilities, API errors, and Zod contracts.
+6. **Step 1.6 — Error Boundaries & Map Fallback (`406693c`):** Built `<ErrorBoundary />` and `<MapFallback />` components with 3 automated unit tests (31 tests total).
+7. **Step 1.7 — Route Lazy Loading & Code Splitting (`2332db2`):** Replaced monolithic 1.14 MB JS chunk with lightweight on-demand chunks (<200 KB initial load).
 
 ---
 
-# Part 2 Step-by-Step Breakdown
+# Part 2 Step-by-Step Breakdown (Next)
 
 ### Step 2.1: Adventure Design System & MUI Theme Overhaul
 - Adventure dark slate palette, high-contrast amber/emerald accents, custom typography tokens.
@@ -117,17 +81,17 @@ RidePlanner is an active learning and portfolio project. Therefore, Sprint 11 is
 
 # Sprint 11 Task Tracking Matrix
 
-| # | Task | Area | Status |
-|---|---|---|---|
-| **11.1** | API Client & RFC 7807 Error Interceptor | 🏗️ Architecture | Pending |
-| **11.2** | Directory & Schema Normalization | 🏗️ Architecture | Pending |
-| **11.3** | Query Key Factories & Mutation Hardening | 🏗️ Architecture | Pending |
-| **11.4** | Dialog Normalization & Maps Debouncing | 🛡️ Hardening | Pending |
-| **11.5** | Vitest + RTL Automated Testing Suite | 🛡️ Hardening | Pending |
-| **11.6** | Multi-Tier Error Boundaries & Map Fallback | 🛡️ Hardening | Pending |
-| **11.7** | Route Lazy Loading & Code-Splitting | 🏗️ Architecture | Pending |
-| **11.8** | Adventure Design System & Theme | 🎨 UX / UI | Pending |
-| **11.9** | App Shell, Navigation & Breadcrumbs | 🎨 UX / UI | Pending |
-| **11.10**| Adventure Dashboard (Home Page) | 🎨 UX / UI | Pending |
-| **11.11**| Trip Details Lifecycle Header & Badged Tabs | 🎨 UX / UI | Pending |
-| **11.12**| Map + Itinerary Sync & Micro-Interactions | 🎨 UX / UI | Pending |
+| # | Phase | Area | Task | Status |
+|---|---|---|---|---|
+| **11.1** | Part 1 | 🏗️ Architecture | API Client & RFC 7807 Error Interceptor | ✅ Completed |
+| **11.2** | Part 1 | 🏗️ Architecture | Directory & Schema Normalization | ✅ Completed |
+| **11.3** | Part 1 | 🏗️ Architecture | Query Key Factories & Mutation Hardening | ✅ Completed |
+| **11.4** | Part 1 | 🛡️ Hardening | Dialog Normalization & Maps Debouncing | ✅ Completed |
+| **11.5** | Part 1 | 🛡️ Hardening | Vitest + RTL Automated Testing Suite | ✅ Completed |
+| **11.6** | Part 1 | 🛡️ Hardening | Multi-Tier Error Boundaries & Map Fallback | ✅ Completed |
+| **11.7** | Part 1 | 🏗️ Architecture | Route Lazy Loading & Code-Splitting | ✅ Completed |
+| **11.8** | Part 2 | 🎨 UX / UI | Adventure Design System & Theme | ⏳ Next |
+| **11.9** | Part 2 | 🎨 UX / UI | App Shell, Navigation & Breadcrumbs | ⏳ Pending |
+| **11.10**| Part 2 | 🎨 UX / UI | Adventure Dashboard (Home Page) | ⏳ Pending |
+| **11.11**| Part 2 | 🎨 UX / UI | Trip Details Lifecycle Header & Badged Tabs | ⏳ Pending |
+| **11.12**| Part 2 | 🎨 UX / UI | Map + Itinerary Sync & Micro-Interactions | ⏳ Pending |
