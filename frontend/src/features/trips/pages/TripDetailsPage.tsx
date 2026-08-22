@@ -1,19 +1,30 @@
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ChecklistRtlIcon from "@mui/icons-material/ChecklistRtl";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import EditIcon from "@mui/icons-material/Edit";
 import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
 import HotelIcon from "@mui/icons-material/Hotel";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SpeedIcon from "@mui/icons-material/Speed";
-import { Box, Button, Chip, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
+import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
+import {
+  Box,
+  Button,
+  Chip,
+  Paper,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link as RouterLink, useParams, useSearchParams } from "react-router-dom";
 
 import { AccommodationsSection } from "@/features/accommodations";
 import { BudgetSection } from "@/features/budget";
@@ -25,28 +36,30 @@ import { ReadinessSection } from "@/features/readiness";
 import { TripSummarySection } from "@/features/summary";
 import { useTripStops } from "@/features/tripStops";
 import { ItinerarySection, TripOverview, useCompleteTrip, useStartTrip, useTrip } from "@/features/trips";
+import { BreadcrumbsBar } from "@/shared/components";
 import { Map, RouteSummary, useRoute } from "@/shared/maps";
-import { ErrorState, LoadingSpinner } from "@/shared/ui";
+import { ErrorState } from "@/shared/ui";
+import { formatDate } from "@/shared/utils";
 
-const TAB_KEYS = ["overview", "readiness", "itinerary", "accommodation", "budget", "checklist", "documents", "contacts", "summary", "memories"] as const;
+import TripDetailsSkeleton from "../components/TripDetailsSkeleton";
+
+const TAB_KEYS = [
+  "overview",
+  "readiness",
+  "itinerary",
+  "accommodation",
+  "budget",
+  "checklist",
+  "documents",
+  "contacts",
+  "summary",
+  "memories",
+] as const;
 type TabKey = (typeof TAB_KEYS)[number];
 
-
-
-
-
-
-const STATUS_COLOR_MAP = {
-  Planning: "info",
-  Active: "success",
-  Completed: "secondary",
-} as const;
-
 export default function TripDetailsPage() {
-  const navigate = useNavigate();
   const { tripId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
 
   const { data: trip, isLoading, isError } = useTrip(tripId ?? "");
@@ -61,7 +74,6 @@ export default function TripDetailsPage() {
       (stop.latitude !== 0 || stop.longitude !== 0)
   );
   const { route } = useRoute(validStops);
-
   const routeDistanceKm = (route?.summary?.distanceMeters ?? 0) / 1000;
 
   // Determine active tab from URL query param (?tab=...)
@@ -75,94 +87,185 @@ export default function TripDetailsPage() {
   };
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <TripDetailsSkeleton />;
   }
 
   if (isError || !trip) {
-    return <ErrorState message="Unable to load trip." />;
+    return <ErrorState message="Unable to load trip expedition details." />;
   }
 
+  const getStatusStyles = (status: string) => {
+    switch (status) {
+      case "Active":
+        return {
+          bg: "rgba(16, 185, 129, 0.12)",
+          color: "#059669",
+          border: "rgba(16, 185, 129, 0.3)",
+          dot: "#10b981",
+        };
+      case "Planning":
+        return {
+          bg: "rgba(37, 99, 235, 0.1)",
+          color: "#2563eb",
+          border: "rgba(37, 99, 235, 0.25)",
+          dot: "#3b82f6",
+        };
+      case "Completed":
+        return {
+          bg: "rgba(100, 116, 139, 0.1)",
+          color: "#475569",
+          border: "rgba(100, 116, 139, 0.2)",
+          dot: "#64748b",
+        };
+      default:
+        return {
+          bg: "rgba(100, 116, 139, 0.1)",
+          color: "#475569",
+          border: "rgba(100, 116, 139, 0.2)",
+          dot: "#64748b",
+        };
+    }
+  };
+
+  const statusStyle = getStatusStyles(trip.status);
+
   return (
-    <Box
-      sx={{
-        maxWidth: 950,
-        mx: "auto",
-        width: "100%",
-        pb: 6,
-      }}
-    >
+    <Box sx={{ maxWidth: 1150, mx: "auto", width: "100%", pb: 6 }} className="animate-fade-in">
       <Stack spacing={3}>
-        <Button
-          variant="text"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/trips")}
+        {/* 1. Breadcrumbs Trail */}
+        <BreadcrumbsBar
+          items={[
+            { label: "My Trips", to: "/trips" },
+            { label: trip.name },
+          ]}
+        />
+
+        {/* 2. Expedition Lifecycle Hero Header */}
+        <Paper
+          variant="outlined"
           sx={{
-            alignSelf: "flex-start",
-            px: 0,
+            p: { xs: 2.5, sm: 3.5 },
+            borderRadius: 3,
+            bgcolor: "background.paper",
+            border: "1px solid",
+            borderColor: "rgba(15, 23, 42, 0.08)",
+            boxShadow: "0 4px 12px -2px rgba(0, 0, 0, 0.03)",
           }}
         >
-          Back to Trips
-        </Button>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={2.5}
+            sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", md: "center" } }}
+          >
+            <Stack spacing={1}>
+              <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+                <Chip
+                  icon={
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        bgcolor: statusStyle.dot,
+                        ml: "6px !important",
+                      }}
+                    />
+                  }
+                  label={trip.status.toUpperCase()}
+                  size="small"
+                  sx={{
+                    bgcolor: statusStyle.bg,
+                    color: statusStyle.color,
+                    border: `1px solid ${statusStyle.border}`,
+                    fontWeight: 800,
+                    fontSize: "0.75rem",
+                    letterSpacing: "0.02em",
+                  }}
+                />
 
-        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-          <Stack spacing={0.5}>
-            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: "flex", alignItems: "center", gap: 0.5, fontWeight: 500 }}
+                >
+                  <CalendarMonthIcon sx={{ fontSize: 16 }} />
+                  {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
+                </Typography>
+              </Stack>
+
               <Typography
                 variant="h4"
                 sx={{
-                  fontWeight: 700,
+                  fontFamily: '"Outfit", sans-serif',
+                  fontWeight: 800,
+                  color: "#0f172a",
+                  lineHeight: 1.2,
                 }}
               >
                 {trip.name}
               </Typography>
-              <Chip
-                label={trip.status}
-                color={STATUS_COLOR_MAP[trip.status] ?? "default"}
-                size="small"
-                sx={{ fontWeight: 700, textTransform: "uppercase", fontSize: "0.75rem" }}
-              />
+
+              {trip.description && (
+                <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 700 }}>
+                  {trip.description}
+                </Typography>
+              )}
             </Stack>
 
-
-            {trip.description && <Typography color="text.secondary">{trip.description}</Typography>}
-          </Stack>
-
-          <Stack direction="row" spacing={1}>
-            {trip.status === "Planning" && (
+            {/* Lifecycle & Action Buttons */}
+            <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", gap: 1 }}>
               <Button
-                variant="contained"
-                color="success"
-                startIcon={<PlayArrowIcon />}
-                disabled={startTripMutation.isPending}
-                onClick={() => startTripMutation.mutate({ id: trip.id })}
+                variant="outlined"
+                component={RouterLink}
+                to={`/trips/${trip.id}/edit`}
+                startIcon={<EditIcon />}
+                sx={{ fontWeight: 600 }}
               >
-                Start Trip Early
+                Edit
               </Button>
-            )}
 
-            {trip.status === "Active" && (
-              <Button
-                variant="contained"
-                color="secondary"
-                startIcon={<CheckCircleIcon />}
-                disabled={completeTripMutation.isPending}
-                onClick={() => completeTripMutation.mutate({ id: trip.id })}
-              >
-                Complete Trip
-              </Button>
-            )}
+              {trip.status === "Planning" && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<PlayArrowIcon />}
+                  disabled={startTripMutation.isPending}
+                  onClick={() => startTripMutation.mutate({ id: trip.id })}
+                  sx={{
+                    fontWeight: 700,
+                    boxShadow: "0 4px 12px rgba(37, 99, 235, 0.25)",
+                  }}
+                >
+                  Start Expedition
+                </Button>
+              )}
+
+              {trip.status === "Active" && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  startIcon={<CheckCircleIcon />}
+                  disabled={completeTripMutation.isPending}
+                  onClick={() => completeTripMutation.mutate({ id: trip.id })}
+                  sx={{
+                    fontWeight: 700,
+                    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.25)",
+                  }}
+                >
+                  Complete Expedition
+                </Button>
+              )}
+            </Stack>
           </Stack>
-        </Stack>
+        </Paper>
 
-
-        {/* Tab Navigation Header */}
+        {/* 3. Badged Tab Navigation Header */}
         <Paper
           variant="outlined"
           sx={{
             borderRadius: 2.5,
             bgcolor: "background.paper",
-            borderBottom: 1,
-            borderColor: "divider",
+            borderColor: "rgba(15, 23, 42, 0.08)",
           }}
         >
           <Tabs
@@ -178,7 +281,8 @@ export default function TripDetailsPage() {
                 fontWeight: 600,
                 textTransform: "none",
                 minHeight: 48,
-                fontSize: "0.95rem",
+                fontSize: "0.92rem",
+                px: 2,
               },
             }}
           >
@@ -201,12 +305,28 @@ export default function TripDetailsPage() {
             <Tab
               icon={<AltRouteIcon fontSize="small" />}
               iconPosition="start"
-              label="Itinerary & Route"
+              label={
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <span>Itinerary</span>
+                  {stops.length > 0 && (
+                    <Chip
+                      label={stops.length}
+                      size="small"
+                      sx={{
+                        height: 18,
+                        fontSize: "0.7rem",
+                        fontWeight: 700,
+                        bgcolor: activeTab === "itinerary" ? "primary.main" : "action.selected",
+                        color: activeTab === "itinerary" ? "#ffffff" : "text.secondary",
+                      }}
+                    />
+                  )}
+                </Stack>
+              }
               value="itinerary"
               id="trip-tab-itinerary"
               aria-controls="trip-tabpanel-itinerary"
             />
-
             <Tab
               icon={<HotelIcon fontSize="small" />}
               iconPosition="start"
@@ -266,8 +386,7 @@ export default function TripDetailsPage() {
           </Tabs>
         </Paper>
 
-
-
+        {/* 4. Tab Panels */}
         {/* Tab Panel 0: Overview Dashboard */}
         {activeTab === "overview" && (
           <Stack spacing={3} role="tabpanel" id="trip-tabpanel-overview" aria-labelledby="trip-tab-overview">
@@ -277,14 +396,18 @@ export default function TripDetailsPage() {
               onViewAccommodationsClick={() => setSearchParams({ tab: "accommodation" })}
             />
 
-            <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
-                Route Overview Map
-              </Typography>
+            <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 3 }}>
+              <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 2 }}>
+                <TwoWheelerIcon color="primary" />
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  Route Expedition Map
+                </Typography>
+              </Stack>
+
               <Box
                 sx={{
-                  height: 380,
-                  borderRadius: 2,
+                  height: 400,
+                  borderRadius: 2.5,
                   overflow: "hidden",
                 }}
               >
@@ -301,17 +424,16 @@ export default function TripDetailsPage() {
           </Box>
         )}
 
-        {/* Tab Panel 2: Itinerary & Map with Bi-Directional Selection Sync */}
-
+        {/* Tab Panel 2: Itinerary & Map */}
         {activeTab === "itinerary" && (
           <Stack spacing={3} role="tabpanel" id="trip-tabpanel-itinerary" aria-labelledby="trip-tab-itinerary">
             <Box
               sx={{
-                height: 460,
+                height: 480,
                 borderRadius: 3,
                 overflow: "hidden",
                 border: "1px solid",
-                borderColor: "divider",
+                borderColor: "rgba(15, 23, 42, 0.08)",
               }}
             >
               <Map stops={stops} selectedStopId={selectedStopId} onStopSelect={setSelectedStopId} />
@@ -328,58 +450,54 @@ export default function TripDetailsPage() {
           </Stack>
         )}
 
-        {/* Tab Panel 2: Accommodation */}
+        {/* Tab Panel 3: Accommodation */}
         {activeTab === "accommodation" && (
           <Box role="tabpanel" id="trip-tabpanel-accommodation" aria-labelledby="trip-tab-accommodation">
             <AccommodationsSection tripId={trip.id} />
           </Box>
         )}
 
-        {/* Tab Panel 3: Budget */}
+        {/* Tab Panel 4: Budget */}
         {activeTab === "budget" && (
           <Box role="tabpanel" id="trip-tabpanel-budget" aria-labelledby="trip-tab-budget">
             <BudgetSection tripId={trip.id} routeDistanceKm={routeDistanceKm} />
           </Box>
         )}
 
-        {/* Tab Panel 4: Checklist */}
+        {/* Tab Panel 5: Checklist */}
         {activeTab === "checklist" && (
           <Box role="tabpanel" id="trip-tabpanel-checklist" aria-labelledby="trip-tab-checklist">
             <ChecklistSection tripId={trip.id} />
           </Box>
         )}
 
-        {/* Tab Panel 5: Documents */}
+        {/* Tab Panel 6: Documents */}
         {activeTab === "documents" && (
           <Box role="tabpanel" id="trip-tabpanel-documents" aria-labelledby="trip-tab-documents">
             <DocumentsSection tripId={trip.id} />
           </Box>
         )}
 
-        {/* Tab Panel 6: Emergency Contacts */}
+        {/* Tab Panel 7: Emergency Contacts */}
         {activeTab === "contacts" && (
           <Box role="tabpanel" id="trip-tabpanel-contacts" aria-labelledby="trip-tab-contacts">
             <EmergencyContactsSection tripId={trip.id} />
           </Box>
         )}
 
-        {/* Tab Panel 7: Trip Summary Report */}
+        {/* Tab Panel 8: Trip Summary Report */}
         {activeTab === "summary" && (
           <Box role="tabpanel" id="trip-tabpanel-summary" aria-labelledby="trip-tab-summary">
             <TripSummarySection tripId={trip.id} />
           </Box>
         )}
 
-        {/* Tab Panel 8: Memories & Journal */}
+        {/* Tab Panel 9: Memories & Journal */}
         {activeTab === "memories" && (
           <Box role="tabpanel" id="trip-tabpanel-memories" aria-labelledby="trip-tab-memories">
             <MemoriesSection tripId={trip.id} />
           </Box>
         )}
-
-
-
-
       </Stack>
     </Box>
   );
