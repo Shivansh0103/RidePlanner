@@ -10,16 +10,25 @@ interface MapCameraControllerProps {
 export default function MapCameraController({ stops }: MapCameraControllerProps) {
   const map = useMap();
 
-  const stopsKey = stops.map((s) => `${s.id}:${s.latitude},${s.longitude}`).join("|");
+  const validStops = stops.filter(
+    (s) =>
+      typeof s.latitude === "number" &&
+      typeof s.longitude === "number" &&
+      !isNaN(s.latitude) &&
+      !isNaN(s.longitude) &&
+      (s.latitude !== 0 || s.longitude !== 0)
+  );
+
+  const stopsKey = validStops.map((s) => `${s.id}:${s.latitude},${s.longitude}`).join("|");
 
   useEffect(() => {
-    if (!map || stops.length === 0) {
+    if (!map || validStops.length === 0) {
       return;
     }
 
     const bounds = new google.maps.LatLngBounds();
 
-    stops.forEach((stop) => {
+    validStops.forEach((stop) => {
       bounds.extend({
         lat: stop.latitude!,
         lng: stop.longitude!,

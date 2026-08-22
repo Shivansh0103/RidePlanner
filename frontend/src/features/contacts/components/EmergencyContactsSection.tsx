@@ -3,8 +3,8 @@ import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import { Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 
-import ErrorState from "@/shared/ui/ErrorState";
-import LoadingSpinner from "@/shared/ui/LoadingSpinner";
+import { ConfirmDialog } from "@/shared/components";
+import { ErrorState, LoadingSpinner } from "@/shared/ui";
 
 import { useCreateEmergencyContact } from "../hooks/useCreateEmergencyContact";
 import { useDeleteEmergencyContact } from "../hooks/useDeleteEmergencyContact";
@@ -28,6 +28,7 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<EmergencyContact | null>(null);
+  const [contactToDelete, setContactToDelete] = useState<EmergencyContact | null>(null);
 
   const handleOpenAdd = () => {
     setEditingContact(null);
@@ -40,9 +41,16 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
   };
 
   const handleDelete = (contact: EmergencyContact) => {
-    if (window.confirm(`Are you sure you want to delete emergency contact "${contact.name}"?`)) {
-      deleteMutation.mutate(contact.id);
-    }
+    setContactToDelete(contact);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!contactToDelete) return;
+    deleteMutation.mutate(contactToDelete.id, {
+      onSuccess: () => {
+        setContactToDelete(null);
+      },
+    });
   };
 
   const handleSubmit = async (data: CreateContactRequest) => {
@@ -105,6 +113,16 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
         onClose={() => setIsDialogOpen(false)}
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={contactToDelete !== null}
+        title="Delete Emergency Contact"
+        message={`Are you sure you want to delete emergency contact "${contactToDelete?.name}"?`}
+        confirmText="Delete"
+        loading={deleteMutation.isPending}
+        onClose={() => setContactToDelete(null)}
+        onConfirm={handleConfirmDelete}
       />
     </Stack>
   );

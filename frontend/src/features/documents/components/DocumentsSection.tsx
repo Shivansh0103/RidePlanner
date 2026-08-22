@@ -3,8 +3,8 @@ import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
 import { Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 
-import ErrorState from "@/shared/ui/ErrorState";
-import LoadingSpinner from "@/shared/ui/LoadingSpinner";
+import { ConfirmDialog } from "@/shared/components";
+import { ErrorState, LoadingSpinner } from "@/shared/ui";
 
 import { useCreateTripDocument } from "../hooks/useCreateTripDocument";
 import { useDeleteTripDocument } from "../hooks/useDeleteTripDocument";
@@ -28,6 +28,7 @@ export default function DocumentsSection({ tripId }: DocumentsSectionProps) {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDoc, setEditingDoc] = useState<TripDocument | null>(null);
+  const [docToDelete, setDocToDelete] = useState<TripDocument | null>(null);
 
   const handleOpenAdd = () => {
     setEditingDoc(null);
@@ -40,9 +41,16 @@ export default function DocumentsSection({ tripId }: DocumentsSectionProps) {
   };
 
   const handleDelete = (doc: TripDocument) => {
-    if (window.confirm(`Are you sure you want to delete "${doc.title}"?`)) {
-      deleteMutation.mutate(doc.id);
-    }
+    setDocToDelete(doc);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!docToDelete) return;
+    deleteMutation.mutate(docToDelete.id, {
+      onSuccess: () => {
+        setDocToDelete(null);
+      },
+    });
   };
 
   const handleSubmit = async (data: CreateDocumentRequest) => {
@@ -97,7 +105,6 @@ export default function DocumentsSection({ tripId }: DocumentsSectionProps) {
             </Grid>
           ))}
         </Grid>
-
       )}
 
       <AddEditDocumentDialog
@@ -106,6 +113,16 @@ export default function DocumentsSection({ tripId }: DocumentsSectionProps) {
         onClose={() => setIsDialogOpen(false)}
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={docToDelete !== null}
+        title="Delete Document"
+        message={`Are you sure you want to delete travel document "${docToDelete?.title}"?`}
+        confirmText="Delete"
+        loading={deleteMutation.isPending}
+        onClose={() => setDocToDelete(null)}
+        onConfirm={handleConfirmDelete}
       />
     </Stack>
   );

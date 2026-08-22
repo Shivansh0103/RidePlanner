@@ -1,18 +1,16 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
+import { useDebounce } from "@/shared/hooks";
+
 import { usePlacesAutocomplete } from "../hooks/usePlacesAutocomplete";
 import type { PlaceLocation, PlaceSuggestion } from "../types";
 
 interface PlaceAutocompleteProps {
   value: PlaceLocation | null;
-
   onPlaceSelected: (place: PlaceLocation | null) => void;
-
   label?: string;
-
   placeholder?: string;
-
   disabled?: boolean;
 }
 
@@ -27,33 +25,44 @@ export function PlaceAutocomplete({
   const [inputValue, setInputValue] = useState(value?.displayName ?? "");
   const [loading, setLoading] = useState(false);
 
+  const debouncedQuery = useDebounce(inputValue.trim(), 300);
   const { service, getSessionToken, resetSession, isLoaded } = usePlacesAutocomplete();
 
   useEffect(() => {
-    if (!isLoaded || !inputValue.trim()) {
+    if (!isLoaded || !debouncedQuery) {
       setOptions([]);
       return;
     }
 
-    const timeout = setTimeout(async () => {
+    let isCancelled = false;
+
+    async function fetchSuggestions() {
       try {
         setLoading(true);
-
         const sessionToken = await getSessionToken();
+        const suggestions = await service.searchSuggestions(debouncedQuery, sessionToken);
 
-        const suggestions = await service.searchSuggestions(inputValue, sessionToken);
-
-        setOptions(suggestions);
+        if (!isCancelled) {
+          setOptions(suggestions);
+        }
       } catch (error) {
-        console.error("Failed to fetch suggestions", error);
-        setOptions([]);
+        if (!isCancelled) {
+          console.error("Failed to fetch suggestions", error);
+          setOptions([]);
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
-    }, 300);
+    }
 
-    return () => clearTimeout(timeout);
-  }, [inputValue, service, isLoaded, getSessionToken]);
+    fetchSuggestions();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [debouncedQuery, service, isLoaded, getSessionToken]);
 
   return (
     <Autocomplete<PlaceSuggestion, false, false, false>
@@ -80,11 +89,9 @@ export function PlaceAutocomplete({
 
         try {
           const place = await service.resolveSuggestion(suggestion);
-
           onPlaceSelected(place);
         } catch (error) {
           console.error("Failed to resolve place", error);
-
           onPlaceSelected(null);
         } finally {
           resetSession();

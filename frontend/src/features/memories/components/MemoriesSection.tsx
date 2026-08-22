@@ -3,8 +3,8 @@ import CollectionsIcon from "@mui/icons-material/Collections";
 import { Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 
-import ErrorState from "@/shared/ui/ErrorState";
-import LoadingSpinner from "@/shared/ui/LoadingSpinner";
+import { ConfirmDialog } from "@/shared/components";
+import { ErrorState, LoadingSpinner } from "@/shared/ui";
 
 import { useCreateTripMemory } from "../hooks/useCreateTripMemory";
 import { useDeleteTripMemory } from "../hooks/useDeleteTripMemory";
@@ -28,6 +28,7 @@ export default function MemoriesSection({ tripId }: MemoriesSectionProps) {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMemory, setEditingMemory] = useState<TripMemory | null>(null);
+  const [memoryToDelete, setMemoryToDelete] = useState<TripMemory | null>(null);
 
   const handleOpenAdd = () => {
     setEditingMemory(null);
@@ -40,9 +41,16 @@ export default function MemoriesSection({ tripId }: MemoriesSectionProps) {
   };
 
   const handleDelete = (memory: TripMemory) => {
-    if (window.confirm(`Are you sure you want to delete memory "${memory.title}"?`)) {
-      deleteMutation.mutate(memory.id);
-    }
+    setMemoryToDelete(memory);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!memoryToDelete) return;
+    deleteMutation.mutate(memoryToDelete.id, {
+      onSuccess: () => {
+        setMemoryToDelete(null);
+      },
+    });
   };
 
   const handleSubmit = async (data: CreateMemoryRequest) => {
@@ -105,6 +113,16 @@ export default function MemoriesSection({ tripId }: MemoriesSectionProps) {
         onClose={() => setIsDialogOpen(false)}
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={memoryToDelete !== null}
+        title="Delete Memory"
+        message={`Are you sure you want to delete memory "${memoryToDelete?.title}"?`}
+        confirmText="Delete"
+        loading={deleteMutation.isPending}
+        onClose={() => setMemoryToDelete(null)}
+        onConfirm={handleConfirmDelete}
       />
     </Stack>
   );
