@@ -1,8 +1,8 @@
 import HomeIcon from "@mui/icons-material/Home";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { Breadcrumbs, Link, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Typography } from "@mui/material";
 import type { ReactNode } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export interface BreadcrumbItem {
   label: string;
@@ -15,16 +15,16 @@ interface BreadcrumbsBarProps {
 }
 
 export default function BreadcrumbsBar({ items }: BreadcrumbsBarProps) {
+  const navigate = useNavigate();
+
   return (
     <Breadcrumbs
       separator={<NavigateNextIcon fontSize="small" sx={{ color: "text.disabled", fontSize: 16 }} />}
       aria-label="breadcrumb"
       sx={{ mb: 2.5 }}
     >
-      <Link
-        component={RouterLink}
-        to="/"
-        underline="hover"
+      <Box
+        onClick={() => navigate("/")}
         sx={{
           display: "flex",
           alignItems: "center",
@@ -32,12 +32,13 @@ export default function BreadcrumbsBar({ items }: BreadcrumbsBarProps) {
           fontSize: "0.85rem",
           fontWeight: 500,
           color: "text.secondary",
+          cursor: "pointer",
           "&:hover": { color: "primary.main" },
         }}
       >
         <HomeIcon sx={{ fontSize: 16 }} />
         Home
-      </Link>
+      </Box>
 
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
@@ -61,11 +62,9 @@ export default function BreadcrumbsBar({ items }: BreadcrumbsBarProps) {
         }
 
         return (
-          <Link
+          <Box
             key={index}
-            component={RouterLink}
-            to={item.to}
-            underline="hover"
+            onClick={() => navigate(item.to!)}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -73,12 +72,13 @@ export default function BreadcrumbsBar({ items }: BreadcrumbsBarProps) {
               fontSize: "0.85rem",
               fontWeight: 500,
               color: "text.secondary",
+              cursor: "pointer",
               "&:hover": { color: "primary.main" },
             }}
           >
             {item.icon}
             {item.label}
-          </Link>
+          </Box>
         );
       })}
     </Breadcrumbs>

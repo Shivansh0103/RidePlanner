@@ -24,7 +24,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { Link as RouterLink, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { AccommodationsSection } from "@/features/accommodations";
 import { BudgetSection } from "@/features/budget";
@@ -58,6 +58,7 @@ const TAB_KEYS = [
 type TabKey = (typeof TAB_KEYS)[number];
 
 export default function TripDetailsPage() {
+  const navigate = useNavigate();
   const { tripId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
@@ -216,8 +217,7 @@ export default function TripDetailsPage() {
             <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", gap: 1 }}>
               <Button
                 variant="outlined"
-                component={RouterLink}
-                to={`/trips/${trip.id}/edit`}
+                onClick={() => navigate(`/trips/${trip.id}/edit`)}
                 startIcon={<EditIcon />}
                 sx={{ fontWeight: 600 }}
               >

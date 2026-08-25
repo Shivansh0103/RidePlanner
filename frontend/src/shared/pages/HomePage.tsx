@@ -11,7 +11,6 @@ import {
   Box,
   Button,
   Card,
-  CardActionArea,
   CardContent,
   Chip,
   Grid,
@@ -19,13 +18,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useTrips } from "@/features/trips";
 import { LoadingSpinner } from "@/shared/ui";
 import { formatDate } from "@/shared/utils";
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const { data: trips = [], isLoading } = useTrips();
 
   if (isLoading) {
@@ -136,8 +136,7 @@ export default function HomePage() {
               <Button
                 variant="contained"
                 size="large"
-                component={RouterLink}
-                to="/trips/new"
+                onClick={() => navigate("/trips/new")}
                 startIcon={<AddIcon />}
                 sx={{
                   bgcolor: "#2563eb",
@@ -157,8 +156,7 @@ export default function HomePage() {
               <Button
                 variant="outlined"
                 size="large"
-                component={RouterLink}
-                to="/trips"
+                onClick={() => navigate("/trips")}
                 endIcon={<ArrowForwardIcon />}
                 sx={{
                   borderColor: "rgba(255, 255, 255, 0.2)",
@@ -343,7 +341,7 @@ export default function HomePage() {
               </Typography>
             </Box>
 
-            <Button component={RouterLink} to="/trips" endIcon={<ArrowForwardIcon />} sx={{ fontWeight: 600 }}>
+            <Button onClick={() => navigate("/trips")} endIcon={<ArrowForwardIcon />} sx={{ fontWeight: 600 }}>
               View All
             </Button>
           </Stack>
@@ -403,8 +401,7 @@ export default function HomePage() {
                   variant="contained"
                   color="primary"
                   size="large"
-                  component={RouterLink}
-                  to={`/trips/${spotlightTrip.id}`}
+                  onClick={() => navigate(`/trips/${spotlightTrip.id}`)}
                   endIcon={<ArrowForwardIcon />}
                   sx={{
                     fontWeight: 700,
@@ -540,7 +537,7 @@ export default function HomePage() {
             <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: '"Outfit", sans-serif' }}>
               Recent Expeditions
             </Typography>
-            <Button component={RouterLink} to="/trips" size="small" endIcon={<ArrowForwardIcon />}>
+            <Button onClick={() => navigate("/trips")} size="small" endIcon={<ArrowForwardIcon />}>
               All Trips ({trips.length})
             </Button>
           </Stack>
@@ -550,49 +547,61 @@ export default function HomePage() {
               const statusStyle = getStatusColor(trip.status);
               return (
                 <Grid key={trip.id} size={{ xs: 12, sm: 6, md: 4 }}>
-                  <Card variant="outlined" sx={{ height: "100%", borderRadius: 2.5 }}>
-                    <CardActionArea component={RouterLink} to={`/trips/${trip.id}`} sx={{ p: 2.5, height: "100%" }}>
-                      <CardContent sx={{ p: 0 }}>
-                        <Stack spacing={1.5}>
-                          <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between", alignItems: "center" }}>
-                            <Chip
-                              label={trip.status}
-                              size="small"
-                              sx={{
-                                bgcolor: statusStyle.bg,
-                                color: statusStyle.color,
-                                border: `1px solid ${statusStyle.border}`,
-                                fontWeight: 700,
-                                fontSize: "0.7rem",
-                              }}
-                            />
-                            <Typography variant="caption" color="text.secondary">
-                              {formatDate(trip.startDate)}
-                            </Typography>
-                          </Stack>
-
-                          <Typography variant="subtitle1" sx={{ fontWeight: 700, fontFamily: '"Outfit", sans-serif' }}>
-                            {trip.name}
+                  <Card
+                    variant="outlined"
+                    onClick={() => navigate(`/trips/${trip.id}`)}
+                    sx={{
+                      height: "100%",
+                      borderRadius: 2.5,
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        transform: "translateY(-2px)",
+                        boxShadow: 2,
+                        borderColor: "primary.main",
+                      },
+                    }}
+                  >
+                    <CardContent sx={{ p: 2.5 }}>
+                      <Stack spacing={1.5}>
+                        <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+                          <Chip
+                            label={trip.status}
+                            size="small"
+                            sx={{
+                              bgcolor: statusStyle.bg,
+                              color: statusStyle.color,
+                              border: `1px solid ${statusStyle.border}`,
+                              fontWeight: 700,
+                              fontSize: "0.7rem",
+                            }}
+                          />
+                          <Typography variant="caption" color="text.secondary">
+                            {formatDate(trip.startDate)}
                           </Typography>
-
-                          {trip.description && (
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                display: "-webkit-box",
-                                WebKitLineClamp: 2,
-                                WebKitBoxOrient: "vertical",
-                              }}
-                            >
-                              {trip.description}
-                            </Typography>
-                          )}
                         </Stack>
-                      </CardContent>
-                    </CardActionArea>
+
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700, fontFamily: '"Outfit", sans-serif' }}>
+                          {trip.name}
+                        </Typography>
+
+                        {trip.description && (
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              display: "-webkit-box",
+                              WebKitLineClamp: 2,
+                              WebKitBoxOrient: "vertical",
+                            }}
+                          >
+                            {trip.description}
+                          </Typography>
+                        )}
+                      </Stack>
+                    </CardContent>
                   </Card>
                 </Grid>
               );

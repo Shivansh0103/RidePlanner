@@ -1,9 +1,11 @@
 import ExploreOffIcon from "@mui/icons-material/ExploreOff";
 import HomeIcon from "@mui/icons-material/Home";
 import { Box, Button, Container, Paper, Stack, Typography } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function NotFoundPage() {
+  const navigate = useNavigate();
+
   return (
     <Container maxWidth="sm" sx={{ py: 10, textAlign: "center" }} className="animate-fade-in">
       <Paper
@@ -46,8 +48,7 @@ export default function NotFoundPage() {
           <Button
             variant="contained"
             color="primary"
-            component={RouterLink}
-            to="/"
+            onClick={() => navigate("/")}
             startIcon={<HomeIcon />}
             sx={{ fontWeight: 700, px: 3, mt: 1, boxShadow: "0 4px 12px rgba(37, 99, 235, 0.25)" }}
           >

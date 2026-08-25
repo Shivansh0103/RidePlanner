@@ -6,8 +6,6 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
   Box,
   Card,
-  CardActionArea,
-  CardActions,
   CardContent,
   Chip,
   IconButton,
@@ -86,12 +84,14 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
   return (
     <Card
       variant="outlined"
+      onClick={() => navigate(`/trips/${trip.id}`)}
       sx={{
         borderRadius: 3,
         height: "100%",
         display: "flex",
         flexDirection: "column",
         bgcolor: "background.paper",
+        cursor: "pointer",
         transition: "all 0.2s ease-in-out",
         "&:hover": {
           transform: "translateY(-3px)",
@@ -100,130 +100,114 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         },
       }}
     >
-      <CardActionArea
-        onClick={() => navigate(`/trips/${trip.id}`)}
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "stretch",
-          justifyContent: "flex-start",
-          p: 3,
-        }}
-      >
-        <CardContent sx={{ p: 0, width: "100%", flexGrow: 1 }}>
-          <Stack spacing={2} sx={{ height: "100%" }}>
-            {/* Header: Status Chip + Menu Button */}
-            <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between", alignItems: "center" }}>
-              <Chip
-                icon={
-                  <Box
-                    sx={{
-                      width: 7,
-                      height: 7,
-                      borderRadius: "50%",
-                      bgcolor: statusStyle.dot,
-                      ml: "6px !important",
-                    }}
-                  />
-                }
-                label={trip.status.toUpperCase()}
-                size="small"
-                sx={{
-                  bgcolor: statusStyle.bg,
-                  color: statusStyle.color,
-                  border: `1px solid ${statusStyle.border}`,
-                  fontWeight: 800,
-                  fontSize: "0.7rem",
-                  letterSpacing: "0.02em",
-                }}
-              />
-
-              <IconButton
-                id={buttonId}
-                size="small"
-                onClick={handleMenuOpen}
-                aria-label={`Trip actions for ${trip.name}`}
-                aria-controls={open ? menuId : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                sx={{ color: "text.secondary" }}
-              >
-                <MoreVertIcon fontSize="small" />
-              </IconButton>
-            </Stack>
-
-            {/* Trip Title & Description */}
-            <Box>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontFamily: '"Outfit", sans-serif',
-                  fontWeight: 700,
-                  color: "text.primary",
-                  lineHeight: 1.3,
-                  mb: 0.5,
-                }}
-              >
-                {trip.name}
-              </Typography>
-
-              {trip.description && (
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
+      <CardContent sx={{ p: 3, flexGrow: 1, display: "flex", flexDirection: "column" }}>
+        <Stack spacing={2} sx={{ height: "100%", flexGrow: 1 }}>
+          {/* Header: Status Chip + Menu Button */}
+          <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+            <Chip
+              icon={
+                <Box
                   sx={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    display: "-webkit-box",
-                    WebKitLineClamp: 2,
-                    WebKitBoxOrient: "vertical",
-                    lineHeight: 1.5,
+                    width: 7,
+                    height: 7,
+                    borderRadius: "50%",
+                    bgcolor: statusStyle.dot,
+                    ml: "6px !important",
                   }}
-                >
-                  {trip.description}
-                </Typography>
-              )}
-            </Box>
-
-            {/* Footer Date Range & Arrow */}
-            <Stack
-              direction="row"
-              spacing={1}
+                />
+              }
+              label={trip.status.toUpperCase()}
+              size="small"
               sx={{
-                justifyContent: "space-between",
-                alignItems: "center",
-                mt: "auto",
-                pt: 1.5,
-                borderTop: "1px solid",
-                borderColor: "rgba(15, 23, 42, 0.06)",
+                bgcolor: statusStyle.bg,
+                color: statusStyle.color,
+                border: `1px solid ${statusStyle.border}`,
+                fontWeight: 800,
+                fontSize: "0.7rem",
+                letterSpacing: "0.02em",
+              }}
+            />
+
+            <IconButton
+              id={buttonId}
+              size="small"
+              onClick={handleMenuOpen}
+              aria-label={`Trip actions for ${trip.name}`}
+              aria-controls={open ? menuId : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              sx={{ color: "text.secondary" }}
+            >
+              <MoreVertIcon fontSize="small" />
+            </IconButton>
+          </Stack>
+
+          {/* Trip Title & Description */}
+          <Box>
+            <Typography
+              variant="h6"
+              sx={{
+                fontFamily: '"Outfit", sans-serif',
+                fontWeight: 700,
+                color: "text.primary",
+                lineHeight: 1.3,
+                mb: 0.5,
               }}
             >
+              {trip.name}
+            </Typography>
+
+            {trip.description && (
               <Typography
-                variant="caption"
+                variant="body2"
                 color="text.secondary"
-                sx={{ display: "flex", alignItems: "center", gap: 0.6, fontWeight: 500 }}
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebKitLineClamp: 2,
+                  WebKitBoxOrient: "vertical",
+                  lineHeight: 1.5,
+                }}
               >
-                <CalendarMonthIcon sx={{ fontSize: 16, color: "action.active" }} />
-                {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
+                {trip.description}
               </Typography>
+            )}
+          </Box>
 
-              <Typography
-                variant="caption"
-                color="primary.main"
-                sx={{ display: "flex", alignItems: "center", gap: 0.3, fontWeight: 700 }}
-              >
-                Cockpit
-                <ArrowForwardIcon sx={{ fontSize: 14 }} />
-              </Typography>
-            </Stack>
+          {/* Footer Date Range & Arrow */}
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: "auto",
+              pt: 1.5,
+              borderTop: "1px solid",
+              borderColor: "rgba(15, 23, 42, 0.06)",
+            }}
+          >
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: "flex", alignItems: "center", gap: 0.6, fontWeight: 500 }}
+            >
+              <CalendarMonthIcon sx={{ fontSize: 16, color: "action.active" }} />
+              {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
+            </Typography>
+
+            <Typography
+              variant="caption"
+              color="primary.main"
+              sx={{ display: "flex", alignItems: "center", gap: 0.3, fontWeight: 700 }}
+            >
+              Cockpit
+              <ArrowForwardIcon sx={{ fontSize: 14 }} />
+            </Typography>
           </Stack>
-        </CardContent>
-      </CardActionArea>
-
-      <CardActions sx={{ display: "none" }}>
-        {/* Hidden menu anchor */}
-      </CardActions>
+        </Stack>
+      </CardContent>
 
       <Menu
         id={menuId}
@@ -245,7 +229,8 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         }}
       >
         <MenuItem
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             handleMenuClose();
             onEdit(trip);
           }}
@@ -257,7 +242,8 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         </MenuItem>
 
         <MenuItem
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             handleMenuClose();
             onDelete(trip);
           }}

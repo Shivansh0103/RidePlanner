@@ -24,12 +24,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
-import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export default function MainLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
@@ -66,11 +67,9 @@ export default function MainLayout() {
           <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 70 }, justifyContent: "space-between" }}>
             {/* Brand Logo */}
             <Box
-              component={RouterLink}
-              to="/"
+              onClick={() => navigate("/")}
               sx={{
-                textDecoration: "none",
-                color: "inherit",
+                cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 gap: 1.5,
@@ -140,8 +139,7 @@ export default function MainLayout() {
                   return (
                     <Button
                       key={item.path}
-                      component={RouterLink}
-                      to={item.path}
+                      onClick={() => navigate(item.path)}
                       startIcon={item.icon}
                       sx={{
                         px: 2,
@@ -169,8 +167,7 @@ export default function MainLayout() {
               <Button
                 variant="contained"
                 color="primary"
-                component={RouterLink}
-                to="/trips/new"
+                onClick={() => navigate("/trips/new")}
                 startIcon={<AddIcon />}
                 size={isMobile ? "small" : "medium"}
                 sx={{
@@ -237,9 +234,10 @@ export default function MainLayout() {
             return (
               <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
-                  component={RouterLink}
-                  to={item.path}
-                  onClick={handleDrawerToggle}
+                  onClick={() => {
+                    handleDrawerToggle();
+                    navigate(item.path);
+                  }}
                   selected={active}
                   sx={{
                     borderRadius: 2,
