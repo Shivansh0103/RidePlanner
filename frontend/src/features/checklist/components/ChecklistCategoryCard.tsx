@@ -42,7 +42,14 @@ export default function ChecklistCategoryCard({
     category.completedItemsCount === category.totalItemsCount;
 
   return (
-    <Card variant="outlined" sx={{ borderRadius: 2 }}>
+    <Card
+      className="neo-convex"
+      sx={{
+        borderRadius: 2.5,
+        bgcolor: "#1a1a1e",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+      }}
+    >
       <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
         <Stack spacing={2}>
           {/* Header */}
@@ -55,16 +62,22 @@ export default function ChecklistCategoryCard({
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <FolderIcon color="action" fontSize="small" />
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              <FolderIcon sx={{ fontSize: 18, color: "#818cf8" }} />
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.95rem" }}>
                 {category.name}
               </Typography>
               <Chip
                 label={`${category.completedItemsCount}/${category.totalItemsCount}`}
                 size="small"
-                color={isAllCompleted ? "success" : "default"}
-                variant={isAllCompleted ? "filled" : "outlined"}
-                sx={{ height: 22, fontSize: "0.75rem", fontWeight: 600 }}
+                sx={{
+                  height: 20,
+                  fontSize: "0.68rem",
+                  fontWeight: 700,
+                  fontFamily: '"JetBrains Mono", monospace',
+                  bgcolor: isAllCompleted ? "rgba(190, 242, 100, 0.15)" : "rgba(255, 255, 255, 0.06)",
+                  color: isAllCompleted ? "#bef264" : "#94a3b8",
+                  border: isAllCompleted ? "1px solid rgba(190, 242, 100, 0.3)" : "1px solid rgba(255, 255, 255, 0.08)",
+                }}
               />
             </Box>
 
@@ -73,7 +86,7 @@ export default function ChecklistCategoryCard({
                 size="small"
                 aria-label="edit category"
                 onClick={() => onEditCategory(category)}
-                sx={{ color: "text.secondary", "&:hover": { color: "primary.main" } }}
+                sx={{ color: "#94a3b8", "&:hover": { color: "#818cf8" } }}
               >
                 <EditIcon fontSize="small" />
               </IconButton>
@@ -81,19 +94,19 @@ export default function ChecklistCategoryCard({
                 size="small"
                 aria-label="delete category"
                 onClick={() => onDeleteCategory(category)}
-                sx={{ color: "text.secondary", "&:hover": { color: "error.main" } }}
+                sx={{ color: "#94a3b8", "&:hover": { color: "#f87171" } }}
               >
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Stack>
           </Box>
 
-          <Divider />
+          <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
 
           {/* Items List */}
           {category.items.length === 0 ? (
-            <Typography variant="body2" color="text.secondary" sx={{ py: 1, fontStyle: "italic" }}>
-              No items in this category yet.
+            <Typography variant="body2" sx={{ py: 1, fontStyle: "italic", color: "#71717a", fontSize: "0.8rem" }}>
+              No items logged in this category yet.
             </Typography>
           ) : (
             <List disablePadding>
@@ -113,11 +126,17 @@ export default function ChecklistCategoryCard({
           <Box sx={{ pt: 0.5 }}>
             <Button
               size="small"
-              startIcon={<AddIcon fontSize="small" />}
+              startIcon={<AddIcon sx={{ fontSize: 14 }} />}
               onClick={() => onAddItem(category.id)}
-              sx={{ color: "text.secondary", "&:hover": { color: "primary.main" } }}
+              sx={{
+                color: "#818cf8",
+                fontSize: "0.72rem",
+                fontFamily: '"JetBrains Mono", monospace',
+                fontWeight: 700,
+                "&:hover": { color: "#a5b4fc" },
+              }}
             >
-              Add Item
+              + Add Item
             </Button>
           </Box>
         </Stack>

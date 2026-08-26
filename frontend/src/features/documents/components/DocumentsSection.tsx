@@ -71,30 +71,76 @@ export default function DocumentsSection({ tripId }: DocumentsSectionProps) {
 
   return (
     <Stack spacing={3}>
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+      <Paper
+        className="neo-convex"
+        sx={{
+          p: 2.8,
+          borderRadius: 2.5,
+          bgcolor: "#1a1a1e",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
+      >
+        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <FolderSpecialIcon color="primary" sx={{ fontSize: 32 }} />
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: 2,
+                bgcolor: "rgba(99, 102, 241, 0.12)",
+                color: "#818cf8",
+                border: "1px solid rgba(99, 102, 241, 0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <FolderSpecialIcon sx={{ fontSize: 22 }} />
+            </Box>
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                Travel Documents ({documents.length})
+              <Typography variant="h6" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
+                Field Permits & Document Vault ({documents.length})
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Manage licenses, permits, vehicle RC, insurance, and identity proofs for this trip.
+              <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                Permits, vehicle registration (RC), insurance policies, and identity clearances
               </Typography>
             </Box>
           </Box>
 
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenAdd}>
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+            onClick={handleOpenAdd}
+            className="glow-indigo"
+            sx={{
+              bgcolor: "#6366f1",
+              color: "#ffffff",
+              fontFamily: '"JetBrains Mono", monospace',
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              letterSpacing: "0.04em",
+              "&:hover": { bgcolor: "#4f46e5" },
+            }}
+          >
             Add Document
           </Button>
         </Stack>
       </Paper>
 
       {documents.length === 0 ? (
-        <Paper variant="outlined" sx={{ p: 4, textTransform: "none", textAlign: "center", borderRadius: 2 }}>
-          <Typography color="text.secondary">
-            No travel documents added yet. Click "Add Document" to store your license, permit, or insurance info.
+        <Paper
+          className="neo-inset"
+          sx={{
+            p: 4,
+            textAlign: "center",
+            borderRadius: 2.5,
+            bgcolor: "#141313",
+            border: "1px solid rgba(255, 255, 255, 0.06)",
+          }}
+        >
+          <Typography sx={{ color: "#94a3b8", fontSize: "0.85rem" }}>
+            No travel documents registered in the vault yet. Click "+ Add Document" to store your permits or insurance info.
           </Typography>
         </Paper>
       ) : (
