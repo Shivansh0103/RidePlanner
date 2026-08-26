@@ -1,20 +1,12 @@
 import AddIcon from "@mui/icons-material/Add";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ExploreIcon from "@mui/icons-material/Explore";
 import SearchIcon from "@mui/icons-material/Search";
-import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import {
   Box,
   Button,
-  Chip,
   Container,
-  Grid,
   InputAdornment,
   Paper,
   Stack,
-  Tab,
-  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -92,357 +84,175 @@ export default function TripsPage() {
     return matchesFilter && matchesSearch;
   });
 
+  const filterOptions: { label: string; value: FilterStatus; count: number }[] = [
+    { label: "All", value: "ALL", count: trips.length },
+    { label: "Active", value: "Active", count: activeTripsCount },
+    { label: "Planning", value: "Planning", count: planningTripsCount },
+    { label: "Completed", value: "Completed", count: completedTripsCount },
+  ];
+
   return (
     <Container maxWidth="xl" sx={{ pb: 6 }} className="animate-fade-in">
-      <Stack spacing={3.5}>
-        {/* Page Header */}
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={2}
-          sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" } }}
-        >
-          <Box>
-            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 0.5 }}>
-              <Typography variant="h4" sx={{ fontWeight: 800, fontFamily: '"Outfit", sans-serif', color: "#f8fafc" }}>
-                My Expeditions
-              </Typography>
-              <Chip
-                label="EXPLORER"
-                size="small"
-                sx={{
-                  bgcolor: "rgba(99, 102, 241, 0.12)",
-                  color: "#818cf8",
-                  border: "1px solid rgba(99, 102, 241, 0.3)",
-                  fontWeight: 800,
-                  fontSize: "0.65rem",
-                  borderRadius: 1,
-                }}
-              />
-            </Stack>
-            <Typography variant="body2" sx={{ color: "#94a3b8" }}>
-              Comprehensive log of all active routes, planned itineraries, and past journeys.
-            </Typography>
-          </Box>
-
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={() => setCreateDialogOpen(true)}
-            sx={{
-              fontWeight: 700,
-              px: 3,
-              py: 1.1,
-              background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
-              boxShadow: "0 4px 16px rgba(99, 102, 241, 0.4)",
-            }}
+      <Stack spacing={4}>
+        {/* Stitch Header Section */}
+        <Box sx={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)", pb: 3 }}>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={3}
+            sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", md: "flex-end" } }}
           >
-            Plan New Ride
-          </Button>
-        </Stack>
-
-        {/* Quick Stats Ribbon */}
-        {trips.length > 0 && (
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <Paper
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  borderRadius: 2.5,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  bgcolor: "#1a1a1e",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                }}
-              >
-                <Box
+            {/* Title & Badge */}
+            <Box>
+              <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 1 }}>
+                <Typography
+                  variant="h3"
                   sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 2,
-                    bgcolor: "rgba(99, 102, 241, 0.12)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#818cf8",
-                    border: "1px solid rgba(99, 102, 241, 0.25)",
-                  }}
-                >
-                  <ExploreIcon fontSize="small" />
-                </Box>
-                <Box>
-                  <Typography variant="h6" className="font-mono" sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.1 }}>
-                    {trips.length}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 600 }}>
-                    Total Trips
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <Paper
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  borderRadius: 2.5,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  bgcolor: "#1a1a1e",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 2,
-                    bgcolor: "rgba(190, 242, 100, 0.12)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#bef264",
-                    border: "1px solid rgba(190, 242, 100, 0.3)",
-                  }}
-                >
-                  <TwoWheelerIcon fontSize="small" />
-                </Box>
-                <Box>
-                  <Typography variant="h6" className="font-mono" sx={{ fontWeight: 800, color: "#bef264", lineHeight: 1.1 }}>
-                    {activeTripsCount}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 600 }}>
-                    Active Rides
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <Paper
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  borderRadius: 2.5,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  bgcolor: "#1a1a1e",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 2,
-                    bgcolor: "rgba(251, 191, 36, 0.12)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#fbbf24",
-                    border: "1px solid rgba(251, 191, 36, 0.3)",
-                  }}
-                >
-                  <CalendarMonthIcon fontSize="small" />
-                </Box>
-                <Box>
-                  <Typography variant="h6" className="font-mono" sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.1 }}>
-                    {planningTripsCount}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 600 }}>
-                    In Planning
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <Paper
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  borderRadius: 2.5,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  bgcolor: "#1a1a1e",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 2,
-                    bgcolor: "rgba(148, 163, 184, 0.1)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#94a3b8",
-                    border: "1px solid rgba(148, 163, 184, 0.2)",
-                  }}
-                >
-                  <CheckCircleIcon fontSize="small" />
-                </Box>
-                <Box>
-                  <Typography variant="h6" className="font-mono" sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.1 }}>
-                    {completedTripsCount}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 600 }}>
-                    Completed
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
-        )}
-
-        {/* Tactical Filter and Search Bar */}
-        {trips.length > 0 && (
-          <Paper
-            variant="outlined"
-            sx={{
-              p: 1.5,
-              borderRadius: 2.5,
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              justifyContent: "space-between",
-              alignItems: { xs: "stretch", md: "center" },
-              gap: 2,
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-            }}
-          >
-            {/* Status Filter Tabs */}
-            <Tabs
-              value={selectedFilter}
-              onChange={(_, val) => setSelectedFilter(val)}
-              variant="scrollable"
-              scrollButtons="auto"
-              sx={{
-                minHeight: 42,
-                "& .MuiTab-root": {
-                  minHeight: 42,
-                  py: 0.5,
-                  px: 1.8,
-                  fontSize: "0.88rem",
-                  fontWeight: 600,
-                  color: "#94a3b8",
-                  "&.Mui-selected": {
+                    fontFamily: '"Outfit", sans-serif',
+                    fontWeight: 800,
                     color: "#f8fafc",
+                    letterSpacing: "-0.03em",
+                  }}
+                >
+                  My Expeditions
+                </Typography>
+                <Box
+                  className="neo-inset font-mono"
+                  sx={{
+                    px: 2,
+                    py: 0.5,
+                    borderRadius: 1.5,
+                    fontSize: "0.75rem",
                     fontWeight: 700,
-                  },
-                },
-              }}
-            >
-              <Tab
-                label={
-                  <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
-                    <span>All</span>
-                    <Chip label={trips.length} size="small" sx={{ height: 18, fontSize: "0.7rem", fontWeight: 700 }} />
-                  </Stack>
-                }
-                value="ALL"
-              />
-              <Tab
-                label={
-                  <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
-                    <span>Active</span>
-                    <Chip
-                      label={activeTripsCount}
-                      size="small"
-                      sx={{
-                        height: 18,
-                        fontSize: "0.7rem",
-                        fontWeight: 700,
-                        bgcolor: "rgba(190, 242, 100, 0.15)",
-                        color: "#bef264",
-                        border: "1px solid rgba(190, 242, 100, 0.3)",
-                      }}
-                    />
-                  </Stack>
-                }
-                value="Active"
-              />
-              <Tab
-                label={
-                  <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
-                    <span>Planning</span>
-                    <Chip
-                      label={planningTripsCount}
-                      size="small"
-                      sx={{
-                        height: 18,
-                        fontSize: "0.7rem",
-                        fontWeight: 700,
-                        bgcolor: "rgba(99, 102, 241, 0.15)",
-                        color: "#818cf8",
-                        border: "1px solid rgba(99, 102, 241, 0.3)",
-                      }}
-                    />
-                  </Stack>
-                }
-                value="Planning"
-              />
-              <Tab
-                label={
-                  <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
-                    <span>Completed</span>
-                    <Chip label={completedTripsCount} size="small" sx={{ height: 18, fontSize: "0.7rem", fontWeight: 700 }} />
-                  </Stack>
-                }
-                value="Completed"
-              />
-            </Tabs>
+                    color: "#94a3b8",
+                  }}
+                >
+                  {trips.length} Total Journeys
+                </Box>
+              </Stack>
 
-            {/* Search Box */}
-            <TextField
-              size="small"
-              placeholder="Search expeditions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" sx={{ color: "#64748b" }} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-              sx={{ minWidth: { xs: "100%", md: 280 } }}
-            />
-          </Paper>
-        )}
+              <Typography variant="body2" sx={{ color: "#94a3b8", maxWidth: 650, lineHeight: 1.6 }}>
+                A definitive archive of your terrestrial operations. Monitor active routes, refine planned
+                trajectories, and review past performance data.
+              </Typography>
+            </Box>
+
+            {/* Search and Action CTA */}
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ width: { xs: "100%", md: "auto" } }}>
+              <TextField
+                size="small"
+                placeholder="Search archive..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon fontSize="small" sx={{ color: "#94a3b8" }} />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                className="neo-inset"
+                sx={{
+                  width: { xs: "100%", sm: 260 },
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    bgcolor: "#141313",
+                    "& fieldset": { borderColor: "rgba(255, 255, 255, 0.08)" },
+                    "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.2)" },
+                    "&.Mui-focused fieldset": { borderColor: "#6366f1" },
+                  },
+                }}
+              />
+
+              <Button
+                variant="contained"
+                onClick={() => setCreateDialogOpen(true)}
+                startIcon={<AddIcon />}
+                sx={{
+                  background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
+                  color: "#ffffff",
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontWeight: 800,
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  px: 3,
+                  py: 1.2,
+                  boxShadow: "0 0 20px rgba(99, 102, 241, 0.4)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Plan New Expedition
+              </Button>
+            </Stack>
+          </Stack>
+
+          {/* Stitch Filter Pill Buttons */}
+          <Stack direction="row" spacing={1.5} sx={{ mt: 3, overflowX: "auto", pb: 0.5 }}>
+            {filterOptions.map((opt) => {
+              const selected = selectedFilter === opt.value;
+              return (
+                <Button
+                  key={opt.value}
+                  onClick={() => setSelectedFilter(opt.value)}
+                  size="small"
+                  className={selected ? "glow-indigo" : ""}
+                  sx={{
+                    borderRadius: 9999,
+                    px: 2.5,
+                    py: 0.8,
+                    bgcolor: selected ? "rgba(99, 102, 241, 0.15)" : "#1a1a1e",
+                    borderColor: selected ? "#6366f1" : "rgba(255, 255, 255, 0.08)",
+                    border: "1px solid",
+                    color: selected ? "#818cf8" : "#94a3b8",
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontWeight: 700,
+                    fontSize: "0.72rem",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    "&:hover": {
+                      bgcolor: selected ? "rgba(99, 102, 241, 0.25)" : "#201f1f",
+                      color: "#ffffff",
+                    },
+                  }}
+                >
+                  {opt.label} <Box component="span" sx={{ opacity: 0.7, ml: 0.8 }}>[{opt.count}]</Box>
+                </Button>
+              );
+            })}
+          </Stack>
+        </Box>
 
         {/* Trips Grid or Empty State */}
         {trips.length === 0 ? (
           <EmptyState
-            title="No expeditions yet"
-            description="Create your first motorcycle ride to begin mapping routes, accommodations, and packing checklists."
+            title="No expeditions in archive"
+            description="Initialize your journey ledger by creating your first motorcycle expedition route and itinerary."
             action={
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={() => setCreateDialogOpen(true)}
-                sx={{ fontWeight: 700 }}
+                sx={{
+                  bgcolor: "#6366f1",
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontWeight: 800,
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.06em",
+                }}
               >
-                Create First Trip
+                Plan First Expedition
               </Button>
             }
           />
         ) : filteredTrips.length === 0 ? (
-          <Paper variant="outlined" sx={{ p: 5, textAlign: "center", borderRadius: 3, bgcolor: "#1a1a1e" }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#f8fafc", mb: 0.5 }}>
+          <Paper className="neo-convex" sx={{ p: 6, textAlign: "center", borderRadius: 3, bgcolor: "#1a1a1e" }}>
+            <Typography variant="h6" sx={{ fontWeight: 800, color: "#f8fafc", mb: 0.5 }}>
               No matching expeditions found
             </Typography>
-            <Typography variant="body2" sx={{ color: "#94a3b8", mb: 2 }}>
-              Try adjusting your search query or status filter.
+            <Typography variant="body2" sx={{ color: "#94a3b8", mb: 3 }}>
+              Try adjusting your search filter criteria or search keyword.
             </Typography>
             <Button
               variant="outlined"
@@ -451,8 +261,14 @@ export default function TripsPage() {
                 setSearchQuery("");
                 setSelectedFilter("ALL");
               }}
+              sx={{
+                borderColor: "#6366f1",
+                color: "#818cf8",
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: "0.72rem",
+              }}
             >
-              Clear Filters
+              Reset Filters
             </Button>
           </Paper>
         ) : (
