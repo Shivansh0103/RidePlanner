@@ -71,30 +71,76 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
 
   return (
     <Stack spacing={3}>
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+      <Paper
+        className="neo-convex"
+        sx={{
+          p: 2.8,
+          borderRadius: 2.5,
+          bgcolor: "#1a1a1e",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
+      >
+        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <ContactPhoneIcon color="primary" sx={{ fontSize: 32 }} />
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: 2,
+                bgcolor: "rgba(248, 113, 113, 0.12)",
+                color: "#f87171",
+                border: "1px solid rgba(248, 113, 113, 0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ContactPhoneIcon sx={{ fontSize: 22 }} />
+            </Box>
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                Emergency Contacts ({contacts.length})
+              <Typography variant="h6" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
+                Emergency Contacts & ICE Network ({contacts.length})
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Ensure safety by adding trusted contacts, family members, or riding companions for this trip.
+              <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                In-Case-of-Emergency contacts, blood relations, and medical response points
               </Typography>
             </Box>
           </Box>
 
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenAdd}>
-            Add Contact
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+            onClick={handleOpenAdd}
+            className="glow-indigo"
+            sx={{
+              bgcolor: "#6366f1",
+              color: "#ffffff",
+              fontFamily: '"JetBrains Mono", monospace',
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              letterSpacing: "0.04em",
+              "&:hover": { bgcolor: "#4f46e5" },
+            }}
+          >
+            Add ICE Contact
           </Button>
         </Stack>
       </Paper>
 
       {contacts.length === 0 ? (
-        <Paper variant="outlined" sx={{ p: 4, textAlign: "center", borderRadius: 2 }}>
-          <Typography color="text.secondary">
-            No emergency contacts added yet. Click "Add Contact" to add family, spouse, or emergency contact info.
+        <Paper
+          className="neo-inset"
+          sx={{
+            p: 4,
+            textAlign: "center",
+            borderRadius: 2.5,
+            bgcolor: "#141313",
+            border: "1px solid rgba(255, 255, 255, 0.06)",
+          }}
+        >
+          <Typography sx={{ color: "#94a3b8", fontSize: "0.85rem" }}>
+            No emergency contacts listed for this trip. Click "+ Add ICE Contact" to register contacts for safety.
           </Typography>
         </Paper>
       ) : (
@@ -117,7 +163,7 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
 
       <ConfirmDialog
         open={contactToDelete !== null}
-        title="Delete Emergency Contact"
+        title="Delete Contact"
         message={`Are you sure you want to delete emergency contact "${contactToDelete?.name}"?`}
         confirmText="Delete"
         loading={deleteMutation.isPending}
