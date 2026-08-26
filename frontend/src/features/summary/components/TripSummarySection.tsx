@@ -1,7 +1,6 @@
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
 import ChecklistRtlIcon from "@mui/icons-material/ChecklistRtl";
 import HotelIcon from "@mui/icons-material/Hotel";
 import PrintIcon from "@mui/icons-material/Print";
@@ -47,15 +46,37 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
   return (
     <Stack spacing={3}>
       {/* Printable Header Banner */}
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, bgcolor: "background.paper" }}>
-        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+      <Paper
+        className="neo-convex"
+        sx={{
+          p: 3,
+          borderRadius: 2.5,
+          bgcolor: "#1a1a1e",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
+      >
+        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <AssessmentIcon color="primary" sx={{ fontSize: 40 }} />
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: 2,
+                bgcolor: "rgba(99, 102, 241, 0.15)",
+                color: "#818cf8",
+                border: "1px solid rgba(99, 102, 241, 0.35)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <AssessmentIcon sx={{ fontSize: 24 }} />
+            </Box>
             <Box>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                {summary.tripName} – Post-Ride Summary
+              <Typography variant="h5" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
+                {summary.tripName} – Expedition Debrief
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
                 {summary.startedAt
                   ? `Started: ${formatDate(summary.startedAt)}`
                   : "Trip not started yet"}
@@ -65,8 +86,32 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
           </Box>
 
           <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-            <Chip label={summary.status} color="primary" sx={{ fontWeight: 700 }} />
-            <Button variant="outlined" startIcon={<PrintIcon />} onClick={handlePrint}>
+            <Chip
+              label={summary.status}
+              size="small"
+              sx={{
+                bgcolor: "rgba(190, 242, 100, 0.15)",
+                color: "#bef264",
+                border: "1px solid rgba(190, 242, 100, 0.3)",
+                fontFamily: '"JetBrains Mono", monospace',
+                fontWeight: 800,
+                fontSize: "0.7rem",
+              }}
+            />
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<PrintIcon sx={{ fontSize: 16 }} />}
+              onClick={handlePrint}
+              sx={{
+                borderColor: "rgba(255, 255, 255, 0.2)",
+                color: "#f8fafc",
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                "&:hover": { borderColor: "#ffffff", bgcolor: "rgba(255, 255, 255, 0.06)" },
+              }}
+            >
               Print Report
             </Button>
           </Stack>
@@ -77,19 +122,27 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
       <Grid container spacing={2.5}>
         {/* Card 1: Duration & Stops */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card variant="outlined" sx={{ borderRadius: 2.5, height: "100%" }}>
+          <Card
+            className="neo-convex"
+            sx={{
+              borderRadius: 2.5,
+              height: "100%",
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
+          >
             <CardContent sx={{ p: 2.5 }}>
               <Stack spacing={1}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "primary.main" }}>
-                  <CalendarMonthIcon />
-                  <Typography variant="subtitle2" color="text.secondary">
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "#818cf8" }}>
+                  <CalendarMonthIcon sx={{ fontSize: 18 }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Duration & Stops
                   </Typography>
                 </Stack>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "#f8fafc" }}>
                   {summary.totalDurationDays} {summary.totalDurationDays === 1 ? "Day" : "Days"}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
                   {summary.totalStops} planned route stop(s)
                 </Typography>
               </Stack>
@@ -99,16 +152,24 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
 
         {/* Card 2: Budget Variance */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card variant="outlined" sx={{ borderRadius: 2.5, height: "100%" }}>
+          <Card
+            className="neo-convex"
+            sx={{
+              borderRadius: 2.5,
+              height: "100%",
+              bgcolor: "#1a1a1e",
+              border: isUnderBudget ? "1px solid rgba(190, 242, 100, 0.3)" : "1px solid rgba(248, 113, 113, 0.3)",
+            }}
+          >
             <CardContent sx={{ p: 2.5 }}>
               <Stack spacing={1}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "primary.main" }}>
-                  <AccountBalanceWalletIcon />
-                  <Typography variant="subtitle2" color="text.secondary">
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "#38bdf8" }}>
+                  <AccountBalanceWalletIcon sx={{ fontSize: 18 }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Budget Spent
                   </Typography>
                 </Stack>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "#f8fafc" }}>
                   ₹{summary.totalExpenses.toLocaleString()}
                 </Typography>
                 <Chip
@@ -117,9 +178,16 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
                       ? `₹${summary.budgetVariance.toLocaleString()} Under Target`
                       : `₹${Math.abs(summary.budgetVariance).toLocaleString()} Over Target`
                   }
-                  color={isUnderBudget ? "success" : "error"}
                   size="small"
-                  sx={{ width: "fit-content", fontWeight: 700, fontSize: "0.72rem" }}
+                  sx={{
+                    width: "fit-content",
+                    fontWeight: 700,
+                    fontSize: "0.68rem",
+                    fontFamily: '"JetBrains Mono", monospace',
+                    bgcolor: isUnderBudget ? "rgba(190, 242, 100, 0.12)" : "rgba(248, 113, 113, 0.12)",
+                    color: isUnderBudget ? "#bef264" : "#f87171",
+                    border: `1px solid ${isUnderBudget ? "rgba(190, 242, 100, 0.3)" : "rgba(248, 113, 113, 0.3)"}`,
+                  }}
                 />
               </Stack>
             </CardContent>
@@ -128,19 +196,27 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
 
         {/* Card 3: Accommodations */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card variant="outlined" sx={{ borderRadius: 2.5, height: "100%" }}>
+          <Card
+            className="neo-convex"
+            sx={{
+              borderRadius: 2.5,
+              height: "100%",
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
+          >
             <CardContent sx={{ p: 2.5 }}>
               <Stack spacing={1}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "primary.main" }}>
-                  <HotelIcon />
-                  <Typography variant="subtitle2" color="text.secondary">
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "#818cf8" }}>
+                  <HotelIcon sx={{ fontSize: 18 }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Accommodations
                   </Typography>
                 </Stack>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "#f8fafc" }}>
                   {summary.totalNights} {summary.totalNights === 1 ? "Night" : "Nights"}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
                   ₹{summary.totalAccommodationCost.toLocaleString()} across {summary.totalAccommodations} stay(s)
                 </Typography>
               </Stack>
@@ -150,19 +226,27 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
 
         {/* Card 4: Gear Packed Rate */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card variant="outlined" sx={{ borderRadius: 2.5, height: "100%" }}>
+          <Card
+            className="neo-convex"
+            sx={{
+              borderRadius: 2.5,
+              height: "100%",
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
+          >
             <CardContent sx={{ p: 2.5 }}>
               <Stack spacing={1}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "primary.main" }}>
-                  <ChecklistRtlIcon />
-                  <Typography variant="subtitle2" color="text.secondary">
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "#bef264" }}>
+                  <ChecklistRtlIcon sx={{ fontSize: 18 }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Gear Readiness
                   </Typography>
                 </Stack>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "#bef264" }}>
                   {summary.checklistCompletionPercentage}%
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
                   {summary.completedChecklistItems} of {summary.totalChecklistItems} items packed
                 </Typography>
               </Stack>
