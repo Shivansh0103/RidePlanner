@@ -3,9 +3,8 @@ import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Grid,
+  Paper,
   Stack,
   Typography,
 } from "@mui/material";
@@ -42,26 +41,43 @@ export default function BudgetSummaryCards({
           gap: 2,
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
-          Trip Budget & Costs
+        <Typography variant="h5" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
+          Financial Telemetry & Cost Control
         </Typography>
 
         <Stack direction="row" spacing={1.5}>
           <Button
             variant="outlined"
-            startIcon={<LocalGasStationIcon />}
+            size="small"
+            startIcon={<LocalGasStationIcon sx={{ fontSize: 16 }} />}
             onClick={onCalculateFuel}
-            color="primary"
-            aria-label="Calculate Fuel Cost"
+            sx={{
+              borderColor: "rgba(190, 242, 100, 0.4)",
+              color: "#bef264",
+              fontFamily: '"JetBrains Mono", monospace',
+              fontSize: "0.72rem",
+              fontWeight: 700,
+              "&:hover": { borderColor: "#bef264", bgcolor: "rgba(190, 242, 100, 0.08)" },
+            }}
           >
             Calculate Fuel
           </Button>
 
           <Button
             variant="contained"
-            startIcon={<EditIcon />}
+            size="small"
+            startIcon={<EditIcon sx={{ fontSize: 16 }} />}
             onClick={onEditBudget}
-            aria-label="Edit Target Budget"
+            className="glow-indigo"
+            sx={{
+              bgcolor: "#6366f1",
+              color: "#ffffff",
+              fontFamily: '"JetBrains Mono", monospace',
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              letterSpacing: "0.04em",
+              "&:hover": { bgcolor: "#4f46e5" },
+            }}
           >
             Edit Target Budget
           </Button>
@@ -71,114 +87,138 @@ export default function BudgetSummaryCards({
       <Grid container spacing={2}>
         {/* Target Budget Card */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card variant="outlined" sx={{ borderRadius: 2, height: "100%" }}>
-            <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: 0.5,
-                }}
-              >
-                Target Budget
-              </Typography>
-              <Typography
-                variant="h5"
-                color="text.primary"
-                sx={{ mt: 0.5, fontWeight: 800 }}
-              >
-                {formatCurrency(targetBudget)}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Paper
+            className="neo-convex"
+            sx={{
+              p: 2.5,
+              borderRadius: 2.5,
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
+          >
+            <Typography
+              className="font-mono"
+              variant="caption"
+              sx={{
+                color: "#94a3b8",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                fontSize: "0.68rem",
+              }}
+            >
+              Target Budget
+            </Typography>
+            <Typography
+              className="font-mono"
+              variant="h5"
+              sx={{ mt: 0.8, fontWeight: 800, color: "#f8fafc" }}
+            >
+              {formatCurrency(targetBudget)}
+            </Typography>
+          </Paper>
         </Grid>
 
         {/* Planned Cost Card */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card variant="outlined" sx={{ borderRadius: 2, height: "100%" }}>
-            <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: 0.5,
-                }}
-              >
-                Planned Cost
-              </Typography>
-              <Typography
-                variant="h5"
-                color="primary.main"
-                sx={{ mt: 0.5, fontWeight: 800 }}
-              >
-                {formatCurrency(estimatedCost)}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Paper
+            className="neo-convex"
+            sx={{
+              p: 2.5,
+              borderRadius: 2.5,
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
+          >
+            <Typography
+              className="font-mono"
+              variant="caption"
+              sx={{
+                color: "#94a3b8",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                fontSize: "0.68rem",
+              }}
+            >
+              Planned Estimates
+            </Typography>
+            <Typography
+              className="font-mono"
+              variant="h5"
+              sx={{ mt: 0.8, fontWeight: 800, color: "#818cf8" }}
+            >
+              {formatCurrency(estimatedCost)}
+            </Typography>
+          </Paper>
         </Grid>
 
         {/* Total Actual Spent Card */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card variant="outlined" sx={{ borderRadius: 2, height: "100%" }}>
-            <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: 0.5,
-                }}
-              >
-                Total Actual Spent
-              </Typography>
-              <Typography
-                variant="h5"
-                color="info.main"
-                sx={{ mt: 0.5, fontWeight: 800 }}
-              >
-                {formatCurrency(actualCost)}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Paper
+            className="neo-convex"
+            sx={{
+              p: 2.5,
+              borderRadius: 2.5,
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
+          >
+            <Typography
+              className="font-mono"
+              variant="caption"
+              sx={{
+                color: "#94a3b8",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                fontSize: "0.68rem",
+              }}
+            >
+              Actual Logged Spent
+            </Typography>
+            <Typography
+              className="font-mono"
+              variant="h5"
+              sx={{ mt: 0.8, fontWeight: 800, color: "#38bdf8" }}
+            >
+              {formatCurrency(actualCost)}
+            </Typography>
+          </Paper>
         </Grid>
 
         {/* Remaining Target Buffer Card */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card
-            variant="outlined"
+          <Paper
+            className="neo-convex"
             sx={{
-              borderRadius: 2,
-              height: "100%",
-              borderColor: isOverTarget ? "error.main" : "divider",
-              backgroundColor: isOverTarget ? "action.hover" : "background.paper",
+              p: 2.5,
+              borderRadius: 2.5,
+              bgcolor: "#1a1a1e",
+              border: isOverTarget ? "1px solid rgba(248, 113, 113, 0.4)" : "1px solid rgba(190, 242, 100, 0.4)",
             }}
           >
-            <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: 0.5,
-                }}
-              >
-                Remaining Target Buffer
-              </Typography>
-              <Typography
-                variant="h5"
-                color={isOverTarget ? "error.main" : "success.main"}
-                sx={{ mt: 0.5, fontWeight: 800 }}
-              >
-                {formatCurrency(remainingTargetBuffer)}
-              </Typography>
-            </CardContent>
-          </Card>
+            <Typography
+              className="font-mono"
+              variant="caption"
+              sx={{
+                color: isOverTarget ? "#f87171" : "#bef264",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                fontSize: "0.68rem",
+              }}
+            >
+              {isOverTarget ? "Budget Deficit" : "Remaining Buffer"}
+            </Typography>
+            <Typography
+              className="font-mono"
+              variant="h5"
+              sx={{ mt: 0.8, fontWeight: 800, color: isOverTarget ? "#f87171" : "#bef264" }}
+            >
+              {formatCurrency(remainingTargetBuffer)}
+            </Typography>
+          </Paper>
         </Grid>
       </Grid>
     </Stack>
