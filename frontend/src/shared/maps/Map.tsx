@@ -23,6 +23,63 @@ export interface MapProps {
 const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
+// Tactical Obsidian dark mode map styles
+const darkMapStyles: google.maps.MapTypeStyle[] = [
+  { elementType: "geometry", stylers: [{ color: "#18181b" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#18181b" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#9ca3af" }] },
+  {
+    featureType: "administrative.locality",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#e5e7eb" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#818cf8" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: "#1f2421" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#27272a" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#1c1c1f" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#3f3f46" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#27272a" }],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [{ color: "#232328" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#09090b" }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#6b7280" }],
+  },
+];
+
 export function Map({
   center = DEFAULT_MAP_CENTER,
   zoom = DEFAULT_MAP_ZOOM,
@@ -56,6 +113,8 @@ export function Map({
         defaultZoom={zoom}
         gestureHandling="greedy"
         disableDefaultUI={false}
+        colorScheme="DARK"
+        styles={mapId ? undefined : darkMapStyles}
         style={{
           width: "100%",
           height: "100%",

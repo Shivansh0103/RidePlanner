@@ -27,6 +27,8 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { useTrips } from "@/features/trips";
 
+const SIDEBAR_WIDTH = 230;
+
 export default function MainLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -73,33 +75,34 @@ export default function MainLayout() {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        p: 2.5,
-        bgcolor: "#1c1b1b",
+        p: 2,
+        bgcolor: "#18181b",
         color: "#e5e2e1",
+        borderRight: "1px solid rgba(255, 255, 255, 0.08)",
       }}
     >
       {/* Brand Header */}
-      <Box sx={{ mb: 4, px: 1 }}>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+      <Box sx={{ mb: 3, px: 0.5 }}>
+        <Stack direction="row" spacing={1.2} sx={{ alignItems: "center" }}>
           <Box
             sx={{
-              width: 36,
-              height: 36,
-              borderRadius: 2,
+              width: 32,
+              height: 32,
+              borderRadius: 1.5,
               bgcolor: "rgba(99, 102, 241, 0.15)",
               border: "1px solid rgba(99, 102, 241, 0.3)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "#818cf8",
-              boxShadow: "0 0 12px rgba(99, 102, 241, 0.25)",
+              boxShadow: "0 0 10px rgba(99, 102, 241, 0.25)",
             }}
           >
-            <TwoWheelerIcon sx={{ fontSize: 20 }} />
+            <TwoWheelerIcon sx={{ fontSize: 18 }} />
           </Box>
           <Box>
             <Typography
-              variant="h6"
+              variant="subtitle1"
               sx={{
                 fontFamily: '"Outfit", sans-serif',
                 fontWeight: 800,
@@ -116,9 +119,9 @@ export default function MainLayout() {
               variant="caption"
               sx={{
                 color: "#94a3b8",
-                fontSize: "0.68rem",
+                fontSize: "0.62rem",
                 fontWeight: 700,
-                letterSpacing: "0.08em",
+                letterSpacing: "0.06em",
                 textTransform: "uppercase",
               }}
             >
@@ -128,8 +131,8 @@ export default function MainLayout() {
         </Stack>
       </Box>
 
-      {/* Primary Action Button (New Mission / Trip) */}
-      <Box sx={{ mb: 3 }}>
+      {/* Primary Action Button */}
+      <Box sx={{ mb: 2.5 }}>
         <Button
           fullWidth
           variant="outlined"
@@ -137,23 +140,22 @@ export default function MainLayout() {
             if (isMobile) setMobileOpen(false);
             navigate("/trips/new");
           }}
-          startIcon={<AddIcon />}
+          startIcon={<AddIcon sx={{ fontSize: 16 }} />}
           sx={{
-            py: 1.3,
+            py: 1,
             bgcolor: "rgba(99, 102, 241, 0.08)",
             borderColor: "#6366f1",
             color: "#818cf8",
             fontWeight: 800,
             letterSpacing: "0.06em",
             fontFamily: '"JetBrains Mono", monospace',
-            fontSize: "0.78rem",
+            fontSize: "0.72rem",
             textTransform: "uppercase",
-            boxShadow: "0 0 16px rgba(99, 102, 241, 0.25)",
+            boxShadow: "0 0 14px rgba(99, 102, 241, 0.2)",
             "&:hover": {
               bgcolor: "#6366f1",
               borderColor: "#6366f1",
               color: "#ffffff",
-              boxShadow: "0 0 24px rgba(99, 102, 241, 0.5)",
             },
           }}
         >
@@ -166,7 +168,7 @@ export default function MainLayout() {
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
-            <ListItem key={item.path} disablePadding sx={{ mb: 1 }}>
+            <ListItem key={item.path} disablePadding sx={{ mb: 0.8 }}>
               <ListItemButton
                 onClick={() => {
                   if (isMobile) setMobileOpen(false);
@@ -174,18 +176,16 @@ export default function MainLayout() {
                 }}
                 selected={active}
                 sx={{
-                  borderRadius: 2,
-                  py: 1.3,
-                  px: 2,
+                  borderRadius: 1.5,
+                  py: 1,
+                  px: 1.5,
                   bgcolor: active ? "#201f1f" : "transparent",
-                  color: active ? "#818cf8" : "#c7c6ca",
-                  borderRight: active ? "4px solid #6366f1" : "4px solid transparent",
-                  boxShadow: active ? "6px 6px 14px #0e0e11, -6px -6px 14px #22222a" : "none",
-                  transition: "all 0.2s ease-in-out",
+                  color: active ? "#818cf8" : "#a1a1aa",
+                  borderRight: active ? "3px solid #6366f1" : "3px solid transparent",
+                  transition: "all 0.15s ease",
                   "&:hover": {
                     bgcolor: active ? "#201f1f" : "rgba(255, 255, 255, 0.04)",
                     color: "#ffffff",
-                    transform: "translateX(3px)",
                     "& .MuiListItemIcon-root": { color: "#818cf8" },
                   },
                   "&.Mui-selected": {
@@ -197,9 +197,8 @@ export default function MainLayout() {
               >
                 <ListItemIcon
                   sx={{
-                    minWidth: 36,
-                    color: active ? "#818cf8" : "#909094",
-                    filter: active ? "drop-shadow(0 0 8px rgba(99,102,241,0.6))" : "none",
+                    minWidth: 30,
+                    color: active ? "#818cf8" : "#71717a",
                   }}
                 >
                   {item.icon}
@@ -209,9 +208,9 @@ export default function MainLayout() {
                     <Typography
                       className="font-mono"
                       sx={{
-                        fontSize: "0.78rem",
+                        fontSize: "0.72rem",
                         fontWeight: active ? 800 : 600,
-                        letterSpacing: "0.08em",
+                        letterSpacing: "0.06em",
                         textTransform: "uppercase",
                       }}
                     >
@@ -224,8 +223,8 @@ export default function MainLayout() {
                     label={item.badge}
                     size="small"
                     sx={{
-                      height: 18,
-                      fontSize: "0.6rem",
+                      height: 16,
+                      fontSize: "0.55rem",
                       fontWeight: 800,
                       bgcolor: "rgba(190, 242, 100, 0.15)",
                       color: "#bef264",
@@ -240,7 +239,7 @@ export default function MainLayout() {
         })}
       </List>
 
-      {/* Active Trip Telemetry Bar (if active trip exists) */}
+      {/* Active Trip Telemetry Bar */}
       {activeTrip && (
         <Box
           onClick={() => {
@@ -248,21 +247,19 @@ export default function MainLayout() {
             navigate(`/trips/${activeTrip.id}`);
           }}
           sx={{
-            mb: 2,
-            p: 1.5,
-            borderRadius: 2,
+            mb: 1.5,
+            p: 1.2,
+            borderRadius: 1.5,
             bgcolor: "#141313",
             border: "1px solid rgba(190, 242, 100, 0.25)",
-            boxShadow: "inset 2px 2px 6px #0e0e11, inset -2px -2px 6px #22222a",
             cursor: "pointer",
             transition: "all 0.2s ease",
             "&:hover": {
               borderColor: "#bef264",
-              boxShadow: "0 0 12px rgba(190, 242, 100, 0.2)",
             },
           }}
         >
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 0.5 }}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 0.3 }}>
             <Box
               className="pulse-telemetry"
               sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#bef264" }}
@@ -270,42 +267,41 @@ export default function MainLayout() {
             <Typography
               className="font-mono"
               variant="caption"
-              sx={{ color: "#bef264", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.06em" }}
+              sx={{ color: "#bef264", fontWeight: 800, fontSize: "0.62rem", letterSpacing: "0.04em" }}
             >
               ACTIVE EXPEDITION
             </Typography>
           </Stack>
           <Typography
             variant="body2"
-            sx={{ color: "#f8fafc", fontWeight: 700, fontSize: "0.82rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+            sx={{ color: "#f8fafc", fontWeight: 700, fontSize: "0.76rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
           >
             {activeTrip.name}
           </Typography>
         </Box>
       )}
 
-      {/* Divider */}
-      <Divider sx={{ mb: 2, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+      <Divider sx={{ mb: 1.5, borderColor: "rgba(255, 255, 255, 0.08)" }} />
 
-      {/* Bottom Profile / Commander Snippet */}
+      {/* Bottom Profile Widget */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 1.5,
-          p: 1.2,
-          borderRadius: 2,
+          gap: 1.2,
+          p: 1,
+          borderRadius: 1.5,
           bgcolor: "rgba(255, 255, 255, 0.02)",
           border: "1px solid rgba(255, 255, 255, 0.06)",
         }}
       >
         <Avatar
           sx={{
-            width: 34,
-            height: 34,
-            bgcolor: "#2b2a2a",
+            width: 28,
+            height: 28,
+            bgcolor: "#27272a",
             border: "1px solid rgba(255, 255, 255, 0.15)",
-            fontSize: "0.78rem",
+            fontSize: "0.7rem",
             fontWeight: 800,
             color: "#818cf8",
           }}
@@ -316,7 +312,7 @@ export default function MainLayout() {
           <Typography
             className="font-mono"
             sx={{
-              fontSize: "0.74rem",
+              fontSize: "0.68rem",
               fontWeight: 800,
               color: "#e5e2e1",
               letterSpacing: "0.04em",
@@ -327,9 +323,9 @@ export default function MainLayout() {
           </Typography>
           <Typography
             className="font-mono"
-            sx={{ fontSize: "0.65rem", color: "#bef264", fontWeight: 700 }}
+            sx={{ fontSize: "0.6rem", color: "#bef264", fontWeight: 700 }}
           >
-            ID: 884-X9 // READY
+            884-X9 // READY
           </Typography>
         </Box>
       </Box>
@@ -338,20 +334,19 @@ export default function MainLayout() {
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", bgcolor: "#141313", color: "#e5e2e1" }}>
-      {/* Desktop Sidebar (Fixed Left 280px) */}
+      {/* Desktop Sidebar (Fixed Left 230px) */}
       {!isMobile && (
         <Box
           component="aside"
           sx={{
-            width: 280,
+            width: SIDEBAR_WIDTH,
             flexShrink: 0,
             position: "fixed",
             top: 0,
             left: 0,
             bottom: 0,
             zIndex: 1200,
-            borderRight: "1px solid rgba(255, 255, 255, 0.08)",
-            boxShadow: "5px 0 20px rgba(0, 0, 0, 0.6)",
+            boxShadow: "4px 0 16px rgba(0, 0, 0, 0.5)",
           }}
         >
           {sidebarContent}
@@ -366,8 +361,8 @@ export default function MainLayout() {
             top: 0,
             left: 0,
             right: 0,
-            height: 60,
-            bgcolor: "#1c1b1b",
+            height: 56,
+            bgcolor: "#18181b",
             borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
             display: "flex",
             alignItems: "center",
@@ -377,9 +372,9 @@ export default function MainLayout() {
           }}
         >
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <TwoWheelerIcon sx={{ color: "#818cf8", fontSize: 22 }} />
+            <TwoWheelerIcon sx={{ color: "#818cf8", fontSize: 20 }} />
             <Typography
-              variant="subtitle1"
+              variant="subtitle2"
               sx={{
                 fontWeight: 800,
                 fontStyle: "italic",
@@ -395,9 +390,10 @@ export default function MainLayout() {
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerToggle}
-            sx={{ border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: 1.5 }}
+            size="small"
+            sx={{ border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: 1 }}
           >
-            <MenuIcon />
+            <MenuIcon fontSize="small" />
           </IconButton>
         </Box>
       )}
@@ -410,25 +406,27 @@ export default function MainLayout() {
         ModalProps={{ keepMounted: true }}
         slotProps={{
           paper: {
-            sx: { width: 280, bgcolor: "#1c1b1b" },
+            sx: { width: SIDEBAR_WIDTH, bgcolor: "#18181b" },
           },
         }}
       >
         {sidebarContent}
       </Drawer>
 
-      {/* Main Content Area (Offset on Desktop by 280px) */}
+      {/* Main Content Area (Fluid & Responsive) */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          ml: { xs: 0, md: "280px" },
-          mt: { xs: "60px", md: 0 },
-          p: { xs: 2.5, sm: 3.5, md: 4.5 },
+          ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` },
+          mt: { xs: "56px", md: 0 },
+          p: { xs: 2, sm: 2.5, md: 3 },
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
+          width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
           maxWidth: "100%",
+          overflowX: "hidden",
         }}
       >
         <Outlet />
