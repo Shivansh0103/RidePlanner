@@ -33,7 +33,6 @@ type TripStopCardProps = {
   onEdit: (stop: TripStop) => void;
   onDelete: (stop: TripStop) => void;
   dragHandleProps?: Record<string, unknown>;
-
   selected?: boolean;
   onStopSelect?: (stopId: string) => void;
 };
@@ -62,32 +61,33 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
         ref={ref}
         component="article"
         aria-label={`Trip stop: ${stop.name}`}
-        variant="outlined"
         onClick={() => onStopSelect?.(stop.id)}
+        className="neo-convex"
         sx={{
-          borderRadius: 2,
+          borderRadius: 2.5,
           cursor: "pointer",
-          borderLeft: 4,
-          borderLeftColor: selected ? "primary.main" : "transparent",
-          bgcolor: selected ? "action.selected" : "background.paper",
-          boxShadow: selected ? 4 : 0,
+          borderLeft: "4px solid",
+          borderLeftColor: selected ? "#6366f1" : "rgba(255, 255, 255, 0.08)",
+          bgcolor: selected ? "#201f1f" : "#1a1a1e",
+          border: "1px solid",
+          borderColor: selected ? "#6366f1" : "rgba(255, 255, 255, 0.08)",
+          boxShadow: selected ? "0 0 16px rgba(99, 102, 241, 0.3)" : "none",
           transition: "all 0.2s ease-in-out",
-
           "&:hover": {
-            boxShadow: selected ? 6 : 2,
-            borderColor: "action.disabled",
+            borderColor: selected ? "#6366f1" : "rgba(99, 102, 241, 0.4)",
+            transform: "translateY(-1px)",
           },
         }}
       >
         <CardContent
           sx={{
-            p: { xs: 2, sm: 2.5 },
+            p: { xs: 2, sm: 2.2 },
             "&:last-child": {
-              pb: { xs: 2, sm: 2.5 },
+              pb: { xs: 2, sm: 2.2 },
             },
           }}
         >
-          <Stack spacing={1.5}>
+          <Stack spacing={1.2}>
             {/* Category & Menu Header */}
             <Stack
               direction="row"
@@ -115,24 +115,20 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                       display: "flex",
                       alignItems: "center",
                       cursor: "grab",
-                      color: "action.active",
+                      color: "#94a3b8",
                       "&:active": {
                         cursor: "grabbing",
                       },
-                      p: 0.5,
+                      p: 0.4,
                       borderRadius: 1,
                       "&:hover": {
-                        bgcolor: "action.hover",
-                      },
-                      "&:focus-visible": {
-                        outline: "2px solid",
-                        outlineColor: "primary.main",
-                        outlineOffset: "1px",
+                        bgcolor: "rgba(255, 255, 255, 0.06)",
+                        color: "#ffffff",
                       },
                     }}
                     aria-label={`Reorder ${stop.name}. Press Space or Enter to drag.`}
                   >
-                    <DragIndicatorIcon fontSize="small" />
+                    <DragIndicatorIcon sx={{ fontSize: 18 }} />
                   </Box>
                 )}
 
@@ -140,30 +136,33 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
 
                 {stayInfo.isOvernight ? (
                   <Chip
-                    icon={<BedtimeIcon sx={{ fontSize: "0.85rem !important" }} />}
+                    icon={<BedtimeIcon sx={{ fontSize: "0.8rem !important", color: "#818cf8 !important" }} />}
                     label={stayInfo.label}
                     size="small"
-                    color="secondary"
-                    variant="outlined"
-                    sx={{ height: 22, fontSize: "0.75rem", fontWeight: 600 }}
+                    sx={{
+                      height: 22,
+                      fontSize: "0.68rem",
+                      fontWeight: 700,
+                      bgcolor: "rgba(99, 102, 241, 0.15)",
+                      color: "#818cf8",
+                      border: "1px solid rgba(99, 102, 241, 0.3)",
+                      fontFamily: '"JetBrains Mono", monospace',
+                    }}
                   />
                 ) : (
                   <Chip
-                    icon={<WbSunnyIcon sx={{ fontSize: "0.85rem !important" }} />}
+                    icon={<WbSunnyIcon sx={{ fontSize: "0.8rem !important", color: "#fbbf24 !important" }} />}
                     label={stayInfo.label}
                     size="small"
-                    variant="outlined"
-                    sx={{ height: 22, fontSize: "0.75rem", color: "text.secondary" }}
-                  />
-                )}
-
-                {(stop.latitude === null || (stop.latitude === 0 && stop.longitude === 0)) && (
-                  <Chip
-                    label="Address Only"
-                    size="small"
-                    variant="outlined"
-                    color="default"
-                    sx={{ height: 22, fontSize: "0.75rem", fontStyle: "italic" }}
+                    sx={{
+                      height: 22,
+                      fontSize: "0.68rem",
+                      fontWeight: 700,
+                      bgcolor: "rgba(251, 191, 36, 0.12)",
+                      color: "#fbbf24",
+                      border: "1px solid rgba(251, 191, 36, 0.3)",
+                      fontFamily: '"JetBrains Mono", monospace',
+                    }}
                   />
                 )}
               </Stack>
@@ -172,147 +171,148 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                 id={buttonId}
                 size="small"
                 onClick={handleMenuOpen}
-                aria-label={`Actions menu for ${stop.name}`}
+                aria-label={`Waypoint actions for ${stop.name}`}
                 aria-controls={open ? menuId : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
                 sx={{
-                  "&:focus-visible": {
-                    outline: "2px solid",
-                    outlineColor: "primary.main",
-                    outlineOffset: "1px",
-                  },
+                  color: "#94a3b8",
+                  "&:hover": { color: "#ffffff", bgcolor: "rgba(255, 255, 255, 0.06)" },
                 }}
               >
-                <MoreVertIcon />
+                <MoreVertIcon sx={{ fontSize: 18 }} />
               </IconButton>
-
-              <Menu
-                id={menuId}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleMenuClose}
-                slotProps={{
-                  list: {
-                    "aria-labelledby": buttonId,
-                  },
-                }}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-              >
-                <MenuItem
-                  onClick={() => {
-                    handleMenuClose();
-                    onEdit(stop);
-                  }}
-                >
-                  <ListItemIcon>
-                    <EditIcon fontSize="small" />
-                  </ListItemIcon>
-
-                  <ListItemText>Edit</ListItemText>
-                </MenuItem>
-
-                <MenuItem
-                  onClick={() => {
-                    handleMenuClose();
-                    onDelete(stop);
-                  }}
-                  sx={{ color: "error.main" }}
-                >
-                  <ListItemIcon sx={{ color: "error.main" }}>
-                    <DeleteIcon fontSize="small" />
-                  </ListItemIcon>
-
-                  <ListItemText>Delete</ListItemText>
-                </MenuItem>
-              </Menu>
             </Stack>
 
-            {/* Stop Title */}
-            <Typography
-              component="h4"
-              variant="h6"
-              sx={{
-                fontWeight: 700,
-                fontSize: {
-                  xs: "1.05rem",
-                  sm: "1.25rem",
-                },
-                wordBreak: "break-word",
-              }}
-            >
-              {stop.name}
-            </Typography>
-
-            {/* Dates */}
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{
-                alignItems: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <CalendarTodayIcon fontSize="small" color="action" />
-
+            {/* Stop Title & Location */}
+            <Box>
               <Typography
-                variant="body2"
-                color="text.secondary"
-                aria-label={`From ${formatDate(stop.arrivalDate)} to ${formatDate(stop.departureDate)}`}
+                variant="subtitle1"
                 sx={{
-                  wordBreak: "break-word",
+                  fontFamily: '"Outfit", sans-serif',
+                  fontWeight: 800,
+                  color: "#f8fafc",
+                  lineHeight: 1.25,
                 }}
               >
-                {formatDate(stop.arrivalDate)}
-                {" → "}
-                {formatDate(stop.departureDate)}
+                {stop.name}
               </Typography>
-            </Stack>
 
-            {/* Clean Notes Container */}
+              {stop.formattedAddress && (
+                <Typography variant="caption" sx={{ color: "#94a3b8", mt: 0.3, display: "block" }}>
+                  {stop.formattedAddress}
+                </Typography>
+              )}
+            </Box>
+
+            {/* Arrival & Departure Times Bar */}
+            <Box
+              className="neo-inset"
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 1.5,
+                p: 1.2,
+                borderRadius: 1.5,
+                bgcolor: "#141313",
+                alignItems: "center",
+              }}
+            >
+              {stop.arrivalDate && (
+                <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
+                  <CalendarTodayIcon sx={{ fontSize: 13, color: "#818cf8" }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#e4e4e7", fontWeight: 700 }}>
+                    Arr: {formatDate(stop.arrivalDate)}
+                  </Typography>
+                </Stack>
+              )}
+
+              {stop.departureDate && (
+                <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
+                  <CalendarTodayIcon sx={{ fontSize: 13, color: "#bef264" }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#e4e4e7", fontWeight: 700 }}>
+                    Dep: {formatDate(stop.departureDate)}
+                  </Typography>
+                </Stack>
+              )}
+            </Box>
+
+            {/* Notes */}
             {stop.notes && (
-              <Box
-                sx={{
-                  p: 1.25,
-                  borderRadius: 1.5,
-                  bgcolor: (theme) =>
-                    theme.palette.mode === "dark"
-                      ? "rgba(255, 255, 255, 0.04)"
-                      : "rgba(0, 0, 0, 0.02)",
-                  borderLeft: "3px solid",
-                  borderColor: "primary.light",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 1,
-                  mt: 0.5,
-                }}
-              >
-                <NotesIcon fontSize="small" color="action" sx={{ mt: 0.2 }} />
+              <Stack direction="row" spacing={0.8} sx={{ alignItems: "flex-start", mt: 0.5 }}>
+                <NotesIcon sx={{ fontSize: 14, color: "#94a3b8", mt: 0.2 }} />
                 <Typography
-                  variant="body2"
-                  color="text.secondary"
+                  variant="caption"
                   sx={{
-                    wordBreak: "break-word",
-                    fontSize: "0.85rem",
+                    color: "#94a3b8",
+                    fontStyle: "italic",
                     lineHeight: 1.4,
                   }}
                 >
                   {stop.notes}
                 </Typography>
-              </Box>
+              </Stack>
             )}
           </Stack>
         </CardContent>
+
+        <Menu
+          id={menuId}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          slotProps={{
+            paper: {
+              sx: {
+                bgcolor: "#1e1e24",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.8)",
+              },
+            },
+            list: {
+              "aria-labelledby": buttonId,
+            },
+          }}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <MenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              handleMenuClose();
+              onEdit(stop);
+            }}
+            sx={{ color: "#e2e8f0", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.06)" } }}
+          >
+            <ListItemIcon sx={{ color: "#818cf8" }}>
+              <EditIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Edit Waypoint</ListItemText>
+          </MenuItem>
+
+          <MenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              handleMenuClose();
+              onDelete(stop);
+            }}
+            sx={{ color: "#f87171", "&:hover": { bgcolor: "rgba(248, 113, 113, 0.08)" } }}
+          >
+            <ListItemIcon sx={{ color: "#f87171" }}>
+              <DeleteIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Delete Waypoint</ListItemText>
+          </MenuItem>
+        </Menu>
       </Card>
     );
-  },
+  }
 );
 
 TripStopCard.displayName = "TripStopCard";

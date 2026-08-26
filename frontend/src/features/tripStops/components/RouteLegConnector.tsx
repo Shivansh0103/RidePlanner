@@ -38,7 +38,7 @@ export default function RouteLegConnector({
           sx={{
             width: "2px",
             height: 20,
-            bgcolor: "divider",
+            bgcolor: "rgba(255, 255, 255, 0.1)",
             borderRadius: 1,
           }}
         />
@@ -52,15 +52,15 @@ export default function RouteLegConnector({
   return (
     <Box
       sx={{
-        py: 1,
-        my: 0.5,
+        py: 0.8,
+        my: 0.2,
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-start",
         position: "relative",
       }}
     >
-      <Stack direction="row" spacing={1} sx={{ pl: { xs: 1, sm: 2 }, alignItems: "center" }}>
+      <Stack direction="row" spacing={1.2} sx={{ pl: { xs: 1, sm: 2.5 }, alignItems: "center" }}>
         <Box
           sx={{
             display: "flex",
@@ -72,46 +72,40 @@ export default function RouteLegConnector({
           <Box
             sx={{
               width: "2px",
-              height: 12,
-              bgcolor: "primary.main",
-              opacity: 0.4,
+              height: 10,
+              bgcolor: "#6366f1",
+              opacity: 0.5,
             }}
           />
           <DirectionsCarIcon
             sx={{
               fontSize: 14,
-              color: "primary.main",
-              my: 0.25,
+              color: "#818cf8",
+              my: 0.2,
             }}
           />
           <Box
             sx={{
               width: "2px",
-              height: 12,
-              bgcolor: "primary.main",
-              opacity: 0.4,
+              height: 10,
+              bgcolor: "#6366f1",
+              opacity: 0.5,
             }}
           />
         </Box>
 
         <Chip
-          icon={<NavigationIcon sx={{ fontSize: "0.85rem !important", transform: "rotate(45deg)" }} />}
+          icon={<NavigationIcon sx={{ fontSize: "0.75rem !important", color: "#818cf8 !important", transform: "rotate(45deg)" }} />}
           label={`${distanceText} • ${durationText}`}
           size="small"
-          variant="outlined"
           sx={{
-            height: 24,
-            fontSize: "0.75rem",
-            fontWeight: 600,
-            color: "text.secondary",
-            bgcolor: (theme) =>
-              theme.palette.mode === "dark"
-                ? "rgba(255, 255, 255, 0.05)"
-                : "rgba(0, 0, 0, 0.03)",
-            borderColor: "divider",
-            "& .MuiChip-icon": {
-              color: "primary.main",
-            },
+            height: 22,
+            fontSize: "0.7rem",
+            fontWeight: 700,
+            color: "#e4e4e7",
+            bgcolor: "#141313",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            fontFamily: '"JetBrains Mono", monospace',
           }}
         />
       </Stack>

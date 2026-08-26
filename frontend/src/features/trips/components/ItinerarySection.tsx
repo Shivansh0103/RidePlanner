@@ -2,10 +2,10 @@ import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 import HotelIcon from "@mui/icons-material/Hotel";
 import {
+  Box,
   Button,
   Card,
   CardContent,
-  CardHeader,
   Chip,
   Divider,
   Stack,
@@ -17,17 +17,16 @@ import AccommodationDialog from "@/features/accommodations/components/Accommodat
 import { useAccommodations } from "@/features/accommodations/hooks/useAccommodations";
 import { useCreateAccommodation } from "@/features/accommodations/hooks/useCreateAccommodation";
 import { useUpdateAccommodation } from "@/features/accommodations/hooks/useUpdateAccommodation";
-import type { Accommodation } from "@/features/accommodations/types/accommodation";
 import type { AccommodationFormValues } from "@/features/accommodations/schemas/accommodationSchema";
-
+import type { Accommodation } from "@/features/accommodations/types/accommodation";
 import TripStopDialog from "@/features/tripStops/components/TripStopDialog";
 import TripStopsView from "@/features/tripStops/components/TripStopsView";
 import { useDeleteTripStop } from "@/features/tripStops/hooks/useDeleteTripStop";
 import { useReorderTripStops } from "@/features/tripStops/hooks/useReorderTripStops";
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
+import type { TripStopFormValues } from "@/features/tripStops/schemas/tripStopSchema";
 import type { TripStop } from "@/features/tripStops/types/tripStop";
 import { TripStopCategory } from "@/features/tripStops/types/tripStopCategory";
-import type { TripStopFormValues } from "@/features/tripStops/schemas/tripStopSchema";
 import ConfirmDialog from "@/shared/components/ConfirmDialog";
 import { useRoute } from "@/shared/maps";
 import type { RouteLeg } from "@/shared/maps/types/route";
@@ -82,7 +81,6 @@ export default function ItinerarySection({
   };
 
   const handleEditStop = (stop: TripStop) => {
-    // If stop is linked to an accommodation or is of category Hotel, use canonical AccommodationDialog
     const linkedAcc = accommodations.find((a) => a.tripStopId === stop.id);
     if (linkedAcc || stop.category === TripStopCategory.Hotel) {
       handleOpenAccommodationDialog(linkedAcc);
@@ -128,24 +126,42 @@ export default function ItinerarySection({
   };
 
   const addStopButton = (
-    <Stack direction="row" spacing={1}>
+    <Stack direction="row" spacing={1.2}>
       <Button
         variant="outlined"
-        startIcon={<HotelIcon />}
+        size="small"
+        startIcon={<HotelIcon sx={{ fontSize: 16 }} />}
         onClick={() => handleOpenAccommodationDialog(null)}
-        sx={{ fontWeight: 600 }}
+        sx={{
+          borderColor: "rgba(190, 242, 100, 0.4)",
+          color: "#bef264",
+          fontFamily: '"JetBrains Mono", monospace',
+          fontSize: "0.72rem",
+          fontWeight: 700,
+          "&:hover": { borderColor: "#bef264", bgcolor: "rgba(190, 242, 100, 0.08)" },
+        }}
       >
         Add Stay
       </Button>
 
       <Button
         variant="contained"
-        startIcon={<AddLocationAltIcon />}
+        size="small"
+        startIcon={<AddLocationAltIcon sx={{ fontSize: 16 }} />}
         onClick={handleOpenCreateDialog}
+        className="glow-indigo"
         aria-label="Add a new stop to itinerary"
-        sx={{ fontWeight: 600 }}
+        sx={{
+          bgcolor: "#6366f1",
+          color: "#ffffff",
+          fontFamily: '"JetBrains Mono", monospace',
+          fontSize: "0.72rem",
+          fontWeight: 800,
+          letterSpacing: "0.04em",
+          "&:hover": { bgcolor: "#4f46e5" },
+        }}
       >
-        Add Stop
+        Add Waypoint
       </Button>
     </Stack>
   );
@@ -184,43 +200,56 @@ export default function ItinerarySection({
       <Card
         component="section"
         aria-labelledby="itinerary-heading"
-        variant="outlined"
-        sx={{ borderRadius: 2 }}
+        className="neo-convex"
+        sx={{
+          borderRadius: 2.5,
+          bgcolor: "#1a1a1e",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
       >
-        <CardHeader
-          title={
-            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-              <Typography
-                id="itinerary-heading"
-                component="h2"
-                variant="h6"
-                sx={{ fontWeight: 700 }}
-              >
-                Itinerary
-              </Typography>
-              {stops.length > 0 && (
-                <Chip
-                  label={`${stops.length} ${stops.length === 1 ? "stop" : "stops"}`}
-                  size="small"
-                  variant="outlined"
-                  aria-label={`Total ${stops.length} ${stops.length === 1 ? "stop" : "stops"}`}
-                  sx={{ fontWeight: 500, color: "text.secondary" }}
-                />
-              )}
-            </Stack>
-          }
-          action={addStopButton}
+        <Box
           sx={{
-            py: { xs: 1.5, sm: 2 },
+            py: 2,
             px: { xs: 2, sm: 3 },
-            "& .MuiCardHeader-action": {
-              m: 0,
-              alignSelf: "center",
-            },
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1.5,
           }}
-        />
+        >
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+            <Typography
+              id="itinerary-heading"
+              variant="h5"
+              sx={{
+                fontFamily: '"Outfit", sans-serif',
+                fontWeight: 800,
+                color: "#f8fafc",
+              }}
+            >
+              Itinerary & Waypoint Sequence
+            </Typography>
+            {stops.length > 0 && (
+              <Chip
+                label={`${stops.length} ${stops.length === 1 ? "Waypoint" : "Waypoints"}`}
+                size="small"
+                sx={{
+                  bgcolor: "rgba(99, 102, 241, 0.15)",
+                  color: "#818cf8",
+                  border: "1px solid rgba(99, 102, 241, 0.3)",
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontWeight: 700,
+                  fontSize: "0.68rem",
+                }}
+              />
+            )}
+          </Stack>
 
-        <Divider />
+          {addStopButton}
+        </Box>
+
+        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
 
         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
           {isLoading ? (
@@ -229,15 +258,16 @@ export default function ItinerarySection({
             <ErrorState message="Unable to load itinerary." />
           ) : stops.length === 0 ? (
             <EmptyState
-              icon={<AltRouteIcon sx={{ fontSize: 56 }} />}
-              title="No stops yet"
-              description="Add your first stop or accommodation stay to start planning your journey."
+              icon={<AltRouteIcon sx={{ fontSize: 56, color: "#818cf8" }} />}
+              title="No waypoints mapped yet"
+              description="Establish your route sequence by adding your departure point, mountain passes, fuel stations, and overnight stays."
               action={
-                <Stack direction="row" spacing={1}>
+                <Stack direction="row" spacing={1.5}>
                   <Button
                     variant="outlined"
                     startIcon={<HotelIcon />}
                     onClick={() => handleOpenAccommodationDialog(null)}
+                    sx={{ color: "#bef264", borderColor: "rgba(190, 242, 100, 0.4)" }}
                   >
                     Add Stay
                   </Button>
@@ -245,8 +275,9 @@ export default function ItinerarySection({
                     variant="contained"
                     startIcon={<AddLocationAltIcon />}
                     onClick={handleOpenCreateDialog}
+                    sx={{ bgcolor: "#6366f1" }}
                   >
-                    Add First Stop
+                    Add First Waypoint
                   </Button>
                 </Stack>
               }
