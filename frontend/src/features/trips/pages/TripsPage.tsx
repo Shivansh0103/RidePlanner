@@ -102,11 +102,25 @@ export default function TripsPage() {
           sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" } }}
         >
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 800, fontFamily: '"Outfit", sans-serif' }}>
-              My Expeditions
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Manage your motorcycle adventures, planned itineraries, and active routes.
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 0.5 }}>
+              <Typography variant="h4" sx={{ fontWeight: 800, fontFamily: '"Outfit", sans-serif', color: "#f8fafc" }}>
+                My Expeditions
+              </Typography>
+              <Chip
+                label="EXPLORER"
+                size="small"
+                sx={{
+                  bgcolor: "rgba(99, 102, 241, 0.12)",
+                  color: "#818cf8",
+                  border: "1px solid rgba(99, 102, 241, 0.3)",
+                  fontWeight: 800,
+                  fontSize: "0.65rem",
+                  borderRadius: 1,
+                }}
+              />
+            </Stack>
+            <Typography variant="body2" sx={{ color: "#94a3b8" }}>
+              Comprehensive log of all active routes, planned itineraries, and past journeys.
             </Typography>
           </Box>
 
@@ -115,7 +129,13 @@ export default function TripsPage() {
             color="primary"
             startIcon={<AddIcon />}
             onClick={() => setCreateDialogOpen(true)}
-            sx={{ fontWeight: 700, px: 2.5, boxShadow: "0 4px 12px rgba(37, 99, 235, 0.25)" }}
+            sx={{
+              fontWeight: 700,
+              px: 3,
+              py: 1.1,
+              background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
+              boxShadow: "0 4px 16px rgba(99, 102, 241, 0.4)",
+            }}
           >
             Plan New Ride
           </Button>
@@ -125,26 +145,38 @@ export default function TripsPage() {
         {trips.length > 0 && (
           <Grid container spacing={2}>
             <Grid size={{ xs: 6, sm: 3 }}>
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5, display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  borderRadius: 2.5,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  bgcolor: "#1a1a1e",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
                 <Box
                   sx={{
-                    width: 38,
-                    height: 38,
+                    width: 40,
+                    height: 40,
                     borderRadius: 2,
-                    bgcolor: "rgba(37, 99, 235, 0.1)",
+                    bgcolor: "rgba(99, 102, 241, 0.12)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "primary.main",
+                    color: "#818cf8",
+                    border: "1px solid rgba(99, 102, 241, 0.25)",
                   }}
                 >
                   <ExploreIcon fontSize="small" />
                 </Box>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: '"Outfit", sans-serif', lineHeight: 1.1 }}>
+                  <Typography variant="h6" className="font-mono" sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.1 }}>
                     {trips.length}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 600 }}>
                     Total Trips
                   </Typography>
                 </Box>
@@ -152,26 +184,38 @@ export default function TripsPage() {
             </Grid>
 
             <Grid size={{ xs: 6, sm: 3 }}>
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5, display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  borderRadius: 2.5,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  bgcolor: "#1a1a1e",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
                 <Box
                   sx={{
-                    width: 38,
-                    height: 38,
+                    width: 40,
+                    height: 40,
                     borderRadius: 2,
-                    bgcolor: "rgba(16, 185, 129, 0.1)",
+                    bgcolor: "rgba(190, 242, 100, 0.12)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "success.main",
+                    color: "#bef264",
+                    border: "1px solid rgba(190, 242, 100, 0.3)",
                   }}
                 >
                   <TwoWheelerIcon fontSize="small" />
                 </Box>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: '"Outfit", sans-serif', lineHeight: 1.1 }}>
+                  <Typography variant="h6" className="font-mono" sx={{ fontWeight: 800, color: "#bef264", lineHeight: 1.1 }}>
                     {activeTripsCount}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 600 }}>
                     Active Rides
                   </Typography>
                 </Box>
@@ -179,26 +223,38 @@ export default function TripsPage() {
             </Grid>
 
             <Grid size={{ xs: 6, sm: 3 }}>
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5, display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  borderRadius: 2.5,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  bgcolor: "#1a1a1e",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
                 <Box
                   sx={{
-                    width: 38,
-                    height: 38,
+                    width: 40,
+                    height: 40,
                     borderRadius: 2,
-                    bgcolor: "rgba(245, 158, 11, 0.1)",
+                    bgcolor: "rgba(251, 191, 36, 0.12)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "warning.main",
+                    color: "#fbbf24",
+                    border: "1px solid rgba(251, 191, 36, 0.3)",
                   }}
                 >
                   <CalendarMonthIcon fontSize="small" />
                 </Box>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: '"Outfit", sans-serif', lineHeight: 1.1 }}>
+                  <Typography variant="h6" className="font-mono" sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.1 }}>
                     {planningTripsCount}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 600 }}>
                     In Planning
                   </Typography>
                 </Box>
@@ -206,26 +262,38 @@ export default function TripsPage() {
             </Grid>
 
             <Grid size={{ xs: 6, sm: 3 }}>
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5, display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  borderRadius: 2.5,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  bgcolor: "#1a1a1e",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
                 <Box
                   sx={{
-                    width: 38,
-                    height: 38,
+                    width: 40,
+                    height: 40,
                     borderRadius: 2,
-                    bgcolor: "rgba(100, 116, 139, 0.1)",
+                    bgcolor: "rgba(148, 163, 184, 0.1)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "text.secondary",
+                    color: "#94a3b8",
+                    border: "1px solid rgba(148, 163, 184, 0.2)",
                   }}
                 >
                   <CheckCircleIcon fontSize="small" />
                 </Box>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: '"Outfit", sans-serif', lineHeight: 1.1 }}>
+                  <Typography variant="h6" className="font-mono" sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.1 }}>
                     {completedTripsCount}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 600 }}>
                     Completed
                   </Typography>
                 </Box>
@@ -234,7 +302,7 @@ export default function TripsPage() {
           </Grid>
         )}
 
-        {/* Filter and Search Bar */}
+        {/* Tactical Filter and Search Bar */}
         {trips.length > 0 && (
           <Paper
             variant="outlined"
@@ -246,6 +314,8 @@ export default function TripsPage() {
               justifyContent: "space-between",
               alignItems: { xs: "stretch", md: "center" },
               gap: 2,
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
             }}
           >
             {/* Status Filter Tabs */}
@@ -255,13 +325,18 @@ export default function TripsPage() {
               variant="scrollable"
               scrollButtons="auto"
               sx={{
-                minHeight: 40,
+                minHeight: 42,
                 "& .MuiTab-root": {
-                  minHeight: 40,
+                  minHeight: 42,
                   py: 0.5,
-                  px: 1.5,
+                  px: 1.8,
                   fontSize: "0.88rem",
                   fontWeight: 600,
+                  color: "#94a3b8",
+                  "&.Mui-selected": {
+                    color: "#f8fafc",
+                    fontWeight: 700,
+                  },
                 },
               }}
             >
@@ -281,7 +356,14 @@ export default function TripsPage() {
                     <Chip
                       label={activeTripsCount}
                       size="small"
-                      sx={{ height: 18, fontSize: "0.7rem", fontWeight: 700, bgcolor: "rgba(16, 185, 129, 0.15)", color: "#059669" }}
+                      sx={{
+                        height: 18,
+                        fontSize: "0.7rem",
+                        fontWeight: 700,
+                        bgcolor: "rgba(190, 242, 100, 0.15)",
+                        color: "#bef264",
+                        border: "1px solid rgba(190, 242, 100, 0.3)",
+                      }}
                     />
                   </Stack>
                 }
@@ -294,7 +376,14 @@ export default function TripsPage() {
                     <Chip
                       label={planningTripsCount}
                       size="small"
-                      sx={{ height: 18, fontSize: "0.7rem", fontWeight: 700, bgcolor: "rgba(37, 99, 235, 0.12)", color: "primary.main" }}
+                      sx={{
+                        height: 18,
+                        fontSize: "0.7rem",
+                        fontWeight: 700,
+                        bgcolor: "rgba(99, 102, 241, 0.15)",
+                        color: "#818cf8",
+                        border: "1px solid rgba(99, 102, 241, 0.3)",
+                      }}
                     />
                   </Stack>
                 }
@@ -321,12 +410,12 @@ export default function TripsPage() {
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" sx={{ color: "text.disabled" }} />
+                      <SearchIcon fontSize="small" sx={{ color: "#64748b" }} />
                     </InputAdornment>
                   ),
                 },
               }}
-              sx={{ minWidth: { xs: "100%", md: 260 } }}
+              sx={{ minWidth: { xs: "100%", md: 280 } }}
             />
           </Paper>
         )}
@@ -348,11 +437,11 @@ export default function TripsPage() {
             }
           />
         ) : filteredTrips.length === 0 ? (
-          <Paper variant="outlined" sx={{ p: 5, textAlign: "center", borderRadius: 3 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>
+          <Paper variant="outlined" sx={{ p: 5, textAlign: "center", borderRadius: 3, bgcolor: "#1a1a1e" }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#f8fafc", mb: 0.5 }}>
               No matching expeditions found
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ color: "#94a3b8", mb: 2 }}>
               Try adjusting your search query or status filter.
             </Typography>
             <Button

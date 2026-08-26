@@ -3,6 +3,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import NavigationIcon from "@mui/icons-material/Navigation";
 import {
   Box,
   Card,
@@ -50,31 +51,35 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
     switch (status) {
       case "Active":
         return {
-          bg: "rgba(16, 185, 129, 0.12)",
-          color: "#059669",
-          border: "rgba(16, 185, 129, 0.3)",
-          dot: "#10b981",
+          bg: "rgba(190, 242, 100, 0.12)",
+          color: "#bef264",
+          border: "rgba(190, 242, 100, 0.35)",
+          dot: "#bef264",
+          glow: "0 0 12px rgba(190, 242, 100, 0.2)",
         };
       case "Planning":
         return {
-          bg: "rgba(37, 99, 235, 0.1)",
-          color: "#2563eb",
-          border: "rgba(37, 99, 235, 0.25)",
-          dot: "#3b82f6",
+          bg: "rgba(99, 102, 241, 0.12)",
+          color: "#818cf8",
+          border: "rgba(99, 102, 241, 0.35)",
+          dot: "#6366f1",
+          glow: "0 0 12px rgba(99, 102, 241, 0.2)",
         };
       case "Completed":
         return {
-          bg: "rgba(100, 116, 139, 0.1)",
-          color: "#475569",
-          border: "rgba(100, 116, 139, 0.2)",
+          bg: "rgba(148, 163, 184, 0.1)",
+          color: "#94a3b8",
+          border: "rgba(148, 163, 184, 0.25)",
           dot: "#64748b",
+          glow: "none",
         };
       default:
         return {
-          bg: "rgba(100, 116, 139, 0.1)",
-          color: "#475569",
-          border: "rgba(100, 116, 139, 0.2)",
+          bg: "rgba(148, 163, 184, 0.1)",
+          color: "#94a3b8",
+          border: "rgba(148, 163, 184, 0.25)",
           dot: "#64748b",
+          glow: "none",
         };
     }
   };
@@ -90,13 +95,14 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        bgcolor: "background.paper",
+        bgcolor: "#1a1a1e",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
         cursor: "pointer",
         transition: "all 0.2s ease-in-out",
         "&:hover": {
           transform: "translateY(-3px)",
-          boxShadow: "0 12px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)",
-          borderColor: "rgba(37, 99, 235, 0.3)",
+          boxShadow: "0 12px 28px -4px rgba(0, 0, 0, 0.7), 0 0 16px rgba(99, 102, 241, 0.15)",
+          borderColor: trip.status === "Active" ? "rgba(190, 242, 100, 0.4)" : "rgba(99, 102, 241, 0.4)",
         },
       }}
     >
@@ -107,6 +113,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             <Chip
               icon={
                 <Box
+                  className={trip.status === "Active" ? "pulse-telemetry" : undefined}
                   sx={{
                     width: 7,
                     height: 7,
@@ -124,7 +131,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
                 border: `1px solid ${statusStyle.border}`,
                 fontWeight: 800,
                 fontSize: "0.7rem",
-                letterSpacing: "0.02em",
+                letterSpacing: "0.04em",
               }}
             />
 
@@ -136,7 +143,10 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               aria-controls={open ? menuId : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
-              sx={{ color: "text.secondary" }}
+              sx={{
+                color: "#94a3b8",
+                "&:hover": { color: "#ffffff", bgcolor: "rgba(255, 255, 255, 0.06)" },
+              }}
             >
               <MoreVertIcon fontSize="small" />
             </IconButton>
@@ -148,8 +158,8 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               variant="h6"
               sx={{
                 fontFamily: '"Outfit", sans-serif',
-                fontWeight: 700,
-                color: "text.primary",
+                fontWeight: 800,
+                color: "#f8fafc",
                 lineHeight: 1.3,
                 mb: 0.5,
               }}
@@ -160,8 +170,8 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             {trip.description && (
               <Typography
                 variant="body2"
-                color="text.secondary"
                 sx={{
+                  color: "#94a3b8",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   display: "-webkit-box",
@@ -175,7 +185,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             )}
           </Box>
 
-          {/* Footer Date Range & Arrow */}
+          {/* Footer Date Range & Action */}
           <Stack
             direction="row"
             spacing={1}
@@ -183,26 +193,31 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               justifyContent: "space-between",
               alignItems: "center",
               mt: "auto",
-              pt: 1.5,
-              borderTop: "1px solid",
-              borderColor: "rgba(15, 23, 42, 0.06)",
+              pt: 1.8,
+              borderTop: "1px solid rgba(255, 255, 255, 0.06)",
             }}
           >
             <Typography
               variant="caption"
-              color="text.secondary"
-              sx={{ display: "flex", alignItems: "center", gap: 0.6, fontWeight: 500 }}
+              sx={{ display: "flex", alignItems: "center", gap: 0.6, fontWeight: 600, color: "#94a3b8" }}
             >
-              <CalendarMonthIcon sx={{ fontSize: 16, color: "action.active" }} />
+              <CalendarMonthIcon sx={{ fontSize: 16, color: "#64748b" }} />
               {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
             </Typography>
 
             <Typography
               variant="caption"
-              color="primary.main"
-              sx={{ display: "flex", alignItems: "center", gap: 0.3, fontWeight: 700 }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.4,
+                fontWeight: 800,
+                color: "#818cf8",
+                letterSpacing: "0.02em",
+              }}
             >
-              Cockpit
+              <NavigationIcon sx={{ fontSize: 13 }} />
+              COCKPIT
               <ArrowForwardIcon sx={{ fontSize: 14 }} />
             </Typography>
           </Stack>
@@ -215,6 +230,13 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         open={open}
         onClose={handleMenuClose}
         slotProps={{
+          paper: {
+            sx: {
+              bgcolor: "#1e1e24",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.8)",
+            },
+          },
           list: {
             "aria-labelledby": buttonId,
           },
@@ -234,11 +256,12 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             handleMenuClose();
             onEdit(trip);
           }}
+          sx={{ color: "#e2e8f0", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.06)" } }}
         >
-          <ListItemIcon>
+          <ListItemIcon sx={{ color: "#818cf8" }}>
             <EditIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Edit Details</ListItemText>
+          <ListItemText>Edit Expedition</ListItemText>
         </MenuItem>
 
         <MenuItem
@@ -247,12 +270,12 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             handleMenuClose();
             onDelete(trip);
           }}
-          sx={{ color: "error.main" }}
+          sx={{ color: "#f87171", "&:hover": { bgcolor: "rgba(248, 113, 113, 0.08)" } }}
         >
-          <ListItemIcon sx={{ color: "error.main" }}>
+          <ListItemIcon sx={{ color: "#f87171" }}>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Delete Trip</ListItemText>
+          <ListItemText>Delete Expedition</ListItemText>
         </MenuItem>
       </Menu>
     </Card>
