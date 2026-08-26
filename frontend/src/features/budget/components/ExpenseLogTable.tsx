@@ -77,9 +77,17 @@ export default function ExpenseLogTable({
   });
 
   return (
-    <Card variant="outlined" sx={{ borderRadius: 3, mt: 3 }}>
-      <CardContent sx={{ p: 3 }}>
-        <Stack spacing={3}>
+    <Card
+      className="neo-convex"
+      sx={{
+        borderRadius: 2.5,
+        mt: 3,
+        bgcolor: "#1a1a1e",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+      }}
+    >
+      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <Stack spacing={2.5}>
           {/* Header & Controls */}
           <Box
             sx={{
@@ -91,36 +99,60 @@ export default function ExpenseLogTable({
             }}
           >
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                Actual Expense Log
+              <Typography
+                variant="h6"
+                sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}
+              >
+                Operational Expense Ledger
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Track every monetary transaction logged for this trip
+              <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                Real-time financial transactions logged during this expedition
               </Typography>
             </Box>
 
             <Button
               variant="contained"
-              startIcon={<AddIcon />}
+              size="small"
+              startIcon={<AddIcon sx={{ fontSize: 16 }} />}
               onClick={onAddExpense}
-              sx={{ fontWeight: 600, alignSelf: { xs: "stretch", sm: "auto" } }}
+              className="glow-indigo"
+              sx={{
+                bgcolor: "#6366f1",
+                color: "#ffffff",
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                letterSpacing: "0.04em",
+                alignSelf: { xs: "stretch", sm: "auto" },
+                "&:hover": { bgcolor: "#4f46e5" },
+              }}
             >
               Log Expense
             </Button>
           </Box>
 
           {/* Filters */}
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel id="category-filter-label">Filter Category</InputLabel>
+              <InputLabel id="category-filter-label" sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>
+                Category
+              </InputLabel>
               <Select
                 labelId="category-filter-label"
                 value={categoryFilter}
-                label="Filter Category"
+                label="Category"
                 onChange={(e) => setCategoryFilter(e.target.value)}
+                sx={{
+                  bgcolor: "#141313",
+                  color: "#f8fafc",
+                  fontSize: "0.78rem",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(255, 255, 255, 0.1)",
+                  },
+                }}
               >
                 {CATEGORIES.map((c) => (
-                  <MenuItem key={c.value} value={c.value}>
+                  <MenuItem key={c.value} value={c.value} sx={{ fontSize: "0.8rem" }}>
                     {c.label}
                   </MenuItem>
                 ))}
@@ -128,15 +160,25 @@ export default function ExpenseLogTable({
             </FormControl>
 
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel id="payment-filter-label">Payment Mode</InputLabel>
+              <InputLabel id="payment-filter-label" sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>
+                Payment Method
+              </InputLabel>
               <Select
                 labelId="payment-filter-label"
                 value={paymentFilter}
-                label="Payment Mode"
+                label="Payment Method"
                 onChange={(e) => setPaymentFilter(e.target.value)}
+                sx={{
+                  bgcolor: "#141313",
+                  color: "#f8fafc",
+                  fontSize: "0.78rem",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(255, 255, 255, 0.1)",
+                  },
+                }}
               >
                 {PAYMENT_METHODS.map((pm) => (
-                  <MenuItem key={pm.value} value={pm.value}>
+                  <MenuItem key={pm.value} value={pm.value} sx={{ fontSize: "0.8rem" }}>
                     {pm.label}
                   </MenuItem>
                 ))}
@@ -147,42 +189,56 @@ export default function ExpenseLogTable({
           {/* Expenses Data Table */}
           {sortedExpenses.length === 0 ? (
             <EmptyState
-              icon={<ReceiptLongIcon sx={{ fontSize: 48, color: "text.secondary" }} />}
-              title="No Actual Expenses Found"
+              icon={<ReceiptLongIcon sx={{ fontSize: 48, color: "#818cf8" }} />}
+              title="No Logged Expenses Found"
               description={
                 expenses.length === 0
-                  ? "Start logging expenses incurred during or for your trip."
-                  : "No expenses match your selected category/payment filters."
+                  ? "Start logging transactions and fuel receipts incurred during your trip."
+                  : "No logged expenses match your active category/payment filters."
               }
               action={
                 expenses.length === 0 ? (
-                  <Button variant="contained" startIcon={<AddIcon />} onClick={onAddExpense}>
+                  <Button variant="contained" startIcon={<AddIcon />} onClick={onAddExpense} sx={{ bgcolor: "#6366f1" }}>
                     Log First Expense
                   </Button>
                 ) : undefined
               }
             />
           ) : (
-            <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+            <TableContainer
+              component={Paper}
+              className="neo-inset"
+              sx={{
+                borderRadius: 2,
+                bgcolor: "#141313",
+                border: "1px solid rgba(255, 255, 255, 0.06)",
+              }}
+            >
               <Table size="medium">
-                <TableHead sx={{ bgcolor: "action.hover" }}>
+                <TableHead sx={{ bgcolor: "rgba(255, 255, 255, 0.03)" }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Category</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Description</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Payment Mode</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>
+                    <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Date</TableCell>
+                    <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Category</TableCell>
+                    <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Description</TableCell>
+                    <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Payment Mode</TableCell>
+                    <TableCell align="right" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Amount
                     </TableCell>
-                    <TableCell align="center" sx={{ fontWeight: 700 }}>
+                    <TableCell align="center" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Actions
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {sortedExpenses.map((expense) => (
-                    <TableRow key={expense.id} hover>
-                      <TableCell sx={{ whiteSpace: "nowrap" }}>
+                    <TableRow
+                      key={expense.id}
+                      sx={{
+                        "&:hover": { bgcolor: "rgba(255, 255, 255, 0.02)" },
+                        borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                      }}
+                    >
+                      <TableCell className="font-mono" sx={{ whiteSpace: "nowrap", fontSize: "0.78rem", color: "#94a3b8" }}>
                         {new Date(expense.expenseDate).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "short",
@@ -193,20 +249,24 @@ export default function ExpenseLogTable({
                         <Chip
                           label={expense.category}
                           size="small"
-                          variant="outlined"
-                          color="primary"
-                          sx={{ fontWeight: 600, fontSize: "0.75rem" }}
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "0.68rem",
+                            bgcolor: "rgba(99, 102, 241, 0.15)",
+                            color: "#818cf8",
+                            border: "1px solid rgba(99, 102, 241, 0.3)",
+                            fontFamily: '"JetBrains Mono", monospace',
+                          }}
                         />
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700, color: "#f8fafc", fontSize: "0.82rem" }}>
                           {expense.title}
                         </Typography>
                         {expense.notes && (
                           <Typography
                             variant="caption"
-                            color="text.secondary"
-                            sx={{ display: "block", mt: 0.25 }}
+                            sx={{ display: "block", mt: 0.2, color: "#94a3b8", fontStyle: "italic" }}
                           >
                             {expense.notes}
                           </Typography>
@@ -217,13 +277,21 @@ export default function ExpenseLogTable({
                           <Chip
                             label={expense.paymentMethod}
                             size="small"
-                            sx={{ fontSize: "0.7rem" }}
+                            sx={{
+                              fontSize: "0.68rem",
+                              fontWeight: 600,
+                              bgcolor: "rgba(255, 255, 255, 0.04)",
+                              color: "#a1a1aa",
+                              border: "1px solid rgba(255, 255, 255, 0.06)",
+                            }}
                           />
                         ) : (
-                          "-"
+                          <Typography variant="caption" sx={{ color: "#71717a" }}>
+                            —
+                          </Typography>
                         )}
                       </TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 700, color: "text.primary" }}>
+                      <TableCell align="right" className="font-mono" sx={{ fontWeight: 800, color: "#38bdf8", fontSize: "0.85rem" }}>
                         {formatCurrency(expense.amount)}
                       </TableCell>
                       <TableCell align="center">
@@ -232,14 +300,15 @@ export default function ExpenseLogTable({
                             size="small"
                             onClick={() => onEditExpense(expense)}
                             aria-label="Edit Expense"
+                            sx={{ color: "#94a3b8", "&:hover": { color: "#818cf8" } }}
                           >
                             <EditIcon fontSize="small" />
                           </IconButton>
                           <IconButton
                             size="small"
-                            color="error"
                             onClick={() => onDeleteExpense(expense)}
                             aria-label="Delete Expense"
+                            sx={{ color: "#94a3b8", "&:hover": { color: "#f87171" } }}
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>

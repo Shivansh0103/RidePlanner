@@ -27,33 +27,52 @@ export default function BudgetVsActualBreakdown({
   categories = [],
 }: BudgetVsActualBreakdownProps) {
   return (
-    <Card variant="outlined" sx={{ borderRadius: 3, mt: 3 }}>
-      <CardContent sx={{ p: 3 }}>
+    <Card
+      className="neo-convex"
+      sx={{
+        borderRadius: 2.5,
+        mt: 3,
+        bgcolor: "#1a1a1e",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+      }}
+    >
+      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
         <Stack spacing={2.5}>
           <Box>
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Budget vs Actual Comparison
+            <Typography
+              variant="h6"
+              sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}
+            >
+              Category Variance & Utilization Ledger
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Category-level breakdown comparing planned estimates with real expenditure
+            <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+              High-density telemetry comparing planned estimates with real expenditure
             </Typography>
           </Box>
 
-          <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+          <TableContainer
+            component={Paper}
+            className="neo-inset"
+            sx={{
+              borderRadius: 2,
+              bgcolor: "#141313",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+            }}
+          >
             <Table size="medium">
-              <TableHead sx={{ bgcolor: "action.hover" }}>
+              <TableHead sx={{ bgcolor: "rgba(255, 255, 255, 0.03)" }}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 700 }}>Category</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
+                  <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Category</TableCell>
+                  <TableCell align="right" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Planned Estimate
                   </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
+                  <TableCell align="right" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Actual Spent
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 700, width: "30%" }}>
-                    Budget Utilization
+                  <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em", width: "30%" }}>
+                    Utilization Meter
                   </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
+                  <TableCell align="right" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Variance (Actual - Planned)
                   </TableCell>
                 </TableRow>
@@ -75,20 +94,28 @@ export default function BudgetVsActualBreakdown({
                   const isUnder = variance < 0;
 
                   return (
-                    <TableRow key={cat.category} hover>
-                      <TableCell sx={{ fontWeight: 700 }}>
+                    <TableRow
+                      key={cat.category}
+                      sx={{
+                        "&:hover": { bgcolor: "rgba(255, 255, 255, 0.02)" },
+                        borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                      }}
+                    >
+                      <TableCell sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.85rem" }}>
                         {cat.category}
                       </TableCell>
 
-                      <TableCell align="right" sx={{ fontWeight: 600 }}>
+                      <TableCell align="right" className="font-mono" sx={{ fontWeight: 700, color: "#818cf8", fontSize: "0.82rem" }}>
                         {formatCurrency(planned)}
                       </TableCell>
 
                       <TableCell
                         align="right"
+                        className="font-mono"
                         sx={{
-                          fontWeight: 700,
-                          color: isOver ? "error.main" : "text.primary",
+                          fontWeight: 800,
+                          fontSize: "0.82rem",
+                          color: isOver ? "#f87171" : "#38bdf8",
                         }}
                       >
                         {formatCurrency(actual)}
@@ -99,12 +126,20 @@ export default function BudgetVsActualBreakdown({
                           <LinearProgress
                             variant="determinate"
                             value={percentage}
-                            color={isOver ? "error" : "primary"}
-                            sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
+                            sx={{
+                              flexGrow: 1,
+                              height: 6,
+                              borderRadius: 3,
+                              bgcolor: "rgba(255, 255, 255, 0.08)",
+                              "& .MuiLinearProgress-bar": {
+                                bgcolor: isOver ? "#f87171" : percentage > 85 ? "#fbbf24" : "#6366f1",
+                                borderRadius: 3,
+                              },
+                            }}
                           />
                           <Typography
-                            variant="caption"
-                            sx={{ fontWeight: 700, minWidth: 36 }}
+                            className="font-mono"
+                            sx={{ fontWeight: 700, minWidth: 36, fontSize: "0.72rem", color: "#94a3b8" }}
                           >
                             {percentage}%
                           </Typography>
@@ -115,14 +150,30 @@ export default function BudgetVsActualBreakdown({
                         <Chip
                           label={
                             isOver
-                              ? `+${formatCurrency(variance)} (Over)`
+                              ? `+${formatCurrency(variance)} (Deficit)`
                               : isUnder
-                              ? `${formatCurrency(variance)} (Under)`
-                              : "On Budget (₹0)"
+                              ? `${formatCurrency(variance)} (Buffer)`
+                              : "On Target (₹0)"
                           }
                           size="small"
-                          color={isOver ? "error" : isUnder ? "success" : "default"}
-                          sx={{ fontWeight: 700, fontSize: "0.75rem" }}
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "0.68rem",
+                            fontFamily: '"JetBrains Mono", monospace',
+                            bgcolor: isOver
+                              ? "rgba(248, 113, 113, 0.12)"
+                              : isUnder
+                              ? "rgba(190, 242, 100, 0.12)"
+                              : "rgba(255, 255, 255, 0.05)",
+                            color: isOver ? "#f87171" : isUnder ? "#bef264" : "#a1a1aa",
+                            border: `1px solid ${
+                              isOver
+                                ? "rgba(248, 113, 113, 0.3)"
+                                : isUnder
+                                ? "rgba(190, 242, 100, 0.3)"
+                                : "rgba(255, 255, 255, 0.08)"
+                            }`,
+                          }}
                         />
                       </TableCell>
                     </TableRow>
