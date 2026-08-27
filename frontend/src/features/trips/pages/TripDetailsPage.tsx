@@ -31,7 +31,7 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { AccommodationsSection, useAccommodations } from "@/features/accommodations";
@@ -100,6 +100,16 @@ export default function TripDetailsPage() {
   const handleTabChange = (_: React.SyntheticEvent, newTab: TabKey) => {
     setSearchParams({ tab: newTab }, { replace: true });
   };
+
+  // Auto-scroll timeline to selected stop when clicked from map or list
+  useEffect(() => {
+    if (selectedStopId) {
+      const el = document.getElementById(`timeline-stop-${selectedStopId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  }, [selectedStopId]);
 
   if (isLoading) {
     return <TripDetailsSkeleton />;
@@ -366,10 +376,11 @@ export default function TripDetailsPage() {
           </Stack>
         </Paper>
 
-        {/* 3. Sleek Cockpit Tab Navigation Bar */}
+        {/* 3. Sleek Cockpit Tab Navigation Bar (Mobile / Drawer only to avoid duplicating left sidebar on desktop) */}
         <Paper
           className="neo-convex"
           sx={{
+            display: { xs: "block", md: "none" },
             borderRadius: 2,
             bgcolor: "#18181b",
             border: "1px solid rgba(255, 255, 255, 0.08)",
@@ -582,66 +593,85 @@ export default function TripDetailsPage() {
                       No waypoints mapped yet. Add starting point and stops in the Itinerary tab.
                     </Typography>
                   ) : (
-                    <Stack spacing={1.2}>
-                      {stops.slice(0, 4).map((stop, idx) => (
-                        <Box
-                          key={stop.id}
-                          className="neo-inset"
-                          sx={{
-                            p: 1.5,
-                            borderRadius: 1.5,
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1.5,
-                            bgcolor: "#141313",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              width: 26,
-                              height: 26,
-                              borderRadius: "50%",
-                              bgcolor: "#27272a",
-                              border: "1px solid rgba(255, 255, 255, 0.15)",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "0.72rem",
-                              fontWeight: 800,
-                              color: "#f8fafc",
-                              fontFamily: '"JetBrains Mono", monospace',
-                              flexShrink: 0,
-                            }}
-                          >
-                            {idx + 1}
-                          </Box>
-                          <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography sx={{ fontWeight: 700, color: "#f8fafc", fontSize: "0.82rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                              {stop.name}
-                              {idx === 0 && (
-                                <Box component="span" sx={{ ml: 1, fontSize: "0.62rem", bgcolor: "#27272a", px: 1, py: 0.2, borderRadius: 1, color: "#a1a1aa" }}>
-                                  Start
-                                </Box>
+                    <Box
+                      sx={{
+                        maxHeight: 300,
+                        overflowY: "auto",
+                        pr: 0.5,
+                        "&::-webkit-scrollbar": {
+                          width: "5px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: "rgba(255, 255, 255, 0.12)",
+                          borderRadius: "4px",
+                        },
+                      }}
+                    >
+                      <Stack spacing={1.2}>
+                        {stops.map((stop, idx) => {
+                          const isSelected = selectedStopId === stop.id;
+                          return (
+                            <Box
+                              key={stop.id}
+                              id={`timeline-stop-${stop.id}`}
+                              className={isSelected ? "neo-convex" : "neo-inset"}
+                              onClick={() => setSelectedStopId(isSelected ? null : stop.id)}
+                              sx={{
+                                p: 1.5,
+                                borderRadius: 1.5,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1.5,
+                                bgcolor: isSelected ? "rgba(99, 102, 241, 0.18)" : "#141313",
+                                border: isSelected ? "1px solid #6366f1" : "1px solid rgba(255, 255, 255, 0.04)",
+                                cursor: "pointer",
+                                transition: "all 0.2s ease",
+                                "&:hover": {
+                                  borderColor: "#818cf8",
+                                  bgcolor: isSelected ? "rgba(99, 102, 241, 0.25)" : "#1c1b1f",
+                                },
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  width: 26,
+                                  height: 26,
+                                  borderRadius: "50%",
+                                  bgcolor: isSelected ? "#6366f1" : "#27272a",
+                                  border: isSelected ? "1px solid #818cf8" : "1px solid rgba(255, 255, 255, 0.15)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "0.72rem",
+                                  fontWeight: 800,
+                                  color: "#ffffff",
+                                  fontFamily: '"JetBrains Mono", monospace',
+                                  flexShrink: 0,
+                                  boxShadow: isSelected ? "0 0 10px rgba(99, 102, 241, 0.5)" : "none",
+                                }}
+                              >
+                                {idx + 1}
+                              </Box>
+                              <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <Typography sx={{ fontWeight: 700, color: isSelected ? "#818cf8" : "#f8fafc", fontSize: "0.82rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                  {stop.name}
+                                  {idx === 0 && (
+                                    <Box component="span" sx={{ ml: 1, fontSize: "0.62rem", bgcolor: "#27272a", px: 1, py: 0.2, borderRadius: 1, color: "#a1a1aa" }}>
+                                      Start
+                                    </Box>
+                                  )}
+                                </Typography>
+                              </Box>
+                              {stop.notes && (
+                                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.7rem", whiteSpace: "nowrap" }}>
+                                  {stop.notes}
+                                </Typography>
                               )}
-                            </Typography>
-                          </Box>
-                          {stop.notes && (
-                            <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.7rem", whiteSpace: "nowrap" }}>
-                              {stop.notes}
-                            </Typography>
-                          )}
-                        </Box>
-                      ))}
-                      {stops.length > 4 && (
-                        <Button
-                          size="small"
-                          onClick={() => setSearchParams({ tab: "itinerary" })}
-                          sx={{ color: "#818cf8", fontSize: "0.72rem", alignSelf: "center", mt: 0.5 }}
-                        >
-                          + {stops.length - 4} more stops in itinerary →
-                        </Button>
-                      )}
-                    </Stack>
+                            </Box>
+                          );
+                        })}
+                      </Stack>
+                    </Box>
                   )}
                 </Paper>
               </Stack>

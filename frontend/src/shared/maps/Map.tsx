@@ -121,7 +121,7 @@ export function Map({
           ...style,
         }}
       >
-        <MapCameraController stops={validStops} />
+        <MapCameraController stops={validStops} selectedStopId={selectedStopId} />
 
         <RouteLayer stops={validStops} />
 

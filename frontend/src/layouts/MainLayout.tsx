@@ -89,13 +89,15 @@ export default function MainLayout() {
   const tripSubNavItems = currentTripId
     ? [
         { label: "Overview", tab: "overview", icon: <SpeedIcon fontSize="small" /> },
+        { label: "Readiness Checks", tab: "readiness", icon: <TaskAltIcon fontSize="small" /> },
         { label: "Itinerary", tab: "itinerary", icon: <MapIcon fontSize="small" /> },
         { label: "Lodging", tab: "accommodation", icon: <HotelIcon fontSize="small" /> },
         { label: "Budget & Fuel", tab: "budget", icon: <PaymentsIcon fontSize="small" /> },
         { label: "Gear Checklist", tab: "checklist", icon: <TaskAltIcon fontSize="small" /> },
         { label: "Permits & Docs", tab: "documents", icon: <DescriptionIcon fontSize="small" /> },
         { label: "Safety ICE", tab: "contacts", icon: <ShieldIcon fontSize="small" /> },
-        { label: "Memories", tab: "memories", icon: <PhotoLibraryIcon fontSize="small" /> },
+        { label: "Debrief Summary", tab: "summary", icon: <DescriptionIcon fontSize="small" /> },
+        { label: "Memories Journal", tab: "memories", icon: <PhotoLibraryIcon fontSize="small" /> },
       ]
     : [];
 
