@@ -3,6 +3,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import RouteIcon from "@mui/icons-material/Route";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import {
   Box,
@@ -56,7 +57,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
           color: "#bef264",
           border: "rgba(190, 242, 100, 0.4)",
           dot: "#bef264",
-          glow: "glow-acid",
+          gradient: "radial-gradient(circle at 75% 25%, rgba(190, 242, 100, 0.2), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)",
         };
       case "Planning":
         return {
@@ -64,15 +65,15 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
           color: "#818cf8",
           border: "rgba(99, 102, 241, 0.4)",
           dot: "#6366f1",
-          glow: "glow-indigo",
+          gradient: "radial-gradient(circle at 75% 25%, rgba(99, 102, 241, 0.25), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)",
         };
       case "Completed":
         return {
           bg: "rgba(20, 19, 19, 0.85)",
-          color: "#94a3b8",
-          border: "rgba(148, 163, 184, 0.3)",
-          dot: "#64748b",
-          glow: "",
+          color: "#38bdf8",
+          border: "rgba(56, 189, 248, 0.4)",
+          dot: "#38bdf8",
+          gradient: "radial-gradient(circle at 75% 25%, rgba(56, 189, 248, 0.22), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)",
         };
       default:
         return {
@@ -80,7 +81,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
           color: "#94a3b8",
           border: "rgba(148, 163, 184, 0.3)",
           dot: "#64748b",
-          glow: "",
+          gradient: "radial-gradient(circle at 75% 25%, rgba(148, 163, 184, 0.15), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)",
         };
     }
   };
@@ -118,28 +119,78 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         },
       }}
     >
-      {/* Cinematic Image Header */}
+      {/* Cinematic Topographical Contour Header */}
       <Box
         sx={{
           position: "relative",
-          height: 180,
+          height: 160,
           width: "100%",
           bgcolor: "#141313",
           overflow: "hidden",
-          backgroundImage: `radial-gradient(circle at 70% 30%, rgba(99, 102, 241, 0.2), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.2) 0%, rgba(26, 26, 30, 0.95) 100%)`,
+          backgroundImage: statusStyle.gradient,
         }}
       >
+        {/* Subtle Decorative SVG Topo Contour Lines */}
         <Box
+          component="svg"
+          viewBox="0 0 400 160"
           sx={{
             position: "absolute",
             inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "rgba(255, 255, 255, 0.06)",
+            width: "100%",
+            height: "100%",
+            opacity: 0.18,
+            pointerEvents: "none",
           }}
         >
-          <TwoWheelerIcon sx={{ fontSize: 90 }} />
+          <path
+            d="M-20,120 Q80,40 180,90 T380,60 T500,110"
+            fill="none"
+            stroke={statusStyle.dot}
+            strokeWidth="1.5"
+            strokeDasharray="4 4"
+          />
+          <path
+            d="M-10,140 Q100,70 200,110 T400,80 T520,130"
+            fill="none"
+            stroke={statusStyle.dot}
+            strokeWidth="1"
+          />
+          <circle cx="180" cy="90" r="4" fill={statusStyle.dot} />
+          <circle cx="380" cy="60" r="4" fill={statusStyle.dot} />
+        </Box>
+
+        {/* Route Icon Badge (Bottom-Left of visual header) */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 12,
+            left: 16,
+            zIndex: 2,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: 1.5,
+              bgcolor: "rgba(20, 19, 19, 0.8)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: statusStyle.color,
+            }}
+          >
+            {trip.status === "Active" ? (
+              <TwoWheelerIcon sx={{ fontSize: 18 }} />
+            ) : (
+              <RouteIcon sx={{ fontSize: 18 }} />
+            )}
+          </Box>
         </Box>
 
         {/* Status Pill Overlay (Top-Right) */}
@@ -252,18 +303,17 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
       </Box>
 
       {/* Card Body */}
-      <CardContent sx={{ p: 3, flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        <Stack spacing={2} sx={{ height: "100%", flexGrow: 1 }}>
+      <CardContent sx={{ p: 2.5, flexGrow: 1, display: "flex", flexDirection: "column" }}>
+        <Stack spacing={1.5} sx={{ height: "100%", flexGrow: 1 }}>
           <Box>
             <Typography
-              variant="h5"
+              variant="h6"
               sx={{
                 fontFamily: '"Outfit", sans-serif',
                 fontWeight: 800,
-                fontStyle: "italic",
                 color: "#f8fafc",
                 lineHeight: 1.2,
-                mb: 0.8,
+                mb: 0.5,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -280,11 +330,11 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
                 display: "flex",
                 alignItems: "center",
                 gap: 0.8,
-                fontSize: "0.72rem",
+                fontSize: "0.7rem",
                 fontWeight: 600,
               }}
             >
-              <CalendarMonthIcon sx={{ fontSize: 14, color: "#64748b" }} />
+              <CalendarMonthIcon sx={{ fontSize: 13, color: "#64748b" }} />
               {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
             </Typography>
           </Box>
@@ -294,7 +344,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               variant="body2"
               sx={{
                 color: "#94a3b8",
-                fontSize: "0.85rem",
+                fontSize: "0.82rem",
                 lineHeight: 1.5,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -312,9 +362,8 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             className="neo-inset"
             sx={{
               mt: "auto",
-              pt: 1.5,
-              pb: 1.5,
-              px: 2,
+              py: 1.2,
+              px: 1.8,
               borderRadius: 2,
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
@@ -325,13 +374,13 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               <Typography
                 className="font-mono"
                 variant="caption"
-                sx={{ color: "#94a3b8", opacity: 0.7, fontSize: "0.65rem", letterSpacing: "0.06em", textTransform: "uppercase", display: "block" }}
+                sx={{ color: "#94a3b8", opacity: 0.7, fontSize: "0.62rem", letterSpacing: "0.06em", textTransform: "uppercase", display: "block" }}
               >
                 Duration
               </Typography>
               <Typography
                 className="font-mono"
-                sx={{ color: "#f8fafc", fontWeight: 800, fontSize: "0.92rem" }}
+                sx={{ color: "#f8fafc", fontWeight: 800, fontSize: "0.88rem" }}
               >
                 {diffDays} {diffDays === 1 ? "Day" : "Days"}
               </Typography>
@@ -341,15 +390,15 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               <Typography
                 className="font-mono"
                 variant="caption"
-                sx={{ color: "#94a3b8", opacity: 0.7, fontSize: "0.65rem", letterSpacing: "0.06em", textTransform: "uppercase", display: "block" }}
+                sx={{ color: "#94a3b8", opacity: 0.7, fontSize: "0.62rem", letterSpacing: "0.06em", textTransform: "uppercase", display: "block" }}
               >
                 Telemetry
               </Typography>
               <Typography
                 className="font-mono"
-                sx={{ color: trip.status === "Active" ? "#bef264" : "#818cf8", fontWeight: 800, fontSize: "0.92rem" }}
+                sx={{ color: statusStyle.color, fontWeight: 800, fontSize: "0.88rem" }}
               >
-                {trip.status === "Active" ? "LIVE" : "READY"}
+                {trip.status === "Active" ? "LIVE" : trip.status === "Completed" ? "LOGGED" : "READY"}
               </Typography>
             </Box>
           </Box>

@@ -86,7 +86,7 @@ export default function HomePage() {
       case "Active":
         return "#bef264";
       case "Completed":
-        return "#a1a1aa";
+        return "#38bdf8";
       default:
         return "#818cf8";
     }
@@ -179,10 +179,7 @@ export default function HomePage() {
         <Grid size={{ xs: 12, sm: 4 }}>
           <Paper
             className="neo-convex"
-            onClick={() => {
-              if (activeTrips.length > 0) navigate(`/trips/${activeTrips[0].id}`);
-              else navigate("/trips");
-            }}
+            onClick={() => navigate("/trips?status=Active")}
             sx={{
               p: 2,
               borderRadius: 2.5,
@@ -215,7 +212,7 @@ export default function HomePage() {
         <Grid size={{ xs: 12, sm: 4 }}>
           <Paper
             className="neo-convex"
-            onClick={() => navigate("/trips")}
+            onClick={() => navigate("/trips?status=Planning")}
             sx={{
               p: 2,
               borderRadius: 2.5,
@@ -573,8 +570,18 @@ export default function HomePage() {
                         width: 34,
                         height: 34,
                         borderRadius: 1.5,
-                        bgcolor: trip.status === "Active" ? "rgba(190, 242, 100, 0.12)" : "rgba(99, 102, 241, 0.12)",
-                        color: trip.status === "Active" ? "#bef264" : "#818cf8",
+                        bgcolor:
+                          trip.status === "Active"
+                            ? "rgba(190, 242, 100, 0.12)"
+                            : trip.status === "Completed"
+                            ? "rgba(56, 189, 248, 0.12)"
+                            : "rgba(99, 102, 241, 0.12)",
+                        color:
+                          trip.status === "Active"
+                            ? "#bef264"
+                            : trip.status === "Completed"
+                            ? "#38bdf8"
+                            : "#818cf8",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -591,8 +598,18 @@ export default function HomePage() {
                         fontSize: "0.6rem",
                         fontWeight: 800,
                         fontFamily: '"JetBrains Mono", monospace',
-                        bgcolor: trip.status === "Active" ? "rgba(190, 242, 100, 0.15)" : "rgba(255, 255, 255, 0.05)",
-                        color: trip.status === "Active" ? "#bef264" : "#94a3b8",
+                        bgcolor:
+                          trip.status === "Active"
+                            ? "rgba(190, 242, 100, 0.15)"
+                            : trip.status === "Completed"
+                            ? "rgba(56, 189, 248, 0.15)"
+                            : "rgba(99, 102, 241, 0.15)",
+                        color:
+                          trip.status === "Active"
+                            ? "#bef264"
+                            : trip.status === "Completed"
+                            ? "#38bdf8"
+                            : "#818cf8",
                       }}
                     />
                   </Stack>

@@ -266,7 +266,7 @@ export default function MainLayout() {
               },
             }}
           >
-            New Mission
+            New Expedition
           </Button>
         </Box>
       )}

@@ -88,7 +88,7 @@ export default function CreateTripDialog({ open, onClose }: CreateTripDialogProp
             "&:hover": { bgcolor: "#4f46e5" },
           }}
         >
-          Launch Mission
+          Launch Expedition
         </Button>
       </DialogActions>
     </Dialog>
