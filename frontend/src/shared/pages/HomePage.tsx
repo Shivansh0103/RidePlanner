@@ -1,25 +1,28 @@
 import AddIcon from "@mui/icons-material/Add";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import BuildIcon from "@mui/icons-material/Build";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ExploreIcon from "@mui/icons-material/Explore";
-import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import MapIcon from "@mui/icons-material/Map";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RouteIcon from "@mui/icons-material/Route";
-import ShieldIcon from "@mui/icons-material/Shield";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import {
   Box,
   Button,
   Chip,
+  FormControl,
   Grid,
+  MenuItem,
   Paper,
+  Select,
   Stack,
   Typography,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useAccommodations } from "@/features/accommodations";
+import { useTripReadiness } from "@/features/readiness";
 import { useTrips } from "@/features/trips";
 import { LoadingSpinner } from "@/shared/ui";
 import { formatDate } from "@/shared/utils";
@@ -28,32 +31,83 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { data: trips = [], isLoading } = useTrips();
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  const [selectedTripId, setSelectedTripId] = useState<string>(() => {
+    return localStorage.getItem("last_active_trip_id") || "";
+  });
+
+  useEffect(() => {
+    if (trips.length > 0) {
+      const storedId = localStorage.getItem("last_active_trip_id");
+      const validStored = trips.find((t) => t.id === (selectedTripId || storedId));
+      if (validStored) {
+        if (selectedTripId !== validStored.id) {
+          setSelectedTripId(validStored.id);
+        }
+      } else {
+        const activeTrip = trips.find((t) => t.status === "Active");
+        const defaultId = activeTrip?.id || trips[0].id;
+        setSelectedTripId(defaultId);
+        localStorage.setItem("last_active_trip_id", defaultId);
+      }
+    }
+  }, [trips, selectedTripId]);
 
   const activeTrips = trips.filter((t) => t.status === "Active");
   const planningTrips = trips.filter((t) => t.status === "Planning");
 
-  // Spotlight active trip, next planned trip, or most recent trip
-  const spotlightTrip = activeTrips[0] || planningTrips[0] || trips[0];
+  const spotlightTrip = trips.find((t) => t.id === selectedTripId) || trips[0];
+
+  // Fetch real readiness and lodging for the selected spotlight trip
+  const { data: readiness } = useTripReadiness(spotlightTrip?.id ?? "");
+  const { data: accommodations = [] } = useAccommodations(spotlightTrip?.id ?? "");
+
+  const handleSelectTrip = (id: string) => {
+    setSelectedTripId(id);
+    localStorage.setItem("last_active_trip_id", id);
+  };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  const getPhaseText = (status?: string) => {
+    switch (status) {
+      case "Active":
+        return "EN ROUTE (LIVE)";
+      case "Completed":
+        return "MISSION COMPLETED";
+      default:
+        return "ROUTE PLANNING";
+    }
+  };
+
+  const getPhaseColor = (status?: string) => {
+    switch (status) {
+      case "Active":
+        return "#bef264";
+      case "Completed":
+        return "#a1a1aa";
+      default:
+        return "#818cf8";
+    }
+  };
 
   return (
     <Box sx={{ maxWidth: 1400, mx: "auto", width: "100%", pb: 6 }} className="animate-fade-in">
-      {/* 1. The Journal Display Header */}
+      {/* 1. Display Header with New Mission Trigger */}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
-        sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, mb: 4 }}
+        sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, mb: 3 }}
       >
         <Box>
           <Typography
-            variant="h3"
+            variant="h4"
             sx={{
               fontFamily: '"Outfit", sans-serif',
               fontWeight: 800,
               color: "#f8fafc",
-              letterSpacing: "-0.03em",
+              letterSpacing: "-0.02em",
               lineHeight: 1.1,
             }}
           >
@@ -62,121 +116,208 @@ export default function HomePage() {
           <Typography
             className="font-mono"
             variant="caption"
-            sx={{ color: "#94a3b8", fontSize: "0.74rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}
+            sx={{ color: "#94a3b8", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}
           >
-            Tactical Operations & Terrestrial Ledger
+            Motorcycle Expeditions & Field Telemetry Hub
           </Typography>
         </Box>
 
-        {/* Systems Nominal Status HUD Pill */}
-        <Box
-          className="neo-inset"
+        <Button
+          variant="contained"
+          size="small"
+          startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+          onClick={() => navigate("/trips/new")}
+          className="glow-indigo"
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            px: 2.5,
-            py: 1,
-            borderRadius: 9999,
+            bgcolor: "#6366f1",
+            color: "#ffffff",
+            fontFamily: '"JetBrains Mono", monospace',
+            fontSize: "0.72rem",
+            fontWeight: 800,
+            letterSpacing: "0.04em",
+            py: 0.9,
+            px: 2,
+            "&:hover": { bgcolor: "#4f46e5" },
           }}
         >
-          <Box
-            className="pulse-telemetry glow-acid"
-            sx={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              bgcolor: "#bef264",
-            }}
-          />
-          <Typography
-            className="font-mono"
-            sx={{
-              fontSize: "0.72rem",
-              fontWeight: 800,
-              color: "#bef264",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            Systems Nominal
-          </Typography>
-        </Box>
+          Plan New Expedition
+        </Button>
       </Stack>
 
-      {/* 2. Top Bento Grid (Hero 2-Col + Telemetry Stats 1-Col) */}
+      {/* 2. Top Compact Lifetime Stats Bar */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Paper
+            className="neo-convex"
+            onClick={() => navigate("/trips")}
+            sx={{
+              p: 2,
+              borderRadius: 2.5,
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              "&:hover": { borderColor: "#6366f1", transform: "translateY(-1px)" },
+            }}
+          >
+            <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+              <Box>
+                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  Total Expeditions
+                </Typography>
+                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: "#f8fafc", mt: 0.2 }}>
+                  {trips.length}
+                </Typography>
+              </Box>
+              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: "rgba(99, 102, 241, 0.12)", color: "#818cf8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <ExploreIcon sx={{ fontSize: 18 }} />
+              </Box>
+            </Stack>
+          </Paper>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Paper
+            className="neo-convex"
+            onClick={() => {
+              if (activeTrips.length > 0) navigate(`/trips/${activeTrips[0].id}`);
+              else navigate("/trips");
+            }}
+            sx={{
+              p: 2,
+              borderRadius: 2.5,
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(190, 242, 100, 0.3)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              "&:hover": { borderColor: "#bef264", transform: "translateY(-1px)" },
+            }}
+          >
+            <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+              <Box>
+                <Stack direction="row" spacing={0.8} sx={{ alignItems: "center" }}>
+                  <Box className="pulse-telemetry glow-acid" sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#bef264" }} />
+                  <Typography className="font-mono" sx={{ color: "#bef264", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                    Active In Field
+                  </Typography>
+                </Stack>
+                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: "#bef264", mt: 0.2 }}>
+                  {activeTrips.length}
+                </Typography>
+              </Box>
+              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: "rgba(190, 242, 100, 0.15)", color: "#bef264", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <TwoWheelerIcon sx={{ fontSize: 18 }} />
+              </Box>
+            </Stack>
+          </Paper>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Paper
+            className="neo-convex"
+            onClick={() => navigate("/trips")}
+            sx={{
+              p: 2,
+              borderRadius: 2.5,
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              "&:hover": { borderColor: "#818cf8", transform: "translateY(-1px)" },
+            }}
+          >
+            <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+              <Box>
+                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  In Planning
+                </Typography>
+                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: "#818cf8", mt: 0.2 }}>
+                  {planningTrips.length}
+                </Typography>
+              </Box>
+              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: "rgba(129, 140, 248, 0.12)", color: "#818cf8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <RouteIcon sx={{ fontSize: 18 }} />
+              </Box>
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* 3. Main Bento Grid (Featured Spotlight Card + Expedition Readiness HUD) */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Left Hero Featured Expedition (2 Cols on Desktop) */}
+        {/* Left: Featured Expedition Spotlight Card (8 Cols on Desktop) */}
         <Grid size={{ xs: 12, lg: 8 }}>
           {spotlightTrip ? (
             <Paper
-              className="neo-convex neo-hover"
-              onClick={() => navigate(`/trips/${spotlightTrip.id}`)}
+              className="neo-convex"
               sx={{
                 position: "relative",
-                minHeight: { xs: 400, md: 440 },
-                borderRadius: 3.5,
+                minHeight: 380,
+                borderRadius: 3,
                 overflow: "hidden",
-                cursor: "pointer",
-                p: { xs: 3, sm: 4.5 },
+                p: { xs: 2.5, sm: 3.5 },
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "flex-end",
-                bgcolor: "#1c1b1b",
+                justifyContent: "space-between",
+                bgcolor: "#1a1a1e",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                backgroundImage: `radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.2), transparent 50%), radial-gradient(circle at 20% 80%, rgba(190, 242, 100, 0.08), transparent 50%)`,
               }}
             >
-              {/* Cinematic Gradient & Landscape Background */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  zIndex: 0,
-                  backgroundImage: `radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.25), transparent 50%), radial-gradient(circle at 20% 80%, rgba(190, 242, 100, 0.1), transparent 50%), linear-gradient(180deg, rgba(20, 19, 19, 0.4) 0%, rgba(20, 19, 19, 0.95) 85%)`,
-                }}
-              />
+              {/* Card Header with Quick Trip Selector */}
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1.5, mb: 2 }}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <Chip
+                    label={spotlightTrip.status === "Active" ? "LIVE EXPEDITION" : "FEATURED SPOTLIGHT"}
+                    size="small"
+                    sx={{
+                      bgcolor: spotlightTrip.status === "Active" ? "rgba(190, 242, 100, 0.15)" : "rgba(99, 102, 241, 0.2)",
+                      color: spotlightTrip.status === "Active" ? "#bef264" : "#818cf8",
+                      border: spotlightTrip.status === "Active" ? "1px solid rgba(190, 242, 100, 0.4)" : "1px solid rgba(99, 102, 241, 0.4)",
+                      fontWeight: 800,
+                      fontSize: "0.65rem",
+                      letterSpacing: "0.06em",
+                      fontFamily: '"JetBrains Mono", monospace',
+                      borderRadius: 1,
+                    }}
+                  />
 
-              {/* Decorative Compass / Terrain Lines */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 24,
-                  right: 24,
-                  zIndex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                }}
-              >
-                <Chip
-                  label={spotlightTrip.status === "Active" ? "ACTIVE IN MOTION" : "FEATURED EXPEDITION"}
-                  size="small"
-                  sx={{
-                    bgcolor: spotlightTrip.status === "Active" ? "rgba(190, 242, 100, 0.15)" : "rgba(99, 102, 241, 0.2)",
-                    color: spotlightTrip.status === "Active" ? "#bef264" : "#818cf8",
-                    border: spotlightTrip.status === "Active" ? "1px solid rgba(190, 242, 100, 0.4)" : "1px solid rgba(99, 102, 241, 0.4)",
-                    fontWeight: 800,
-                    fontSize: "0.68rem",
-                    letterSpacing: "0.06em",
-                    fontFamily: '"JetBrains Mono", monospace',
-                    borderRadius: 9999,
-                    boxShadow: spotlightTrip.status === "Active" ? "0 0 12px rgba(190, 242, 100, 0.3)" : "0 0 12px rgba(99, 102, 241, 0.3)",
-                  }}
-                />
-              </Box>
-
-              {/* Hero Content */}
-              <Box sx={{ position: "relative", zIndex: 1, mt: "auto" }}>
-                <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 1.5 }}>
-                  <Typography
-                    className="font-mono"
-                    variant="caption"
-                    sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}
-                  >
-                    <CalendarMonthIcon sx={{ fontSize: 14, verticalAlign: "middle", mr: 0.5 }} />
-                    {formatDate(spotlightTrip.startDate)} – {formatDate(spotlightTrip.endDate)}
-                  </Typography>
+                  {/* Switch Expedition Dropdown */}
+                  {trips.length > 1 && (
+                    <FormControl size="small" sx={{ minWidth: 160 }}>
+                      <Select
+                        value={spotlightTrip.id}
+                        onChange={(e) => handleSelectTrip(e.target.value)}
+                        sx={{
+                          height: 26,
+                          fontSize: "0.68rem",
+                          fontFamily: '"JetBrains Mono", monospace',
+                          fontWeight: 700,
+                          bgcolor: "#141313",
+                          color: "#e4e4e7",
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "rgba(255, 255, 255, 0.1)",
+                          },
+                        }}
+                      >
+                        {trips.map((t) => (
+                          <MenuItem key={t.id} value={t.id} sx={{ fontSize: "0.75rem" }}>
+                            {t.name} ({t.status})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
                 </Stack>
 
+                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.72rem", fontWeight: 700 }}>
+                  <CalendarMonthIcon sx={{ fontSize: 14, verticalAlign: "middle", mr: 0.5, color: "#818cf8" }} />
+                  {formatDate(spotlightTrip.startDate)} – {formatDate(spotlightTrip.endDate)}
+                </Typography>
+              </Box>
+
+              {/* Spotlight Content */}
+              <Box sx={{ my: "auto" }}>
                 <Typography
                   variant="h3"
                   sx={{
@@ -185,22 +326,21 @@ export default function HomePage() {
                     color: "#ffffff",
                     letterSpacing: "-0.02em",
                     lineHeight: 1.15,
-                    mb: 1.5,
-                    fontSize: { xs: "1.8rem", sm: "2.4rem", md: "2.8rem" },
+                    mb: 1,
+                    fontSize: { xs: "1.6rem", sm: "2.2rem" },
                   }}
                 >
                   {spotlightTrip.name}
                 </Typography>
 
-                {spotlightTrip.description && (
+                {spotlightTrip.description ? (
                   <Typography
-                    variant="body1"
+                    variant="body2"
                     sx={{
-                      color: "#c7c6ca",
-                      maxWidth: 650,
-                      mb: 3,
+                      color: "#cbd5e1",
+                      maxWidth: 620,
                       lineHeight: 1.6,
-                      fontSize: "0.95rem",
+                      fontSize: "0.88rem",
                       display: "-webkit-box",
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: "vertical",
@@ -209,534 +349,270 @@ export default function HomePage() {
                   >
                     {spotlightTrip.description}
                   </Typography>
+                ) : (
+                  <Typography variant="body2" sx={{ color: "#71717a", fontStyle: "italic", fontSize: "0.82rem" }}>
+                    No mission description configured. Click "Open Cockpit" to manage waypoints and logistics.
+                  </Typography>
                 )}
+              </Box>
 
-                {/* High Density Metrics Row */}
-                <Box
-                  sx={{
-                    pt: 2.5,
-                    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-                  }}
-                >
-                  <Grid container spacing={2}>
-                    <Grid size={{ xs: 4 }}>
-                      <Typography
-                        className="font-mono"
-                        variant="caption"
-                        sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.08em", display: "block", mb: 0.5 }}
-                      >
-                        STATUS
-                      </Typography>
-                      <Typography
-                        className="font-mono"
-                        sx={{
-                          fontSize: { xs: "1rem", sm: "1.2rem" },
-                          fontWeight: 800,
-                          color: spotlightTrip.status === "Active" ? "#bef264" : "#818cf8",
-                        }}
-                      >
-                        {spotlightTrip.status.toUpperCase()}
-                      </Typography>
-                    </Grid>
-
-                    <Grid size={{ xs: 4 }}>
-                      <Typography
-                        className="font-mono"
-                        variant="caption"
-                        sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.08em", display: "block", mb: 0.5 }}
-                      >
-                        PHASE
-                      </Typography>
-                      <Typography
-                        className="font-mono"
-                        sx={{ fontSize: { xs: "1rem", sm: "1.2rem" }, fontWeight: 800, color: "#f8fafc" }}
-                      >
-                        TERRESTRIAL
-                      </Typography>
-                    </Grid>
-
-                    <Grid size={{ xs: 4 }}>
-                      <Typography
-                        className="font-mono"
-                        variant="caption"
-                        sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.08em", display: "block", mb: 0.5 }}
-                      >
-                        ACTION
-                      </Typography>
-                      <Typography
-                        className="font-mono"
-                        sx={{
-                          fontSize: { xs: "0.85rem", sm: "1.05rem" },
-                          fontWeight: 800,
-                          color: "#818cf8",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                        }}
-                      >
-                        OPEN COCKPIT <ArrowForwardIcon sx={{ fontSize: 16 }} />
-                      </Typography>
-                    </Grid>
+              {/* High Density Metrics Row */}
+              <Box sx={{ pt: 2, borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
+                <Grid container spacing={2} sx={{ alignItems: "center" }}>
+                  <Grid size={{ xs: 4 }}>
+                    <Typography className="font-mono" sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.06em", fontSize: "0.65rem", mb: 0.3 }}>
+                      LIFECYCLE STATUS
+                    </Typography>
+                    <Typography className="font-mono" sx={{ fontSize: "0.95rem", fontWeight: 800, color: spotlightTrip.status === "Active" ? "#bef264" : "#818cf8" }}>
+                      {spotlightTrip.status.toUpperCase()}
+                    </Typography>
                   </Grid>
 
-                  {/* Progress Line */}
-                  <Box
-                    className="neo-inset"
-                    sx={{
-                      mt: 3,
-                      width: "100%",
-                      height: 6,
-                      borderRadius: 9999,
-                      overflow: "hidden",
-                      bgcolor: "#141313",
-                    }}
-                  >
-                    <Box
+                  <Grid size={{ xs: 4 }}>
+                    <Typography className="font-mono" sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.06em", fontSize: "0.65rem", mb: 0.3 }}>
+                      MISSION PHASE
+                    </Typography>
+                    <Typography className="font-mono" sx={{ fontSize: "0.88rem", fontWeight: 800, color: getPhaseColor(spotlightTrip.status) }}>
+                      {getPhaseText(spotlightTrip.status)}
+                    </Typography>
+                  </Grid>
+
+                  <Grid size={{ xs: 4 }} sx={{ textAlign: "right" }}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() => navigate(`/trips/${spotlightTrip.id}`)}
                       className="glow-indigo"
+                      endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />}
                       sx={{
-                        height: "100%",
-                        width: spotlightTrip.status === "Completed" ? "100%" : spotlightTrip.status === "Active" ? "60%" : "25%",
-                        bgcolor: spotlightTrip.status === "Active" ? "#bef264" : "#6366f1",
-                        borderRadius: 9999,
+                        bgcolor: "#6366f1",
+                        color: "#ffffff",
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.72rem",
+                        fontWeight: 800,
+                        letterSpacing: "0.04em",
+                        "&:hover": { bgcolor: "#4f46e5" },
                       }}
-                    />
-                  </Box>
-                </Box>
+                    >
+                      Open Cockpit
+                    </Button>
+                  </Grid>
+                </Grid>
               </Box>
             </Paper>
           ) : (
-            <Paper
-              className="neo-convex"
-              sx={{
-                p: 6,
-                borderRadius: 3.5,
-                textAlign: "center",
-                bgcolor: "#1c1b1b",
-                minHeight: 400,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <TwoWheelerIcon sx={{ fontSize: 48, color: "#818cf8", mb: 2 }} />
+            <Paper className="neo-convex" sx={{ p: 5, borderRadius: 3, textAlign: "center", bgcolor: "#1a1a1e" }}>
+              <TwoWheelerIcon sx={{ fontSize: 44, color: "#818cf8", mb: 1.5 }} />
               <Typography variant="h5" sx={{ fontWeight: 800, color: "#f8fafc", mb: 1 }}>
-                No Active Missions
+                No Expeditions in Ledger
               </Typography>
-              <Typography variant="body2" sx={{ color: "#94a3b8", maxWidth: 420, mb: 3 }}>
-                Initialize your first terrestrial expedition to generate waypoint trajectories, fuel logs, and telemetry.
-              </Typography>
-              <Button
-                variant="contained"
-                onClick={() => navigate("/trips/new")}
-                startIcon={<AddIcon />}
-                sx={{
-                  bgcolor: "#6366f1",
-                  color: "#ffffff",
-                  fontWeight: 700,
-                  px: 3,
-                  py: 1.2,
-                  boxShadow: "0 0 20px rgba(99, 102, 241, 0.4)",
-                }}
-              >
-                Plan First Mission
+              <Button variant="contained" onClick={() => navigate("/trips/new")} sx={{ bgcolor: "#6366f1", mt: 1 }}>
+                Plan Your First Mission
               </Button>
             </Paper>
           )}
         </Grid>
 
-        {/* Right Telemetry Column (2 Stacked Neomorphic Stat Cards) */}
+        {/* Right: Expedition Readiness & Logistics Action Hub (4 Cols on Desktop) */}
         <Grid size={{ xs: 12, lg: 4 }}>
-          <Stack spacing={3} sx={{ height: "100%" }}>
-            {/* Stat Card 1: Total Expeditions */}
-            <Paper
-              className="neo-convex"
-              onClick={() => navigate("/trips")}
-              sx={{
-                p: 3.5,
-                borderRadius: 3,
-                bgcolor: "#1c1b1b",
-                flex: 1,
-                cursor: "pointer",
-                transition: "all 0.2s ease-in-out",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                  borderColor: "#6366f1",
-                  boxShadow: "8px 8px 18px #0e0e11, -8px -8px 18px #22222a",
-                },
-              }}
-            >
-              <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
-                <Box
-                  sx={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 2,
-                    bgcolor: "rgba(99, 102, 241, 0.12)",
-                    border: "1px solid rgba(99, 102, 241, 0.25)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#818cf8",
-                  }}
-                >
-                  <ExploreIcon fontSize="medium" />
-                </Box>
-                <Typography
-                  className="font-mono"
-                  variant="caption"
-                  sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}
-                >
-                  EXPEDITIONS
+          <Paper
+            className="neo-convex"
+            sx={{
+              p: 2.8,
+              borderRadius: 3,
+              bgcolor: "#1a1a1e",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <Box>
+              <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  Expedition Readiness HUD
                 </Typography>
-              </Stack>
-
-              <Typography
-                className="font-mono"
-                variant="h2"
-                sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1, mb: 1 }}
-              >
-                {trips.length}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#94a3b8" }}>
-                Total logged journeys across your motorcycle ledger.
-              </Typography>
-            </Paper>
-
-            {/* Stat Card 2: Active Rides */}
-            <Paper
-              className="neo-convex"
-              onClick={() => {
-                if (activeTrips.length > 0) navigate(`/trips/${activeTrips[0].id}`);
-                else navigate("/trips");
-              }}
-              sx={{
-                p: 3.5,
-                borderRadius: 3,
-                bgcolor: "#1c1b1b",
-                flex: 1,
-                cursor: "pointer",
-                transition: "all 0.2s ease-in-out",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                  borderColor: "#bef264",
-                  boxShadow: "8px 8px 18px #0e0e11, -8px -8px 18px #22222a",
-                },
-              }}
-            >
-              <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
-                <Box
+                <Chip
+                  label={`${readiness?.scorePercentage ?? 0}% READY`}
+                  size="small"
                   sx={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 2,
-                    bgcolor: "rgba(190, 242, 100, 0.12)",
-                    border: "1px solid rgba(190, 242, 100, 0.3)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#bef264",
+                    height: 20,
+                    fontSize: "0.62rem",
+                    fontWeight: 800,
+                    fontFamily: '"JetBrains Mono", monospace',
+                    bgcolor: (readiness?.scorePercentage ?? 0) >= 80 ? "rgba(190, 242, 100, 0.15)" : "rgba(99, 102, 241, 0.15)",
+                    color: (readiness?.scorePercentage ?? 0) >= 80 ? "#bef264" : "#818cf8",
+                    border: `1px solid ${(readiness?.scorePercentage ?? 0) >= 80 ? "rgba(190, 242, 100, 0.3)" : "rgba(99, 102, 241, 0.3)"}`,
                   }}
-                >
-                  <TwoWheelerIcon fontSize="medium" />
-                </Box>
-                <Typography
-                  className="font-mono"
-                  variant="caption"
-                  sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}
-                >
-                  ACTIVE RIDES
-                </Typography>
-              </Stack>
-
-              <Typography
-                className="font-mono"
-                variant="h2"
-                sx={{ fontWeight: 800, color: "#bef264", lineHeight: 1, mb: 1 }}
-              >
-                {activeTrips.length}
-              </Typography>
-              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                <Box
-                  className="pulse-telemetry glow-acid"
-                  sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#bef264" }}
                 />
-                <Typography variant="body2" sx={{ color: "#94a3b8" }}>
-                  {activeTrips.length > 0 ? "Currently tracking in field" : "All expeditions currently docked"}
-                </Typography>
               </Stack>
-            </Paper>
-          </Stack>
-        </Grid>
-      </Grid>
 
-      {/* 3. Bottom Bento Row (Instruments 1-Col + Archives 2-Cols) */}
-      <Grid container spacing={3}>
-        {/* Instruments / Operational Tools (1 Column) */}
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <Paper
-            className="neo-convex"
-            sx={{
-              p: 3.5,
-              borderRadius: 3,
-              bgcolor: "#1c1b1b",
-              height: "100%",
-            }}
-          >
-            <Typography
-              variant="h5"
-              sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc", mb: 3 }}
-            >
-              Instruments
-            </Typography>
-
-            <Grid container spacing={2}>
-              {/* Tool 1: Route Gen */}
-              <Grid size={{ xs: 6 }}>
-                <Box
-                  className="neo-convex"
-                  onClick={() => {
-                    if (spotlightTrip) navigate(`/trips/${spotlightTrip.id}?tab=itinerary`);
-                    else navigate("/trips/new");
-                  }}
-                  sx={{
-                    p: 2.5,
-                    borderRadius: 2,
-                    textAlign: "center",
-                    bgcolor: "#1f1f24",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      color: "#818cf8",
-                      boxShadow: "0 0 16px rgba(99, 102, 241, 0.3)",
-                      transform: "translateY(-2px)",
-                    },
-                  }}
-                >
-                  <RouteIcon sx={{ fontSize: 28, mb: 1, color: "#818cf8" }} />
-                  <Typography
-                    className="font-mono"
-                    sx={{ fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}
-                  >
-                    Route Gen
-                  </Typography>
-                </Box>
-              </Grid>
-
-              {/* Tool 2: Budget & Fuel */}
-              <Grid size={{ xs: 6 }}>
-                <Box
-                  className="neo-convex"
-                  onClick={() => {
-                    if (spotlightTrip) navigate(`/trips/${spotlightTrip.id}?tab=budget`);
-                    else navigate("/trips");
-                  }}
-                  sx={{
-                    p: 2.5,
-                    borderRadius: 2,
-                    textAlign: "center",
-                    bgcolor: "#1f1f24",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      color: "#bef264",
-                      boxShadow: "0 0 16px rgba(190, 242, 100, 0.3)",
-                      transform: "translateY(-2px)",
-                    },
-                  }}
-                >
-                  <LocalGasStationIcon sx={{ fontSize: 28, mb: 1, color: "#bef264" }} />
-                  <Typography
-                    className="font-mono"
-                    sx={{ fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}
-                  >
-                    Fuel Log
-                  </Typography>
-                </Box>
-              </Grid>
-
-              {/* Tool 3: Loadout & Gear */}
-              <Grid size={{ xs: 6 }}>
-                <Box
-                  className="neo-convex"
-                  onClick={() => {
-                    if (spotlightTrip) navigate(`/trips/${spotlightTrip.id}?tab=checklist`);
-                    else navigate("/trips");
-                  }}
-                  sx={{
-                    p: 2.5,
-                    borderRadius: 2,
-                    textAlign: "center",
-                    bgcolor: "#1f1f24",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      color: "#fbbf24",
-                      boxShadow: "0 0 16px rgba(251, 191, 36, 0.3)",
-                      transform: "translateY(-2px)",
-                    },
-                  }}
-                >
-                  <BuildIcon sx={{ fontSize: 28, mb: 1, color: "#fbbf24" }} />
-                  <Typography
-                    className="font-mono"
-                    sx={{ fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}
-                  >
-                    Loadout
-                  </Typography>
-                </Box>
-              </Grid>
-
-              {/* Tool 4: Safety & Emergency */}
-              <Grid size={{ xs: 6 }}>
-                <Box
-                  className="neo-convex"
-                  onClick={() => {
-                    if (spotlightTrip) navigate(`/trips/${spotlightTrip.id}?tab=contacts`);
-                    else navigate("/trips");
-                  }}
-                  sx={{
-                    p: 2.5,
-                    borderRadius: 2,
-                    textAlign: "center",
-                    bgcolor: "#1f1f24",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      color: "#f87171",
-                      boxShadow: "0 0 16px rgba(248, 113, 113, 0.3)",
-                      transform: "translateY(-2px)",
-                    },
-                  }}
-                >
-                  <ShieldIcon sx={{ fontSize: 28, mb: 1, color: "#f87171" }} />
-                  <Typography
-                    className="font-mono"
-                    sx={{ fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}
-                  >
-                    Safety ICE
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        {/* Archives / Recent Expeditions List (2 Columns) */}
-        <Grid size={{ xs: 12, lg: 8 }}>
-          <Paper
-            className="neo-convex"
-            sx={{
-              p: 3.5,
-              borderRadius: 3,
-              bgcolor: "#1c1b1b",
-              height: "100%",
-            }}
-          >
-            <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-              <Typography
-                variant="h5"
-                sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}
-              >
-                Archives
-              </Typography>
-              <Button
-                onClick={() => navigate("/trips")}
-                className="font-mono"
-                sx={{
-                  color: "#818cf8",
-                  fontSize: "0.75rem",
-                  fontWeight: 800,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  "&:hover": { color: "#bef264" },
-                }}
-              >
-                View All [{trips.length}]
-              </Button>
-            </Stack>
-
-            {trips.length === 0 ? (
-              <Box sx={{ py: 4, textAlign: "center" }}>
-                <Typography variant="body2" sx={{ color: "#94a3b8" }}>
-                  No past expedition records in memory bank.
-                </Typography>
-              </Box>
-            ) : (
-              <Stack spacing={2}>
-                {trips.slice(0, 3).map((trip) => (
+              {/* Readiness Checks Summary */}
+              <Stack spacing={1.2} sx={{ mb: 2.5 }}>
+                {(readiness?.items || []).slice(0, 3).map((item) => (
                   <Box
-                    key={trip.id}
+                    key={item.key}
                     className="neo-inset"
-                    onClick={() => navigate(`/trips/${trip.id}`)}
                     sx={{
-                      p: 2,
-                      borderRadius: 2,
+                      p: 1.2,
+                      borderRadius: 1.5,
+                      bgcolor: "#141313",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        bgcolor: "#2b2a2a",
-                        transform: "translateX(4px)",
-                      },
                     }}
                   >
-                    <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-                      <Box
-                        className="neo-convex"
-                        sx={{
-                          width: 42,
-                          height: 42,
-                          borderRadius: 1.5,
-                          bgcolor: "#201f1f",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: trip.status === "Active" ? "#bef264" : trip.status === "Planning" ? "#818cf8" : "#94a3b8",
-                        }}
-                      >
-                        {trip.status === "Active" ? (
-                          <TwoWheelerIcon fontSize="small" />
-                        ) : (
-                          <MapIcon fontSize="small" />
-                        )}
-                      </Box>
-
-                      <Box>
-                        <Typography
-                          variant="subtitle2"
-                          sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.2, mb: 0.3 }}
-                        >
-                          {trip.name}
-                        </Typography>
-                        <Typography
-                          className="font-mono"
-                          variant="caption"
-                          sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}
-                        >
-                          {trip.status} • {formatDate(trip.startDate)}
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                    <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-                      <Typography
-                        className="font-mono"
-                        sx={{ color: "#818cf8", fontSize: "0.75rem", fontWeight: 800 }}
-                      >
-                        OPEN
+                    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                      {item.isPassed ? (
+                        <CheckCircleIcon sx={{ fontSize: 16, color: "#bef264" }} />
+                      ) : (
+                        <Box sx={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid #f87171" }} />
+                      )}
+                      <Typography variant="body2" sx={{ color: "#f8fafc", fontSize: "0.78rem", fontWeight: 700 }}>
+                        {item.title}
                       </Typography>
-                      <OpenInNewIcon sx={{ fontSize: 16, color: "#818cf8" }} />
                     </Stack>
+                    <Typography className="font-mono" sx={{ fontSize: "0.65rem", color: item.isPassed ? "#bef264" : "#f87171", fontWeight: 700 }}>
+                      {item.isPassed ? "PASSED" : "PENDING"}
+                    </Typography>
                   </Box>
                 ))}
               </Stack>
-            )}
+            </Box>
+
+            {/* Next Accommodation / Stay Preview */}
+            <Box sx={{ pt: 2, borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
+              <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.65rem", fontWeight: 700, mb: 1, textTransform: "uppercase" }}>
+                Next Lodging Stay
+              </Typography>
+              {accommodations.length > 0 ? (
+                <Box className="neo-inset" sx={{ p: 1.2, borderRadius: 1.5, bgcolor: "#141313" }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.82rem" }}>
+                    {accommodations[0].name}
+                  </Typography>
+                  <Typography className="font-mono" sx={{ color: "#818cf8", fontSize: "0.7rem", mt: 0.2 }}>
+                    {formatDate(accommodations[0].checkInDate)} – {formatDate(accommodations[0].checkOutDate)}
+                  </Typography>
+                </Box>
+              ) : (
+                <Typography variant="caption" sx={{ color: "#71717a", fontStyle: "italic" }}>
+                  No lodging booked for this mission.
+                </Typography>
+              )}
+            </Box>
           </Paper>
         </Grid>
       </Grid>
+
+      {/* 4. Recent Expeditions Section (Renamed from Archives) */}
+      <Paper
+        className="neo-convex"
+        sx={{
+          p: 3,
+          borderRadius: 3,
+          bgcolor: "#1a1a1e",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
+      >
+        <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 2.5 }}>
+          <Box>
+            <Typography variant="h6" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
+              Recent Expeditions & Journeys
+            </Typography>
+            <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+              Your motorcycle adventure ledger ({trips.length} total logged)
+            </Typography>
+          </Box>
+
+          <Button
+            onClick={() => navigate("/trips")}
+            className="font-mono"
+            sx={{
+              color: "#818cf8",
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              "&:hover": { color: "#bef264" },
+            }}
+          >
+            View All Expeditions [{trips.length}] →
+          </Button>
+        </Stack>
+
+        {trips.length === 0 ? (
+          <Box sx={{ py: 3, textAlign: "center" }}>
+            <Typography variant="body2" sx={{ color: "#94a3b8" }}>
+              No past expedition records in your ledger.
+            </Typography>
+          </Box>
+        ) : (
+          <Grid container spacing={2}>
+            {trips.slice(0, 4).map((trip) => (
+              <Grid key={trip.id} size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box
+                  className="neo-inset"
+                  onClick={() => navigate(`/trips/${trip.id}`)}
+                  sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: "#141313",
+                    border: "1px solid rgba(255, 255, 255, 0.06)",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      borderColor: "#6366f1",
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                >
+                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start", mb: 1.5 }}>
+                    <Box
+                      sx={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: 1.5,
+                        bgcolor: trip.status === "Active" ? "rgba(190, 242, 100, 0.12)" : "rgba(99, 102, 241, 0.12)",
+                        color: trip.status === "Active" ? "#bef264" : "#818cf8",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {trip.status === "Active" ? <TwoWheelerIcon sx={{ fontSize: 18 }} /> : <MapIcon sx={{ fontSize: 18 }} />}
+                    </Box>
+
+                    <Chip
+                      label={trip.status}
+                      size="small"
+                      sx={{
+                        height: 18,
+                        fontSize: "0.6rem",
+                        fontWeight: 800,
+                        fontFamily: '"JetBrains Mono", monospace',
+                        bgcolor: trip.status === "Active" ? "rgba(190, 242, 100, 0.15)" : "rgba(255, 255, 255, 0.05)",
+                        color: trip.status === "Active" ? "#bef264" : "#94a3b8",
+                      }}
+                    />
+                  </Stack>
+
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.88rem", lineHeight: 1.2, mb: 0.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                  >
+                    {trip.name}
+                  </Typography>
+
+                  <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.68rem" }}>
+                    {formatDate(trip.startDate)}
+                  </Typography>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Paper>
     </Box>
   );
 }
