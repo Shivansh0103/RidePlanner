@@ -1081,26 +1081,36 @@ export default function TripDetailsPage() {
         {/* Tab 2: Itinerary & Waypoints */}
         {activeTab === "itinerary" && (
           <Stack spacing={2.5} role="tabpanel">
-            <Paper
-              className="glass-panel"
-              sx={{
-                height: 440,
-                borderRadius: 2.5,
-                overflow: "hidden",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-              }}
-            >
-              <Map stops={stops} selectedStopId={selectedStopId} onStopSelect={setSelectedStopId} />
-            </Paper>
-
+            {/* Top Stat Bar */}
             <RouteSummary summary={route?.summary} stopCount={validStops.length} />
 
-            <ItinerarySection
-              tripId={trip.id}
-              selectedStopId={selectedStopId}
-              onStopSelect={setSelectedStopId}
-              routeLegs={route?.legs}
-            />
+            {/* Side-by-Side Map & Itinerary List */}
+            <Grid container spacing={2.5} sx={{ alignItems: "stretch" }}>
+              {/* Left Column: Tactical Map */}
+              <Grid size={{ xs: 12, lg: 6.5 }} sx={{ height: { xs: 420, lg: 680 } }}>
+                <Paper
+                  className="glass-panel neo-convex"
+                  sx={{
+                    height: "100%",
+                    borderRadius: 2.5,
+                    overflow: "hidden",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                  }}
+                >
+                  <Map stops={stops} selectedStopId={selectedStopId} onStopSelect={setSelectedStopId} />
+                </Paper>
+              </Grid>
+
+              {/* Right Column: Waypoints List & Sequence */}
+              <Grid size={{ xs: 12, lg: 5.5 }} sx={{ height: { xs: "auto", lg: 680 } }}>
+                <ItinerarySection
+                  tripId={trip.id}
+                  selectedStopId={selectedStopId}
+                  onStopSelect={setSelectedStopId}
+                  routeLegs={route?.legs}
+                />
+              </Grid>
+            </Grid>
           </Stack>
         )}
 

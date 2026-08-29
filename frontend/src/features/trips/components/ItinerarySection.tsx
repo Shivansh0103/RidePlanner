@@ -202,9 +202,13 @@ export default function ItinerarySection({
         aria-labelledby="itinerary-heading"
         className="neo-convex"
         sx={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
           borderRadius: 2.5,
           bgcolor: "#1a1a1e",
           border: "1px solid rgba(255, 255, 255, 0.08)",
+          boxSizing: "border-box",
         }}
       >
         <Box
@@ -251,7 +255,20 @@ export default function ItinerarySection({
 
         <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
 
-        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <CardContent
+          sx={{
+            p: { xs: 1.5, sm: 2.5 },
+            flex: 1,
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "6px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(255, 255, 255, 0.15)",
+              borderRadius: "4px",
+            },
+          }}
+        >
           {isLoading ? (
             <LoadingSpinner />
           ) : isError ? (
@@ -288,7 +305,6 @@ export default function ItinerarySection({
               onEdit={handleEditStop}
               onDelete={handleDeleteStop}
               onReorder={handleReorderStops}
-              headerAction={addStopButton}
               routeLegs={routeLegs}
               selectedStopId={selectedStopId}
               onStopSelect={onStopSelect}

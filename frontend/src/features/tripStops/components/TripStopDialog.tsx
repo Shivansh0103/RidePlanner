@@ -82,7 +82,11 @@ export default function TripStopDialog({
       </DialogTitle>
 
       <DialogContent sx={{ px: 3, py: 1.5 }}>
-        <TripStopForm defaultValues={defaultValues} onSubmit={handleSubmit} />
+        <TripStopForm
+          defaultValues={defaultValues}
+          onSubmit={handleSubmit}
+          onRedirectToAccommodation={onRedirectToAccommodation}
+        />
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2.5, pt: 1 }}>

@@ -17,7 +17,7 @@ export function useScrollToSelection(selectedStopId?: string | null) {
 
     elementRefs.current[selectedStopId]?.scrollIntoView({
       behavior: "smooth",
-      block: "center",
+      block: "nearest",
     });
   }, [selectedStopId]);
 
