@@ -459,18 +459,21 @@ export default function TripDetailsPage() {
         {/* 4. Tab Panels */}
         {/* Tab 0: Authentic Stitch Overview Bento Grid */}
         {activeTab === "overview" && (
-          <Grid container spacing={2.5} role="tabpanel">
-            {/* Left 65% Bento Column */}
-            <Grid size={{ xs: 12, lg: 7.5 }}>
-              <Stack spacing={2.5}>
-                {/* Interactive Map Viewport with Telemetry HUD */}
+          <Stack spacing={2.5} role="tabpanel">
+            {/* Top Row: Tactical Navigation Map + Route Timeline Side-by-Side */}
+            <Grid container spacing={2.5}>
+              {/* Left Column: Interactive Map Viewport with Telemetry HUD */}
+              <Grid size={{ xs: 12, lg: 7 }}>
                 <Paper
-                  className="glass-panel"
+                  className="glass-panel neo-convex"
                   sx={{
                     position: "relative",
                     borderRadius: 2.5,
                     overflow: "hidden",
                     bgcolor: "#1a1a1e",
+                    height: 480,
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
                   <Stack
@@ -482,6 +485,7 @@ export default function TripDetailsPage() {
                       alignItems: "center",
                       justifyContent: "space-between",
                       borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                      bgcolor: "#141313",
                     }}
                   >
                     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
@@ -505,7 +509,7 @@ export default function TripDetailsPage() {
                     </Button>
                   </Stack>
 
-                  <Box sx={{ height: 380, position: "relative" }}>
+                  <Box sx={{ flex: 1, position: "relative", minHeight: 0 }}>
                     <Map stops={stops} selectedStopId={selectedStopId} onStopSelect={setSelectedStopId} />
 
                     {/* Floating Glass Telemetry HUD */}
@@ -544,20 +548,43 @@ export default function TripDetailsPage() {
                     </Box>
                   </Box>
                 </Paper>
+              </Grid>
 
-                {/* Route Timeline Summary Card */}
+              {/* Right Column: Route Timeline Card Directly Next to Map */}
+              <Grid size={{ xs: 12, lg: 5 }}>
                 <Paper
-                  className="glass-panel"
+                  className="glass-panel neo-convex"
                   sx={{
-                    p: 2.5,
+                    p: 2.2,
                     borderRadius: 2.5,
                     bgcolor: "#1a1a1e",
+                    height: 480,
+                    boxSizing: "border-box",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                    <Typography variant="subtitle1" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
-                      Route Timeline
-                    </Typography>
+                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1.8 }}>
+                    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                      <AltRouteIcon sx={{ color: "#818cf8", fontSize: 18 }} />
+                      <Typography variant="subtitle1" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc", fontSize: "0.95rem" }}>
+                        Route Timeline
+                      </Typography>
+                      <Box
+                        className="neo-inset font-mono"
+                        sx={{
+                          px: 1,
+                          py: 0.2,
+                          borderRadius: 1,
+                          fontSize: "0.65rem",
+                          fontWeight: 800,
+                          color: "#818cf8",
+                        }}
+                      >
+                        {stops.length} Stops
+                      </Box>
+                    </Stack>
+
                     <Stack direction="row" spacing={1}>
                       <Button
                         size="small"
@@ -589,15 +616,17 @@ export default function TripDetailsPage() {
                   </Stack>
 
                   {stops.length === 0 ? (
-                    <Typography variant="body2" sx={{ color: "#94a3b8", py: 2, textAlign: "center" }}>
-                      No waypoints mapped yet. Add starting point and stops in the Itinerary tab.
-                    </Typography>
+                    <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", p: 3, textAlign: "center" }}>
+                      <Typography variant="body2" sx={{ color: "#94a3b8" }}>
+                        No waypoints mapped yet. Add starting point and stops in the Itinerary tab.
+                      </Typography>
+                    </Box>
                   ) : (
                     <Box
                       sx={{
-                        maxHeight: 300,
+                        flex: 1,
                         overflowY: "auto",
-                        pr: 0.5,
+                        pr: 0.8,
                         "&::-webkit-scrollbar": {
                           width: "5px",
                         },
@@ -674,310 +703,372 @@ export default function TripDetailsPage() {
                     </Box>
                   )}
                 </Paper>
-              </Stack>
+              </Grid>
             </Grid>
 
-            {/* Right 35% Bento Column */}
-            <Grid size={{ xs: 12, lg: 4.5 }}>
-              <Stack spacing={2.5}>
-                {/* 1. Readiness Health Score Card */}
+            {/* Bottom Row: 4-Column Expedition Telemetry Bento Grid */}
+            <Grid container spacing={2.5}>
+              {/* 1. Readiness Health Score Card */}
+              <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                 <Paper
                   className="glass-panel neo-convex"
                   sx={{
-                    p: 2.5,
+                    p: 2.2,
                     borderRadius: 2.5,
                     bgcolor: "#1a1a1e",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <Typography
-                    className="font-mono"
-                    sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", mb: 2 }}
-                  >
-                    Expedition Readiness
-                  </Typography>
+                  <Box>
+                    <Typography
+                      className="font-mono"
+                      sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", mb: 1.5 }}
+                    >
+                      Expedition Readiness
+                    </Typography>
 
-                  <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 2 }}>
-                    <Box sx={{ position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-                      <CircularProgress
-                        variant="determinate"
-                        value={100}
-                        size={64}
-                        thickness={5}
-                        sx={{ color: "#27272a" }}
-                      />
-                      <CircularProgress
-                        variant="determinate"
-                        value={overallReadinessScore}
-                        size={64}
-                        thickness={5}
-                        sx={{
-                          color: overallReadinessScore >= 80 ? "#bef264" : "#fbbf24",
-                          position: "absolute",
-                          left: 0,
-                          filter: overallReadinessScore >= 80 ? "drop-shadow(0 0 6px rgba(190, 242, 100, 0.5))" : "none",
-                        }}
-                      />
-                      <Box sx={{ position: "absolute", textAlign: "center" }}>
-                        <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 800, color: "#f8fafc" }}>
-                          {overallReadinessScore}%
-                        </Typography>
+                    <Stack direction="row" spacing={1.8} sx={{ alignItems: "center", mb: 1.5 }}>
+                      <Box sx={{ position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                        <CircularProgress
+                          variant="determinate"
+                          value={100}
+                          size={54}
+                          thickness={5}
+                          sx={{ color: "#27272a" }}
+                        />
+                        <CircularProgress
+                          variant="determinate"
+                          value={overallReadinessScore}
+                          size={54}
+                          thickness={5}
+                          sx={{
+                            color: overallReadinessScore >= 80 ? "#bef264" : "#fbbf24",
+                            position: "absolute",
+                            left: 0,
+                            filter: overallReadinessScore >= 80 ? "drop-shadow(0 0 6px rgba(190, 242, 100, 0.5))" : "none",
+                          }}
+                        />
+                        <Box sx={{ position: "absolute", textAlign: "center" }}>
+                          <Typography className="font-mono" sx={{ fontSize: "0.78rem", fontWeight: 800, color: "#f8fafc" }}>
+                            {overallReadinessScore}%
+                          </Typography>
+                        </Box>
                       </Box>
-                    </Box>
 
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="body2" sx={{ color: "#f8fafc", fontWeight: 600, fontSize: "0.82rem", lineHeight: 1.4 }}>
-                        {overallReadinessScore === 100
-                          ? "All mission checklists & requirements nominal."
-                          : "Review pending pre-ride action items."}
-                      </Typography>
-                      <Button
-                        size="small"
-                        onClick={() => setSearchParams({ tab: "readiness" })}
-                        sx={{ color: "#818cf8", fontSize: "0.7rem", p: 0, mt: 0.5, textTransform: "none", fontWeight: 700 }}
-                      >
-                        Inspect Breakdown →
-                      </Button>
-                    </Box>
-                  </Stack>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="body2" sx={{ color: "#f8fafc", fontWeight: 600, fontSize: "0.78rem", lineHeight: 1.3 }}>
+                          {overallReadinessScore === 100
+                            ? "All mission checklists nominal."
+                            : "Pending pre-ride items."}
+                        </Typography>
+                        <Button
+                          size="small"
+                          onClick={() => setSearchParams({ tab: "readiness" })}
+                          sx={{ color: "#818cf8", fontSize: "0.68rem", p: 0, mt: 0.3, textTransform: "none", fontWeight: 700 }}
+                        >
+                          Inspect Breakdown →
+                        </Button>
+                      </Box>
+                    </Stack>
+                  </Box>
 
                   {overallReadinessScore < 100 && (
                     <Box
                       sx={{
-                        p: 1.2,
+                        p: 1,
                         borderRadius: 1.5,
                         bgcolor: "rgba(251, 191, 36, 0.08)",
                         border: "1px solid rgba(251, 191, 36, 0.2)",
                         display: "flex",
                         alignItems: "center",
-                        gap: 1,
+                        gap: 0.8,
                       }}
                     >
-                      <WarningAmberIcon sx={{ color: "#fbbf24", fontSize: 16 }} />
-                      <Typography sx={{ color: "#fbbf24", fontSize: "0.7rem", fontWeight: 600 }}>
-                        Some preparation tasks require attention.
+                      <WarningAmberIcon sx={{ color: "#fbbf24", fontSize: 14 }} />
+                      <Typography sx={{ color: "#fbbf24", fontSize: "0.68rem", fontWeight: 600 }}>
+                        Tasks require attention.
                       </Typography>
                     </Box>
                   )}
                 </Paper>
+              </Grid>
 
-                {/* 2. Fuel & Expense Budget Card */}
+              {/* 2. Fuel & Expense Budget Card */}
+              <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                 <Paper
                   className="glass-panel neo-convex"
                   sx={{
-                    p: 2.5,
+                    p: 2.2,
                     borderRadius: 2.5,
                     bgcolor: "#1a1a1e",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
-                    <Typography
-                      className="font-mono"
-                      sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
-                    >
-                      Budget Tracking
-                    </Typography>
-                    <Typography className="font-mono" sx={{ color: "#818cf8", fontSize: "0.72rem", fontWeight: 800 }}>
-                      {budgetPercent}% Used
-                    </Typography>
-                  </Stack>
+                  <Box>
+                    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                      <Typography
+                        className="font-mono"
+                        sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                      >
+                        Budget Tracking
+                      </Typography>
+                      <Typography className="font-mono" sx={{ color: "#818cf8", fontSize: "0.68rem", fontWeight: 800 }}>
+                        {budgetPercent}% Used
+                      </Typography>
+                    </Stack>
 
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "baseline", mb: 1 }}>
-                    <Typography className="font-mono" sx={{ fontSize: "1.1rem", fontWeight: 800, color: "#f8fafc" }}>
-                      {formatCurrency(spentAmount)}
-                      <Box component="span" sx={{ fontSize: "0.65rem", color: "#94a3b8", ml: 0.5 }}>
-                        SPENT
-                      </Box>
-                    </Typography>
-                    <Typography className="font-mono" sx={{ fontSize: "0.85rem", color: "#94a3b8", fontWeight: 700 }}>
-                      {targetBudget > 0 ? formatCurrency(targetBudget) : "No Target"}
-                      <Box component="span" sx={{ fontSize: "0.65rem", color: "#71717a", ml: 0.5 }}>
-                        TARGET
-                      </Box>
-                    </Typography>
-                  </Stack>
+                    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "baseline", mb: 1 }}>
+                      <Typography className="font-mono" sx={{ fontSize: "1rem", fontWeight: 800, color: "#f8fafc" }}>
+                        {formatCurrency(spentAmount)}
+                        <Box component="span" sx={{ fontSize: "0.6rem", color: "#94a3b8", ml: 0.4 }}>
+                          SPENT
+                        </Box>
+                      </Typography>
+                      <Typography className="font-mono" sx={{ fontSize: "0.78rem", color: "#94a3b8", fontWeight: 700 }}>
+                        {targetBudget > 0 ? formatCurrency(targetBudget) : "No Target"}
+                      </Typography>
+                    </Stack>
 
-                  <Box
-                    className="neo-inset"
-                    sx={{
-                      width: "100%",
-                      height: 6,
-                      borderRadius: 9999,
-                      overflow: "hidden",
-                      bgcolor: "#141313",
-                      mb: 2,
-                    }}
-                  >
                     <Box
-                      className="glow-indigo"
+                      className="neo-inset"
                       sx={{
-                        height: "100%",
-                        width: `${Math.min(100, budgetPercent)}%`,
-                        bgcolor: budgetPercent > 100 ? "#f87171" : "#6366f1",
+                        width: "100%",
+                        height: 5,
                         borderRadius: 9999,
+                        overflow: "hidden",
+                        bgcolor: "#141313",
+                        mb: 1.8,
                       }}
-                    />
+                    >
+                      <Box
+                        className="glow-indigo"
+                        sx={{
+                          height: "100%",
+                          width: `${Math.min(100, budgetPercent)}%`,
+                          bgcolor: budgetPercent > 100 ? "#f87171" : "#6366f1",
+                          borderRadius: 9999,
+                        }}
+                      />
+                    </Box>
                   </Box>
 
-                  <Stack direction="row" spacing={1.5}>
+                  <Stack direction="row" spacing={1}>
                     <Button
                       fullWidth
                       size="small"
                       onClick={() => setSearchParams({ tab: "budget" })}
-                      startIcon={<LocalGasStationIcon sx={{ fontSize: 14 }} />}
+                      startIcon={<LocalGasStationIcon sx={{ fontSize: 13 }} />}
                       sx={{
                         bgcolor: "#201f1f",
                         border: "1px solid rgba(255, 255, 255, 0.08)",
                         color: "#bef264",
-                        fontSize: "0.68rem",
+                        fontSize: "0.65rem",
                         fontFamily: '"JetBrains Mono", monospace',
                         fontWeight: 700,
+                        py: 0.5,
                         "&:hover": { bgcolor: "#27272a" },
                       }}
                     >
-                      Quick Fuel
+                      Fuel
                     </Button>
                     <Button
                       fullWidth
                       size="small"
                       onClick={() => setSearchParams({ tab: "budget" })}
-                      startIcon={<ReceiptLongIcon sx={{ fontSize: 14 }} />}
+                      startIcon={<ReceiptLongIcon sx={{ fontSize: 13 }} />}
                       sx={{
                         bgcolor: "#201f1f",
                         border: "1px solid rgba(255, 255, 255, 0.08)",
                         color: "#818cf8",
-                        fontSize: "0.68rem",
+                        fontSize: "0.65rem",
                         fontFamily: '"JetBrains Mono", monospace',
                         fontWeight: 700,
+                        py: 0.5,
                         "&:hover": { bgcolor: "#27272a" },
                       }}
                     >
-                      Log Expense
+                      Expense
                     </Button>
                   </Stack>
                 </Paper>
+              </Grid>
 
-                {/* 3. Upcoming Stay Card */}
+              {/* 3. Upcoming Stay Card */}
+              <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                 <Paper
                   className="glass-panel neo-convex"
                   sx={{
-                    p: 2.5,
+                    p: 2.2,
                     borderRadius: 2.5,
                     bgcolor: "#1a1a1e",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
-                    <Typography
-                      className="font-mono"
-                      sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
-                    >
-                      Next Accommodation
-                    </Typography>
-                    {nextStay && (
-                      <Chip
-                        label={nextStay.type}
-                        size="small"
-                        sx={{ height: 18, fontSize: "0.6rem", bgcolor: "#27272a", color: "#a1a1aa", borderRadius: 1 }}
-                      />
-                    )}
-                  </Stack>
+                  <Box>
+                    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                      <Typography
+                        className="font-mono"
+                        sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                      >
+                        Next Stay
+                      </Typography>
+                      {nextStay && (
+                        <Chip
+                          label={nextStay.type}
+                          size="small"
+                          sx={{ height: 18, fontSize: "0.6rem", bgcolor: "#27272a", color: "#a1a1aa", borderRadius: 1 }}
+                        />
+                      )}
+                    </Stack>
 
-                  {nextStay ? (
-                    <Box>
-                      <Typography sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.9rem", mb: 0.5 }}>
-                        {nextStay.name}
-                      </Typography>
-                      <Typography className="font-mono" sx={{ color: "#818cf8", fontSize: "0.72rem" }}>
-                        {formatDate(nextStay.checkInDate)} – {formatDate(nextStay.checkOutDate)}
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Box sx={{ textAlign: "center", py: 1 }}>
-                      <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.78rem", mb: 1 }}>
-                        No lodging added to this expedition yet.
+                    {nextStay ? (
+                      <Box sx={{ mt: 0.5 }}>
+                        <Typography sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.85rem", mb: 0.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {nextStay.name}
+                        </Typography>
+                        <Typography className="font-mono" sx={{ color: "#818cf8", fontSize: "0.7rem" }}>
+                          {formatDate(nextStay.checkInDate)} – {formatDate(nextStay.checkOutDate)}
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Box sx={{ textAlign: "center", py: 0.8 }}>
+                        <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.75rem", mb: 0.5 }}>
+                          No lodging booked yet.
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+
+                  <Button
+                    fullWidth
+                    size="small"
+                    onClick={() => setSearchParams({ tab: "accommodation" })}
+                    sx={{
+                      bgcolor: "#201f1f",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      color: "#bef264",
+                      fontSize: "0.65rem",
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontWeight: 700,
+                      py: 0.5,
+                      "&:hover": { bgcolor: "#27272a" },
+                    }}
+                  >
+                    {nextStay ? "View All Lodging →" : "+ Add Stay Details"}
+                  </Button>
+                </Paper>
+              </Grid>
+
+              {/* 4. Critical Gear Checklist Card */}
+              <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                <Paper
+                  className="glass-panel neo-convex"
+                  sx={{
+                    p: 2.2,
+                    borderRadius: 2.5,
+                    bgcolor: "#1a1a1e",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box>
+                    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                      <Typography
+                        className="font-mono"
+                        sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                      >
+                        Critical Gear
                       </Typography>
                       <Button
                         size="small"
-                        onClick={() => setSearchParams({ tab: "accommodation" })}
-                        sx={{ color: "#bef264", fontSize: "0.7rem", fontWeight: 700 }}
+                        onClick={() => setSearchParams({ tab: "checklist" })}
+                        sx={{ color: "#818cf8", fontSize: "0.65rem", p: 0, minWidth: 0 }}
                       >
-                        + Add Stay Details
+                        [{checklist?.totalItemsCount ?? 0}] All →
                       </Button>
-                    </Box>
-                  )}
-                </Paper>
+                    </Stack>
 
-                {/* 4. Critical Gear Checklist Card */}
-                <Paper
-                  className="glass-panel neo-convex"
-                  sx={{
-                    p: 2.5,
-                    borderRadius: 2.5,
-                    bgcolor: "#1a1a1e",
-                  }}
-                >
-                  <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
-                    <Typography
-                      className="font-mono"
-                      sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
-                    >
-                      Critical Gear
-                    </Typography>
-                    <Button
-                      size="small"
-                      onClick={() => setSearchParams({ tab: "checklist" })}
-                      sx={{ color: "#818cf8", fontSize: "0.68rem", p: 0, minWidth: 0 }}
-                    >
-                      View All [{checklist?.totalItemsCount ?? 0}]
-                    </Button>
-                  </Stack>
-
-                  {checklistItems.length === 0 ? (
-                    <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.78rem", py: 1, textAlign: "center" }}>
-                      No gear checklist items added.
-                    </Typography>
-                  ) : (
-                    <Stack spacing={0.8}>
-                      {checklistItems.map((item: ChecklistItem) => (
-                        <Box
-                          key={item.id}
-                          onClick={() => toggleItemMutation.mutate({ itemId: item.id, isCompleted: !item.isCompleted })}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                            cursor: "pointer",
-                            p: 0.5,
-                            borderRadius: 1,
-                            "&:hover": { bgcolor: "rgba(255, 255, 255, 0.03)" },
-                          }}
-                        >
-                          <Checkbox
-                            checked={item.isCompleted}
-                            size="small"
+                    {checklistItems.length === 0 ? (
+                      <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.75rem", py: 1, textAlign: "center" }}>
+                        No checklist items added.
+                      </Typography>
+                    ) : (
+                      <Stack spacing={0.6}>
+                        {checklistItems.slice(0, 3).map((item: ChecklistItem) => (
+                          <Box
+                            key={item.id}
+                            onClick={() => toggleItemMutation.mutate({ itemId: item.id, isCompleted: !item.isCompleted })}
                             sx={{
-                              p: 0,
-                              color: "#52525b",
-                              "&.Mui-checked": { color: "#6366f1" },
-                            }}
-                          />
-                          <Typography
-                            className="font-mono"
-                            sx={{
-                              fontSize: "0.75rem",
-                              color: item.isCompleted ? "#71717a" : "#e4e4e7",
-                              textDecoration: item.isCompleted ? "line-through" : "none",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 0.8,
+                              cursor: "pointer",
+                              p: 0.3,
+                              borderRadius: 1,
+                              "&:hover": { bgcolor: "rgba(255, 255, 255, 0.03)" },
                             }}
                           >
-                            {item.title}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Stack>
-                  )}
+                            <Checkbox
+                              checked={item.isCompleted}
+                              size="small"
+                              sx={{
+                                p: 0,
+                                color: "#52525b",
+                                "&.Mui-checked": { color: "#6366f1" },
+                              }}
+                            />
+                            <Typography
+                              className="font-mono"
+                              sx={{
+                                fontSize: "0.72rem",
+                                color: item.isCompleted ? "#71717a" : "#e4e4e7",
+                                textDecoration: item.isCompleted ? "line-through" : "none",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {item.title}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
+                    )}
+                  </Box>
+
+                  <Button
+                    fullWidth
+                    size="small"
+                    onClick={() => setSearchParams({ tab: "checklist" })}
+                    sx={{
+                      bgcolor: "#201f1f",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      color: "#818cf8",
+                      fontSize: "0.65rem",
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontWeight: 700,
+                      py: 0.5,
+                      mt: 1,
+                      "&:hover": { bgcolor: "#27272a" },
+                    }}
+                  >
+                    Open Checklist →
+                  </Button>
                 </Paper>
-              </Stack>
+              </Grid>
             </Grid>
-          </Grid>
+          </Stack>
         )}
 
         {/* Tab 1: Readiness Section */}
