@@ -1,6 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Box, Checkbox, Chip, IconButton, ListItem, Typography } from "@mui/material";
+import StarIcon from "@mui/icons-material/Star";
+import { Box, Checkbox, Chip, IconButton, ListItem, Stack, Tooltip, Typography } from "@mui/material";
 
 import type { ChecklistItem } from "../types/checklist";
 
@@ -23,19 +24,26 @@ export default function ChecklistItemRow({
     <ListItem
       disableGutters
       sx={{
-        py: 0.6,
+        py: 0.5,
         px: 1,
         borderRadius: 1.5,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         transition: "background-color 0.15s ease",
+        bgcolor: item.isCompleted ? "rgba(255, 255, 255, 0.01)" : "rgba(255, 255, 255, 0.03)",
+        border: "1px solid rgba(255, 255, 255, 0.04)",
+        mb: 0.8,
         "&:hover": {
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
+          backgroundColor: "rgba(255, 255, 255, 0.06)",
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          "& .action-buttons": {
+            opacity: 1,
+          },
         },
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", minWidth: 0, mr: 1 }}>
+      <Box sx={{ display: "flex", alignItems: "center", minWidth: 0, mr: 1, flex: 1 }}>
         <Checkbox
           edge="start"
           checked={item.isCompleted}
@@ -43,10 +51,11 @@ export default function ChecklistItemRow({
           onChange={(e) => onToggle(item.id, e.target.checked)}
           size="small"
           sx={{
-            p: 0.5,
+            p: 0.4,
+            mr: 0.5,
             color: "#52525b",
             "&.Mui-checked": {
-              color: "#6366f1",
+              color: "#bef264",
             },
           }}
         />
@@ -56,8 +65,8 @@ export default function ChecklistItemRow({
             textDecoration: item.isCompleted ? "line-through" : "none",
             color: item.isCompleted ? "#71717a" : "#f8fafc",
             fontWeight: item.isCompleted ? 400 : 600,
-            fontSize: "0.82rem",
-            transition: "color 0.2s ease, text-decoration 0.2s ease",
+            fontSize: "0.8rem",
+            transition: "all 0.2s ease",
             wordBreak: "break-word",
             mr: 1,
           }}
@@ -65,39 +74,59 @@ export default function ChecklistItemRow({
           {item.title}
         </Typography>
 
+        {item.isRequired && !item.isCompleted && (
+          <Tooltip title="Mission-critical required item">
+            <StarIcon sx={{ fontSize: 11, color: "#fbbf24", flexShrink: 0 }} />
+          </Tooltip>
+        )}
+
         {!item.isRequired && (
           <Chip
-            label="Optional"
+            label="Opt"
             size="small"
             sx={{
-              height: 18,
-              fontSize: "0.62rem",
+              height: 16,
+              fontSize: "0.58rem",
               bgcolor: "rgba(255, 255, 255, 0.04)",
-              color: "#94a3b8",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              color: "#71717a",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+              fontFamily: '"JetBrains Mono", monospace',
             }}
           />
         )}
       </Box>
 
-      <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
-        <IconButton
-          size="small"
-          aria-label="edit item"
-          onClick={() => onEdit(item)}
-          sx={{ color: "#71717a", "&:hover": { color: "#818cf8" } }}
-        >
-          <EditIcon sx={{ fontSize: 15 }} />
-        </IconButton>
-        <IconButton
-          size="small"
-          aria-label="delete item"
-          onClick={() => onDelete(item)}
-          sx={{ color: "#71717a", "&:hover": { color: "#f87171" } }}
-        >
-          <DeleteIcon sx={{ fontSize: 15 }} />
-        </IconButton>
-      </Box>
+      <Stack
+        className="action-buttons"
+        direction="row"
+        spacing={0.2}
+        sx={{
+          flexShrink: 0,
+          opacity: { xs: 1, sm: 0.7 },
+          transition: "opacity 0.2s ease",
+        }}
+      >
+        <Tooltip title="Edit item">
+          <IconButton
+            size="small"
+            aria-label="edit item"
+            onClick={() => onEdit(item)}
+            sx={{ p: 0.4, color: "#71717a", "&:hover": { color: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.1)" } }}
+          >
+            <EditIcon sx={{ fontSize: 14 }} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete item">
+          <IconButton
+            size="small"
+            aria-label="delete item"
+            onClick={() => onDelete(item)}
+            sx={{ p: 0.4, color: "#71717a", "&:hover": { color: "#f87171", bgcolor: "rgba(248, 113, 113, 0.1)" } }}
+          >
+            <DeleteIcon sx={{ fontSize: 14 }} />
+          </IconButton>
+        </Tooltip>
+      </Stack>
     </ListItem>
   );
 }

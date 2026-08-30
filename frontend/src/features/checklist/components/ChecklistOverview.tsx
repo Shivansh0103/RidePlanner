@@ -26,22 +26,22 @@ export default function ChecklistOverview({
         border: "1px solid rgba(255, 255, 255, 0.08)",
       }}
     >
-      <CardContent sx={{ p: 2.5 }}>
-        <Stack spacing={2}>
+      <CardContent sx={{ p: 2.2 }}>
+        <Stack spacing={1.8}>
           <Box
             sx={{
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
               alignItems: { xs: "flex-start", sm: "center" },
-              gap: 2,
+              gap: 1.5,
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
               <Box
                 sx={{
-                  width: 40,
-                  height: 40,
+                  width: 38,
+                  height: 38,
                   borderRadius: 2,
                   bgcolor: "rgba(190, 242, 100, 0.12)",
                   color: "#bef264",
@@ -51,17 +51,17 @@ export default function ChecklistOverview({
                   justifyContent: "center",
                 }}
               >
-                <ChecklistRtlIcon sx={{ fontSize: 22 }} />
+                <ChecklistRtlIcon sx={{ fontSize: 20 }} />
               </Box>
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}
+                  sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc", fontSize: "1rem" }}
                 >
                   Fleet & Gear Logistics Readiness
                 </Typography>
-                <Typography className="font-mono" sx={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-                  {completedItemsCount} of {totalItemsCount} checklist items prepared ({completionPercentage}%)
+                <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                  {completedItemsCount} of {totalItemsCount} items ready ({completionPercentage}%)
                 </Typography>
               </Box>
             </Box>
@@ -69,7 +69,7 @@ export default function ChecklistOverview({
             <Button
               variant="contained"
               size="small"
-              startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+              endIcon={<AddIcon sx={{ fontSize: 15 }} />}
               onClick={onAddCategory}
               className="glow-indigo"
               sx={{
@@ -78,7 +78,10 @@ export default function ChecklistOverview({
                 fontFamily: '"JetBrains Mono", monospace',
                 fontSize: "0.72rem",
                 fontWeight: 800,
-                letterSpacing: "0.04em",
+                px: 1.6,
+                py: 0.6,
+                borderRadius: 2,
+                textTransform: "none",
                 alignSelf: { xs: "stretch", sm: "auto" },
                 "&:hover": { bgcolor: "#4f46e5" },
               }}
@@ -87,16 +90,16 @@ export default function ChecklistOverview({
             </Button>
           </Box>
 
-          <Box sx={{ width: "100%", mt: 0.5 }}>
+          <Box sx={{ width: "100%" }}>
             <LinearProgress
               variant="determinate"
               value={completionPercentage}
               sx={{
-                height: 8,
-                borderRadius: 4,
+                height: 6,
+                borderRadius: 3,
                 bgcolor: "rgba(255, 255, 255, 0.08)",
                 "& .MuiLinearProgress-bar": {
-                  borderRadius: 4,
+                  borderRadius: 3,
                   bgcolor: isComplete ? "#bef264" : "#6366f1",
                 },
               }}

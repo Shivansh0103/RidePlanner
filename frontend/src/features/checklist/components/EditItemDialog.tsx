@@ -73,6 +73,7 @@ export default function EditItemDialog({
             label="Item Title"
             fullWidth
             variant="outlined"
+            slotProps={{ inputLabel: { shrink: true } }}
             {...register("title")}
             error={Boolean(errors.title)}
             helperText={errors.title?.message}

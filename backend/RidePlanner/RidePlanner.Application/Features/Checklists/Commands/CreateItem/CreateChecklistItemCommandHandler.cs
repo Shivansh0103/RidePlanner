@@ -32,7 +32,8 @@ public sealed class CreateChecklistItemCommandHandler : IRequestHandler<CreateCh
             ? category.Items.Max(i => i.DisplayOrder) + 1
             : 1;
 
-        category.AddItem(request.Title, nextDisplayOrder, isRequired: request.IsRequired);
+        var item = category.AddItem(request.Title, nextDisplayOrder, isRequired: request.IsRequired);
+        _checklistRepository.AddItem(item);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var updatedCategories = await _checklistRepository.GetCategoriesByTripIdAsync(request.TripId, cancellationToken);

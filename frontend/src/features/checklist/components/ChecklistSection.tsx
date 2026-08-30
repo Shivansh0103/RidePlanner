@@ -1,6 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 
 import ErrorState from "@/shared/ui/ErrorState";
@@ -134,20 +134,21 @@ export default function ChecklistSection({ tripId }: ChecklistSectionProps) {
             </Box>
           </Paper>
         ) : (
-          <Stack spacing={2.5}>
+          <Grid container spacing={2.5}>
             {checklist.categories.map((category) => (
-              <ChecklistCategoryCard
-                key={category.id}
-                category={category}
-                onToggleItem={handleToggleItem}
-                onAddItem={(catId) => setAddItemCategoryId(catId)}
-                onEditItem={(item) => setEditingItem(item)}
-                onDeleteItem={(item) => setDeletingItem(item)}
-                onEditCategory={(cat) => setEditingCategory(cat)}
-                onDeleteCategory={(cat) => setDeletingCategory(cat)}
-              />
+              <Grid key={category.id} size={{ xs: 12, md: 6, lg: 4 }}>
+                <ChecklistCategoryCard
+                  category={category}
+                  onToggleItem={handleToggleItem}
+                  onAddItem={(catId) => setAddItemCategoryId(catId)}
+                  onEditItem={(item) => setEditingItem(item)}
+                  onDeleteItem={(item) => setDeletingItem(item)}
+                  onEditCategory={(cat) => setEditingCategory(cat)}
+                  onDeleteCategory={(cat) => setDeletingCategory(cat)}
+                />
+              </Grid>
             ))}
-          </Stack>
+          </Grid>
         )}
       </Stack>
 

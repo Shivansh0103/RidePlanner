@@ -63,6 +63,7 @@ export default function AddCategoryDialog({
             fullWidth
             variant="outlined"
             placeholder="e.g. Navigation Tools"
+            slotProps={{ inputLabel: { shrink: true } }}
             {...register("name")}
             error={Boolean(errors.name)}
             helperText={errors.name?.message}
