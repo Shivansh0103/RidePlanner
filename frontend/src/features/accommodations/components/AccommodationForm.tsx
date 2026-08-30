@@ -23,11 +23,15 @@ import { accommodationSchema } from "../schemas/accommodationSchema";
 interface AccommodationFormProps {
   defaultValues: AccommodationFormValues;
   onSubmit: (values: AccommodationFormValues) => void;
+  tripStartDate?: string;
+  tripEndDate?: string;
 }
 
 export default function AccommodationForm({
   defaultValues,
   onSubmit,
+  tripStartDate,
+  tripEndDate,
 }: AccommodationFormProps) {
   const [isManualAddress, setIsManualAddress] = useState(
     !defaultValues.placeId && !!defaultValues.formattedAddress
@@ -80,10 +84,10 @@ export default function AccommodationForm({
     }
 
     setValue("placeId", place.placeId);
-    if (!watch("name")) {
-      setValue("name", place.displayName);
+    if (!watch("name") || watch("name") === "") {
+      setValue("name", place.displayName, { shouldValidate: true });
     }
-    setValue("formattedAddress", place.formattedAddress);
+    setValue("formattedAddress", place.formattedAddress, { shouldValidate: true });
     setValue("latitude", place.coordinates.latitude);
     setValue("longitude", place.coordinates.longitude);
   };
@@ -96,7 +100,7 @@ export default function AccommodationForm({
           sx={{
             display: "flex",
             alignItems: "center",
-            justify: "space-between",
+            justifyContent: "space-between",
             bgcolor: "action.hover",
             p: 1.5,
             borderRadius: 2,
@@ -144,6 +148,7 @@ export default function AccommodationForm({
             label="Formatted Address"
             fullWidth
             placeholder="e.g. Near Mall Road, Manali, Himachal Pradesh"
+            slotProps={{ inputLabel: { shrink: true } }}
             error={!!errors.formattedAddress}
             helperText={errors.formattedAddress?.message}
             {...register("formattedAddress")}
@@ -156,6 +161,7 @@ export default function AccommodationForm({
             label="Property / Stay Name"
             fullWidth
             placeholder="e.g. The Grand Manali"
+            slotProps={{ inputLabel: { shrink: true } }}
             error={!!errors.name}
             helperText={errors.name?.message}
             {...register("name")}
@@ -170,6 +176,7 @@ export default function AccommodationForm({
                 select
                 label="Accommodation Type"
                 fullWidth
+                slotProps={{ inputLabel: { shrink: true } }}
                 error={!!errors.type}
                 helperText={errors.type?.message}
               >
@@ -192,7 +199,13 @@ export default function AccommodationForm({
             label="Check-In Date"
             type="date"
             fullWidth
-            slotProps={{ inputLabel: { shrink: true } }}
+            slotProps={{
+              inputLabel: { shrink: true },
+              htmlInput: {
+                min: tripStartDate,
+                max: tripEndDate,
+              },
+            }}
             error={!!errors.checkInDate}
             helperText={errors.checkInDate?.message}
             {...register("checkInDate")}
@@ -202,7 +215,13 @@ export default function AccommodationForm({
             label="Check-Out Date"
             type="date"
             fullWidth
-            slotProps={{ inputLabel: { shrink: true } }}
+            slotProps={{
+              inputLabel: { shrink: true },
+              htmlInput: {
+                min: tripStartDate,
+                max: tripEndDate,
+              },
+            }}
             error={!!errors.checkOutDate}
             helperText={errors.checkOutDate?.message}
             {...register("checkOutDate")}
@@ -238,6 +257,7 @@ export default function AccommodationForm({
             label="Confirmation / Booking #"
             fullWidth
             placeholder="e.g. RES-982341"
+            slotProps={{ inputLabel: { shrink: true } }}
             error={!!errors.confirmationNumber}
             helperText={errors.confirmationNumber?.message}
             {...register("confirmationNumber")}
@@ -247,6 +267,7 @@ export default function AccommodationForm({
             label="Contact Person Name"
             fullWidth
             placeholder="e.g. Front Desk / Host Name"
+            slotProps={{ inputLabel: { shrink: true } }}
             error={!!errors.contactName}
             helperText={errors.contactName?.message}
             {...register("contactName")}
@@ -258,6 +279,7 @@ export default function AccommodationForm({
             label="Contact Phone"
             fullWidth
             placeholder="e.g. +91 98765 43210"
+            slotProps={{ inputLabel: { shrink: true } }}
             error={!!errors.contactPhone}
             helperText={errors.contactPhone?.message}
             {...register("contactPhone")}
@@ -267,6 +289,7 @@ export default function AccommodationForm({
             label="Property Website"
             fullWidth
             placeholder="e.g. https://hotelwebsite.com"
+            slotProps={{ inputLabel: { shrink: true } }}
             error={!!errors.website}
             helperText={errors.website?.message}
             {...register("website")}
@@ -280,6 +303,7 @@ export default function AccommodationForm({
             type="number"
             fullWidth
             slotProps={{
+              inputLabel: { shrink: true },
               input: {
                 startAdornment: (
                   <InputAdornment position="start">₹</InputAdornment>
@@ -302,6 +326,7 @@ export default function AccommodationForm({
           multiline
           rows={3}
           fullWidth
+          slotProps={{ inputLabel: { shrink: true } }}
           error={!!errors.bookingNotes}
           helperText={errors.bookingNotes?.message}
           {...register("bookingNotes")}

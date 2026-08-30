@@ -6,8 +6,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import type { Accommodation } from "../types/accommodation";
 import type { AccommodationFormValues } from "../schemas/accommodationSchema";
+import type { Accommodation } from "../types/accommodation";
 import AccommodationForm from "./AccommodationForm";
 
 interface AccommodationDialogProps {
@@ -17,6 +17,8 @@ interface AccommodationDialogProps {
   editingAccommodation?: Accommodation | null;
   defaultDisplayOrder?: number;
   isLoading?: boolean;
+  tripStartDate?: string;
+  tripEndDate?: string;
 }
 
 export default function AccommodationDialog({
@@ -26,6 +28,8 @@ export default function AccommodationDialog({
   editingAccommodation,
   defaultDisplayOrder = 1,
   isLoading = false,
+  tripStartDate,
+  tripEndDate,
 }: AccommodationDialogProps) {
   const isEditing = !!editingAccommodation;
 
@@ -34,9 +38,11 @@ export default function AccommodationDialog({
     type: editingAccommodation?.type ?? "Hotel",
     checkInDate:
       editingAccommodation?.checkInDate ??
+      tripStartDate ??
       new Date().toISOString().split("T")[0],
     checkOutDate:
       editingAccommodation?.checkOutDate ??
+      tripStartDate ??
       new Date().toISOString().split("T")[0],
     checkInTime: editingAccommodation?.checkInTime ?? "",
     checkOutTime: editingAccommodation?.checkOutTime ?? "",
@@ -68,6 +74,8 @@ export default function AccommodationDialog({
         <AccommodationForm
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
+          tripStartDate={tripStartDate}
+          tripEndDate={tripEndDate}
         />
       </DialogContent>
 

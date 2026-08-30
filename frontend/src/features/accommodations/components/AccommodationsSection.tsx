@@ -35,9 +35,15 @@ import AccommodationDialog from "./AccommodationDialog";
 
 interface AccommodationsSectionProps {
   tripId: string;
+  tripStartDate?: string;
+  tripEndDate?: string;
 }
 
-export default function AccommodationsSection({ tripId }: AccommodationsSectionProps) {
+export default function AccommodationsSection({
+  tripId,
+  tripStartDate,
+  tripEndDate,
+}: AccommodationsSectionProps) {
   const { data: accommodations = [], isLoading, isError } = useAccommodations(tripId);
 
   const createMutation = useCreateAccommodation(tripId);
@@ -397,6 +403,8 @@ export default function AccommodationsSection({ tripId }: AccommodationsSectionP
       {/* Create / Edit Dialog */}
       <AccommodationDialog
         open={isDialogOpen}
+        tripStartDate={tripStartDate}
+        tripEndDate={tripEndDate}
         onClose={() => {
           setIsDialogOpen(false);
           setEditingAccommodation(null);
