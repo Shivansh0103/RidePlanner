@@ -71,21 +71,66 @@ export default function MemoriesSection({ tripId }: MemoriesSectionProps) {
 
   return (
     <Stack spacing={3}>
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-        <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+      <Paper
+        className="neo-convex"
+        sx={{
+          p: 2.2,
+          borderRadius: 2.5,
+          bgcolor: "#1a1a1e",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
+      >
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 1.5 }}
+        >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <CollectionsIcon color="primary" sx={{ fontSize: 32 }} />
+            <Box
+              sx={{
+                width: 38,
+                height: 38,
+                borderRadius: 2,
+                bgcolor: "rgba(192, 132, 252, 0.15)",
+                color: "#c084fc",
+                border: "1px solid rgba(192, 132, 252, 0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CollectionsIcon sx={{ fontSize: 20 }} />
+            </Box>
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "1rem" }}>
                 Ride Memories & Journal ({memories.length})
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
                 Capture highlights, journal logs, photo links, and mileage readings from your journey.
               </Typography>
             </Box>
           </Box>
 
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenAdd}>
+          <Button
+            variant="contained"
+            size="small"
+            endIcon={<AddIcon sx={{ fontSize: 15 }} />}
+            onClick={handleOpenAdd}
+            className="glow-indigo"
+            sx={{
+              bgcolor: "#6366f1",
+              color: "#ffffff",
+              fontFamily: '"JetBrains Mono", monospace',
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              px: 1.6,
+              py: 0.6,
+              borderRadius: 2,
+              textTransform: "none",
+              alignSelf: { xs: "stretch", sm: "auto" },
+              "&:hover": { bgcolor: "#4f46e5" },
+            }}
+          >
             Add Memory
           </Button>
         </Stack>

@@ -86,6 +86,7 @@ export default function AddEditMemoryDialog({
             fullWidth
             variant="outlined"
             placeholder="e.g. Sunset view over Khardung La Pass"
+            slotProps={{ inputLabel: { shrink: true } }}
             {...register("title")}
             error={Boolean(errors.title)}
             helperText={errors.title?.message}
@@ -101,6 +102,7 @@ export default function AddEditMemoryDialog({
             rows={4}
             variant="outlined"
             placeholder="Record what made this moment special, road conditions, gear notes..."
+            slotProps={{ inputLabel: { shrink: true } }}
             {...register("content")}
             error={Boolean(errors.content)}
             helperText={errors.content?.message}
@@ -114,6 +116,7 @@ export default function AddEditMemoryDialog({
             fullWidth
             variant="outlined"
             placeholder="https://example.com/photo.jpg"
+            slotProps={{ inputLabel: { shrink: true } }}
             {...register("imageUrl")}
             error={Boolean(errors.imageUrl)}
             helperText={errors.imageUrl?.message}
@@ -128,6 +131,7 @@ export default function AddEditMemoryDialog({
             fullWidth
             variant="outlined"
             placeholder="e.g. 18450"
+            slotProps={{ inputLabel: { shrink: true } }}
             {...register("odometerReadingKm", {
               setValueAs: (val) =>
                 val === "" || val === null || val === undefined || isNaN(Number(val))
@@ -135,7 +139,6 @@ export default function AddEditMemoryDialog({
                   : Number(val),
             })}
             error={Boolean(errors.odometerReadingKm)}
-
             helperText={errors.odometerReadingKm?.message}
             disabled={isLoading}
             sx={{ mb: 2 }}
