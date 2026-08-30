@@ -1124,7 +1124,11 @@ export default function TripDetailsPage() {
         {/* Tab 4: Budget & Fuel */}
         {activeTab === "budget" && (
           <Box role="tabpanel">
-            <BudgetSection tripId={trip.id} routeDistanceKm={routeDistanceKm} />
+            <BudgetSection
+              tripId={trip.id}
+              routeDistanceKm={routeDistanceKm}
+              tripStatus={trip.status}
+            />
           </Box>
         )}
 

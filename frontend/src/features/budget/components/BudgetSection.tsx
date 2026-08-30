@@ -37,6 +37,7 @@ import LogExpenseDialog from "./LogExpenseDialog";
 interface BudgetSectionProps {
   tripId: string;
   routeDistanceKm?: number;
+  tripStatus?: string;
 }
 
 type BudgetSubTab = "analysis" | "estimates" | "expenses";
@@ -44,11 +45,19 @@ type BudgetSubTab = "analysis" | "estimates" | "expenses";
 export default function BudgetSection({
   tripId,
   routeDistanceKm = 0,
+  tripStatus = "Planning",
 }: BudgetSectionProps) {
   const { data: budget, isLoading, isError } = useTripBudget(tripId);
 
-  // Sub-tab view state
-  const [activeTab, setActiveTab] = useState<BudgetSubTab>("analysis");
+  // Sub-tab view state: auto-select according to expedition lifecycle stage
+  const defaultSubTab: BudgetSubTab =
+    tripStatus === "Active"
+      ? "expenses"
+      : tripStatus === "Completed"
+      ? "analysis"
+      : "estimates";
+
+  const [activeTab, setActiveTab] = useState<BudgetSubTab>(defaultSubTab);
 
   // Budget mutations
   const updateBudgetMutation = useUpdateTripBudget(tripId);
@@ -175,7 +184,7 @@ export default function BudgetSection({
   };
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 2 }}>
       {/* Summary Cards */}
       <BudgetSummaryCards
         targetBudget={budget.targetBudget}
@@ -187,34 +196,60 @@ export default function BudgetSection({
       />
 
       {/* View Switcher Sub-tabs */}
-      <Paper variant="outlined" sx={{ borderRadius: 2, mt: 3 }}>
+      <Paper
+        className="glass-panel neo-convex"
+        sx={{
+          borderRadius: 2,
+          mt: 3,
+          p: 0.5,
+          bgcolor: "#141313",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
+      >
         <Tabs
           value={activeTab}
           onChange={(_, newValue) => setActiveTab(newValue)}
           variant="fullWidth"
-          indicatorColor="primary"
-          textColor="primary"
+          sx={{
+            minHeight: 40,
+            "& .MuiTabs-indicator": {
+              bgcolor: "#6366f1",
+              height: "100%",
+              borderRadius: 1.5,
+              zIndex: 0,
+            },
+            "& .MuiTab-root": {
+              minHeight: 40,
+              py: 0.8,
+              fontSize: "0.74rem",
+              fontFamily: '"JetBrains Mono", monospace',
+              fontWeight: 700,
+              color: "#94a3b8",
+              zIndex: 1,
+              textTransform: "none",
+              "&.Mui-selected": {
+                color: "#ffffff",
+              },
+            },
+          }}
         >
           <Tab
-            icon={<AnalyticsIcon />}
+            icon={<AnalyticsIcon sx={{ fontSize: 16 }} />}
             iconPosition="start"
             label="Budget vs Actual Analysis"
             value="analysis"
-            sx={{ fontWeight: 700 }}
           />
           <Tab
-            icon={<FormatListBulletedIcon />}
+            icon={<FormatListBulletedIcon sx={{ fontSize: 16 }} />}
             iconPosition="start"
             label="Planned Estimates"
             value="estimates"
-            sx={{ fontWeight: 700 }}
           />
           <Tab
-            icon={<ReceiptLongIcon />}
+            icon={<ReceiptLongIcon sx={{ fontSize: 16 }} />}
             iconPosition="start"
             label={`Expense Log (${allExpenses.length})`}
             value="expenses"
-            sx={{ fontWeight: 700 }}
           />
         </Tabs>
       </Paper>
