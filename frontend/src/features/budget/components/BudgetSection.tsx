@@ -2,9 +2,14 @@ import AnalyticsIcon from "@mui/icons-material/Analytics";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { Box, Paper, Tab, Tabs } from "@mui/material";
-import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 
+import { summaryKeys } from "@/features/summary/api/summaryKeys";
 import ErrorState from "@/shared/ui/ErrorState";
+
+import { calculateFuelEstimate } from "../api/budgetApi";
+import { budgetKeys } from "../api/budgetKeys";
 
 import { useCalculateFuelEstimate } from "../hooks/useCalculateFuelEstimate";
 import { useCreateBudgetEstimate } from "../hooks/useCreateBudgetEstimate";
@@ -70,6 +75,46 @@ export default function BudgetSection({
   const createExpenseMutation = useCreateExpense(tripId);
   const updateExpenseMutation = useUpdateExpense(tripId);
   const deleteExpenseMutation = useDeleteExpense(tripId);
+
+  const queryClient = useQueryClient();
+
+  // Auto-sync fuel estimate whenever route distance changes
+  const lastSyncedDistanceRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (
+      routeDistanceKm > 0 &&
+      Math.abs(routeDistanceKm - lastSyncedDistanceRef.current) >= 0.1 &&
+      budget
+    ) {
+      const fuelCategory = budget.categories?.find((c) => c.category === "Fuel");
+      const hasOnlyAutoFuel =
+        !fuelCategory ||
+        fuelCategory.estimates.length === 0 ||
+        fuelCategory.estimates.every((e) =>
+          e.title.toLowerCase().includes("fuel") ||
+          e.title.toLowerCase().includes("route") ||
+          e.title.toLowerCase().includes("petrol") ||
+          e.title.toLowerCase().includes("diesel")
+        );
+
+      if (hasOnlyAutoFuel) {
+        lastSyncedDistanceRef.current = routeDistanceKm;
+        calculateFuelEstimate(tripId, {
+          routeDistanceKm,
+          vehicleMileage: 15,
+          fuelPricePerLiter: 100,
+        })
+          .then(() => {
+            queryClient.invalidateQueries({ queryKey: budgetKeys.detail(tripId) });
+            queryClient.invalidateQueries({ queryKey: summaryKeys.tripSummary(tripId) });
+          })
+          .catch((err) => {
+            console.warn("Silent background fuel sync failed:", err);
+          });
+      }
+    }
+  }, [routeDistanceKm, tripId, budget?.targetBudget, queryClient]);
 
   // Budget Dialog states
   const [isEditBudgetOpen, setIsEditBudgetOpen] = useState(false);
@@ -266,6 +311,8 @@ export default function BudgetSection({
           onAddEstimate={handleOpenAddEstimate}
           onEditEstimate={handleOpenEditEstimate}
           onDeleteEstimate={handleOpenDeleteEstimate}
+          routeDistanceKm={routeDistanceKm}
+          onCalculateFuel={() => setIsFuelCalculatorOpen(true)}
         />
       )}
 

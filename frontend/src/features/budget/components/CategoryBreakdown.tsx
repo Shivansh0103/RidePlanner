@@ -34,6 +34,8 @@ interface CategoryBreakdownProps {
   onAddEstimate: (categoryType: BudgetCategoryType) => void;
   onEditEstimate: (estimate: BudgetEstimate) => void;
   onDeleteEstimate: (estimate: BudgetEstimate) => void;
+  routeDistanceKm?: number;
+  onCalculateFuel?: () => void;
 }
 
 const CATEGORY_META: Record<
@@ -83,6 +85,8 @@ export default function CategoryBreakdown({
   onAddEstimate,
   onEditEstimate,
   onDeleteEstimate,
+  routeDistanceKm = 0,
+  onCalculateFuel,
 }: CategoryBreakdownProps) {
   const [selectedCategoryType, setSelectedCategoryType] = useState<BudgetCategoryType>(
     categories[0]?.category || "Fuel"
@@ -385,6 +389,65 @@ export default function CategoryBreakdown({
                   </Typography>
                 </Box>
               </Stack>
+
+              {/* Dynamic Live Route Distance Telemetry for Fuel */}
+              {selectedCategory.category === "Fuel" && (
+                <Box
+                  className="neo-inset"
+                  sx={{
+                    p: 1.5,
+                    mt: 2,
+                    borderRadius: 2,
+                    bgcolor: "#141313",
+                    border: "1px solid rgba(56, 189, 248, 0.25)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 1,
+                  }}
+                >
+                  <Stack direction="row" spacing={1.2} sx={{ alignItems: "center" }}>
+                    <LocalGasStationIcon sx={{ color: "#38bdf8", fontSize: 22 }} />
+                    <Box>
+                      <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#f8fafc", fontWeight: 700 }}>
+                        ROUTE DISTANCE:{" "}
+                        <span style={{ color: "#38bdf8" }}>
+                          {routeDistanceKm > 0 ? `${routeDistanceKm.toFixed(1)} km` : "No route plotted yet"}
+                        </span>
+                      </Typography>
+                      <Typography variant="caption" sx={{ fontSize: "0.66rem", color: "#94a3b8" }}>
+                        {routeDistanceKm > 0
+                          ? `Est. fuel cost @ 15 km/L (₹100/L) is ~₹${Math.round((routeDistanceKm / 15) * 100).toLocaleString()}`
+                          : "Add stops in the Route & Itinerary tab to calculate distance."}
+                      </Typography>
+                    </Box>
+                  </Stack>
+
+                  {routeDistanceKm > 0 && onCalculateFuel && (
+                    <Button
+                      size="small"
+                      variant="contained"
+                      onClick={onCalculateFuel}
+                      className="glow-indigo"
+                      sx={{
+                        bgcolor: "#38bdf8",
+                        color: "#0f172a",
+                        fontWeight: 800,
+                        fontSize: "0.68rem",
+                        fontFamily: '"JetBrains Mono", monospace',
+                        textTransform: "none",
+                        py: 0.5,
+                        px: 1.4,
+                        borderRadius: 1.5,
+                        "&:hover": { bgcolor: "#0284c7", color: "#ffffff" },
+                      }}
+                    >
+                      ⚙️ Custom Mileage / Rate
+                    </Button>
+                  )}
+                </Box>
+              )}
 
               {/* Estimate Items List */}
               <Box sx={{ pt: 2, minHeight: 220 }}>

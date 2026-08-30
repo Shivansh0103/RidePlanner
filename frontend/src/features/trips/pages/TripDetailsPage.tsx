@@ -1,5 +1,4 @@
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import AddIcon from "@mui/icons-material/Add";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AssessmentIcon from "@mui/icons-material/Assessment";
@@ -585,34 +584,26 @@ export default function TripDetailsPage() {
                       </Box>
                     </Stack>
 
-                    <Stack direction="row" spacing={1}>
-                      <Button
-                        size="small"
-                        onClick={() => setSearchParams({ tab: "itinerary" })}
-                        startIcon={<AddIcon sx={{ fontSize: 14 }} />}
-                        sx={{
-                          color: "#818cf8",
-                          fontFamily: '"JetBrains Mono", monospace',
-                          fontSize: "0.68rem",
-                          fontWeight: 700,
-                        }}
-                      >
-                        Add Stop
-                      </Button>
-                      <Button
-                        size="small"
-                        onClick={() => setSearchParams({ tab: "accommodation" })}
-                        startIcon={<AddIcon sx={{ fontSize: 14 }} />}
-                        sx={{
-                          color: "#bef264",
-                          fontFamily: '"JetBrains Mono", monospace',
-                          fontSize: "0.68rem",
-                          fontWeight: 700,
-                        }}
-                      >
-                        Add Stay
-                      </Button>
-                    </Stack>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => setSearchParams({ tab: "itinerary" })}
+                      startIcon={<EditIcon sx={{ fontSize: 13 }} />}
+                      sx={{
+                        color: "#818cf8",
+                        borderColor: "rgba(99, 102, 241, 0.35)",
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.68rem",
+                        fontWeight: 700,
+                        textTransform: "none",
+                        px: 1.2,
+                        py: 0.3,
+                        borderRadius: 1.5,
+                        "&:hover": { borderColor: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.08)" },
+                      }}
+                    >
+                      Edit Itinerary →
+                    </Button>
                   </Stack>
 
                   {stops.length === 0 ? (
@@ -1108,6 +1099,8 @@ export default function TripDetailsPage() {
                   selectedStopId={selectedStopId}
                   onStopSelect={setSelectedStopId}
                   routeLegs={route?.legs}
+                  tripStartDate={trip.startDate}
+                  tripEndDate={trip.endDate}
                 />
               </Grid>
             </Grid>
@@ -1117,7 +1110,11 @@ export default function TripDetailsPage() {
         {/* Tab 3: Accommodations */}
         {activeTab === "accommodation" && (
           <Box role="tabpanel">
-            <AccommodationsSection tripId={trip.id} />
+            <AccommodationsSection
+              tripId={trip.id}
+              tripStartDate={trip.startDate}
+              tripEndDate={trip.endDate}
+            />
           </Box>
         )}
 
