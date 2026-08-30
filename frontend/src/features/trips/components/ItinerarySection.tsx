@@ -1,5 +1,6 @@
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
+import FlagIcon from "@mui/icons-material/Flag";
 import HotelIcon from "@mui/icons-material/Hotel";
 import {
   Box,
@@ -39,6 +40,8 @@ type ItinerarySectionProps = {
   selectedStopId?: string | null;
   onStopSelect?: (stopId: string) => void;
   routeLegs?: RouteLeg[];
+  tripStartDate?: string;
+  tripEndDate?: string;
 };
 
 export default function ItinerarySection({
@@ -46,6 +49,8 @@ export default function ItinerarySection({
   selectedStopId,
   onStopSelect,
   routeLegs: propsRouteLegs,
+  tripStartDate,
+  tripEndDate,
 }: ItinerarySectionProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isAccommodationDialogOpen, setIsAccommodationDialogOpen] = useState(false);
@@ -125,200 +130,184 @@ export default function ItinerarySection({
     reorderTripStopsMutation.mutate(orderedStopIds);
   };
 
-  const addStopButton = (
-    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-      <Button
-        variant="outlined"
-        size="small"
-        endIcon={<HotelIcon sx={{ fontSize: 14 }} />}
-        onClick={() => handleOpenAccommodationDialog(null)}
-        sx={{
-          bgcolor: "rgba(190, 242, 100, 0.05)",
-          borderColor: "rgba(190, 242, 100, 0.3)",
-          color: "#bef264",
-          fontFamily: '"JetBrains Mono", monospace',
-          fontSize: "0.72rem",
-          fontWeight: 700,
-          px: 1.4,
-          py: 0.55,
-          borderRadius: 2,
-          textTransform: "none",
-          transition: "all 0.2s ease",
-          "&:hover": {
-            borderColor: "#bef264",
-            bgcolor: "rgba(190, 242, 100, 0.12)",
-            boxShadow: "0 0 12px rgba(190, 242, 100, 0.2)",
-          },
-        }}
-      >
-        Add Stay
-      </Button>
-
-      <Button
-        variant="contained"
-        size="small"
-        endIcon={<AddLocationAltIcon sx={{ fontSize: 14 }} />}
-        onClick={handleOpenCreateDialog}
-        className="glow-indigo"
-        aria-label="Add a new stop to itinerary"
-        sx={{
-          bgcolor: "#6366f1",
-          color: "#ffffff",
-          fontFamily: '"JetBrains Mono", monospace',
-          fontSize: "0.72rem",
-          fontWeight: 800,
-          letterSpacing: "0.02em",
-          px: 1.5,
-          py: 0.55,
-          borderRadius: 2,
-          textTransform: "none",
-          transition: "all 0.2s ease",
-          "&:hover": {
-            bgcolor: "#4f46e5",
-            boxShadow: "0 0 16px rgba(99, 102, 241, 0.4)",
-          },
-        }}
-      >
-        Add Waypoint
-      </Button>
-    </Stack>
-  );
-
-  const handleRedirectToAccommodation = (values: TripStopFormValues) => {
-    setIsCreateDialogOpen(false);
-    setSelectedStop(null);
-    setEditingAccommodation({
-      id: "",
-      tripId,
-      tripStopId: "",
-      name: values.name,
+  const handleRedirectToAccommodation = (stopValues: TripStopFormValues) => {
+    const formValues: AccommodationFormValues = {
+      name: stopValues.name || "",
       type: "Hotel",
-      checkInDate: values.arrivalDate || new Date().toISOString().split("T")[0],
-      checkOutDate: values.departureDate || new Date().toISOString().split("T")[0],
-      checkInTime: null,
-      checkOutTime: null,
-      nights: 1,
-      formattedAddress: values.formattedAddress,
-      latitude: values.latitude ?? null,
-      longitude: values.longitude ?? null,
-      placeId: values.placeId ?? null,
+      placeId: stopValues.placeId || "",
+      formattedAddress: stopValues.formattedAddress || "",
+      latitude: stopValues.latitude ?? null,
+      longitude: stopValues.longitude ?? null,
+      checkInDate: stopValues.arrivalDate || tripStartDate || "",
+      checkOutDate: stopValues.departureDate || tripStartDate || "",
+      checkInTime: "",
+      checkOutTime: "",
+      cost: 0,
+      bookingNotes: stopValues.notes || "",
       confirmationNumber: "",
       contactName: "",
       contactPhone: "",
       website: "",
-      bookingNotes: values.notes ?? "",
-      cost: 0,
-      displayOrder: 1,
-    });
+    };
+
+    setEditingAccommodation(formValues as unknown as Accommodation);
     setIsAccommodationDialogOpen(true);
   };
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (isError) {
+    return <ErrorState message="Failed to load itinerary stops." />;
+  }
+
+  // Calculate default dates for new stop
+  const lastStop = stops.length > 0 ? stops[stops.length - 1] : null;
+  const initialStopCategory = stops.length === 0 ? TripStopCategory.Checkpoint : TripStopCategory.Checkpoint;
+  const initialStopArrival = stops.length === 0 ? (tripStartDate || "") : (lastStop?.departureDate || tripStartDate || "");
+  const initialStopDeparture = stops.length === 0 ? (tripStartDate || "") : (lastStop?.departureDate || tripStartDate || "");
+
   return (
-    <>
+    <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
       <Card
-        component="section"
-        aria-labelledby="itinerary-heading"
         className="neo-convex"
         sx={{
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
           borderRadius: 2.5,
           bgcolor: "#1a1a1e",
           border: "1px solid rgba(255, 255, 255, 0.08)",
-          boxSizing: "border-box",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
         }}
       >
-        <Box
-          sx={{
-            py: 1.8,
-            px: { xs: 2, sm: 2.5 },
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "nowrap",
-            gap: 1.5,
-          }}
-        >
-          <Stack direction="row" spacing={1.2} sx={{ alignItems: "center", minWidth: 0 }}>
-            <AltRouteIcon sx={{ color: "#818cf8", fontSize: 20 }} />
-            <Typography
-              id="itinerary-heading"
-              variant="h6"
-              sx={{
-                fontFamily: '"Outfit", sans-serif',
-                fontWeight: 800,
-                color: "#f8fafc",
-                fontSize: { xs: "0.95rem", sm: "1.05rem" },
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
+        <CardContent sx={{ p: 2.5, pb: 1, flexShrink: 0 }}>
+          <Stack spacing={1.5}>
+            {/* Header: Title, Telemetry Count & Actions */}
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1 }}
             >
-              Waypoint Sequence
-            </Typography>
-            {stops.length > 0 && (
-              <Chip
-                label={`${stops.length} ${stops.length === 1 ? "Stop" : "Stops"}`}
-                size="small"
-                sx={{
-                  bgcolor: "rgba(99, 102, 241, 0.15)",
-                  color: "#818cf8",
-                  border: "1px solid rgba(99, 102, 241, 0.3)",
-                  fontFamily: '"JetBrains Mono", monospace',
-                  fontWeight: 700,
-                  fontSize: "0.66rem",
-                  height: 22,
-                }}
-              />
-            )}
+              <Stack direction="row" spacing={1.2} sx={{ alignItems: "center" }}>
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 2,
+                    bgcolor: "rgba(99, 102, 241, 0.15)",
+                    color: "#818cf8",
+                    border: "1px solid rgba(99, 102, 241, 0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <AltRouteIcon sx={{ fontSize: 20 }} />
+                </Box>
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "1rem" }}>
+                    Expedition Route Itinerary
+                  </Typography>
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8" }}>
+                    Drag cards to re-sequence waypoint flow
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <Chip
+                  label={`${stops.length} Stop${stops.length === 1 ? "" : "s"}`}
+                  size="small"
+                  sx={{
+                    bgcolor: "rgba(190, 242, 100, 0.12)",
+                    color: "#bef264",
+                    border: "1px solid rgba(190, 242, 100, 0.3)",
+                    fontWeight: 700,
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.68rem",
+                    height: 22,
+                  }}
+                />
+
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<HotelIcon sx={{ fontSize: 14 }} />}
+                  onClick={() => handleOpenAccommodationDialog(null)}
+                  sx={{
+                    borderColor: "rgba(99, 102, 241, 0.4)",
+                    color: "#818cf8",
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.68rem",
+                    fontWeight: 700,
+                    height: 28,
+                    px: 1.2,
+                    "&:hover": { borderColor: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.08)" },
+                  }}
+                >
+                  Add Stay
+                </Button>
+
+                <Button
+                  variant="contained"
+                  size="small"
+                  startIcon={<AddLocationAltIcon sx={{ fontSize: 14 }} />}
+                  onClick={handleOpenCreateDialog}
+                  className="glow-indigo"
+                  sx={{
+                    bgcolor: "#6366f1",
+                    color: "#ffffff",
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.68rem",
+                    fontWeight: 800,
+                    height: 28,
+                    px: 1.5,
+                    "&:hover": { bgcolor: "#4f46e5" },
+                  }}
+                >
+                  {stops.length === 0 ? "Add Origin" : "Add Stop"}
+                </Button>
+              </Stack>
+            </Stack>
+
+            <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
           </Stack>
+        </CardContent>
 
-          {addStopButton}
-        </Box>
-
-        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
-
+        {/* Scrollable Waypoint List */}
         <CardContent
           sx={{
-            p: { xs: 1.5, sm: 2.5 },
+            p: 2,
+            pt: 0,
             flex: 1,
             overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "6px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              borderRadius: "4px",
-            },
+            "&::-webkit-scrollbar": { width: 5 },
+            "&::-webkit-scrollbar-track": { bgcolor: "transparent" },
+            "&::-webkit-scrollbar-thumb": { bgcolor: "rgba(255, 255, 255, 0.12)", borderRadius: 3 },
           }}
         >
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : isError ? (
-            <ErrorState message="Unable to load itinerary." />
-          ) : stops.length === 0 ? (
+          {stops.length === 0 ? (
             <EmptyState
-              icon={<AltRouteIcon sx={{ fontSize: 56, color: "#818cf8" }} />}
-              title="No waypoints mapped yet"
-              description="Establish your route sequence by adding your departure point, mountain passes, fuel stations, and overnight stays."
+              title="No Waypoints Plotted"
+              description="Establish your route by defining the origin start point, scenic passes, and destinations."
               action={
-                <Stack direction="row" spacing={1.5}>
-                  <Button
-                    variant="outlined"
-                    startIcon={<HotelIcon />}
-                    onClick={() => handleOpenAccommodationDialog(null)}
-                    sx={{ color: "#bef264", borderColor: "rgba(190, 242, 100, 0.4)" }}
-                  >
-                    Add Stay
-                  </Button>
+                <Stack direction="row" spacing={1.5} sx={{ mt: 1 }}>
                   <Button
                     variant="contained"
-                    startIcon={<AddLocationAltIcon />}
+                    startIcon={<FlagIcon />}
                     onClick={handleOpenCreateDialog}
-                    sx={{ bgcolor: "#6366f1" }}
+                    className="glow-indigo"
+                    sx={{
+                      bgcolor: "#6366f1",
+                      color: "#ffffff",
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: "0.72rem",
+                      fontWeight: 800,
+                    }}
                   >
-                    Add First Waypoint
+                    Add Expedition Start Point
                   </Button>
                 </Stack>
               }
@@ -342,15 +331,18 @@ export default function ItinerarySection({
         open={isCreateDialogOpen}
         tripId={tripId}
         mode="create"
+        tripStartDate={tripStartDate}
+        tripEndDate={tripEndDate}
+        isFirstStop={stops.length === 0}
         defaultValues={{
           name: "",
           placeId: null,
           formattedAddress: "",
           latitude: null,
           longitude: null,
-          category: TripStopCategory.Destination,
-          arrivalDate: "",
-          departureDate: "",
+          category: initialStopCategory,
+          arrivalDate: initialStopArrival,
+          departureDate: initialStopDeparture,
           notes: "",
         }}
         onClose={() => setIsCreateDialogOpen(false)}
@@ -363,6 +355,9 @@ export default function ItinerarySection({
           tripId={tripId}
           mode="edit"
           stopId={selectedStop.id}
+          tripStartDate={tripStartDate}
+          tripEndDate={tripEndDate}
+          isFirstStop={stops[0]?.id === selectedStop.id}
           defaultValues={{
             name: selectedStop.name,
             placeId: selectedStop.placeId,
@@ -382,6 +377,8 @@ export default function ItinerarySection({
       {/* Canonical Accommodation Editor Dialog */}
       <AccommodationDialog
         open={isAccommodationDialogOpen}
+        tripStartDate={tripStartDate}
+        tripEndDate={tripEndDate}
         onClose={() => {
           setIsAccommodationDialogOpen(false);
           setEditingAccommodation(null);
@@ -398,11 +395,11 @@ export default function ItinerarySection({
         open={stopToDelete !== null}
         title="Delete Stop"
         message={`Are you sure you want to permanently delete "${stopToDelete?.name}"? This action cannot be undone.`}
-        confirmText="Delete"
+        confirmText="Delete Stop"
         loading={deleteTripStopMutation.isPending}
         onClose={() => setStopToDelete(null)}
         onConfirm={handleConfirmDelete}
       />
-    </>
+    </Box>
   );
 }

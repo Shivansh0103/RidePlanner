@@ -28,17 +28,29 @@ type TripStopFormProps = {
   defaultValues: TripStopFormValues;
   onSubmit: (values: TripStopFormValues) => void;
   onRedirectToAccommodation?: (values: TripStopFormValues) => void;
+  tripStartDate?: string;
+  tripEndDate?: string;
+  isFirstStop?: boolean;
 };
 
 type StopRole = "START" | "WAYPOINT" | "STAY" | "DESTINATION";
 
-export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAccommodation }: TripStopFormProps) {
-  // Determine initial role based on default values
+export default function TripStopForm({
+  defaultValues,
+  onSubmit,
+  onRedirectToAccommodation,
+  tripStartDate,
+  tripEndDate,
+  isFirstStop,
+}: TripStopFormProps) {
+  // Determine initial role based on default values or first stop
   const initialRole: StopRole =
-    defaultValues.category === TripStopCategory.Hotel
+    isFirstStop
+      ? "START"
+      : defaultValues.category === TripStopCategory.Hotel
       ? "STAY"
-      : defaultValues.arrivalDate && defaultValues.departureDate && defaultValues.arrivalDate !== defaultValues.departureDate
-      ? "STAY"
+      : defaultValues.category === TripStopCategory.Destination
+      ? "DESTINATION"
       : "WAYPOINT";
 
   const [stopRole, setStopRole] = useState<StopRole>(initialRole);
@@ -53,7 +65,11 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
     formState: { errors },
   } = useForm<TripStopFormValues>({
     resolver: zodResolver(tripStopSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      arrivalDate: defaultValues.arrivalDate || tripStartDate || "",
+      departureDate: defaultValues.departureDate || tripStartDate || "",
+    },
   });
 
   const category = watch("category");
@@ -61,8 +77,15 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
   const departureDate = watch("departureDate");
 
   useEffect(() => {
-    reset(defaultValues);
-  }, [defaultValues, reset]);
+    reset({
+      ...defaultValues,
+      arrivalDate: defaultValues.arrivalDate || tripStartDate || "",
+      departureDate: defaultValues.departureDate || tripStartDate || "",
+    });
+    if (isFirstStop) {
+      setStopRole("START");
+    }
+  }, [defaultValues, tripStartDate, isFirstStop, reset]);
 
   const selectedLocation: PlaceLocation | null =
     watch("placeId") && watch("formattedAddress")
@@ -80,12 +103,20 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
   const handleRoleChange = (_: React.SyntheticEvent, newRole: StopRole) => {
     setStopRole(newRole);
     if (newRole === "START") {
+      setValue("category", TripStopCategory.Checkpoint);
       if (departureDate) setValue("arrivalDate", departureDate);
     } else if (newRole === "DESTINATION") {
       setValue("category", TripStopCategory.Destination);
       if (arrivalDate) setValue("departureDate", arrivalDate);
     } else if (newRole === "STAY") {
       setValue("category", TripStopCategory.Hotel);
+      if (onRedirectToAccommodation) {
+        onRedirectToAccommodation({
+          ...watch(),
+          category: TripStopCategory.Hotel,
+        });
+        return;
+      }
     } else if (newRole === "WAYPOINT") {
       if (category === TripStopCategory.Hotel) {
         setValue("category", TripStopCategory.Checkpoint);
@@ -199,6 +230,7 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
           label="Stop Name"
           placeholder="e.g. Manali Base Camp or Rohtang Pass"
           fullWidth
+          slotProps={{ inputLabel: { shrink: true } }}
           error={!!errors.name}
           helperText={errors.name?.message}
           {...register("name")}
@@ -219,8 +251,8 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
             setValue("formattedAddress", place.formattedAddress);
             setValue("latitude", place.coordinates.latitude);
             setValue("longitude", place.coordinates.longitude);
-            if (!watch("name")) {
-              setValue("name", place.displayName);
+            if (!watch("name") || watch("name") === "") {
+              setValue("name", place.displayName, { shouldValidate: true });
             }
           }}
         />
@@ -234,6 +266,7 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
               select
               label="Stop Category"
               fullWidth
+              slotProps={{ inputLabel: { shrink: true } }}
               error={!!errors.category}
               helperText={errors.category?.message}
             >
@@ -246,7 +279,7 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
           )}
         />
 
-        {/* Dynamic Context-Aware Date Fields */}
+        {/* Dynamic Context-Aware Date Fields with Trip Bounds */}
         {stopRole === "START" && (
           <TextField
             label="Departure Date (Day of Departure)"
@@ -254,9 +287,13 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
             fullWidth
             slotProps={{
               inputLabel: { shrink: true },
+              htmlInput: {
+                min: tripStartDate,
+                max: tripEndDate,
+              },
             }}
             error={!!errors.departureDate}
-            helperText={errors.departureDate?.message || "Starting point of your expedition"}
+            helperText={errors.departureDate?.message || (tripStartDate ? `Within trip bounds (${tripStartDate} to ${tripEndDate})` : "Starting point of your expedition")}
             value={watch("departureDate")}
             onChange={(e) => {
               setValue("departureDate", e.target.value);
@@ -272,9 +309,13 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
             fullWidth
             slotProps={{
               inputLabel: { shrink: true },
+              htmlInput: {
+                min: tripStartDate,
+                max: tripEndDate,
+              },
             }}
             error={!!errors.arrivalDate}
-            helperText={errors.arrivalDate?.message || "Final destination of your expedition"}
+            helperText={errors.arrivalDate?.message || (tripEndDate ? `Within trip bounds (${tripStartDate} to ${tripEndDate})` : "Final destination of your expedition")}
             value={watch("arrivalDate")}
             onChange={(e) => {
               setValue("arrivalDate", e.target.value);
@@ -290,6 +331,10 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
             fullWidth
             slotProps={{
               inputLabel: { shrink: true },
+              htmlInput: {
+                min: tripStartDate,
+                max: tripEndDate,
+              },
             }}
             error={!!errors.arrivalDate}
             helperText={errors.arrivalDate?.message || "Date of pass, fuel stop, or en-route waypoint"}
@@ -309,6 +354,10 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
               fullWidth
               slotProps={{
                 inputLabel: { shrink: true },
+                htmlInput: {
+                  min: tripStartDate,
+                  max: tripEndDate,
+                },
               }}
               error={!!errors.arrivalDate}
               helperText={errors.arrivalDate?.message}
@@ -321,6 +370,10 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
               fullWidth
               slotProps={{
                 inputLabel: { shrink: true },
+                htmlInput: {
+                  min: tripStartDate,
+                  max: tripEndDate,
+                },
               }}
               error={!!errors.departureDate}
               helperText={errors.departureDate?.message}
@@ -335,6 +388,7 @@ export default function TripStopForm({ defaultValues, onSubmit, onRedirectToAcco
           multiline
           rows={3}
           fullWidth
+          slotProps={{ inputLabel: { shrink: true } }}
           error={!!errors.notes}
           helperText={errors.notes?.message}
           {...register("notes")}

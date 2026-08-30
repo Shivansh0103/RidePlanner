@@ -33,6 +33,11 @@ public sealed class CreateTripStopCommandHandler : IRequestHandler<CreateTripSto
         if (trip is null)
             throw new NotFoundException("Trip", request.TripId);
 
+        if (request.ArrivalDate < trip.StartDate || request.DepartureDate > trip.EndDate)
+        {
+            throw new DomainException($"Stop dates must be within the trip date range ({trip.StartDate:dd-MM-yyyy} to {trip.EndDate:dd-MM-yyyy}).");
+        }
+
         var existingStops = await _tripStopRepository.GetByTripIdAsync(request.TripId, cancellationToken);
         int initialOrder = request.DisplayOrder > 0 ? request.DisplayOrder : existingStops.Count + 1;
 

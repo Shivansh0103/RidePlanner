@@ -39,6 +39,11 @@ public sealed class UpdateTripStopCommandHandler : IRequestHandler<UpdateTripSto
         if (stop is null || stop.TripId != request.TripId)
             throw new NotFoundException("TripStop", request.StopId);
 
+        if (request.ArrivalDate < trip.StartDate || request.DepartureDate > trip.EndDate)
+        {
+            throw new DomainException($"Stop dates must be within the trip date range ({trip.StartDate:dd-MM-yyyy} to {trip.EndDate:dd-MM-yyyy}).");
+        }
+
         int orderToUse = request.DisplayOrder > 0 ? request.DisplayOrder : stop.DisplayOrder;
 
         stop.Update(

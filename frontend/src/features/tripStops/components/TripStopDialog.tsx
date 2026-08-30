@@ -14,6 +14,9 @@ type TripStopDialogProps = {
   stopId?: string;
   onClose: () => void;
   onRedirectToAccommodation?: (values: TripStopFormValues) => void;
+  tripStartDate?: string;
+  tripEndDate?: string;
+  isFirstStop?: boolean;
 };
 
 export default function TripStopDialog({
@@ -24,6 +27,9 @@ export default function TripStopDialog({
   stopId,
   onClose,
   onRedirectToAccommodation,
+  tripStartDate,
+  tripEndDate,
+  isFirstStop,
 }: TripStopDialogProps) {
   const createTripStopMutation = useCreateTripStop(tripId);
   const updateTripStopMutation = useUpdateTripStop(tripId);
@@ -78,14 +84,20 @@ export default function TripStopDialog({
       }}
     >
       <DialogTitle id="trip-stop-dialog-title" sx={{ px: 3, pt: 2.5, pb: 1.5, fontWeight: 700 }}>
-        {mode === "create" ? "Add Trip Stop" : "Edit Trip Stop"}
+        {mode === "create" ? (isFirstStop ? "Add Expedition Start Point" : "Add Trip Stop") : "Edit Trip Stop"}
       </DialogTitle>
 
       <DialogContent sx={{ px: 3, py: 1.5 }}>
         <TripStopForm
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
-          onRedirectToAccommodation={onRedirectToAccommodation}
+          onRedirectToAccommodation={(vals) => {
+            onClose();
+            onRedirectToAccommodation?.(vals);
+          }}
+          tripStartDate={tripStartDate}
+          tripEndDate={tripEndDate}
+          isFirstStop={isFirstStop}
         />
       </DialogContent>
 
