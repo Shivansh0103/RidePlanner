@@ -126,19 +126,29 @@ export default function ItinerarySection({
   };
 
   const addStopButton = (
-    <Stack direction="row" spacing={1.2}>
+    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <Button
         variant="outlined"
         size="small"
-        startIcon={<HotelIcon sx={{ fontSize: 16 }} />}
+        endIcon={<HotelIcon sx={{ fontSize: 14 }} />}
         onClick={() => handleOpenAccommodationDialog(null)}
         sx={{
-          borderColor: "rgba(190, 242, 100, 0.4)",
+          bgcolor: "rgba(190, 242, 100, 0.05)",
+          borderColor: "rgba(190, 242, 100, 0.3)",
           color: "#bef264",
           fontFamily: '"JetBrains Mono", monospace',
           fontSize: "0.72rem",
           fontWeight: 700,
-          "&:hover": { borderColor: "#bef264", bgcolor: "rgba(190, 242, 100, 0.08)" },
+          px: 1.4,
+          py: 0.55,
+          borderRadius: 2,
+          textTransform: "none",
+          transition: "all 0.2s ease",
+          "&:hover": {
+            borderColor: "#bef264",
+            bgcolor: "rgba(190, 242, 100, 0.12)",
+            boxShadow: "0 0 12px rgba(190, 242, 100, 0.2)",
+          },
         }}
       >
         Add Stay
@@ -147,7 +157,7 @@ export default function ItinerarySection({
       <Button
         variant="contained"
         size="small"
-        startIcon={<AddLocationAltIcon sx={{ fontSize: 16 }} />}
+        endIcon={<AddLocationAltIcon sx={{ fontSize: 14 }} />}
         onClick={handleOpenCreateDialog}
         className="glow-indigo"
         aria-label="Add a new stop to itinerary"
@@ -157,8 +167,16 @@ export default function ItinerarySection({
           fontFamily: '"JetBrains Mono", monospace',
           fontSize: "0.72rem",
           fontWeight: 800,
-          letterSpacing: "0.04em",
-          "&:hover": { bgcolor: "#4f46e5" },
+          letterSpacing: "0.02em",
+          px: 1.5,
+          py: 0.55,
+          borderRadius: 2,
+          textTransform: "none",
+          transition: "all 0.2s ease",
+          "&:hover": {
+            bgcolor: "#4f46e5",
+            boxShadow: "0 0 16px rgba(99, 102, 241, 0.4)",
+          },
         }}
       >
         Add Waypoint
@@ -213,30 +231,35 @@ export default function ItinerarySection({
       >
         <Box
           sx={{
-            py: 2,
-            px: { xs: 2, sm: 3 },
+            py: 1.8,
+            px: { xs: 2, sm: 2.5 },
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            flexWrap: "wrap",
+            flexWrap: "nowrap",
             gap: 1.5,
           }}
         >
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+          <Stack direction="row" spacing={1.2} sx={{ alignItems: "center", minWidth: 0 }}>
+            <AltRouteIcon sx={{ color: "#818cf8", fontSize: 20 }} />
             <Typography
               id="itinerary-heading"
-              variant="h5"
+              variant="h6"
               sx={{
                 fontFamily: '"Outfit", sans-serif',
                 fontWeight: 800,
                 color: "#f8fafc",
+                fontSize: { xs: "0.95rem", sm: "1.05rem" },
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
-              Itinerary & Waypoint Sequence
+              Waypoint Sequence
             </Typography>
             {stops.length > 0 && (
               <Chip
-                label={`${stops.length} ${stops.length === 1 ? "Waypoint" : "Waypoints"}`}
+                label={`${stops.length} ${stops.length === 1 ? "Stop" : "Stops"}`}
                 size="small"
                 sx={{
                   bgcolor: "rgba(99, 102, 241, 0.15)",
@@ -244,7 +267,8 @@ export default function ItinerarySection({
                   border: "1px solid rgba(99, 102, 241, 0.3)",
                   fontFamily: '"JetBrains Mono", monospace',
                   fontWeight: 700,
-                  fontSize: "0.68rem",
+                  fontSize: "0.66rem",
+                  height: 22,
                 }}
               />
             )}

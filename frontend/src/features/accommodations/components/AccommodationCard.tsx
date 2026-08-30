@@ -2,21 +2,19 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import LanguageIcon from "@mui/icons-material/Language";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
-import PhoneIcon from "@mui/icons-material/Phone";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {
   Box,
-  Button,
+  Card,
+  CardContent,
   Chip,
   IconButton,
-  Paper,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { toast } from "sonner";
 
 import { formatCurrency, formatDate } from "@/shared/utils";
 
@@ -27,67 +25,81 @@ interface AccommodationCardProps {
   accommodation: Accommodation;
   onEdit: (accommodation: Accommodation) => void;
   onDelete: (accommodation: Accommodation) => void;
+  onViewDetails: (accommodation: Accommodation) => void;
 }
 
 export default function AccommodationCard({
   accommodation,
   onEdit,
   onDelete,
+  onViewDetails,
 }: AccommodationCardProps) {
-  const typeOption = ACCOMMODATION_TYPE_OPTIONS.find(
-    (opt) => opt.value === accommodation.type
-  ) ?? ACCOMMODATION_TYPE_OPTIONS[0];
+  const typeOption =
+    ACCOMMODATION_TYPE_OPTIONS.find((opt) => opt.value === accommodation.type) ??
+    ACCOMMODATION_TYPE_OPTIONS[0];
 
   const IconComponent = typeOption.icon;
 
-  const handleCopyConfirmation = () => {
-    if (accommodation.confirmationNumber) {
-      navigator.clipboard.writeText(accommodation.confirmationNumber);
-      toast.success("Confirmation number copied!");
-    }
-  };
-
   return (
-    <Paper
+    <Card
       className="neo-convex"
+      onClick={() => onViewDetails(accommodation)}
       sx={{
-        p: 2.8,
         borderRadius: 2.5,
         bgcolor: "#1a1a1e",
         border: "1px solid rgba(255, 255, 255, 0.08)",
-        transition: "all 0.2s ease",
+        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        cursor: "pointer",
         "&:hover": {
-          borderColor: "#6366f1",
+          borderColor: "rgba(129, 140, 248, 0.5)",
           transform: "translateY(-2px)",
+          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
+          bgcolor: "#1f1f24",
+          "& .view-action-text": {
+            color: "#bef264",
+          },
         },
       }}
     >
-      <Stack spacing={2}>
-        {/* Header: Title, Type Chip, Actions */}
-        <Stack
-          direction="row"
-          sx={{ justifyContent: "space-between", alignItems: "flex-start" }}
-        >
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-            <Box
-              sx={{
-                width: 42,
-                height: 42,
-                borderRadius: 2,
-                bgcolor: "rgba(99, 102, 241, 0.12)",
-                color: "#818cf8",
-                border: "1px solid rgba(99, 102, 241, 0.3)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <IconComponent fontSize="small" />
-            </Box>
+      <CardContent sx={{ p: 2, pb: 1.5, flex: 1, display: "flex", flexDirection: "column" }}>
+        <Stack spacing={1.5} sx={{ flex: 1 }}>
+          {/* Top Row: Type Icon + Name & Badge + Action Buttons */}
+          <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}>
+            <Stack direction="row" spacing={1.2} sx={{ alignItems: "center", minWidth: 0, flex: 1 }}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 2,
+                  bgcolor: "rgba(99, 102, 241, 0.12)",
+                  color: "#818cf8",
+                  border: "1px solid rgba(99, 102, 241, 0.3)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <IconComponent sx={{ fontSize: 18 }} />
+              </Box>
 
-            <Box>
-              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.2 }}>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    fontWeight: 800,
+                    color: "#f8fafc",
+                    fontSize: "0.92rem",
+                    lineHeight: 1.2,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {accommodation.name}
                 </Typography>
                 <Chip
@@ -95,189 +107,171 @@ export default function AccommodationCard({
                   size="small"
                   sx={{
                     fontWeight: 700,
-                    fontSize: "0.68rem",
-                    bgcolor: "rgba(255, 255, 255, 0.06)",
+                    fontSize: "0.62rem",
+                    bgcolor: "rgba(190, 242, 100, 0.08)",
                     color: "#bef264",
-                    border: "1px solid rgba(190, 242, 100, 0.3)",
+                    border: "1px solid rgba(190, 242, 100, 0.25)",
                     fontFamily: '"JetBrains Mono", monospace',
-                    height: 20,
+                    height: 18,
+                    mt: 0.3,
                   }}
                 />
-              </Stack>
+              </Box>
+            </Stack>
 
-              <Stack
-                direction="row"
-                spacing={0.5}
-                sx={{ alignItems: "center", mt: 0.5 }}
-              >
-                <LocationOnIcon sx={{ fontSize: 14, color: "#94a3b8" }} />
-                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
-                  {accommodation.formattedAddress}
-                </Typography>
-              </Stack>
-            </Box>
+            {/* Edit / Delete actions */}
+            <Stack
+              direction="row"
+              spacing={0.3}
+              sx={{ flexShrink: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Tooltip title="Edit stay">
+                <IconButton
+                  size="small"
+                  onClick={() => onEdit(accommodation)}
+                  sx={{ color: "#94a3b8", p: 0.5, "&:hover": { color: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.1)" } }}
+                >
+                  <EditIcon sx={{ fontSize: 16 }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Remove stay">
+                <IconButton
+                  size="small"
+                  onClick={() => onDelete(accommodation)}
+                  sx={{ color: "#94a3b8", p: 0.5, "&:hover": { color: "#f87171", bgcolor: "rgba(248, 113, 113, 0.1)" } }}
+                >
+                  <DeleteIcon sx={{ fontSize: 16 }} />
+                </IconButton>
+              </Tooltip>
+            </Stack>
           </Stack>
 
-          {/* Action buttons */}
-          <Stack direction="row" spacing={0.5}>
-            <Tooltip title="Edit stay details">
-              <IconButton size="small" onClick={() => onEdit(accommodation)} sx={{ color: "#94a3b8", "&:hover": { color: "#818cf8" } }}>
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Remove stay">
-              <IconButton
-                size="small"
-                onClick={() => onDelete(accommodation)}
-                sx={{ color: "#94a3b8", "&:hover": { color: "#f87171" } }}
+          {/* Location Address */}
+          {accommodation.formattedAddress && (
+            <Stack direction="row" spacing={0.6} sx={{ alignItems: "flex-start" }}>
+              <LocationOnIcon sx={{ fontSize: 14, color: "#818cf8", mt: 0.2, flexShrink: 0 }} />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "#94a3b8",
+                  fontSize: "0.72rem",
+                  lineHeight: 1.3,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
               >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-        </Stack>
-
-        {/* Stay Dates, Nights Counter, Cost */}
-        <Box
-          className="neo-inset"
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            justifyContent: "space-between",
-            alignItems: { xs: "flex-start", sm: "center" },
-            p: 1.5,
-            borderRadius: 2,
-            gap: 1,
-            bgcolor: "#141313",
-          }}
-        >
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <CalendarMonthIcon sx={{ fontSize: 16, color: "#818cf8" }} />
-            <Typography className="font-mono" sx={{ fontSize: "0.78rem", fontWeight: 700, color: "#e4e4e7" }}>
-              {formatDate(accommodation.checkInDate)} → {formatDate(accommodation.checkOutDate)}
-            </Typography>
-            {accommodation.checkInTime && (
-              <Typography className="font-mono" sx={{ fontSize: "0.7rem", color: "#94a3b8" }}>
-                (In: {accommodation.checkInTime} / Out: {accommodation.checkOutTime || "--"})
+                {accommodation.formattedAddress}
               </Typography>
-            )}
-          </Stack>
+            </Stack>
+          )}
 
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <Chip
-              icon={<NightsStayIcon sx={{ fontSize: 13 }} />}
-              label={`${accommodation.nights} ${
-                accommodation.nights === 1 ? "Night" : "Nights"
-              }`}
-              size="small"
-              sx={{
-                fontWeight: 700,
-                fontSize: "0.68rem",
-                bgcolor: "rgba(99, 102, 241, 0.15)",
-                color: "#818cf8",
-                border: "1px solid rgba(99, 102, 241, 0.3)",
-                fontFamily: '"JetBrains Mono", monospace',
-              }}
-            />
-
-            {accommodation.cost > 0 && (
-              <Chip
-                label={formatCurrency(accommodation.cost)}
-                size="small"
-                sx={{
-                  fontWeight: 800,
-                  fontSize: "0.72rem",
-                  bgcolor: "rgba(190, 242, 100, 0.12)",
-                  color: "#bef264",
-                  border: "1px solid rgba(190, 242, 100, 0.35)",
-                  fontFamily: '"JetBrains Mono", monospace',
-                }}
-              />
-            )}
-          </Stack>
-        </Box>
-
-        {/* Contact & Confirmation Quick Bar */}
-        {(accommodation.confirmationNumber ||
-          accommodation.contactPhone ||
-          accommodation.website ||
-          accommodation.contactName) && (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-            {accommodation.confirmationNumber && (
-              <Chip
-                icon={<ConfirmationNumberIcon sx={{ fontSize: 13 }} />}
-                label={`Conf: ${accommodation.confirmationNumber}`}
-                size="small"
-                onClick={handleCopyConfirmation}
-                clickable
-                sx={{
-                  bgcolor: "#27272a",
-                  color: "#e4e4e7",
-                  fontFamily: '"JetBrains Mono", monospace',
-                  fontSize: "0.68rem",
-                  fontWeight: 700,
-                }}
-              />
-            )}
-
-            {accommodation.contactPhone && (
-              <Button
-                size="small"
-                variant="text"
-                startIcon={<PhoneIcon sx={{ fontSize: 13 }} />}
-                href={`tel:${accommodation.contactPhone}`}
-                sx={{
-                  color: "#818cf8",
-                  fontSize: "0.72rem",
-                  fontFamily: '"JetBrains Mono", monospace',
-                  textTransform: "none",
-                  py: 0,
-                }}
-              >
-                {accommodation.contactPhone}
-              </Button>
-            )}
-
-            {accommodation.website && (
-              <Button
-                size="small"
-                variant="text"
-                startIcon={<LanguageIcon sx={{ fontSize: 13 }} />}
-                href={accommodation.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  color: "#bef264",
-                  fontSize: "0.72rem",
-                  fontFamily: '"JetBrains Mono", monospace',
-                  textTransform: "none",
-                  py: 0,
-                }}
-              >
-                Website
-              </Button>
-            )}
-          </Box>
-        )}
-
-        {/* Booking Notes */}
-        {accommodation.bookingNotes && (
-          <Typography
-            variant="body2"
+          {/* Dates & Cost Telemetry Inset */}
+          <Box
+            className="neo-inset font-mono"
             sx={{
-              fontStyle: "italic",
-              bgcolor: "rgba(255, 255, 255, 0.02)",
-              color: "#94a3b8",
               p: 1.2,
-              borderRadius: 1.5,
-              border: "1px solid rgba(255, 255, 255, 0.04)",
-              fontSize: "0.8rem",
+              borderRadius: 2,
+              bgcolor: "#141313",
+              border: "1px solid rgba(255, 255, 255, 0.05)",
             }}
           >
-            “{accommodation.bookingNotes}”
+            <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
+              <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
+                <CalendarMonthIcon sx={{ fontSize: 14, color: "#818cf8" }} />
+                <Typography className="font-mono" sx={{ fontSize: "0.74rem", fontWeight: 700, color: "#e4e4e7" }}>
+                  {formatDate(accommodation.checkInDate)} → {formatDate(accommodation.checkOutDate)}
+                </Typography>
+              </Stack>
+
+              <Chip
+                icon={<NightsStayIcon sx={{ fontSize: 12 }} />}
+                label={`${accommodation.nights}N`}
+                size="small"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "0.64rem",
+                  bgcolor: "rgba(99, 102, 241, 0.15)",
+                  color: "#818cf8",
+                  border: "1px solid rgba(99, 102, 241, 0.3)",
+                  fontFamily: '"JetBrains Mono", monospace',
+                  height: 20,
+                }}
+              />
+            </Stack>
+
+            <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#71717a" }}>
+                Estimated Cost
+              </Typography>
+              <Typography
+                className="font-mono"
+                sx={{
+                  fontSize: "0.78rem",
+                  fontWeight: 800,
+                  color: accommodation.cost > 0 ? "#bef264" : "#71717a",
+                }}
+              >
+                {accommodation.cost > 0 ? formatCurrency(accommodation.cost) : "Free / Included"}
+              </Typography>
+            </Stack>
+          </Box>
+        </Stack>
+      </CardContent>
+
+      {/* Footer Quick Action Bar */}
+      <Box
+        sx={{
+          py: 0.8,
+          px: 2,
+          borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+          bgcolor: "rgba(0, 0, 0, 0.2)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Stack direction="row" spacing={0.8} sx={{ alignItems: "center" }}>
+          {accommodation.confirmationNumber && (
+            <Chip
+              icon={<ConfirmationNumberIcon sx={{ fontSize: 11 }} />}
+              label="Confirmed"
+              size="small"
+              sx={{
+                height: 18,
+                fontSize: "0.6rem",
+                bgcolor: "rgba(99, 102, 241, 0.12)",
+                color: "#818cf8",
+                border: "1px solid rgba(99, 102, 241, 0.25)",
+                fontFamily: '"JetBrains Mono", monospace',
+                fontWeight: 700,
+              }}
+            />
+          )}
+          {accommodation.bookingNotes && (
+            <Typography className="font-mono" sx={{ fontSize: "0.62rem", color: "#71717a" }}>
+              📝 Notes
+            </Typography>
+          )}
+        </Stack>
+
+        <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+          <Typography
+            className="view-action-text font-mono"
+            sx={{
+              fontSize: "0.66rem",
+              color: "#818cf8",
+              fontWeight: 700,
+              transition: "color 0.2s ease",
+            }}
+          >
+            Details
           </Typography>
-        )}
-      </Stack>
-    </Paper>
+          <VisibilityOutlinedIcon sx={{ fontSize: 13, color: "#818cf8" }} />
+        </Stack>
+      </Box>
+    </Card>
   );
 }

@@ -1,4 +1,5 @@
-import { Box, Fade } from "@mui/material";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { Box, Fade, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 
 import type { TripStop } from "@/features/tripStops/types/tripStop";
@@ -30,13 +31,25 @@ export default function TripStopsView({ headerAction, routeLegs, ...props }: Tri
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: { xs: "stretch", sm: "center" },
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 2,
-          mb: { xs: 2, sm: 3 },
+          alignItems: "center",
+          gap: 1.5,
+          mb: 1.8,
         }}
       >
         <ViewToggle value={viewMode} onChange={setViewMode} />
+
+        {viewMode === "list" && props.stops.length > 1 && (
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+            <DragIndicatorIcon sx={{ fontSize: 13, color: "#71717a" }} />
+            <Typography
+              className="font-mono"
+              sx={{ fontSize: "0.66rem", color: "#71717a", fontWeight: 500 }}
+            >
+              Drag to reorder
+            </Typography>
+          </Stack>
+        )}
+
         {headerAction}
       </Box>
 
