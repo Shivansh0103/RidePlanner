@@ -96,7 +96,7 @@ The core capabilities of Ride Planner include:
 
 ## Current Status
 
-Ride Planner is actively being developed (Version **v0.10.0**).
+Ride Planner is actively being developed (Version **v0.12.0** — *Obsidian Velocity UI/UX & Telemetry Overhaul*).
 
 Completed milestones include:
 * **Product Features (Sprints 1–9)**: Trip Lifecycle Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Actual Expense Log & Budget vs Actual Analysis, Preparation Checklists, Overview Command Center Dashboard, Accommodation & Stay Planning, Travel Documents, Emergency Contacts, Derived Trip Readiness Score, Printable Trip Summary Report, and Trip Memories.

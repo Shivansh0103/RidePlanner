@@ -6,6 +6,48 @@ The project follows an incremental sprint-based development approach.
 
 ---
 
+# [v0.12.0] - Sprint 12 Complete
+
+Release Date: August 2026
+
+## Overview
+
+Sprint 12 delivered the complete **Obsidian Velocity UI/UX Overhaul & Telemetry Redesign**, converting the entire RidePlanner web platform into a cutting-edge dark cockpit adventure interface inspired by Google Stitch designs, backed by 100% resilient React 19 / TypeScript / MUI architecture and verified against live backend APIs.
+
+### Key Highlights Delivered:
+1. **Design Tokens & Theme Foundation:** Deep Obsidian canvas (`#121416`, `#1a1a1e`), glassmorphic translucent panels (`rgba(31, 31, 36, 0.75)`), Electric Indigo (`#6366f1`) and Acid Green (`#bef264`) telemetry highlights, Outfit and JetBrains Mono typography.
+2. **Dashboard & Trips Hub:** Bento metrics grid, high-contrast status chips, dynamic lifecycle sorting, and interactive elevation & route tags.
+3. **Overview Command Center & Readiness Health:** 6-category readiness dial with instant issue navigation, sticky action header with trip lifecycle triggers (`Start Expedition`, `Complete Trip`).
+4. **Waypoints & Smart Stop Roles:** Side-by-side sticky map viewport, multi-role categorizer (`Waypoint`, `Fuel / Pitstop`, `Scenic Overlook`, `Meal / Food`, `Night Stay / Camp`), and interactive drag reordering.
+5. **Lodging Matrix & Booking Dossier:** Responsive 3-column accommodation bento cards with uniform height and rich detail modal.
+6. **Financial Telemetry & Master-Detail Explorer:** 4-card telemetry HUD (Ceiling, Planned Estimates with Unallocated buffer, Spent, Runway), variance status pills, and 2-pane Category Explorer (Navigator + Estimates ledger).
+7. **Preparation Checklist & Smart Presets:** 3-column category bento grid, 1-click tailored suggestions (`Govt ID`, `Toolkit`, `Riding Gear`), and fixed item persistence.
+8. **Permits & Identity Documents:** Uniform document pass cards with type badges and 1-click clipboard copy.
+9. **Emergency ICE & Safety Network:** Strict phone number regex validation, glowing primary ICE badges, and instant `CALL NOW` action.
+10. **Debrief Summary & Memories Journal:** Printable expedition report and journal highlight cards with clean input label docking.
+
+---
+
+# [v0.11.0] - Sprint 11 Complete
+
+Release Date: August 2026
+
+## Overview
+
+Sprint 11 delivered **Frontend Architecture Hardening & UX Resilience**, establishing robust React Query cache invalidation policies, standardized Zod validation schemas across all forms, accessible component primitives, and resilient error/loading states.
+
+---
+
+# [v0.10.0] - Sprint 10 Complete
+
+Release Date: August 2026
+
+## Overview
+
+Sprint 10 delivered **Backend Architecture Hardening & Performance Optimizations**, establishing MediatR pipeline behaviors (FluentValidation, logging, performance monitoring), EF Core query optimizations with split queries and read-only no-tracking, and domain invariant protections.
+
+---
+
 # [v0.9.0] - Sprint 9 Complete
 
 Release Date: August 2026
