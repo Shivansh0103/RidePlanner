@@ -31,25 +31,43 @@ Ride Planner is expected to evolve through the following milestones.
 
 ## Current Project Status
 
-**Version:** v0.9.0
+**Version:** v0.12.0 (Obsidian Velocity UI/UX & Telemetry Overhaul)
 
-### Completed
+### Completed Sprints (Sprints 0 – 12)
 
-- ✅ Sprint 0 – Project Foundation
-- ✅ Sprint 1 – Backend Foundation
-- ✅ Sprint 2 – Frontend Foundation & Trip Management
-- ✅ Sprint 3 – Trip Workspace & Navigation
-- ✅ Sprint 4 – Places Search & Route Visualization
-- ✅ Sprint 5 – Itinerary Management & Stops
-- ✅ Sprint 6 – Trip Planning Intelligence (Budget, Fuel Calculator, Checklist, Overview, Tabbed Layout)
-- ✅ Sprint 7 – Accommodation & Stay Planning
-- ✅ Sprint 8 – Actual Expense Tracking & Budget vs Actual Analysis
-- ✅ Sprint 9 – Core Trip Polish, Readiness, Completion & Memories
+- ✅ **Sprint 0** – Project Foundation (.NET & Architecture ADRs)
+- ✅ **Sprint 1** – Backend Foundation (Clean Architecture, Repositories, Unit of Work)
+- ✅ **Sprint 2** – Frontend Foundation & Trip Management (React, Vite, MUI)
+- ✅ **Sprint 3** – Trip Workspace & Navigation (Tab layout, deep-link routing)
+- ✅ **Sprint 4** – Places Search & Route Visualization (Google Maps API integration)
+- ✅ **Sprint 5** – Itinerary Management & Stops (Stops ordering, day groupings)
+- ✅ **Sprint 6** – Trip Planning Intelligence (Target budget, fuel calculator, preparation checklist, overview hub)
+- ✅ **Sprint 7** – Accommodation & Stay Planning (Lodging matrix, check-in/out, cost binding)
+- ✅ **Sprint 8** – Actual Expense Tracking & Budget vs Actual Analysis (Expense ledger, variance telemetry)
+- ✅ **Sprint 9** – Core Trip Polish, Readiness & Trip Lifecycle (Planning/Active/Completed states, 6-category readiness dial, document locker, ICE contacts, printable report, memory journal)
+- ✅ **Sprint 10** – Backend Architecture Hardening (CQRS ISender, RFC 7807 ProblemDetails, FluentValidation pipeline, split queries, no-tracking projections, 66+ tests)
+- ✅ **Sprint 11** – Frontend Architecture Hardening (TanStack Query cache policies, Zod validation schemas, accessible primitives)
+- ✅ **Sprint 12** – Obsidian Velocity UI/UX Overhaul (Dark adventure cockpit aesthetic, Bento grids, HUD telemetry, sticky maps, pass cards, glowing ICE action)
 
-### Current Focus
+### Current Roadmap & Future Sprints (Sprints 13 – 22)
 
-Milestone 1 Completed – Delivering the Core Trip Lifecycle Experience.
-Future development will focus on Collaborative Planning, Weather Integration, and Smart Travel Reminders.
+For full execution details, see the dedicated [Future Sprints Roadmap](file:///d:/Coding/RidePlanner/docs/Sprints/Future-Sprints-Roadmap.md).
+
+- 🔒 **Phase 1: Cloud & Multi-Tenancy Foundation**
+  - Sprint 13 — Authentication, Multi-Tenancy & User Profiles
+  - Sprint 14 — DevOps, Dockerization, CI/CD & Production Cloud Launch
+- 🧭 **Phase 2: Live Field Companion & Off-Grid Capability**
+  - Sprint 15 — Route Weather Matrix & Elevation Profiles
+  - Sprint 16 — PWA, Offline Storage & 1-Click Navigation GPX Handoff
+- 🤖 **Phase 3: AI Travel Co-Pilot & Automation**
+  - Sprint 17 — AI Prompt-to-Expedition Generator & Range-Aware Fuel Curator
+  - Sprint 18 — Receipt OCR Scanner & Adaptive Packing Assistant
+- 👥 **Phase 4: Group Expeditions & Collaborative Planning**
+  - Sprint 19 — Trip Sharing, Role-Based Access & Real-Time Sync (SignalR)
+  - Sprint 20 — Group Expense Splitting & Debt Minimization
+- 🌍 **Phase 5: Community Discovery & Expedition Replay**
+  - Sprint 21 — Community Routes Showcase & 1-Click Fork/Clone
+  - Sprint 22 — Expedition Replay & Animated Timeline Storytelling
 
 
 ---
