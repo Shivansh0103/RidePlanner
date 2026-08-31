@@ -29,6 +29,10 @@ public class ExceptionHandlingMiddleware
             {
                 _logger.LogWarning(exception, "Resource not found: {Message}", exception.Message);
             }
+            else if (exception is ConflictException)
+            {
+                _logger.LogWarning(exception, "Resource conflict: {Message}", exception.Message);
+            }
             else if (exception is ValidationException validationException)
             {
                 _logger.LogWarning(exception, "Validation failures: {Count}", validationException.Errors.Count);
@@ -45,6 +49,7 @@ public class ExceptionHandlingMiddleware
             var statusCode = exception switch
             {
                 NotFoundException => StatusCodes.Status404NotFound,
+                ConflictException => StatusCodes.Status409Conflict,
                 ValidationException => StatusCodes.Status400BadRequest,
                 DomainException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
@@ -53,6 +58,7 @@ public class ExceptionHandlingMiddleware
             var title = exception switch
             {
                 NotFoundException => "Not Found",
+                ConflictException => "Conflict",
                 ValidationException => "One or more validation errors occurred.",
                 DomainException => "Bad Request",
                 _ => "Internal Server Error"
@@ -61,6 +67,7 @@ public class ExceptionHandlingMiddleware
             var detail = exception switch
             {
                 NotFoundException => exception.Message,
+                ConflictException => exception.Message,
                 ValidationException => exception.Message,
                 DomainException => exception.Message,
                 _ => "An unexpected error occurred."
@@ -69,6 +76,7 @@ public class ExceptionHandlingMiddleware
             var type = statusCode switch
             {
                 StatusCodes.Status404NotFound => "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                StatusCodes.Status409Conflict => "https://tools.ietf.org/html/rfc7231#section-6.5.8",
                 StatusCodes.Status400BadRequest => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
             };
