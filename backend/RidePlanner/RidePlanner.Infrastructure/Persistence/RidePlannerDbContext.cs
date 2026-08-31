@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RidePlanner.Domain.Common;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Entities.Budget;
 using RidePlanner.Domain.Entities.Checklist;
+using RidePlanner.Infrastructure.Identity;
 
 namespace RidePlanner.Infrastructure.Persistence;
 
-public class RidePlannerDbContext : DbContext
+public class RidePlannerDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public RidePlannerDbContext(DbContextOptions<RidePlannerDbContext> options)
         : base(options)

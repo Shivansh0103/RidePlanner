@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RidePlanner.Application.Abstractions.Persistence;
+using RidePlanner.Infrastructure.Identity;
 using RidePlanner.Infrastructure.Persistence;
 using RidePlanner.Infrastructure.Persistence.Repositories;
 
@@ -25,6 +27,16 @@ public static class DependencyInjection
             services.AddDbContext<RidePlannerDbContext>(options =>
                 options.UseNpgsql(connectionString));
         }
+
+        services.AddDataProtection();
+
+        services.AddIdentityCore<ApplicationUser>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddRoles<IdentityRole<Guid>>()
+        .AddEntityFrameworkStores<RidePlannerDbContext>()
+        .AddDefaultTokenProviders();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
