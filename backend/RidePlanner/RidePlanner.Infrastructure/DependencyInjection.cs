@@ -30,13 +30,21 @@ public static class DependencyInjection
         }
 
         services.AddDataProtection();
+        services.AddHttpContextAccessor();
+        services.AddAuthentication();
 
         services.AddIdentityCore<ApplicationUser>(options =>
         {
             options.User.RequireUniqueEmail = true;
+
+            // Lockout settings
+            options.Lockout.AllowedForNewUsers = true;
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
         })
         .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<RidePlannerDbContext>()
+        .AddSignInManager()
         .AddDefaultTokenProviders();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -49,6 +57,8 @@ public static class DependencyInjection
         services.AddScoped<ITripDocumentRepository, TripDocumentRepository>();
         services.AddScoped<IEmergencyContactRepository, EmergencyContactRepository>();
         services.AddScoped<ITripMemoryRepository, TripMemoryRepository>();
+        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IIdentityService, IdentityService>();
         return services;
     }

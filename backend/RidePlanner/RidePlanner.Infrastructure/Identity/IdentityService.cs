@@ -2,6 +2,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Exceptions;
+using RidePlanner.Application.Features.Auth.DTOs;
 using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Infrastructure.Identity;
@@ -9,10 +10,17 @@ namespace RidePlanner.Infrastructure.Identity;
 public class IdentityService : IIdentityService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-    public IdentityService(UserManager<ApplicationUser> userManager)
+    public IdentityService(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        IJwtTokenGenerator jwtTokenGenerator)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
+        _jwtTokenGenerator = jwtTokenGenerator;
     }
 
     public async Task<Guid> RegisterUserAsync(
@@ -53,5 +61,32 @@ public class IdentityService : IIdentityService
         }
 
         return user.Id;
+    }
+
+    public async Task<LoginResponse> LoginAsync(
+        string email,
+        string password,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            throw new UnauthorizedException("Invalid email or password.");
+        }
+
+        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure: true);
+        if (!signInResult.Succeeded)
+        {
+            throw new UnauthorizedException("Invalid email or password.");
+        }
+
+        var (token, expiresIn) = _jwtTokenGenerator.GenerateToken(user.Id, user.Email!, user.UserName);
+
+        return new LoginResponse(
+            AccessToken: token,
+            TokenType: "Bearer",
+            ExpiresIn: expiresIn,
+            UserId: user.Id,
+            Email: user.Email!);
     }
 }
