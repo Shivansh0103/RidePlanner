@@ -33,6 +33,10 @@ public class ExceptionHandlingMiddleware
             {
                 _logger.LogWarning(exception, "Resource conflict: {Message}", exception.Message);
             }
+            else if (exception is UnauthorizedException)
+            {
+                _logger.LogWarning(exception, "Unauthorized access: {Message}", exception.Message);
+            }
             else if (exception is ValidationException validationException)
             {
                 _logger.LogWarning(exception, "Validation failures: {Count}", validationException.Errors.Count);
@@ -50,6 +54,7 @@ public class ExceptionHandlingMiddleware
             {
                 NotFoundException => StatusCodes.Status404NotFound,
                 ConflictException => StatusCodes.Status409Conflict,
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
                 ValidationException => StatusCodes.Status400BadRequest,
                 DomainException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
@@ -59,6 +64,7 @@ public class ExceptionHandlingMiddleware
             {
                 NotFoundException => "Not Found",
                 ConflictException => "Conflict",
+                UnauthorizedException => "Unauthorized",
                 ValidationException => "One or more validation errors occurred.",
                 DomainException => "Bad Request",
                 _ => "Internal Server Error"
@@ -68,6 +74,7 @@ public class ExceptionHandlingMiddleware
             {
                 NotFoundException => exception.Message,
                 ConflictException => exception.Message,
+                UnauthorizedException => exception.Message,
                 ValidationException => exception.Message,
                 DomainException => exception.Message,
                 _ => "An unexpected error occurred."
@@ -77,6 +84,7 @@ public class ExceptionHandlingMiddleware
             {
                 StatusCodes.Status404NotFound => "https://tools.ietf.org/html/rfc7231#section-6.5.4",
                 StatusCodes.Status409Conflict => "https://tools.ietf.org/html/rfc7231#section-6.5.8",
+                StatusCodes.Status401Unauthorized => "https://tools.ietf.org/html/rfc7235#section-3.1",
                 StatusCodes.Status400BadRequest => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
             };

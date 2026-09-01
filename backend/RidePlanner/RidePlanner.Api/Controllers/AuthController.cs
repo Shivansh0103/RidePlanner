@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RidePlanner.Application.Features.Auth.Commands.Login;
 using RidePlanner.Application.Features.Auth.Commands.Register;
 using RidePlanner.Application.Features.Auth.DTOs;
 
@@ -22,6 +23,16 @@ public class AuthController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new RegisterUserCommand(request.Email, request.Password);
+        var response = await _sender.Send(command, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<LoginResponse>> Login(
+        [FromBody] LoginRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new LoginUserCommand(request.Email, request.Password);
         var response = await _sender.Send(command, cancellationToken);
         return Ok(response);
     }
