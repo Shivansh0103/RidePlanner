@@ -59,6 +59,7 @@ public static class DependencyInjection
         services.AddScoped<ITripMemoryRepository, TripMemoryRepository>();
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IIdentityService, IdentityService>();
         return services;
     }

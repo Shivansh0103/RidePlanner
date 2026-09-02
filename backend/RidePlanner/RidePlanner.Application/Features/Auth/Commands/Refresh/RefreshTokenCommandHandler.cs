@@ -2,24 +2,23 @@ using MediatR;
 using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Features.Auth.DTOs;
 
-namespace RidePlanner.Application.Features.Auth.Commands.Login;
+namespace RidePlanner.Application.Features.Auth.Commands.Refresh;
 
-public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthResult>
+public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResult>
 {
     private readonly IIdentityService _identityService;
 
-    public LoginUserCommandHandler(IIdentityService identityService)
+    public RefreshTokenCommandHandler(IIdentityService identityService)
     {
         _identityService = identityService;
     }
 
     public async Task<AuthResult> Handle(
-        LoginUserCommand request,
+        RefreshTokenCommand request,
         CancellationToken cancellationToken)
     {
-        return await _identityService.LoginAsync(
-            request.Email,
-            request.Password,
+        return await _identityService.RefreshTokenAsync(
+            request.RefreshToken,
             cancellationToken);
     }
 }

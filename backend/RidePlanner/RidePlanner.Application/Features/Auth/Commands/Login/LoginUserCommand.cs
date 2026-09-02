@@ -5,4 +5,4 @@ namespace RidePlanner.Application.Features.Auth.Commands.Login;
 
 public sealed record LoginUserCommand(
     string Email,
-    string Password) : IRequest<LoginResponse>;
+    string Password) : IRequest<AuthResult>;

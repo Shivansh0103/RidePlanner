@@ -9,8 +9,12 @@ public interface IIdentityService
         string password,
         CancellationToken cancellationToken = default);
 
-    Task<LoginResponse> LoginAsync(
+    Task<AuthResult> LoginAsync(
         string email,
         string password,
+        CancellationToken cancellationToken = default);
+
+    Task<AuthResult> RefreshTokenAsync(
+        string rawRefreshToken,
         CancellationToken cancellationToken = default);
 }

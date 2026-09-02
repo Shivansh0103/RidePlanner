@@ -12,15 +12,18 @@ public class IdentityService : IIdentityService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IRefreshTokenService _refreshTokenService;
 
     public IdentityService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        IJwtTokenGenerator jwtTokenGenerator)
+        IJwtTokenGenerator jwtTokenGenerator,
+        IRefreshTokenService refreshTokenService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _refreshTokenService = refreshTokenService;
     }
 
     public async Task<Guid> RegisterUserAsync(
@@ -63,7 +66,7 @@ public class IdentityService : IIdentityService
         return user.Id;
     }
 
-    public async Task<LoginResponse> LoginAsync(
+    public async Task<AuthResult> LoginAsync(
         string email,
         string password,
         CancellationToken cancellationToken = default)
@@ -81,12 +84,41 @@ public class IdentityService : IIdentityService
         }
 
         var (token, expiresIn) = _jwtTokenGenerator.GenerateToken(user.Id, user.Email!, user.UserName);
+        var (refreshToken, refreshTokenExpiresAt) = await _refreshTokenService.CreateSessionAsync(user.Id, cancellationToken);
 
-        return new LoginResponse(
+        var loginResponse = new LoginResponse(
             AccessToken: token,
             TokenType: "Bearer",
             ExpiresIn: expiresIn,
             UserId: user.Id,
             Email: user.Email!);
+
+        return new AuthResult(loginResponse, refreshToken, refreshTokenExpiresAt);
+    }
+
+    public async Task<AuthResult> RefreshTokenAsync(
+        string rawRefreshToken,
+        CancellationToken cancellationToken = default)
+    {
+        var (userId, newRawRefreshToken, newExpiresAt) = await _refreshTokenService.RotateTokenAsync(
+            rawRefreshToken,
+            cancellationToken);
+
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null || await _userManager.IsLockedOutAsync(user))
+        {
+            throw new UnauthorizedException("Invalid refresh token.");
+        }
+
+        var (token, expiresIn) = _jwtTokenGenerator.GenerateToken(user.Id, user.Email!, user.UserName);
+
+        var loginResponse = new LoginResponse(
+            AccessToken: token,
+            TokenType: "Bearer",
+            ExpiresIn: expiresIn,
+            UserId: user.Id,
+            Email: user.Email!);
+
+        return new AuthResult(loginResponse, newRawRefreshToken, newExpiresAt);
     }
 }

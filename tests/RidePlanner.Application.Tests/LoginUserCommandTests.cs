@@ -44,36 +44,41 @@ public class LoginUserCommandTests
     }
 
     [Fact]
-    public async Task Handler_ShouldCallIdentityService_AndReturnLoginResponse()
+    public async Task Handler_ShouldCallIdentityService_AndReturnAuthResult()
     {
         // Arrange
         var expectedUserId = Guid.NewGuid();
         var email = "rider@example.com";
         var password = "Password123!";
         var command = new LoginUserCommand(email, password);
-        var expectedResponse = new LoginResponse(
+        var expectedLoginResponse = new LoginResponse(
             AccessToken: "fake-jwt-token",
             TokenType: "Bearer",
             ExpiresIn: 900,
             UserId: expectedUserId,
             Email: email);
+        var expectedResult = new AuthResult(
+            expectedLoginResponse,
+            "raw-refresh-token",
+            DateTimeOffset.UtcNow.AddDays(30));
 
         _identityServiceMock
             .Setup(s => s.LoginAsync(email, password, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedResponse);
+            .ReturnsAsync(expectedResult);
 
         var handler = new LoginUserCommandHandler(_identityServiceMock.Object);
 
         // Act
-        var response = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        Assert.NotNull(response);
-        Assert.Equal("fake-jwt-token", response.AccessToken);
-        Assert.Equal("Bearer", response.TokenType);
-        Assert.Equal(900, response.ExpiresIn);
-        Assert.Equal(expectedUserId, response.UserId);
-        Assert.Equal(email, response.Email);
+        Assert.NotNull(result);
+        Assert.Equal("fake-jwt-token", result.Response.AccessToken);
+        Assert.Equal("Bearer", result.Response.TokenType);
+        Assert.Equal(900, result.Response.ExpiresIn);
+        Assert.Equal(expectedUserId, result.Response.UserId);
+        Assert.Equal(email, result.Response.Email);
+        Assert.Equal("raw-refresh-token", result.RefreshToken);
         _identityServiceMock.Verify(s => s.LoginAsync(email, password, It.IsAny<CancellationToken>()), Times.Once);
     }
 }
