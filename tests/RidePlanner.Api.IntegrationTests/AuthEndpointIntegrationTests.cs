@@ -404,6 +404,76 @@ public class AuthEndpointIntegrationTests : IClassFixture<CustomWebApplicationFa
         Assert.Equal("Invalid email or password.", problemDetails.Detail);
     }
 
+    [Fact]
+    public async Task GetCurrentUser_WithoutToken_Returns401Unauthorized()
+    {
+        // Act: GET /api/auth/me without Authorization header
+        var response = await _client.GetAsync("/api/auth/me");
+
+        // Assert: 401 Unauthorized
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_WithValidJwtToken_Returns200Ok_AndCorrectUserIdAndAuthenticated()
+    {
+        // Arrange: Register and login
+        var uniqueEmail = $"current_user_{Guid.NewGuid():N}@example.com";
+        var password = "SecurePassword123!";
+        await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequest(uniqueEmail, password));
+
+        var loginRes = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest(uniqueEmail, password));
+        var loginData = await loginRes.Content.ReadFromJsonAsync<LoginResponse>();
+        Assert.NotNull(loginData);
+
+        // Act: GET /api/auth/me with Bearer token
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/me");
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginData.AccessToken);
+        var response = await _client.SendAsync(request);
+
+        // Assert: 200 OK with correct CurrentUserResponse
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var currentUser = await response.Content.ReadFromJsonAsync<CurrentUserResponse>();
+        Assert.NotNull(currentUser);
+        Assert.True(currentUser.IsAuthenticated);
+        Assert.Equal(loginData.UserId, currentUser.UserId);
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_WithMalformedToken_Returns401Unauthorized()
+    {
+        // Act: GET /api/auth/me with garbage token
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/me");
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "not-a-valid-token-format");
+        var response = await _client.SendAsync(request);
+
+        // Assert: 401 Unauthorized
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_WithTokenSignedByDifferentKey_Returns401Unauthorized()
+    {
+        // Arrange: Create a token signed by a different secret key
+        var differentKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("another_completely_different_signing_key_at_least_32_bytes!"));
+        var creds = new Microsoft.IdentityModel.Tokens.SigningCredentials(differentKey, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256);
+        var jwt = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
+            issuer: "RidePlanner",
+            audience: "RidePlanner",
+            claims: new[] { new System.Security.Claims.Claim("sub", Guid.NewGuid().ToString()) },
+            expires: DateTime.UtcNow.AddMinutes(15),
+            signingCredentials: creds);
+        var invalidToken = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(jwt);
+
+        // Act: GET /api/auth/me with improperly signed token
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/me");
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", invalidToken);
+        var response = await _client.SendAsync(request);
+
+        // Assert: 401 Unauthorized
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
     private static string? ExtractCookie(HttpResponseMessage response, string cookieName)
     {
         if (response.Headers.TryGetValues("Set-Cookie", out var cookies))

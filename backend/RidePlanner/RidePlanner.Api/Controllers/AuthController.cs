@@ -1,6 +1,8 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Api.Common;
+using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Features.Auth.Commands.Login;
 using RidePlanner.Application.Features.Auth.Commands.Refresh;
 using RidePlanner.Application.Features.Auth.Commands.Register;
@@ -14,10 +16,12 @@ namespace RidePlanner.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly ISender _sender;
+    private readonly ICurrentUserService _currentUserService;
 
-    public AuthController(ISender sender)
+    public AuthController(ISender sender, ICurrentUserService currentUserService)
     {
         _sender = sender;
+        _currentUserService = currentUserService;
     }
 
     [HttpPost("register")]
@@ -67,5 +71,14 @@ public class AuthController : ControllerBase
             Request.IsHttps);
 
         return Ok(authResult.Response);
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public ActionResult<CurrentUserResponse> GetCurrentUser()
+    {
+        return Ok(new CurrentUserResponse(
+            _currentUserService.UserId,
+            _currentUserService.IsAuthenticated));
     }
 }
