@@ -1,8 +1,10 @@
 using MediatR;
+using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Checklists.DTOs;
 using RidePlanner.Application.Features.Checklists.Mappings;
 using RidePlanner.Domain.Entities.Checklist;
+using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.Checklists.Commands.CreateCategory;
 
@@ -11,22 +13,28 @@ public sealed class CreateChecklistCategoryCommandHandler : IRequestHandler<Crea
     private readonly IChecklistRepository _checklistRepository;
     private readonly ITripRepository _tripRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICurrentUserService _currentUserService;
 
     public CreateChecklistCategoryCommandHandler(
         IChecklistRepository checklistRepository,
         ITripRepository tripRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ICurrentUserService currentUserService)
     {
         _checklistRepository = checklistRepository;
         _tripRepository = tripRepository;
         _unitOfWork = unitOfWork;
+        _currentUserService = currentUserService;
     }
 
     public async Task<ChecklistSummaryDto?> Handle(
         CreateChecklistCategoryCommand request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(request.TripId, cancellationToken);
+        var currentUserId = _currentUserService.UserId
+            ?? throw new UnauthorizedException("User is not authenticated.");
+
+        var trip = await _tripRepository.GetByIdAsync(request.TripId, currentUserId, cancellationToken);
         if (trip is null)
         {
             return null;

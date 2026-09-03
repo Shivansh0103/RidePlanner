@@ -1,3 +1,4 @@
+using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Expenses.Commands.CreateExpense;
 using RidePlanner.Application.Features.Expenses.Commands.DeleteExpense;
@@ -10,20 +11,28 @@ namespace RidePlanner.Application.Tests;
 
 public class ExpenseApplicationTests
 {
+    private static readonly Guid TestOwnerUserId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+
+    private class FakeCurrentUserService : ICurrentUserService
+    {
+        public bool IsAuthenticated => true;
+        public Guid? UserId => TestOwnerUserId;
+    }
+
     private class FakeTripRepository : ITripRepository
     {
         public List<Trip> Trips { get; } = [];
 
         public void Add(Trip trip) => Trips.Add(trip);
 
-        public Task<Trip?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
-            Task.FromResult(Trips.FirstOrDefault(t => t.Id == id));
+        public Task<Trip?> GetByIdAsync(Guid id, Guid ownerUserId, CancellationToken cancellationToken = default) =>
+            Task.FromResult(Trips.FirstOrDefault(t => t.Id == id && t.OwnerUserId == ownerUserId));
 
-        public Task<Trip?> GetWithBudgetAsync(Guid id, CancellationToken cancellationToken = default) =>
-            Task.FromResult(Trips.FirstOrDefault(t => t.Id == id));
+        public Task<Trip?> GetWithBudgetAsync(Guid id, Guid ownerUserId, CancellationToken cancellationToken = default) =>
+            Task.FromResult(Trips.FirstOrDefault(t => t.Id == id && t.OwnerUserId == ownerUserId));
 
-        public Task<IReadOnlyList<Trip>> GetAllAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult<IReadOnlyList<Trip>>(Trips.AsReadOnly());
+        public Task<IReadOnlyList<Trip>> GetAllAsync(Guid ownerUserId, CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<Trip>>(Trips.Where(t => t.OwnerUserId == ownerUserId).ToList());
 
         public Task DeleteAsync(Trip trip, CancellationToken cancellationToken = default)
         {
@@ -48,11 +57,12 @@ public class ExpenseApplicationTests
     {
         var repository = new FakeTripRepository();
         var unitOfWork = new FakeUnitOfWork();
-        var trip = Trip.Create("Leh Ladakh Ride", "Mountain trip", new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 15));
+        var currentUserService = new FakeCurrentUserService();
+        var trip = Trip.Create(TestOwnerUserId, "Leh Ladakh Ride", "Mountain trip", new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 15));
         trip.InitializeBudget();
         repository.Add(trip);
 
-        var handler = new CreateExpenseCommandHandler(repository, unitOfWork);
+        var handler = new CreateExpenseCommandHandler(repository, unitOfWork, currentUserService);
 
         var command = new CreateExpenseCommand(
             trip.Id,
@@ -78,7 +88,8 @@ public class ExpenseApplicationTests
     {
         var repository = new FakeTripRepository();
         var unitOfWork = new FakeUnitOfWork();
-        var trip = Trip.Create("Goa Ride", "Beach road trip", new DateOnly(2026, 9, 1), new DateOnly(2026, 9, 5));
+        var currentUserService = new FakeCurrentUserService();
+        var trip = Trip.Create(TestOwnerUserId, "Goa Ride", "Beach road trip", new DateOnly(2026, 9, 1), new DateOnly(2026, 9, 5));
         trip.InitializeBudget();
 
         var existingExpense = trip.Budget.AddExpense(
@@ -90,7 +101,7 @@ public class ExpenseApplicationTests
 
         repository.Add(trip);
 
-        var handler = new UpdateExpenseCommandHandler(repository, unitOfWork);
+        var handler = new UpdateExpenseCommandHandler(repository, unitOfWork, currentUserService);
 
         var command = new UpdateExpenseCommand(
             trip.Id,
@@ -116,7 +127,8 @@ public class ExpenseApplicationTests
     {
         var repository = new FakeTripRepository();
         var unitOfWork = new FakeUnitOfWork();
-        var trip = Trip.Create("South Tour", "Coastal trip", new DateOnly(2026, 10, 1), new DateOnly(2026, 10, 10));
+        var currentUserService = new FakeCurrentUserService();
+        var trip = Trip.Create(TestOwnerUserId, "South Tour", "Coastal trip", new DateOnly(2026, 10, 1), new DateOnly(2026, 10, 10));
         trip.InitializeBudget();
 
         var expense = trip.Budget.AddExpense(
@@ -128,7 +140,7 @@ public class ExpenseApplicationTests
 
         repository.Add(trip);
 
-        var handler = new DeleteExpenseCommandHandler(repository, unitOfWork);
+        var handler = new DeleteExpenseCommandHandler(repository, unitOfWork, currentUserService);
         var command = new DeleteExpenseCommand(trip.Id, expense.Id);
 
         var result = await handler.Handle(command, CancellationToken.None);
@@ -143,7 +155,8 @@ public class ExpenseApplicationTests
     public async Task GetTripExpensesQueryHandler_Returns_Expense_List()
     {
         var repository = new FakeTripRepository();
-        var trip = Trip.Create("Spiti Valley", "Himalaya circuit", new DateOnly(2026, 7, 1), new DateOnly(2026, 7, 10));
+        var currentUserService = new FakeCurrentUserService();
+        var trip = Trip.Create(TestOwnerUserId, "Spiti Valley", "Himalaya circuit", new DateOnly(2026, 7, 1), new DateOnly(2026, 7, 10));
         trip.InitializeBudget();
 
         trip.Budget.AddExpense(BudgetCategoryType.Fuel, "Kaza Petrol Station", 1800m, new DateOnly(2026, 7, 3), PaymentMethod.Cash);
@@ -151,7 +164,7 @@ public class ExpenseApplicationTests
 
         repository.Add(trip);
 
-        var handler = new GetTripExpensesQueryHandler(repository);
+        var handler = new GetTripExpensesQueryHandler(repository, currentUserService);
         var query = new GetTripExpensesQuery(trip.Id);
 
         var result = await handler.Handle(query, CancellationToken.None);

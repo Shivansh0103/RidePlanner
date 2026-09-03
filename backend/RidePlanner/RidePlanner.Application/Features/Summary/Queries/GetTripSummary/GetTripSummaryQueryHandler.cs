@@ -1,6 +1,8 @@
 using MediatR;
+using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Summary.DTOs;
+using RidePlanner.Domain.Exceptions;
 using RidePlanner.Domain.ValueObjects;
 
 namespace RidePlanner.Application.Features.Summary.Queries.GetTripSummary;
@@ -12,26 +14,32 @@ public sealed class GetTripSummaryQueryHandler : IRequestHandler<GetTripSummaryQ
     private readonly IExpenseRepository _expenseRepository;
     private readonly IAccommodationRepository _accommodationRepository;
     private readonly IChecklistRepository _checklistRepository;
+    private readonly ICurrentUserService _currentUserService;
 
     public GetTripSummaryQueryHandler(
         ITripRepository tripRepository,
         ITripStopRepository stopRepository,
         IExpenseRepository expenseRepository,
         IAccommodationRepository accommodationRepository,
-        IChecklistRepository checklistRepository)
+        IChecklistRepository checklistRepository,
+        ICurrentUserService currentUserService)
     {
         _tripRepository = tripRepository;
         _stopRepository = stopRepository;
         _expenseRepository = expenseRepository;
         _accommodationRepository = accommodationRepository;
         _checklistRepository = checklistRepository;
+        _currentUserService = currentUserService;
     }
 
     public async Task<TripSummaryDto?> Handle(
         GetTripSummaryQuery request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetWithBudgetAsync(request.TripId, cancellationToken);
+        var currentUserId = _currentUserService.UserId
+            ?? throw new UnauthorizedException("User is not authenticated.");
+
+        var trip = await _tripRepository.GetWithBudgetAsync(request.TripId, currentUserId, cancellationToken);
         if (trip is null)
         {
             return null;

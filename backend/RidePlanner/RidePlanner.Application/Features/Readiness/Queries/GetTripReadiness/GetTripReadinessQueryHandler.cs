@@ -1,6 +1,8 @@
 using MediatR;
+using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Readiness.DTOs;
+using RidePlanner.Domain.Exceptions;
 using RidePlanner.Domain.ValueObjects;
 
 namespace RidePlanner.Application.Features.Readiness.Queries.GetTripReadiness;
@@ -13,6 +15,7 @@ public sealed class GetTripReadinessQueryHandler : IRequestHandler<GetTripReadin
     private readonly ITripDocumentRepository _documentRepository;
     private readonly IEmergencyContactRepository _contactRepository;
     private readonly IAccommodationRepository _accommodationRepository;
+    private readonly ICurrentUserService _currentUserService;
 
     public GetTripReadinessQueryHandler(
         ITripRepository tripRepository,
@@ -20,7 +23,8 @@ public sealed class GetTripReadinessQueryHandler : IRequestHandler<GetTripReadin
         IChecklistRepository checklistRepository,
         ITripDocumentRepository documentRepository,
         IEmergencyContactRepository contactRepository,
-        IAccommodationRepository accommodationRepository)
+        IAccommodationRepository accommodationRepository,
+        ICurrentUserService currentUserService)
     {
         _tripRepository = tripRepository;
         _stopRepository = stopRepository;
@@ -28,13 +32,17 @@ public sealed class GetTripReadinessQueryHandler : IRequestHandler<GetTripReadin
         _documentRepository = documentRepository;
         _contactRepository = contactRepository;
         _accommodationRepository = accommodationRepository;
+        _currentUserService = currentUserService;
     }
 
     public async Task<TripReadinessDto?> Handle(
         GetTripReadinessQuery request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(request.TripId, cancellationToken);
+        var currentUserId = _currentUserService.UserId
+            ?? throw new UnauthorizedException("User is not authenticated.");
+
+        var trip = await _tripRepository.GetByIdAsync(request.TripId, currentUserId, cancellationToken);
         if (trip is null)
         {
             return null;

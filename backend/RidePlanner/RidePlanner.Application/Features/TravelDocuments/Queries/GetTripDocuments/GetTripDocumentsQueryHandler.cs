@@ -1,7 +1,9 @@
 using MediatR;
+using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.TravelDocuments.DTOs;
 using RidePlanner.Application.Features.TravelDocuments.Mappings;
+using RidePlanner.Domain.Exceptions;
 
 namespace RidePlanner.Application.Features.TravelDocuments.Queries.GetTripDocuments;
 
@@ -9,20 +11,26 @@ public sealed class GetTripDocumentsQueryHandler : IRequestHandler<GetTripDocume
 {
     private readonly ITripDocumentRepository _documentRepository;
     private readonly ITripRepository _tripRepository;
+    private readonly ICurrentUserService _currentUserService;
 
     public GetTripDocumentsQueryHandler(
         ITripDocumentRepository documentRepository,
-        ITripRepository tripRepository)
+        ITripRepository tripRepository,
+        ICurrentUserService currentUserService)
     {
         _documentRepository = documentRepository;
         _tripRepository = tripRepository;
+        _currentUserService = currentUserService;
     }
 
     public async Task<IReadOnlyList<TripDocumentDto>?> Handle(
         GetTripDocumentsQuery request,
         CancellationToken cancellationToken = default)
     {
-        var trip = await _tripRepository.GetByIdAsync(request.TripId, cancellationToken);
+        var currentUserId = _currentUserService.UserId
+            ?? throw new UnauthorizedException("User is not authenticated.");
+
+        var trip = await _tripRepository.GetByIdAsync(request.TripId, currentUserId, cancellationToken);
         if (trip is null)
         {
             return null;
