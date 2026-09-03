@@ -2,8 +2,11 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Summary.Queries.GetTripSummary;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/summary")]
 public sealed class TripSummaryController : ControllerBase

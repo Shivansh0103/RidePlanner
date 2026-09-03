@@ -7,8 +7,11 @@ using RidePlanner.Application.Features.Accommodations.DTOs;
 using RidePlanner.Application.Features.Accommodations.Queries.GetAccommodationById;
 using RidePlanner.Application.Features.Accommodations.Queries.GetAccommodationsByTripId;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/accommodations")]
 public class TripAccommodationsController : ControllerBase

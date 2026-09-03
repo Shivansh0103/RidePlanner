@@ -7,8 +7,11 @@ using RidePlanner.Application.Features.Memories.DTOs;
 using RidePlanner.Application.Features.Memories.Queries.GetTripMemories;
 using RidePlanner.Application.Features.Memories.Queries.GetTripMemory;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/memories")]
 public sealed class TripMemoriesController : ControllerBase

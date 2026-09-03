@@ -1,6 +1,8 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
+using RidePlanner.Application.Features.Auth.DTOs;
 
 namespace RidePlanner.Api.IntegrationTests;
 
@@ -13,9 +15,21 @@ public class ErrorHandlingIntegrationTests : IClassFixture<CustomWebApplicationF
         _client = factory.CreateClient();
     }
 
+    private async Task AuthenticateAsync()
+    {
+        var email = $"error_tests_{Guid.NewGuid():N}@example.com";
+        var password = "SecurePassword123!";
+        await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequest(email, password));
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest(email, password));
+        var loginData = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginData!.AccessToken);
+    }
+
     [Fact]
     public async Task CreateTrip_With_Empty_Name_Returns_400_ValidationProblemDetails()
     {
+        await AuthenticateAsync();
+
         // Arrange: Invalid payload with empty name
         var invalidTrip = new
         {
@@ -41,6 +55,8 @@ public class ErrorHandlingIntegrationTests : IClassFixture<CustomWebApplicationF
     [Fact]
     public async Task CreateTripStop_For_NonExistent_Trip_Returns_404_NotFound_ProblemDetails()
     {
+        await AuthenticateAsync();
+
         // Arrange: Non-existent TripId
         var nonExistentTripId = Guid.NewGuid();
         var newStop = new

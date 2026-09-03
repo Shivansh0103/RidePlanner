@@ -7,8 +7,11 @@ using RidePlanner.Application.Features.EmergencyContacts.DTOs;
 using RidePlanner.Application.Features.EmergencyContacts.Queries.GetEmergencyContact;
 using RidePlanner.Application.Features.EmergencyContacts.Queries.GetEmergencyContacts;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/contacts")]
 public sealed class EmergencyContactsController : ControllerBase

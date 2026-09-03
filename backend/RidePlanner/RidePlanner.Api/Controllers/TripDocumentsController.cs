@@ -7,8 +7,11 @@ using RidePlanner.Application.Features.TravelDocuments.DTOs;
 using RidePlanner.Application.Features.TravelDocuments.Queries.GetTripDocument;
 using RidePlanner.Application.Features.TravelDocuments.Queries.GetTripDocuments;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/documents")]
 public sealed class TripDocumentsController : ControllerBase

@@ -8,8 +8,11 @@ using RidePlanner.Application.Features.Budgets.Commands.UpdateTripBudget;
 using RidePlanner.Application.Features.Budgets.DTOs;
 using RidePlanner.Application.Features.Budgets.Queries.GetTripBudget;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/budget")]
 public sealed class TripBudgetsController : ControllerBase

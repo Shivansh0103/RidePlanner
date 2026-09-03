@@ -10,8 +10,11 @@ using RidePlanner.Application.Features.Checklists.Commands.UpdateItem;
 using RidePlanner.Application.Features.Checklists.DTOs;
 using RidePlanner.Application.Features.Checklists.Queries.GetTripChecklist;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/checklist")]
 public sealed class TripChecklistsController : ControllerBase

@@ -2,8 +2,11 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Application.Features.Readiness.Queries.GetTripReadiness;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/readiness")]
 public sealed class TripReadinessController : ControllerBase

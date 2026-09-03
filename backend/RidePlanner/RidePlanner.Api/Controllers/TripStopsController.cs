@@ -7,8 +7,11 @@ using RidePlanner.Application.Features.TripStops.Commands.UpdateTripStop;
 using RidePlanner.Application.Features.TripStops.DTOs;
 using RidePlanner.Application.Features.TripStops.Queries.GetTripStops;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/stops")]
 public class TripStopsController : ControllerBase

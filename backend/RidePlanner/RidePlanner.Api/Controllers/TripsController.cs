@@ -10,8 +10,11 @@ using RidePlanner.Application.Features.Trips.Mappings;
 using RidePlanner.Application.Features.Trips.Queries.GetTrip;
 using RidePlanner.Application.Features.Trips.Queries.GetTrips;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TripsController : ControllerBase

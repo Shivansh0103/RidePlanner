@@ -6,8 +6,11 @@ using RidePlanner.Application.Features.Expenses.Commands.UpdateExpense;
 using RidePlanner.Application.Features.Expenses.DTOs;
 using RidePlanner.Application.Features.Expenses.Queries.GetTripExpenses;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace RidePlanner.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/trips/{tripId:guid}/expenses")]
 public sealed class ExpensesController : ControllerBase

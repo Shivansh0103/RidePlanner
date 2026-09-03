@@ -1,5 +1,7 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using RidePlanner.Application.Features.Auth.DTOs;
 using RidePlanner.Application.Features.Trips.DTOs;
 
 namespace RidePlanner.Api.IntegrationTests;
@@ -13,9 +15,21 @@ public class TripsEndpointIntegrationTests : IClassFixture<CustomWebApplicationF
         _client = factory.CreateClient();
     }
 
+    private async Task AuthenticateAsync()
+    {
+        var email = $"trips_{Guid.NewGuid():N}@example.com";
+        var password = "SecurePassword123!";
+        await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequest(email, password));
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest(email, password));
+        var loginData = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginData!.AccessToken);
+    }
+
     [Fact]
     public async Task CreateTrip_Returns_Created_And_GetTrip_Returns_Trip()
     {
+        await AuthenticateAsync();
+
         // 1. Arrange: Prepare CreateTrip payload
         var newTrip = new
         {
@@ -49,6 +63,8 @@ public class TripsEndpointIntegrationTests : IClassFixture<CustomWebApplicationF
     [Fact]
     public async Task GetTrips_Returns_Ok_List()
     {
+        await AuthenticateAsync();
+
         var response = await _client.GetAsync("/api/trips");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
