@@ -10,6 +10,8 @@ public class Trip : Entity, IAuditableEntity
 {
     private readonly List<ChecklistCategory> _checklistCategories = [];
 
+    public Guid OwnerUserId { get; private set; }
+
     public string Name { get; private set; }
 
     public string? Description { get; private set; }
@@ -45,12 +47,14 @@ public class Trip : Entity, IAuditableEntity
 
     private Trip(
         Guid id,
+        Guid ownerUserId,
         string name,
         string? description,
         DateOnly startDate,
         DateOnly endDate)
     {
         Id = id;
+        OwnerUserId = ownerUserId;
         Name = name;
         Description = description;
         StartDate = startDate;
@@ -61,15 +65,17 @@ public class Trip : Entity, IAuditableEntity
     }
 
     public static Trip Create(
+        Guid ownerUserId,
         string name,
         string? description,
         DateOnly startDate,
         DateOnly endDate)
     {
-        Validate(name, startDate, endDate);
+        Validate(ownerUserId, name, startDate, endDate);
 
         return new Trip(
             Guid.NewGuid(),
+            ownerUserId,
             name,
             description,
             startDate,
@@ -126,6 +132,18 @@ public class Trip : Entity, IAuditableEntity
         Status = TripStatus.Completed;
         CompletedAt = actualCompletion ?? DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    private static void Validate(
+        Guid ownerUserId,
+        string name,
+        DateOnly startDate,
+        DateOnly endDate)
+    {
+        if (ownerUserId == Guid.Empty)
+            throw new DomainException("Owner user ID cannot be empty.");
+
+        Validate(name, startDate, endDate);
     }
 
     private static void Validate(

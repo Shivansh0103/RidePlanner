@@ -6,10 +6,39 @@ namespace RidePlanner.Domain.Tests;
 
 public class TripDomainTests
 {
+    private static readonly Guid TestOwnerUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+
+    [Fact]
+    public void Trip_Creation_Sets_OwnerUserId_Correctly()
+    {
+        var trip = Trip.Create(
+            TestOwnerUserId,
+            "Ladakh Adventure",
+            "Mountain road trip",
+            new DateOnly(2026, 6, 20),
+            new DateOnly(2026, 6, 30));
+
+        Assert.Equal(TestOwnerUserId, trip.OwnerUserId);
+    }
+
+    [Fact]
+    public void Trip_Creation_With_Empty_OwnerUserId_Throws_DomainException()
+    {
+        var ex = Assert.Throws<DomainException>(() => Trip.Create(
+            Guid.Empty,
+            "Invalid Trip",
+            null,
+            new DateOnly(2026, 6, 20),
+            new DateOnly(2026, 6, 30)));
+
+        Assert.Contains("Owner user ID cannot be empty", ex.Message);
+    }
+
     [Fact]
     public void Trip_Creation_Defaults_To_Planning_Status_With_Null_Lifecycle_Timestamps()
     {
         var trip = Trip.Create(
+            TestOwnerUserId,
             "Ladakh Adventure",
             "Mountain road trip",
             new DateOnly(2026, 6, 20),
@@ -24,6 +53,7 @@ public class TripDomainTests
     public void Trip_Start_Sets_Status_To_Active_And_Populates_StartedAt()
     {
         var trip = Trip.Create(
+            TestOwnerUserId,
             "South India Ride",
             "Coastal route",
             new DateOnly(2026, 9, 1),
@@ -41,6 +71,7 @@ public class TripDomainTests
     public void Trip_AutoActivate_Changes_Planning_To_Active_Without_Setting_StartedAt()
     {
         var trip = Trip.Create(
+            TestOwnerUserId,
             "Spiti Valley",
             "Circuit ride",
             new DateOnly(2026, 7, 1),
@@ -56,6 +87,7 @@ public class TripDomainTests
     public void Trip_Complete_Sets_Status_To_Completed_And_Populates_CompletedAt()
     {
         var trip = Trip.Create(
+            TestOwnerUserId,
             "Goa Monsoon Ride",
             "Weekend getaway",
             new DateOnly(2026, 8, 1),
@@ -73,7 +105,7 @@ public class TripDomainTests
     [Fact]
     public void Trip_Start_Throws_When_Already_Completed()
     {
-        var trip = Trip.Create("Test Trip", "Desc", new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 5));
+        var trip = Trip.Create(TestOwnerUserId, "Test Trip", "Desc", new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 5));
         trip.Complete();
 
         Assert.Throws<DomainException>(() => trip.Start());
@@ -82,7 +114,7 @@ public class TripDomainTests
     [Fact]
     public void Trip_Complete_Throws_When_Already_Completed()
     {
-        var trip = Trip.Create("Test Trip", "Desc", new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 5));
+        var trip = Trip.Create(TestOwnerUserId, "Test Trip", "Desc", new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 5));
         trip.Complete();
 
         Assert.Throws<DomainException>(() => trip.Complete());
