@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RidePlanner.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using RidePlanner.Infrastructure.Persistence;
 namespace RidePlanner.Infrastructure.Migrations
 {
     [DbContext(typeof(RidePlannerDbContext))]
-    partial class RidePlannerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260903180000_AddTripOwnerUserIdNullable")]
+    partial class AddTripOwnerUserIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -452,9 +455,6 @@ namespace RidePlanner.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<Guid>("OwnerUserId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
@@ -470,8 +470,6 @@ namespace RidePlanner.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OwnerUserId");
 
                     b.ToTable("Trips", (string)null);
                 });
@@ -703,7 +701,6 @@ namespace RidePlanner.Infrastructure.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<DateTimeOffset?>("RevokedAt")
-                        .IsConcurrencyToken()
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("TokenHash")
@@ -881,15 +878,6 @@ namespace RidePlanner.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Trip");
-                });
-
-            modelBuilder.Entity("RidePlanner.Domain.Entities.Trip", b =>
-                {
-                    b.HasOne("RidePlanner.Infrastructure.Identity.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("OwnerUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("RidePlanner.Domain.Entities.TripDocument", b =>

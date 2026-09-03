@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RidePlanner.Domain.Entities;
 using RidePlanner.Domain.Enums;
+using RidePlanner.Infrastructure.Identity;
 
 namespace RidePlanner.Infrastructure.Persistence.Configurations;
 
@@ -12,6 +13,11 @@ public class TripConfiguration : IEntityTypeConfiguration<Trip>
         builder.ToTable("Trips");
 
         builder.HasKey(t => t.Id);
+
+        builder.Property(t => t.OwnerUserId)
+            .IsRequired();
+
+        builder.HasIndex(t => t.OwnerUserId);
 
         builder.Property(t => t.Name)
             .IsRequired()
@@ -30,6 +36,11 @@ public class TripConfiguration : IEntityTypeConfiguration<Trip>
 
         builder.Property(t => t.CompletedAt)
             .IsRequired(false);
+
+        builder.HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(t => t.OwnerUserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(t => t.Stops)
             .WithOne(s => s.Trip)

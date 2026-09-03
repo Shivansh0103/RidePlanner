@@ -20,14 +20,16 @@ public sealed class TripRepository : ITripRepository
 
     public async Task<Trip?> GetByIdAsync(
         Guid id,
+        Guid ownerUserId,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Trips
-            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == id && t.OwnerUserId == ownerUserId, cancellationToken);
     }
 
     public async Task<Trip?> GetWithBudgetAsync(
         Guid id,
+        Guid ownerUserId,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Trips
@@ -35,14 +37,16 @@ public sealed class TripRepository : ITripRepository
             .ThenInclude(b => b.Estimates)
             .Include(t => t.Budget)
             .ThenInclude(b => b.Expenses)
-            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == id && t.OwnerUserId == ownerUserId, cancellationToken);
     }
 
     public async Task<IReadOnlyList<Trip>> GetAllAsync(
+        Guid ownerUserId,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Trips
             .AsNoTracking()
+            .Where(t => t.OwnerUserId == ownerUserId)
             .ToListAsync(cancellationToken);
     }
 
