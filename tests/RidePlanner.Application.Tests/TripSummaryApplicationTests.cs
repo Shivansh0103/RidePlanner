@@ -1,3 +1,4 @@
+using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Application.Features.Summary.Queries.GetTripSummary;
 using RidePlanner.Domain.Entities;
@@ -9,16 +10,25 @@ namespace RidePlanner.Application.Tests;
 
 public class TripSummaryApplicationTests
 {
+    private static readonly Guid TestOwnerUserId = Guid.Parse("44444444-4444-4444-4444-444444444444");
+
+    private class FakeCurrentUserService : ICurrentUserService
+    {
+        public bool IsAuthenticated => true;
+        public Guid? UserId => TestOwnerUserId;
+    }
+
     private readonly FakeTripRepository _tripRepository = new();
     private readonly FakeTripStopRepository _stopRepository = new();
     private readonly FakeExpenseRepository _expenseRepository = new();
     private readonly FakeAccommodationRepository _accommodationRepository = new();
     private readonly FakeChecklistRepository _checklistRepository = new();
+    private readonly FakeCurrentUserService _currentUserService = new();
 
     [Fact]
     public async Task GetTripSummaryQueryHandler_Correctly_Calculates_TotalExpenses()
     {
-        var trip = Trip.Create("Ladakh Ride", "Himalaya tour", new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 15));
+        var trip = Trip.Create(TestOwnerUserId, "Ladakh Ride", "Himalaya tour", new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 15));
         trip.InitializeBudget();
         trip.Budget!.UpdateTargetBudget(50000m);
 
@@ -34,7 +44,8 @@ public class TripSummaryApplicationTests
             _stopRepository,
             _expenseRepository,
             _accommodationRepository,
-            _checklistRepository);
+            _checklistRepository,
+            _currentUserService);
 
         var query = new GetTripSummaryQuery(trip.Id);
         var summary = await handler.Handle(query, CancellationToken.None);
@@ -50,9 +61,9 @@ public class TripSummaryApplicationTests
         public List<Trip> Trips { get; } = [];
 
         public void Add(Trip trip) => Trips.Add(trip);
-        public Task<Trip?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(Trips.FirstOrDefault(t => t.Id == id));
-        public Task<Trip?> GetWithBudgetAsync(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(Trips.FirstOrDefault(t => t.Id == id));
-        public Task<IReadOnlyList<Trip>> GetAllAsync(CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<Trip>>(Trips);
+        public Task<Trip?> GetByIdAsync(Guid id, Guid ownerUserId, CancellationToken cancellationToken = default) => Task.FromResult(Trips.FirstOrDefault(t => t.Id == id && t.OwnerUserId == ownerUserId));
+        public Task<Trip?> GetWithBudgetAsync(Guid id, Guid ownerUserId, CancellationToken cancellationToken = default) => Task.FromResult(Trips.FirstOrDefault(t => t.Id == id && t.OwnerUserId == ownerUserId));
+        public Task<IReadOnlyList<Trip>> GetAllAsync(Guid ownerUserId, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<Trip>>(Trips.Where(t => t.OwnerUserId == ownerUserId).ToList());
         public Task DeleteAsync(Trip trip, CancellationToken cancellationToken = default) { Trips.Remove(trip); return Task.CompletedTask; }
     }
 

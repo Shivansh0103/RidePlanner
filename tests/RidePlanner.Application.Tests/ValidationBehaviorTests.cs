@@ -23,7 +23,8 @@ public class ValidationBehaviorTests
             new DateOnly(2026, 8, 10),
             new DateOnly(2026, 8, 5));
 
-        RequestHandlerDelegate<Trip> next = (ct) => Task.FromResult(Trip.Create("Valid", null, new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 5)));
+        var testOwnerUserId = Guid.Parse("55555555-5555-5555-5555-555555555555");
+        RequestHandlerDelegate<Trip> next = (ct) => Task.FromResult(Trip.Create(testOwnerUserId, "Valid", null, new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 5)));
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ValidationException>(() =>
@@ -47,7 +48,8 @@ public class ValidationBehaviorTests
             new DateOnly(2026, 8, 1),
             new DateOnly(2026, 8, 10));
 
-        var expectedTrip = Trip.Create("Ladakh Ride", "Tour", new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 10));
+        var testOwnerUserId = Guid.Parse("55555555-5555-5555-5555-555555555555");
+        var expectedTrip = Trip.Create(testOwnerUserId, "Ladakh Ride", "Tour", new DateOnly(2026, 8, 1), new DateOnly(2026, 8, 10));
         bool nextCalled = false;
         RequestHandlerDelegate<Trip> next = (ct) =>
         {
