@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Api.Common;
 using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Features.Auth.Commands.Login;
+using RidePlanner.Application.Features.Auth.Commands.Logout;
 using RidePlanner.Application.Features.Auth.Commands.Refresh;
 using RidePlanner.Application.Features.Auth.Commands.Register;
 using RidePlanner.Application.Features.Auth.DTOs;
@@ -71,6 +72,19 @@ public class AuthController : ControllerBase
             Request.IsHttps);
 
         return Ok(authResult.Response);
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+    {
+        var refreshToken = Request.Cookies[AuthCookieHelper.RefreshTokenCookieName];
+        if (!string.IsNullOrWhiteSpace(refreshToken))
+        {
+            await _sender.Send(new LogoutUserCommand(refreshToken), cancellationToken);
+        }
+
+        AuthCookieHelper.ClearRefreshTokenCookie(Response, Request.IsHttps);
+        return Ok();
     }
 
     [Authorize]

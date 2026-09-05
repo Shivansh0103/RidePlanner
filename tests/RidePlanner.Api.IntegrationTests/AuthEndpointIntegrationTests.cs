@@ -474,6 +474,53 @@ public class AuthEndpointIntegrationTests : IClassFixture<CustomWebApplicationFa
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
+    [Fact]
+    public async Task Logout_WithValidRefreshTokenCookie_Returns200Ok_ClearsCookie_AndRevokesToken()
+    {
+        // Arrange: Register and login
+        var uniqueEmail = $"logout_user_{Guid.NewGuid():N}@example.com";
+        var password = "SecurePassword123!";
+        await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequest(uniqueEmail, password));
+
+        var loginRes = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest(uniqueEmail, password));
+        var token = ExtractCookie(loginRes, "refreshToken");
+        Assert.False(string.IsNullOrWhiteSpace(token));
+
+        // Act: Logout with the cookie
+        var logoutRequest = new HttpRequestMessage(HttpMethod.Post, "/api/auth/logout");
+        logoutRequest.Headers.Add("Cookie", $"refreshToken={token}");
+        var logoutResponse = await _client.SendAsync(logoutRequest);
+
+        // Assert: 200 OK
+        Assert.Equal(HttpStatusCode.OK, logoutResponse.StatusCode);
+
+        // Assert cookie clearance header
+        var setCookie = logoutResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+        Assert.NotNull(setCookie);
+        Assert.Contains("refreshToken=", setCookie);
+
+        // Act: Try to refresh using the logged-out token
+        var refreshRequest = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+        refreshRequest.Headers.Add("Cookie", $"refreshToken={token}");
+        var refreshResponse = await _client.SendAsync(refreshRequest);
+
+        // Assert: Refresh fails with 401 because token was revoked
+        Assert.Equal(HttpStatusCode.Unauthorized, refreshResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Logout_WithoutCookie_Returns200Ok_AndClearsCookie()
+    {
+        // Act: Logout without any cookie
+        var response = await _client.PostAsync("/api/auth/logout", null);
+
+        // Assert: 200 OK and cookie clearance
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var setCookie = response.Headers.GetValues("Set-Cookie").FirstOrDefault();
+        Assert.NotNull(setCookie);
+        Assert.Contains("refreshToken=", setCookie);
+    }
+
     private static string? ExtractCookie(HttpResponseMessage response, string cookieName)
     {
         if (response.Headers.TryGetValues("Set-Cookie", out var cookies))

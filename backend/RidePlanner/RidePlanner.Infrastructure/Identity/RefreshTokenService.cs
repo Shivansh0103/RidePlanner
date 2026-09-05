@@ -130,4 +130,24 @@ public class RefreshTokenService : IRefreshTokenService
 
         return (existingToken.UserId, newRawToken, expiresAt);
     }
+
+    public async Task RevokeSessionAsync(
+        string rawRefreshToken,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(rawRefreshToken))
+        {
+            return;
+        }
+
+        var tokenHash = HashToken(rawRefreshToken);
+        var existingToken = await _dbContext.RefreshTokens
+            .FirstOrDefaultAsync(r => r.TokenHash == tokenHash, cancellationToken);
+
+        if (existingToken != null && !existingToken.IsRevoked)
+        {
+            existingToken.RevokedAt = DateTimeOffset.UtcNow;
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

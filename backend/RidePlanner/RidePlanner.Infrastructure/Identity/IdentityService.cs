@@ -121,4 +121,14 @@ public class IdentityService : IIdentityService
 
         return new AuthResult(loginResponse, newRawRefreshToken, newExpiresAt);
     }
+
+    public async Task LogoutAsync(
+        string? rawRefreshToken,
+        CancellationToken cancellationToken = default)
+    {
+        if (!string.IsNullOrWhiteSpace(rawRefreshToken))
+        {
+            await _refreshTokenService.RevokeSessionAsync(rawRefreshToken, cancellationToken);
+        }
+    }
 }

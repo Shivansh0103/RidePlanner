@@ -17,4 +17,8 @@ public interface IIdentityService
     Task<AuthResult> RefreshTokenAsync(
         string rawRefreshToken,
         CancellationToken cancellationToken = default);
+
+    Task LogoutAsync(
+        string? rawRefreshToken,
+        CancellationToken cancellationToken = default);
 }
