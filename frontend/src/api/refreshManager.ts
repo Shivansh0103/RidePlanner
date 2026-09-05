@@ -1,8 +1,8 @@
-import { refreshTransport } from "./refreshTransport";
+import { refreshTransport, type RefreshResponse } from "./refreshTransport";
 import { tokenStore } from "./tokenStore";
 
 class RefreshManager {
-  private inFlightRefreshPromise: Promise<string> | null = null;
+  private inFlightRefreshPromise: Promise<RefreshResponse> | null = null;
   private sessionExpiredListeners: Array<() => void> = [];
 
   /**
@@ -28,6 +28,25 @@ class RefreshManager {
    * and revoke the user's session family.
    */
   public async getValidToken(): Promise<string> {
+    const response = await this.executeRefreshInternal();
+    return response.accessToken;
+  }
+
+  /**
+   * Restores an active session on application bootstrap and returns the user identity.
+   */
+  public async restoreSession(): Promise<{
+    user: { id: string; email: string };
+    accessToken: string;
+  }> {
+    const response = await this.executeRefreshInternal();
+    return {
+      user: { id: response.userId, email: response.email },
+      accessToken: response.accessToken,
+    };
+  }
+
+  private async executeRefreshInternal(): Promise<import("./refreshTransport").RefreshResponse> {
     if (this.inFlightRefreshPromise) {
       return this.inFlightRefreshPromise;
     }
@@ -37,7 +56,7 @@ class RefreshManager {
         const response = await refreshTransport.executeRefresh();
         const newToken = response.accessToken;
         tokenStore.set(newToken);
-        return newToken;
+        return response;
       } catch (error) {
         tokenStore.clear();
         this.emitSessionExpired();

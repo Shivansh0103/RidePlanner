@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import queryClient from "@/app/providers/queryClient";
 import theme from "@/app/theme/theme";
+import { AuthProvider } from "@/features/auth";
 import { ErrorBoundary } from "@/shared/components";
 import { MapProvider } from "@/shared/maps";
 
@@ -18,7 +19,9 @@ export default function AppProviders({ children }: AppProvidersProps) {
         <CssBaseline />
 
         <QueryClientProvider client={queryClient}>
-          <MapProvider>{children}</MapProvider>
+          <AuthProvider>
+            <MapProvider>{children}</MapProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </ErrorBoundary>
