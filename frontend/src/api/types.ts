@@ -57,3 +57,81 @@ export class ApiError extends Error {
     return this.detail || this.message || this.title || fallback;
   }
 }
+
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    skipAuthRefresh?: boolean;
+    _retry?: boolean;
+  }
+}
+
+/**
+ * Normalizes an unknown Axios error or standard error into an ApiError.
+ */
+export function normalizeApiError(error: unknown): ApiError {
+  if (error instanceof ApiError) {
+    return error;
+  }
+
+  const axiosError = error as {
+    isAxiosError?: boolean;
+    code?: string;
+    message?: string;
+    response?: {
+      status: number;
+      data: unknown;
+    };
+  };
+
+  // Case 1: No response received (Network error, offline, timeout, CORS)
+  if (!axiosError?.response) {
+    const isTimeout =
+      axiosError?.code === "ECONNABORTED" ||
+      (axiosError?.message && axiosError.message.toLowerCase().includes("timeout"));
+
+    return new ApiError({
+      message: isTimeout
+        ? "Request timed out. Please try again."
+        : "Unable to connect to the server. Please check your network connection.",
+      status: 0,
+      title: isTimeout ? "Request Timeout" : "Network Error",
+      isNetworkError: true,
+      raw: error,
+    });
+  }
+
+  // Case 2: Server responded with an HTTP error status (4xx / 5xx)
+  const { status, data } = axiosError.response;
+  const problem = data as ProblemDetails | undefined;
+
+  const legacyError =
+    typeof data === "object" && data !== null
+      ? ((data as { Error?: string }).Error ??
+        (data as { error?: string }).error)
+      : undefined;
+
+  const title =
+    problem?.title ||
+    (status >= 500 ? "Server Error" : "Request Failed");
+  const detail = problem?.detail || legacyError;
+  const errors = problem?.errors;
+
+  let message = detail || title;
+  if (errors && Object.keys(errors).length > 0) {
+    const firstField = Object.keys(errors)[0];
+    const firstError = errors[firstField]?.[0];
+    if (firstError) {
+      message = firstError;
+    }
+  }
+
+  return new ApiError({
+    message,
+    status,
+    title,
+    detail,
+    errors,
+    raw: data,
+  });
+}
+

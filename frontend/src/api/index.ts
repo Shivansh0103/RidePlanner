@@ -1,2 +1,7 @@
 export { apiClient } from "./axios";
-export { ApiError, type ProblemDetails } from "./types";
+export { rawClient } from "./rawClient";
+export { refreshManager } from "./refreshManager";
+export { refreshTransport, type RefreshResponse } from "./refreshTransport";
+export { tokenStore } from "./tokenStore";
+export { ApiError, normalizeApiError, type ProblemDetails } from "./types";
+

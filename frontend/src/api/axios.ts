@@ -1,6 +1,8 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
-import { ApiError, type ProblemDetails } from "./types";
+import { refreshManager } from "./refreshManager";
+import { tokenStore } from "./tokenStore";
+import { normalizeApiError } from "./types";
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -8,66 +10,51 @@ export const apiClient = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 15000,
+  withCredentials: true,
 });
 
+// 1. Request Interceptor: Attach in-memory Bearer token
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = tokenStore.get();
+  if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// 2. Response Interceptor: 401 handling with deduplicated refresh retry
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<ProblemDetails | Record<string, unknown>>) => {
-    // Case 1: No response received (Network error, offline, timeout, CORS)
-    if (!error.response) {
-      const isTimeout =
-        error.code === "ECONNABORTED" ||
-        (error.message && error.message.toLowerCase().includes("timeout"));
+  async (error: AxiosError) => {
+    const originalRequest = error.config;
 
-      return Promise.reject(
-        new ApiError({
-          message: isTimeout
-            ? "Request timed out. Please try again."
-            : "Unable to connect to the server. Please check your network connection.",
-          status: 0,
-          title: isTimeout ? "Request Timeout" : "Network Error",
-          isNetworkError: true,
-          raw: error,
-        })
-      );
-    }
+    // Determine eligibility for refresh handling:
+    // - Must have received a 401 response
+    // - Must have an original request configuration
+    // - Must NOT have been retried already (_retry flag)
+    // - Must NOT be marked to skip auth refresh (skipAuthRefresh)
+    const isEligible =
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !originalRequest.skipAuthRefresh;
 
-    // Case 2: Server responded with an HTTP error status (4xx / 5xx)
-    const { status, data } = error.response;
-    const problem = data as ProblemDetails | undefined;
+    if (isEligible) {
+      originalRequest._retry = true;
 
-    // Support legacy { Error: "..." } or standard { error: "..." } format if present
-    const legacyError =
-      typeof data === "object" && data !== null
-        ? ((data as { Error?: string }).Error ??
-          (data as { error?: string }).error)
-        : undefined;
+      try {
+        // Await the shared refresh promise (deduplicated across concurrent 401s)
+        const newAccessToken = await refreshManager.getValidToken();
 
-    const title =
-      problem?.title ||
-      (status >= 500 ? "Server Error" : "Request Failed");
-    const detail = problem?.detail || legacyError;
-    const errors = problem?.errors;
-
-    // Pick best message for the default Error.message
-    let message = detail || title;
-    if (errors && Object.keys(errors).length > 0) {
-      const firstField = Object.keys(errors)[0];
-      const firstError = errors[firstField]?.[0];
-      if (firstError) {
-        message = firstError;
+        // Update Authorization header on original request and replay
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        return Promise.reject(normalizeApiError(refreshError));
       }
     }
 
-    return Promise.reject(
-      new ApiError({
-        message,
-        status,
-        title,
-        detail,
-        errors,
-        raw: data,
-      })
-    );
+    // Standard RFC 7807 problem details normalization
+    return Promise.reject(normalizeApiError(error));
   }
 );
