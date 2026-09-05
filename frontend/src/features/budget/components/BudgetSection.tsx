@@ -5,12 +5,12 @@ import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
+import { useProfile } from "@/features/profile";
 import { summaryKeys } from "@/features/summary/api/summaryKeys";
 import ErrorState from "@/shared/ui/ErrorState";
 
 import { calculateFuelEstimate } from "../api/budgetApi";
 import { budgetKeys } from "../api/budgetKeys";
-
 import { useCalculateFuelEstimate } from "../hooks/useCalculateFuelEstimate";
 import { useCreateBudgetEstimate } from "../hooks/useCreateBudgetEstimate";
 import { useCreateExpense } from "../hooks/useCreateExpense";
@@ -53,6 +53,8 @@ export default function BudgetSection({
   tripStatus = "Planning",
 }: BudgetSectionProps) {
   const { data: budget, isLoading, isError } = useTripBudget(tripId);
+  const { data: profile } = useProfile();
+  const defaultMileage = profile?.defaultFuelEfficiencyKmPerLitre ?? 15;
 
   // Sub-tab view state: auto-select according to expedition lifecycle stage
   const defaultSubTab: BudgetSubTab =
@@ -102,7 +104,7 @@ export default function BudgetSection({
         lastSyncedDistanceRef.current = routeDistanceKm;
         calculateFuelEstimate(tripId, {
           routeDistanceKm,
-          vehicleMileage: 15,
+          vehicleMileage: defaultMileage,
           fuelPricePerLiter: 100,
         })
           .then(() => {
@@ -313,6 +315,7 @@ export default function BudgetSection({
           onDeleteEstimate={handleOpenDeleteEstimate}
           routeDistanceKm={routeDistanceKm}
           onCalculateFuel={() => setIsFuelCalculatorOpen(true)}
+          defaultMileage={defaultMileage}
         />
       )}
 
@@ -371,6 +374,7 @@ export default function BudgetSection({
         onClose={() => setIsFuelCalculatorOpen(false)}
         onSubmit={handleCalculateFuel}
         isLoading={calculateFuelMutation.isPending}
+        defaultMileage={defaultMileage}
       />
 
       {/* Expense Modals */}

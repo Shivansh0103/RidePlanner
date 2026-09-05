@@ -36,6 +36,7 @@ interface CategoryBreakdownProps {
   onDeleteEstimate: (estimate: BudgetEstimate) => void;
   routeDistanceKm?: number;
   onCalculateFuel?: () => void;
+  defaultMileage?: number;
 }
 
 const CATEGORY_META: Record<
@@ -87,6 +88,7 @@ export default function CategoryBreakdown({
   onDeleteEstimate,
   routeDistanceKm = 0,
   onCalculateFuel,
+  defaultMileage = 15,
 }: CategoryBreakdownProps) {
   const [selectedCategoryType, setSelectedCategoryType] = useState<BudgetCategoryType>(
     categories[0]?.category || "Fuel"
@@ -418,7 +420,7 @@ export default function CategoryBreakdown({
                       </Typography>
                       <Typography variant="caption" sx={{ fontSize: "0.66rem", color: "#94a3b8" }}>
                         {routeDistanceKm > 0
-                          ? `Est. fuel cost @ 15 km/L (₹100/L) is ~₹${Math.round((routeDistanceKm / 15) * 100).toLocaleString()}`
+                          ? `Est. fuel cost @ ${defaultMileage} km/L (₹100/L) is ~₹${Math.round((routeDistanceKm / defaultMileage) * 100).toLocaleString()}`
                           : "Add stops in the Route & Itinerary tab to calculate distance."}
                       </Typography>
                     </Box>

@@ -3,6 +3,7 @@ import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import PlaceIcon from "@mui/icons-material/Place";
 import { Avatar, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 
+import type { DistanceUnit } from "@/features/profile";
 import { formatDistance, formatDuration } from "@/shared/utils/formatters";
 
 import type { RouteSummary as RouteSummaryType } from "../types/route";
@@ -10,9 +11,14 @@ import type { RouteSummary as RouteSummaryType } from "../types/route";
 export interface RouteSummaryProps {
   summary?: RouteSummaryType | null;
   stopCount: number;
+  distanceUnit?: DistanceUnit;
 }
 
-export default function RouteSummary({ summary, stopCount }: RouteSummaryProps) {
+export default function RouteSummary({
+  summary,
+  stopCount,
+  distanceUnit = "Kilometers",
+}: RouteSummaryProps) {
   if (!summary || stopCount < 2) {
     return null;
   }
@@ -20,7 +26,7 @@ export default function RouteSummary({ summary, stopCount }: RouteSummaryProps) 
   const items = [
     {
       title: "Total Distance",
-      value: formatDistance(summary.distanceMeters),
+      value: formatDistance(summary.distanceMeters, distanceUnit),
       icon: <DirectionsCarIcon />,
       iconBgColor: "primary.50",
       iconColor: "primary.main",

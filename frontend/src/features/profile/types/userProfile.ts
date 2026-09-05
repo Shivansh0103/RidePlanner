@@ -1,5 +1,6 @@
 export type SupportedCurrency = "INR" | "USD" | "EUR" | "GBP";
 export type SupportedDistanceUnit = "Kilometers" | "Miles";
+export type DistanceUnit = SupportedDistanceUnit;
 
 export interface UserProfile {
   preferredCurrencyCode: SupportedCurrency;

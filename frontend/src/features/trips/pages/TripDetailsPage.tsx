@@ -35,14 +35,15 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { AccommodationsSection, useAccommodations } from "@/features/accommodations";
 import { BudgetSection, useTripBudget } from "@/features/budget";
-import { ChecklistSection, type ChecklistItem, useToggleChecklistItem, useTripChecklist } from "@/features/checklist";
+import { type ChecklistItem, ChecklistSection, useToggleChecklistItem, useTripChecklist } from "@/features/checklist";
 import { EmergencyContactsSection } from "@/features/contacts";
 import { DocumentsSection } from "@/features/documents";
 import { MemoriesSection } from "@/features/memories";
+import { useProfile } from "@/features/profile";
 import { ReadinessSection, useTripReadiness } from "@/features/readiness";
 import { TripSummarySection } from "@/features/summary";
-import { useTripStops } from "@/features/tripStops";
 import { ItinerarySection, useCompleteTrip, useStartTrip, useTrip } from "@/features/trips";
+import { useTripStops } from "@/features/tripStops";
 import { BreadcrumbsBar } from "@/shared/components";
 import { Map, RouteSummary, useRoute } from "@/shared/maps";
 import { ErrorState } from "@/shared/ui";
@@ -76,6 +77,7 @@ export default function TripDetailsPage() {
   const { data: checklist } = useTripChecklist(tripId ?? "");
   const { data: accommodations = [] } = useAccommodations(tripId ?? "");
   const { data: readinessData } = useTripReadiness(tripId ?? "");
+  const { data: profile } = useProfile();
 
   const startTripMutation = useStartTrip();
   const completeTripMutation = useCompleteTrip();
@@ -1073,7 +1075,11 @@ export default function TripDetailsPage() {
         {activeTab === "itinerary" && (
           <Stack spacing={2.5} role="tabpanel">
             {/* Top Stat Bar */}
-            <RouteSummary summary={route?.summary} stopCount={validStops.length} />
+            <RouteSummary
+              summary={route?.summary}
+              stopCount={validStops.length}
+              distanceUnit={profile?.distanceUnit}
+            />
 
             {/* Side-by-Side Map & Itinerary List */}
             <Grid container spacing={2.5} sx={{ alignItems: "stretch" }}>

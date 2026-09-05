@@ -6,6 +6,7 @@ import PlaceIcon from "@mui/icons-material/Place";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 
+import type { DistanceUnit } from "@/features/profile";
 import type { Trip } from "@/features/trips/types/trip";
 import { calculateTripDays } from "@/features/trips/utils/tripOverviewSelectors";
 import { formatDate } from "@/shared/utils/date";
@@ -16,6 +17,7 @@ interface OverviewHeaderProps {
   stopCount: number;
   routeDistanceMeters?: number;
   routeDurationMillis?: number;
+  distanceUnit?: DistanceUnit;
 }
 
 export default function OverviewHeader({
@@ -23,6 +25,7 @@ export default function OverviewHeader({
   stopCount,
   routeDistanceMeters = 0,
   routeDurationMillis = 0,
+  distanceUnit = "Kilometers",
 }: OverviewHeaderProps) {
   const totalDays = calculateTripDays(trip.startDate, trip.endDate);
 
@@ -88,7 +91,7 @@ export default function OverviewHeader({
           {routeDistanceMeters > 0 && (
             <Chip
               icon={<NavigationIcon fontSize="small" />}
-              label={formatDistance(routeDistanceMeters)}
+              label={formatDistance(routeDistanceMeters, distanceUnit)}
               variant="outlined"
               size="small"
               sx={{ fontWeight: 600, color: "primary.main", borderColor: "rgba(37, 99, 235, 0.3)" }}

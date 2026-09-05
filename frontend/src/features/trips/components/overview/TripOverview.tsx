@@ -2,6 +2,8 @@ import { Box, Grid, Stack } from "@mui/material";
 
 import { useTripBudget } from "@/features/budget/hooks/useTripBudget";
 import { useTripChecklist } from "@/features/checklist/hooks/useTripChecklist";
+import { useProfile } from "@/features/profile";
+import ReadinessWidget from "@/features/readiness/components/ReadinessWidget";
 import type { Trip } from "@/features/trips/types/trip";
 import {
   calculatePlanningProgress,
@@ -10,8 +12,6 @@ import {
 } from "@/features/trips/utils/tripOverviewSelectors";
 import { useTripStops } from "@/features/tripStops/hooks/useTripStops";
 import { useRoute } from "@/shared/maps";
-
-import ReadinessWidget from "@/features/readiness/components/ReadinessWidget";
 
 import OverviewAccommodationCard from "./OverviewAccommodationCard";
 import OverviewAlerts from "./OverviewAlerts";
@@ -36,6 +36,7 @@ export default function TripOverview({
   const { data: stops = [] } = useTripStops(trip.id);
   const { data: budget } = useTripBudget(trip.id);
   const { data: checklist } = useTripChecklist(trip.id);
+  const { data: profile } = useProfile();
 
   const validStops = stops.filter(
     (stop) =>
@@ -59,6 +60,7 @@ export default function TripOverview({
           stopCount={stops.length}
           routeDistanceMeters={route?.summary?.distanceMeters}
           routeDurationMillis={route?.summary?.durationMillis}
+          distanceUnit={profile?.distanceUnit}
         />
 
         {/* Pre-Ride Readiness Health Score Widget */}
@@ -91,6 +93,7 @@ export default function TripOverview({
               totalStops={stops.length}
               routeDistanceMeters={route?.summary?.distanceMeters}
               routeDurationMillis={route?.summary?.durationMillis}
+              distanceUnit={profile?.distanceUnit}
             />
           </Grid>
 

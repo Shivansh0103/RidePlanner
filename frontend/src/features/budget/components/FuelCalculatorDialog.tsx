@@ -26,6 +26,7 @@ interface FuelCalculatorDialogProps {
   onClose: () => void;
   onSubmit: (data: FuelCalculatorRequest) => Promise<void>;
   isLoading?: boolean;
+  defaultMileage?: number;
 }
 
 export default function FuelCalculatorDialog({
@@ -33,35 +34,40 @@ export default function FuelCalculatorDialog({
   routeDistanceKm,
   onClose,
   onSubmit,
+  defaultMileage = 15,
 }: FuelCalculatorDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FuelCalculatorRequest>({
     resolver: zodResolver(fuelCalculatorSchema),
     defaultValues: {
       routeDistanceKm: routeDistanceKm || 0,
-      vehicleMileage: 15,
+      vehicleMileage: defaultMileage,
       fuelPricePerLiter: 100,
     },
   });
 
-  const mileage = watch("vehicleMileage") || 15;
+  const mileage = watch("vehicleMileage") || defaultMileage;
   const price = watch("fuelPricePerLiter") || 100;
   const computedFuelLiters = mileage > 0 && routeDistanceKm > 0 ? routeDistanceKm / mileage : 0;
   const computedTotalCost = Math.round(computedFuelLiters * price);
 
   useEffect(() => {
     if (open) {
-      setValue("routeDistanceKm", routeDistanceKm || 0);
+      reset({
+        routeDistanceKm: routeDistanceKm || 0,
+        vehicleMileage: defaultMileage,
+        fuelPricePerLiter: 100,
+      });
       setIsSubmitting(false);
     }
-  }, [open, routeDistanceKm, setValue]);
+  }, [open, routeDistanceKm, defaultMileage, reset]);
 
   const handleFormSubmit = async (data: FuelCalculatorRequest) => {
     try {
@@ -136,11 +142,14 @@ export default function FuelCalculatorDialog({
             type="number"
             fullWidth
             variant="outlined"
-            placeholder="e.g. 15"
+            placeholder={`e.g. ${defaultMileage}`}
             slotProps={{ inputLabel: { shrink: true } }}
             {...register("vehicleMileage", { valueAsNumber: true })}
             error={Boolean(errors.vehicleMileage)}
-            helperText={errors.vehicleMileage?.message}
+            helperText={
+              errors.vehicleMileage?.message ??
+              (defaultMileage !== 15 ? `Default from profile: ${defaultMileage} km/L` : undefined)
+            }
             sx={{ mb: 2 }}
           />
 

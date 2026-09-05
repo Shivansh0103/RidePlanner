@@ -4,6 +4,7 @@ import NavigationIcon from "@mui/icons-material/Navigation";
 import PlaceIcon from "@mui/icons-material/Place";
 import { Box, Card, CardContent, Chip, Stack, Typography } from "@mui/material";
 
+import type { DistanceUnit } from "@/features/profile";
 import type { NextStopInfo } from "@/features/trips/utils/tripOverviewSelectors";
 import { formatDistance, formatDuration } from "@/shared/utils/formatters";
 
@@ -12,6 +13,7 @@ interface OverviewItineraryCardProps {
   totalStops: number;
   routeDistanceMeters?: number;
   routeDurationMillis?: number;
+  distanceUnit?: DistanceUnit;
 }
 
 export default function OverviewItineraryCard({
@@ -19,6 +21,7 @@ export default function OverviewItineraryCard({
   totalStops,
   routeDistanceMeters = 0,
   routeDurationMillis = 0,
+  distanceUnit = "Kilometers",
 }: OverviewItineraryCardProps) {
   return (
     <Card variant="outlined" sx={{ borderRadius: 3, height: "100%" }}>
@@ -93,7 +96,7 @@ export default function OverviewItineraryCard({
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
                 <NavigationIcon fontSize="small" color="action" />
                 <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                  {formatDistance(routeDistanceMeters)}
+                  {formatDistance(routeDistanceMeters, distanceUnit)}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
