@@ -120,7 +120,11 @@ describe("Core Transport & Security Layer", () => {
 
       // Verify request interceptor
       const requestInterceptor = apiClient.interceptors.request as unknown as {
-        handlers: Array<{ fulfilled: (config: any) => any }>;
+        handlers: Array<{
+          fulfilled: (config: { headers: Record<string, string> }) => {
+            headers: Record<string, string>;
+          };
+        }>;
       };
 
       const handler = requestInterceptor.handlers[0];
@@ -134,7 +138,11 @@ describe("Core Transport & Security Layer", () => {
       tokenStore.clear();
 
       const requestInterceptor = apiClient.interceptors.request as unknown as {
-        handlers: Array<{ fulfilled: (config: any) => any }>;
+        handlers: Array<{
+          fulfilled: (config: { headers: Record<string, string> }) => {
+            headers: Record<string, string>;
+          };
+        }>;
       };
 
       const handler = requestInterceptor.handlers[0];

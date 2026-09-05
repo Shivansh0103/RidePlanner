@@ -71,7 +71,7 @@ export const AuthBootSplash: React.FC = () => {
         </Box>
 
         {/* Spinner & Telemetry Text */}
-        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ pt: 2 }}>
+        <Stack direction="row" spacing={1.5} sx={{ pt: 2, alignItems: "center" }}>
           <CircularProgress
             size={18}
             thickness={4.5}

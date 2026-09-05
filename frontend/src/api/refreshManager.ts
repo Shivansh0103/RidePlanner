@@ -1,4 +1,4 @@
-import { refreshTransport, type RefreshResponse } from "./refreshTransport";
+import { type RefreshResponse,refreshTransport } from "./refreshTransport";
 import { tokenStore } from "./tokenStore";
 
 class RefreshManager {

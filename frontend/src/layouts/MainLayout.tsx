@@ -13,7 +13,6 @@ import SpeedIcon from "@mui/icons-material/Speed";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import {
-  Avatar,
   Box,
   Button,
   Chip,
