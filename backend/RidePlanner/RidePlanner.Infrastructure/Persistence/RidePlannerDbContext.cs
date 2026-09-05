@@ -28,6 +28,7 @@ public class RidePlannerDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<EmergencyContact> EmergencyContacts => Set<EmergencyContact>();
     public DbSet<TripMemory> TripMemories => Set<TripMemory>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
