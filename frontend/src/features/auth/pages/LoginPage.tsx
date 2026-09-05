@@ -1,9 +1,15 @@
 import React from "react";
 
+import { LoginForm } from "../components/LoginForm";
+import { AuthLayout } from "../layouts/AuthLayout";
+
 export default function LoginPage(): React.ReactElement {
   return (
-    <div data-testid="login-page">
-      <h1>Rider Login</h1>
-    </div>
+    <AuthLayout
+      title="Rider Check-in"
+      subtitle="Enter your credentials to access your routes and telemetry"
+    >
+      <LoginForm />
+    </AuthLayout>
   );
 }

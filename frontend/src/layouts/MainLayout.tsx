@@ -34,6 +34,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import { useTrips } from "@/features/trips";
+import { UserMenu } from "@/features/auth";
 
 const SIDEBAR_WIDTH = 230;
 
@@ -457,46 +458,7 @@ export default function MainLayout() {
       <Divider sx={{ mb: 1.5, borderColor: "rgba(255, 255, 255, 0.08)" }} />
 
       {/* Bottom Profile Widget */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1.2,
-          p: 1,
-          borderRadius: 1.5,
-          bgcolor: "rgba(255, 255, 255, 0.02)",
-          border: "1px solid rgba(255, 255, 255, 0.06)",
-        }}
-      >
-        <Avatar
-          sx={{
-            width: 28,
-            height: 28,
-            bgcolor: "#6366f1",
-            color: "#ffffff",
-            fontSize: "0.75rem",
-            fontWeight: 800,
-            fontFamily: '"JetBrains Mono", monospace',
-          }}
-        >
-          R
-        </Avatar>
-        <Box sx={{ overflow: "hidden" }}>
-          <Typography
-            variant="body2"
-            sx={{ color: "#f8fafc", fontWeight: 700, fontSize: "0.75rem", lineHeight: 1.2 }}
-          >
-            Rider One
-          </Typography>
-          <Typography
-            className="font-mono"
-            variant="caption"
-            sx={{ color: "#818cf8", fontSize: "0.6rem", fontWeight: 600 }}
-          >
-            READY
-          </Typography>
-        </Box>
-      </Box>
+      <UserMenu />
     </Box>
   );
 

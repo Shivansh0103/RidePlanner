@@ -1,9 +1,15 @@
 import React from "react";
 
+import { RegisterForm } from "../components/RegisterForm";
+import { AuthLayout } from "../layouts/AuthLayout";
+
 export default function RegisterPage(): React.ReactElement {
   return (
-    <div data-testid="register-page">
-      <h1>Rider Registration</h1>
-    </div>
+    <AuthLayout
+      title="Create Rider Profile"
+      subtitle="Establish your secure credentials for isolated trip workspace management"
+    >
+      <RegisterForm />
+    </AuthLayout>
   );
 }
