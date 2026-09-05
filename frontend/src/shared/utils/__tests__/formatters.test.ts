@@ -4,12 +4,14 @@ import { formatCurrency, formatDistance, formatDuration } from "../formatters";
 
 describe("formatters utilities", () => {
   describe("formatDistance", () => {
-    it("formats 0 or negative values as 0 m", () => {
+    it("formats 0 or negative values as 0 m or 0 mi", () => {
       expect(formatDistance(0)).toBe("0 m");
       expect(formatDistance(-50)).toBe("0 m");
+      expect(formatDistance(0, "Miles")).toBe("0 mi");
+      expect(formatDistance(-50, "Miles")).toBe("0 mi");
     });
 
-    it("formats distances under 1000m in meters", () => {
+    it("formats distances under 1000m in meters when unit is Kilometers", () => {
       expect(formatDistance(450)).toBe("450 m");
       expect(formatDistance(999.4)).toBe("999 m");
     });
@@ -18,6 +20,13 @@ describe("formatters utilities", () => {
       expect(formatDistance(1000)).toBe("1.0 km");
       expect(formatDistance(42500)).toBe("42.5 km");
       expect(formatDistance(842400)).toBe("842.4 km");
+    });
+
+    it("formats distances in miles when unit is Miles", () => {
+      // 100 km = 62.1 mi
+      expect(formatDistance(100000, "Miles")).toBe("62.1 mi");
+      // 842.4 km * 0.621371 = 523.4 mi
+      expect(formatDistance(842400, "Miles")).toBe("523.4 mi");
     });
   });
 
@@ -48,14 +57,33 @@ describe("formatters utilities", () => {
       expect(formatCurrency(NaN)).toBe("₹0");
     });
 
-    it("formats whole INR amounts without decimals", () => {
+    it("formats whole INR amounts without decimals by default", () => {
       const formatted = formatCurrency(14000);
       expect(formatted).toContain("14,000");
+      expect(formatted).toContain("₹");
     });
 
     it("formats amounts with decimals to 2 decimal places", () => {
       const formatted = formatCurrency(4200.5);
       expect(formatted).toContain("4,200.50");
+    });
+
+    it("formats explicit USD currency with dollar sign", () => {
+      const formatted = formatCurrency(250, "USD");
+      expect(formatted).toContain("$");
+      expect(formatted).toContain("250");
+    });
+
+    it("formats explicit GBP currency with pound sign", () => {
+      const formatted = formatCurrency(150, "GBP");
+      expect(formatted).toContain("£");
+      expect(formatted).toContain("150");
+    });
+
+    it("formats explicit EUR currency with euro sign", () => {
+      const formatted = formatCurrency(500, "EUR");
+      expect(formatted).toContain("€");
+      expect(formatted).toContain("500");
     });
   });
 });

@@ -17,6 +17,7 @@ const TripDetailsPage = lazy(() => import("@/features/trips/pages/TripDetailsPag
 const EditTripPage = lazy(() => import("@/features/trips/pages/EditTripPage"));
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
+const SettingsPage = lazy(() => import("@/features/profile/pages/SettingsPage"));
 const NotFoundPage = lazy(() => import("@/shared/pages/NotFoundPage"));
 
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
@@ -106,6 +107,14 @@ const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <EditTripPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: "settings",
+            element: (
+              <SuspenseWrapper>
+                <SettingsPage />
               </SuspenseWrapper>
             ),
           },

@@ -1,5 +1,6 @@
 import LogoutIcon from "@mui/icons-material/Logout";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Avatar,
   Box,
@@ -30,6 +31,11 @@ export const UserMenu: React.FC = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleOpenSettings = () => {
+    handleClose();
+    navigate("/settings");
   };
 
   const handleLogout = async () => {
@@ -173,6 +179,31 @@ export const UserMenu: React.FC = () => {
             {email}
           </Typography>
         </Box>
+
+        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
+
+        <MenuItem
+          onClick={handleOpenSettings}
+          sx={{
+            py: 1,
+            px: 2,
+            color: "#f8fafc",
+            "&:hover": {
+              bgcolor: "rgba(99, 102, 241, 0.08)",
+            },
+          }}
+        >
+          <ListItemIcon sx={{ color: "#818cf8", minWidth: 28 }}>
+            <SettingsIcon sx={{ fontSize: 18 }} />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
+                Rider Settings
+              </Typography>
+            }
+          />
+        </MenuItem>
 
         <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
 
