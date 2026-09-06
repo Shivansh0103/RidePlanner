@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using RidePlanner.Api.Middleware;
 using RidePlanner.Application;
@@ -65,6 +66,31 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+if (app.Environment.IsEnvironment("Testing"))
+{
+    app.MapPost("/api/test/signin-external", async (HttpContext httpContext, TestExternalSignInRequest request) =>
+    {
+        var claims = new List<System.Security.Claims.Claim>
+        {
+            new(System.Security.Claims.ClaimTypes.NameIdentifier, request.ProviderKey),
+            new(System.Security.Claims.ClaimTypes.Email, request.Email),
+            new(System.Security.Claims.ClaimTypes.Name, request.Name ?? request.Email)
+        };
+        var identity = new System.Security.Claims.ClaimsIdentity(claims, Microsoft.AspNetCore.Identity.IdentityConstants.ExternalScheme);
+        var principal = new System.Security.Claims.ClaimsPrincipal(identity);
+        var properties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties();
+        if (!string.IsNullOrWhiteSpace(request.ReturnUrl))
+        {
+            properties.Items["returnUrl"] = request.ReturnUrl;
+        }
+
+        await httpContext.SignInAsync(Microsoft.AspNetCore.Identity.IdentityConstants.ExternalScheme, principal, properties);
+        return Results.Ok();
+    });
+}
+
 app.Run();
 
 public partial class Program { }
+
+public record TestExternalSignInRequest(string ProviderKey, string Email, string? Name = null, string? ReturnUrl = null);
