@@ -1,9 +1,12 @@
 using System.Text;
+using System.Text.Json;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RidePlanner.Application.Abstractions.Identity;
@@ -26,6 +29,8 @@ public class IdentityService : IIdentityService
     private readonly IEmailSender _emailSender;
     private readonly IConfiguration _configuration;
     private readonly ILogger<IdentityService> _logger;
+    private readonly IMemoryCache _memoryCache;
+    private readonly ITimeLimitedDataProtector _linkProtector;
 
     public IdentityService(
         UserManager<ApplicationUser> userManager,
@@ -35,7 +40,9 @@ public class IdentityService : IIdentityService
         RidePlannerDbContext dbContext,
         IEmailSender emailSender,
         IConfiguration configuration,
-        ILogger<IdentityService> logger)
+        ILogger<IdentityService> logger,
+        IDataProtectionProvider dataProtectionProvider,
+        IMemoryCache memoryCache)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -45,6 +52,10 @@ public class IdentityService : IIdentityService
         _emailSender = emailSender;
         _configuration = configuration;
         _logger = logger;
+        _memoryCache = memoryCache;
+        _linkProtector = dataProtectionProvider
+            .CreateProtector("RidePlanner.ExternalAccountLinking")
+            .ToTimeLimitedDataProtector();
     }
 
     public async Task<Guid> RegisterUserAsync(
@@ -303,5 +314,220 @@ public class IdentityService : IIdentityService
         }
 
         return $"{name[0]}***{name[^1]}@{domain}";
+    }
+
+    public async Task<ProcessExternalLoginResult> ProcessExternalLoginAsync(
+        ExternalLoginModel loginInfo,
+        string? returnUrl,
+        CancellationToken cancellationToken = default)
+    {
+        // 1. Check if this external identity is already linked to an existing account
+        var userByLogin = await _userManager.FindByLoginAsync(loginInfo.Provider, loginInfo.ProviderKey);
+        if (userByLogin != null)
+        {
+            if (await _userManager.IsLockedOutAsync(userByLogin))
+            {
+                throw new UnauthorizedException("Your account is locked due to multiple failed login attempts. Please try again later.");
+            }
+
+            var authResult = await CreateAuthResultAsync(userByLogin, cancellationToken);
+            return new ProcessExternalLoginResult.Success(authResult, returnUrl);
+        }
+
+        // 2. Check if a local account exists with this email (Proof of Control Required)
+        var userByEmail = await _userManager.FindByEmailAsync(loginInfo.Email);
+        if (userByEmail != null)
+        {
+            var ticketPayload = new ExternalLinkTicketPayload(
+                TicketId: Guid.NewGuid(),
+                UserId: userByEmail.Id,
+                Email: userByEmail.Email!,
+                Provider: loginInfo.Provider,
+                ProviderKey: loginInfo.ProviderKey,
+                ReturnUrl: returnUrl,
+                CreatedAtUtc: DateTimeOffset.UtcNow);
+
+            var json = JsonSerializer.Serialize(ticketPayload);
+            var protectedTicket = _linkProtector.Protect(json, TimeSpan.FromMinutes(10));
+
+            return new ProcessExternalLoginResult.RequiresAccountLinking(protectedTicket, returnUrl);
+        }
+
+        // 3. New user: Atomic creation of ApplicationUser + AspNetUserLogins + UserProfile
+        var isRelational = _dbContext.Database.IsRelational();
+        IDbContextTransaction? transaction = null;
+
+        if (isRelational)
+        {
+            transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+        }
+
+        var newUser = new ApplicationUser
+        {
+            UserName = loginInfo.Email,
+            Email = loginInfo.Email,
+            EmailConfirmed = true
+        };
+
+        try
+        {
+            var createResult = await _userManager.CreateAsync(newUser);
+            if (!createResult.Succeeded)
+            {
+                var errorDesc = string.Join("; ", createResult.Errors.Select(e => e.Description));
+                _logger.LogError("Failed to create user during external registration: {Errors}", errorDesc);
+                return new ProcessExternalLoginResult.Failed("Failed to create user account.");
+            }
+
+            var addLoginResult = await _userManager.AddLoginAsync(
+                newUser,
+                new UserLoginInfo(loginInfo.Provider, loginInfo.ProviderKey, loginInfo.Provider));
+            if (!addLoginResult.Succeeded)
+            {
+                var errorDesc = string.Join("; ", addLoginResult.Errors.Select(e => e.Description));
+                _logger.LogError("Failed to add external login for user during external registration: {Errors}", errorDesc);
+                throw new InvalidOperationException($"Failed to add external login: {errorDesc}");
+            }
+
+            var profile = UserProfile.CreateDefault(newUser.Id);
+            _dbContext.UserProfiles.Add(profile);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            if (transaction != null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+            }
+
+            var authResult = await CreateAuthResultAsync(newUser, cancellationToken);
+            return new ProcessExternalLoginResult.Success(authResult, returnUrl);
+        }
+        catch
+        {
+            if (transaction != null)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+            }
+            else if (!isRelational && newUser.Id != Guid.Empty)
+            {
+                await _userManager.DeleteAsync(newUser);
+            }
+            throw;
+        }
+        finally
+        {
+            if (transaction != null)
+            {
+                await transaction.DisposeAsync();
+            }
+        }
+    }
+
+    public async Task<AuthResult> LinkExternalAccountAsync(
+        string linkTicket,
+        string password,
+        CancellationToken cancellationToken = default)
+    {
+        ExternalLinkTicketPayload payload;
+        try
+        {
+            var json = _linkProtector.Unprotect(linkTicket);
+            payload = JsonSerializer.Deserialize<ExternalLinkTicketPayload>(json)
+                ?? throw new InvalidOperationException("Invalid ticket payload.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to unprotect account link ticket.");
+            throw new UnauthorizedException("Invalid or expired account linking ticket.");
+        }
+
+        // Anti-replay check
+        if (_memoryCache.TryGetValue($"spent_ticket_{payload.TicketId}", out _))
+        {
+            _logger.LogWarning("Attempted reuse of spent account linking ticket {TicketId}", payload.TicketId);
+            throw new UnauthorizedException("This linking ticket has already been used or expired.");
+        }
+
+        // Check if provider + providerKey is already linked to any user
+        var existingUserWithLogin = await _userManager.FindByLoginAsync(payload.Provider, payload.ProviderKey);
+        if (existingUserWithLogin != null)
+        {
+            _logger.LogWarning("External identity {Provider}:{ProviderKey} is already linked to user {UserId}",
+                payload.Provider, payload.ProviderKey, existingUserWithLogin.Id);
+            throw new ConflictException("This external account is already linked to an account.");
+        }
+
+        var user = await _userManager.FindByIdAsync(payload.UserId.ToString());
+        if (user == null)
+        {
+            throw new UnauthorizedException("User not found.");
+        }
+
+        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure: true);
+        if (signInResult.IsLockedOut)
+        {
+            throw new UnauthorizedException("Your account is locked due to multiple failed login attempts. Please try again later.");
+        }
+
+        if (!signInResult.Succeeded)
+        {
+            throw new UnauthorizedException("Invalid password.");
+        }
+
+        var addLoginResult = await _userManager.AddLoginAsync(
+            user,
+            new UserLoginInfo(payload.Provider, payload.ProviderKey, payload.Provider));
+
+        if (!addLoginResult.Succeeded)
+        {
+            var error = string.Join("; ", addLoginResult.Errors.Select(e => e.Description));
+            throw new ConflictException($"Failed to link account: {error}");
+        }
+
+        // Invalidate ticket to prevent reuse
+        _memoryCache.Set($"spent_ticket_{payload.TicketId}", true, TimeSpan.FromMinutes(10));
+
+        _logger.LogInformation("Successfully linked external {Provider} account to user {UserId}", payload.Provider, user.Id);
+        return await CreateAuthResultAsync(user, cancellationToken);
+    }
+
+    public ExternalLinkInfo GetLinkTicketInfo(string linkTicket)
+    {
+        ExternalLinkTicketPayload payload;
+        try
+        {
+            var json = _linkProtector.Unprotect(linkTicket);
+            payload = JsonSerializer.Deserialize<ExternalLinkTicketPayload>(json)
+                ?? throw new InvalidOperationException("Invalid ticket payload.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to unprotect account link ticket for info.");
+            throw new UnauthorizedException("Invalid or expired account linking ticket.");
+        }
+
+        if (_memoryCache.TryGetValue($"spent_ticket_{payload.TicketId}", out _))
+        {
+            throw new UnauthorizedException("This linking ticket has already been used or expired.");
+        }
+
+        var maskedEmail = MaskEmail(payload.Email);
+        return new ExternalLinkInfo(maskedEmail, payload.Provider);
+    }
+
+    private async Task<AuthResult> CreateAuthResultAsync(
+        ApplicationUser user,
+        CancellationToken cancellationToken)
+    {
+        var (token, expiresIn) = _jwtTokenGenerator.GenerateToken(user.Id, user.Email!, user.UserName);
+        var (refreshToken, refreshTokenExpiresAt) = await _refreshTokenService.CreateSessionAsync(user.Id, cancellationToken);
+
+        var loginResponse = new LoginResponse(
+            AccessToken: token,
+            TokenType: "Bearer",
+            ExpiresIn: expiresIn,
+            UserId: user.Id,
+            Email: user.Email!);
+
+        return new AuthResult(loginResponse, refreshToken, refreshTokenExpiresAt);
     }
 }

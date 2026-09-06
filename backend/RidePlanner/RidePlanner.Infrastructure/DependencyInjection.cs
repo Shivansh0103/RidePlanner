@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,12 +36,13 @@ public static class DependencyInjection
         }
 
         services.AddDataProtection();
+        services.AddMemoryCache();
         services.AddHttpContextAccessor();
 
         var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>() ?? new JwtSettings();
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
 
-        services.AddAuthentication(options =>
+        var authBuilder = services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -60,6 +62,30 @@ public static class DependencyInjection
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };
+        })
+        .AddCookie(IdentityConstants.ExternalScheme, options =>
+        {
+            options.Cookie.Name = "RidePlanner.External";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+        });
+
+        var googleClientId = configuration["Authentication:Google:ClientId"];
+        var googleClientSecret = configuration["Authentication:Google:ClientSecret"];
+        if (string.IsNullOrWhiteSpace(googleClientId) || string.IsNullOrWhiteSpace(googleClientSecret))
+        {
+            googleClientId = "development-placeholder-google-client-id";
+            googleClientSecret = "development-placeholder-google-client-secret";
+        }
+
+        authBuilder.AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+            options.SaveTokens = false;
         });
 
         services.AddIdentityCore<ApplicationUser>(options =>

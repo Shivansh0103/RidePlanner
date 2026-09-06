@@ -31,4 +31,16 @@ public interface IIdentityService
         string token,
         string newPassword,
         CancellationToken cancellationToken = default);
+
+    Task<ProcessExternalLoginResult> ProcessExternalLoginAsync(
+        ExternalLoginModel loginInfo,
+        string? returnUrl,
+        CancellationToken cancellationToken = default);
+
+    Task<AuthResult> LinkExternalAccountAsync(
+        string linkTicket,
+        string password,
+        CancellationToken cancellationToken = default);
+
+    ExternalLinkInfo GetLinkTicketInfo(string linkTicket);
 }
