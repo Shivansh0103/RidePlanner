@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RidePlanner.Api.Common;
 using RidePlanner.Application.Abstractions.Identity;
+using RidePlanner.Application.Features.Auth.Commands.ForgotPassword;
 using RidePlanner.Application.Features.Auth.Commands.Login;
 using RidePlanner.Application.Features.Auth.Commands.Logout;
 using RidePlanner.Application.Features.Auth.Commands.Refresh;
 using RidePlanner.Application.Features.Auth.Commands.Register;
+using RidePlanner.Application.Features.Auth.Commands.ResetPassword;
 using RidePlanner.Application.Features.Auth.DTOs;
 using RidePlanner.Domain.Exceptions;
 
@@ -85,6 +87,26 @@ public class AuthController : ControllerBase
 
         AuthCookieHelper.ClearRefreshTokenCookie(Response, Request.IsHttps);
         return Ok();
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<ActionResult<ForgotPasswordResponse>> ForgotPassword(
+        [FromBody] ForgotPasswordRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new ForgotPasswordCommand(request.Email);
+        var response = await _sender.Send(command, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<ActionResult<ResetPasswordResponse>> ResetPassword(
+        [FromBody] ResetPasswordRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new ResetPasswordCommand(request.UserId, request.Token, request.NewPassword);
+        var response = await _sender.Send(command, cancellationToken);
+        return Ok(response);
     }
 
     [Authorize]

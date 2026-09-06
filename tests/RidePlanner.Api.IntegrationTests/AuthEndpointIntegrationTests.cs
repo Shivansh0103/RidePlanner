@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using RidePlanner.Application.Features.Auth.DTOs;
 
 namespace RidePlanner.Api.IntegrationTests;
@@ -536,5 +537,202 @@ public class AuthEndpointIntegrationTests : IClassFixture<CustomWebApplicationFa
             }
         }
         return null;
+    }
+
+    private static (Guid UserId, string Token) ParseResetUrl(string resetUrl)
+    {
+        var uri = new Uri(resetUrl);
+        var query = QueryHelpers.ParseQuery(uri.Query);
+        var userId = Guid.Parse(query["userId"]!);
+        var token = query["token"]!.ToString();
+        return (userId, token);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_WithRegisteredEmail_Returns200Ok_WithGenericMessage_AndSendsEmail()
+    {
+        // Arrange
+        var email = $"forgot_reg_{Guid.NewGuid():N}@example.com";
+        var regPayload = new RegisterRequest(email, "Password123!");
+        var regResponse = await _client.PostAsJsonAsync("/api/auth/register", regPayload);
+        Assert.Equal(HttpStatusCode.OK, regResponse.StatusCode);
+
+        // Act
+        var payload = new ForgotPasswordRequest(email);
+        var response = await _client.PostAsJsonAsync("/api/auth/forgot-password", payload);
+
+        // Assert: 200 OK with generic message
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ForgotPasswordResponse>();
+        Assert.NotNull(body);
+        Assert.Equal("If an account exists with that email address, password reset instructions have been sent.", body.Message);
+
+        // Assert: email sender received the email
+        var sent = _factory.EmailSender.SentEmails.FirstOrDefault(e => e.ToEmail == email);
+        Assert.NotNull(sent);
+        Assert.Contains("reset-password?userId=", sent.ResetUrl);
+        Assert.Contains("&token=", sent.ResetUrl);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_WithUnknownEmail_Returns200Ok_WithIdenticalMessage_AndSendsNoEmail()
+    {
+        // Arrange
+        var unknownEmail = $"unknown_{Guid.NewGuid():N}@example.com";
+        var payload = new ForgotPasswordRequest(unknownEmail);
+
+        // Act
+        var response = await _client.PostAsJsonAsync("/api/auth/forgot-password", payload);
+
+        // Assert: 200 OK with identical message
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ForgotPasswordResponse>();
+        Assert.NotNull(body);
+        Assert.Equal("If an account exists with that email address, password reset instructions have been sent.", body.Message);
+
+        // Assert: no email was sent for the unknown account
+        var sent = _factory.EmailSender.SentEmails.FirstOrDefault(e => e.ToEmail == unknownEmail);
+        Assert.Null(sent);
+    }
+
+    [Fact]
+    public async Task ResetPassword_WithValidToken_Succeeds_AndOldPasswordFails()
+    {
+        // Arrange
+        var email = $"reset_valid_{Guid.NewGuid():N}@example.com";
+        var oldPassword = "OldPassword123!";
+        var newPassword = "NewPassword123!";
+
+        var regResponse = await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequest(email, oldPassword));
+        Assert.Equal(HttpStatusCode.OK, regResponse.StatusCode);
+
+        await _client.PostAsJsonAsync("/api/auth/forgot-password", new ForgotPasswordRequest(email));
+        var sent = _factory.EmailSender.SentEmails.First(e => e.ToEmail == email);
+        var (userId, token) = ParseResetUrl(sent.ResetUrl);
+
+        // Act: Reset password
+        var resetPayload = new ResetPasswordRequest(userId, token, newPassword);
+        var resetResponse = await _client.PostAsJsonAsync("/api/auth/reset-password", resetPayload);
+
+        // Assert: 200 OK
+        Assert.Equal(HttpStatusCode.OK, resetResponse.StatusCode);
+        var body = await resetResponse.Content.ReadFromJsonAsync<ResetPasswordResponse>();
+        Assert.NotNull(body);
+        Assert.Equal("Password has been reset successfully. You may now log in with your new credentials.", body.Message);
+
+        // Assert: Old password fails with 401
+        var oldLoginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest(email, oldPassword));
+        Assert.Equal(HttpStatusCode.Unauthorized, oldLoginResponse.StatusCode);
+
+        // Assert: New password succeeds with 200 OK
+        var newLoginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest(email, newPassword));
+        Assert.Equal(HttpStatusCode.OK, newLoginResponse.StatusCode);
+        var loginBody = await newLoginResponse.Content.ReadFromJsonAsync<LoginResponse>();
+        Assert.NotNull(loginBody);
+        Assert.False(string.IsNullOrWhiteSpace(loginBody.AccessToken));
+    }
+
+    [Fact]
+    public async Task ResetPassword_TokenReplayAttempt_FailsWithBadRequest()
+    {
+        // Arrange
+        var email = $"replay_{Guid.NewGuid():N}@example.com";
+        await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequest(email, "InitialPass123!"));
+        await _client.PostAsJsonAsync("/api/auth/forgot-password", new ForgotPasswordRequest(email));
+
+        var sent = _factory.EmailSender.SentEmails.First(e => e.ToEmail == email);
+        var (userId, token) = ParseResetUrl(sent.ResetUrl);
+
+        // Act 1: First reset succeeds
+        var firstReset = await _client.PostAsJsonAsync("/api/auth/reset-password", new ResetPasswordRequest(userId, token, "FirstResetPass123!"));
+        Assert.Equal(HttpStatusCode.OK, firstReset.StatusCode);
+
+        // Act 2: Attempt to reuse the exact same token
+        var replayReset = await _client.PostAsJsonAsync("/api/auth/reset-password", new ResetPasswordRequest(userId, token, "SecondResetPass123!"));
+
+        // Assert: 400 Bad Request
+        Assert.Equal(HttpStatusCode.BadRequest, replayReset.StatusCode);
+        var problemDetails = await replayReset.Content.ReadFromJsonAsync<ProblemDetails>();
+        Assert.NotNull(problemDetails);
+        Assert.Equal("The password reset token is invalid or has expired.", problemDetails.Detail);
+    }
+
+    [Fact]
+    public async Task ResetPassword_RevokesAllActiveRefreshTokens()
+    {
+        // Arrange
+        var email = $"sessions_{Guid.NewGuid():N}@example.com";
+        var password = "Password123!";
+        await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequest(email, password));
+
+        // Login to obtain active refresh token
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest(email, password));
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+        var refreshToken = ExtractCookie(loginResponse, "refreshToken");
+        Assert.NotNull(refreshToken);
+
+        // Verify refresh token works before password reset
+        var preRefreshRequest = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+        preRefreshRequest.Headers.Add("Cookie", $"refreshToken={refreshToken}");
+        var preRefreshResponse = await _client.SendAsync(preRefreshRequest);
+        Assert.Equal(HttpStatusCode.OK, preRefreshResponse.StatusCode);
+        var activeRefreshToken = ExtractCookie(preRefreshResponse, "refreshToken");
+        Assert.NotNull(activeRefreshToken);
+
+        // Request and execute password reset
+        await _client.PostAsJsonAsync("/api/auth/forgot-password", new ForgotPasswordRequest(email));
+        var sent = _factory.EmailSender.SentEmails.First(e => e.ToEmail == email);
+        var (userId, token) = ParseResetUrl(sent.ResetUrl);
+
+        var resetResponse = await _client.PostAsJsonAsync("/api/auth/reset-password", new ResetPasswordRequest(userId, token, "NewPassword123!"));
+        Assert.Equal(HttpStatusCode.OK, resetResponse.StatusCode);
+
+        // Act: Attempt to refresh using the pre-reset refresh token
+        var postRefreshRequest = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+        postRefreshRequest.Headers.Add("Cookie", $"refreshToken={activeRefreshToken}");
+        var postRefreshResponse = await _client.SendAsync(postRefreshRequest);
+
+        // Assert: 401 Unauthorized because active user sessions were revoked
+        Assert.Equal(HttpStatusCode.Unauthorized, postRefreshResponse.StatusCode);
+
+        // Assert: User can authenticate with the new credentials
+        var newLoginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest(email, "NewPassword123!"));
+        Assert.Equal(HttpStatusCode.OK, newLoginResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task ResetPassword_WithWeakPassword_Returns400ValidationProblemDetails()
+    {
+        // Arrange
+        var email = $"weakpass_{Guid.NewGuid():N}@example.com";
+        await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequest(email, "StrongPass123!"));
+        await _client.PostAsJsonAsync("/api/auth/forgot-password", new ForgotPasswordRequest(email));
+
+        var sent = _factory.EmailSender.SentEmails.First(e => e.ToEmail == email);
+        var (userId, token) = ParseResetUrl(sent.ResetUrl);
+
+        // Act: Pass a weak password (e.g. no special character or too short)
+        var resetResponse = await _client.PostAsJsonAsync("/api/auth/reset-password", new ResetPasswordRequest(userId, token, "simple123"));
+
+        // Assert: 400 Bad Request ValidationProblemDetails
+        Assert.Equal(HttpStatusCode.BadRequest, resetResponse.StatusCode);
+        var problem = await resetResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        Assert.NotNull(problem);
+        Assert.True(problem.Errors.ContainsKey("NewPassword"));
+    }
+
+    [Fact]
+    public async Task ResetPassword_WithInvalidToken_Returns400BadRequest()
+    {
+        // Act: Attempt reset with invalid/fabricated token
+        var resetResponse = await _client.PostAsJsonAsync(
+            "/api/auth/reset-password",
+            new ResetPasswordRequest(Guid.NewGuid(), "invalid-nonexistent-token", "ValidPassword123!"));
+
+        // Assert: 400 Bad Request
+        Assert.Equal(HttpStatusCode.BadRequest, resetResponse.StatusCode);
+        var problemDetails = await resetResponse.Content.ReadFromJsonAsync<ProblemDetails>();
+        Assert.NotNull(problemDetails);
+        Assert.Equal("The password reset token is invalid or has expired.", problemDetails.Detail);
     }
 }
