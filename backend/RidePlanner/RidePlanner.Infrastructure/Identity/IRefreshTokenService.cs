@@ -16,4 +16,8 @@ public interface IRefreshTokenService
     Task RevokeSessionAsync(
         string rawRefreshToken,
         CancellationToken cancellationToken = default);
+
+    Task RevokeAllUserSessionsAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
 }

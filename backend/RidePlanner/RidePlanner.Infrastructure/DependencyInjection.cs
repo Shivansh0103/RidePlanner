@@ -6,8 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using RidePlanner.Application.Abstractions.Identity;
+using RidePlanner.Application.Abstractions.Notifications;
 using RidePlanner.Application.Abstractions.Persistence;
 using RidePlanner.Infrastructure.Identity;
+using RidePlanner.Infrastructure.Notifications;
 using RidePlanner.Infrastructure.Persistence;
 using RidePlanner.Infrastructure.Persistence.Repositories;
 
@@ -74,6 +76,12 @@ public static class DependencyInjection
         .AddSignInManager()
         .AddDefaultTokenProviders();
 
+        var resetTokenHours = configuration.GetValue<double>("Identity:PasswordResetTokenLifespanHours", 2);
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(resetTokenHours);
+        });
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<ITripRepository, TripRepository>();
@@ -89,6 +97,7 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddTransient<IEmailSender, DevelopmentEmailSender>();
         return services;
     }
 }

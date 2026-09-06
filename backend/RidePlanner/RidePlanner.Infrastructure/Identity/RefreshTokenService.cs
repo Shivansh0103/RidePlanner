@@ -150,4 +150,26 @@ public class RefreshTokenService : IRefreshTokenService
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
+
+    public async Task RevokeAllUserSessionsAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var activeTokens = await _dbContext.RefreshTokens
+            .Where(r => r.UserId == userId && r.RevokedAt == null)
+            .ToListAsync(cancellationToken);
+
+        if (activeTokens.Count == 0)
+        {
+            return;
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        foreach (var token in activeTokens)
+        {
+            token.RevokedAt = now;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }

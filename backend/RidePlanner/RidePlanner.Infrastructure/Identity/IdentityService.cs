@@ -1,8 +1,13 @@
+using System.Text;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using RidePlanner.Application.Abstractions.Identity;
+using RidePlanner.Application.Abstractions.Notifications;
 using RidePlanner.Application.Exceptions;
 using RidePlanner.Application.Features.Auth.DTOs;
 using RidePlanner.Domain.Entities;
@@ -18,19 +23,28 @@ public class IdentityService : IIdentityService
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly RidePlannerDbContext _dbContext;
+    private readonly IEmailSender _emailSender;
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<IdentityService> _logger;
 
     public IdentityService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IJwtTokenGenerator jwtTokenGenerator,
         IRefreshTokenService refreshTokenService,
-        RidePlannerDbContext dbContext)
+        RidePlannerDbContext dbContext,
+        IEmailSender emailSender,
+        IConfiguration configuration,
+        ILogger<IdentityService> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtTokenGenerator = jwtTokenGenerator;
         _refreshTokenService = refreshTokenService;
         _dbContext = dbContext;
+        _emailSender = emailSender;
+        _configuration = configuration;
+        _logger = logger;
     }
 
     public async Task<Guid> RegisterUserAsync(
@@ -178,5 +192,116 @@ public class IdentityService : IIdentityService
         {
             await _refreshTokenService.RevokeSessionAsync(rawRefreshToken, cancellationToken);
         }
+    }
+
+    public async Task ForgotPasswordAsync(
+        string email,
+        CancellationToken cancellationToken = default)
+    {
+        var maskedEmail = MaskEmail(email);
+        _logger.LogInformation("Password reset requested for {MaskedEmail}", maskedEmail);
+
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            // Do not reveal account non-existence; return early without sending an email
+            return;
+        }
+
+        var rawToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
+
+        var frontendBaseUrl = _configuration["App:FrontendBaseUrl"]
+            ?? _configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()?.FirstOrDefault()
+            ?? "http://localhost:5173";
+
+        var resetUrl = $"{frontendBaseUrl.TrimEnd('/')}/reset-password?userId={user.Id}&token={encodedToken}";
+
+        await _emailSender.SendPasswordResetEmailAsync(user.Email!, resetUrl, cancellationToken);
+    }
+
+    public async Task ResetPasswordAsync(
+        Guid userId,
+        string token,
+        string newPassword,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            _logger.LogWarning("Password reset rejected: user {UserId} not found.", userId);
+            throw new DomainException("The password reset token is invalid or has expired.");
+        }
+
+        string decodedToken;
+        try
+        {
+            var tokenBytes = WebEncoders.Base64UrlDecode(token);
+            decodedToken = Encoding.UTF8.GetString(tokenBytes);
+        }
+        catch
+        {
+            decodedToken = token;
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+
+        // If decoding failed to match a token that was already raw (e.g. from direct test helpers), attempt raw fallback
+        if (!result.Succeeded && decodedToken != token && result.Errors.Any(e => e.Code == "InvalidToken"))
+        {
+            var fallbackResult = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            if (fallbackResult.Succeeded || !fallbackResult.Errors.Any(e => e.Code == "InvalidToken"))
+            {
+                result = fallbackResult;
+            }
+        }
+
+        if (!result.Succeeded)
+        {
+            if (result.Errors.Any(e => e.Code == "InvalidToken"))
+            {
+                _logger.LogWarning("Password reset failed for user {UserId}: Invalid or expired token.", user.Id);
+                throw new DomainException("The password reset token is invalid or has expired.");
+            }
+
+            var failures = result.Errors.Select(e =>
+            {
+                var propertyName = e.Code.Contains("Password", StringComparison.OrdinalIgnoreCase)
+                    ? "NewPassword"
+                    : "Token";
+                return new ValidationFailure(propertyName, e.Description);
+            });
+
+            _logger.LogWarning("Password reset failed for user {UserId}: Password policy violation.", user.Id);
+            throw new ValidationException(failures);
+        }
+
+        // Revoke all active sessions (refresh tokens) in PostgreSQL
+        await _refreshTokenService.RevokeAllUserSessionsAsync(user.Id, cancellationToken);
+
+        _logger.LogInformation("Password reset succeeded for user {UserId}. All active sessions revoked.", user.Id);
+    }
+
+    private static string MaskEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return string.Empty;
+        }
+
+        var parts = email.Split('@');
+        if (parts.Length != 2)
+        {
+            return "***";
+        }
+
+        var name = parts[0];
+        var domain = parts[1];
+        if (name.Length <= 2)
+        {
+            return $"{name[0]}***@{domain}";
+        }
+
+        return $"{name[0]}***{name[^1]}@{domain}";
     }
 }
