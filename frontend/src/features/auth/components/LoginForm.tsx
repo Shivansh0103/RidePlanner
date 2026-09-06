@@ -134,6 +134,21 @@ export const LoginForm: React.FC = () => {
           {...register("password")}
         />
 
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: -1 }}>
+          <Link
+            component={RouterLink}
+            to="/forgot-password"
+            sx={{
+              color: "text.secondary",
+              fontSize: "0.85rem",
+              textDecoration: "none",
+              "&:hover": { color: "#bef264", textDecoration: "underline" },
+            }}
+          >
+            Forgot password?
+          </Link>
+        </Box>
+
         <Button
           type="submit"
           variant="contained"

@@ -2,10 +2,14 @@ import { apiClient, rawClient } from "@/api";
 
 import type {
   CurrentUserResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
 } from "../types";
 
 export const authApi = {
@@ -22,6 +26,22 @@ export const authApi = {
    */
   async register(credentials: RegisterRequest): Promise<RegisterResponse> {
     const response = await rawClient.post<RegisterResponse>("/auth/register", credentials);
+    return response.data;
+  },
+
+  /**
+   * Request a password reset link using rawClient (unintercepted).
+   */
+  async forgotPassword(payload: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
+    const response = await rawClient.post<ForgotPasswordResponse>("/auth/forgot-password", payload);
+    return response.data;
+  },
+
+  /**
+   * Complete password reset using rawClient (unintercepted).
+   */
+  async resetPassword(payload: ResetPasswordRequest): Promise<ResetPasswordResponse> {
+    const response = await rawClient.post<ResetPasswordResponse>("/auth/reset-password", payload);
     return response.data;
   },
 

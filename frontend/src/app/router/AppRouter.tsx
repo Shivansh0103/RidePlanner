@@ -17,6 +17,8 @@ const TripDetailsPage = lazy(() => import("@/features/trips/pages/TripDetailsPag
 const EditTripPage = lazy(() => import("@/features/trips/pages/EditTripPage"));
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("@/features/auth/pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("@/features/auth/pages/ResetPasswordPage"));
 const SettingsPage = lazy(() => import("@/features/profile/pages/SettingsPage"));
 const NotFoundPage = lazy(() => import("@/shared/pages/NotFoundPage"));
 
@@ -51,6 +53,22 @@ const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <RegisterPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: "forgot-password",
+        element: (
+          <SuspenseWrapper>
+            <ForgotPasswordPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: "reset-password",
+        element: (
+          <SuspenseWrapper>
+            <ResetPasswordPage />
           </SuspenseWrapper>
         ),
       },
