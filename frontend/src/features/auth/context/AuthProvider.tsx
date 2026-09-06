@@ -12,6 +12,7 @@ import { refreshManager, tokenStore } from "@/api";
 import { authApi } from "../api/authApi";
 import type {
   AuthState,
+  LinkExternalAccountRequest,
   LoginRequest,
   RegisterRequest,
 } from "../types";
@@ -117,6 +118,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     []
   );
 
+  const restoreSession = useCallback(async (): Promise<void> => {
+    try {
+      const session = await refreshManager.restoreSession();
+      setAuthState({
+        status: "authenticated",
+        user: session.user,
+        isAuthenticated: true,
+      });
+    } catch (err) {
+      tokenStore.clear();
+      setAuthState({
+        status: "unauthenticated",
+        user: null,
+        isAuthenticated: false,
+      });
+      throw err;
+    }
+  }, []);
+
+  const linkExternalAccount = useCallback(
+    async (payload: LinkExternalAccountRequest): Promise<void> => {
+      const response = await authApi.linkExternalAccount(payload);
+      tokenStore.set(response.accessToken);
+      setAuthState({
+        status: "authenticated",
+        user: {
+          id: response.userId,
+          email: response.email,
+        },
+        isAuthenticated: true,
+      });
+    },
+    []
+  );
+
   const logout = useCallback(async (): Promise<void> => {
     try {
       await authApi.logout();
@@ -141,9 +177,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isBootstrapping: authState.status === "bootstrapping",
       login,
       register,
+      linkExternalAccount,
+      restoreSession,
       logout,
     }),
-    [authState, login, register, logout]
+    [authState, login, register, linkExternalAccount, restoreSession, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

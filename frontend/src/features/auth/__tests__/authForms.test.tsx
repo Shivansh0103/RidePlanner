@@ -29,6 +29,8 @@ describe("Auth UI Components", () => {
       login: vi.fn(),
       register: vi.fn(),
       logout: vi.fn(),
+      linkExternalAccount: vi.fn(),
+      restoreSession: vi.fn(),
       ...authValue,
     };
 

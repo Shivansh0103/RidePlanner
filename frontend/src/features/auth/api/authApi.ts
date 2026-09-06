@@ -2,8 +2,10 @@ import { apiClient, rawClient } from "@/api";
 
 import type {
   CurrentUserResponse,
+  ExternalLinkInfo,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
+  LinkExternalAccountRequest,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
@@ -51,6 +53,24 @@ export const authApi = {
    */
   async logout(): Promise<void> {
     await apiClient.post("/auth/logout", undefined, { skipAuthRefresh: true });
+  },
+
+  /**
+   * Retrieve external link info for account linking preview.
+   */
+  async getLinkInfo(ticket: string): Promise<ExternalLinkInfo> {
+    const response = await rawClient.get<ExternalLinkInfo>(
+      `/auth/external/link-info?ticket=${encodeURIComponent(ticket)}`
+    );
+    return response.data;
+  },
+
+  /**
+   * Link external account to existing account by proving control with password.
+   */
+  async linkExternalAccount(payload: LinkExternalAccountRequest): Promise<LoginResponse> {
+    const response = await rawClient.post<LoginResponse>("/auth/external/link", payload);
+    return response.data;
   },
 
   /**

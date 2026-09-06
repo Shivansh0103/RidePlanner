@@ -19,6 +19,8 @@ const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
 const ForgotPasswordPage = lazy(() => import("@/features/auth/pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("@/features/auth/pages/ResetPasswordPage"));
+const AuthCallbackPage = lazy(() => import("@/features/auth/pages/AuthCallbackPage"));
+const LinkAccountPage = lazy(() => import("@/features/auth/pages/LinkAccountPage"));
 const SettingsPage = lazy(() => import("@/features/profile/pages/SettingsPage"));
 const NotFoundPage = lazy(() => import("@/shared/pages/NotFoundPage"));
 
@@ -31,6 +33,21 @@ function SuspenseWrapper({ children }: { children: React.ReactNode }) {
 }
 
 const router = createBrowserRouter([
+  // Public OAuth / External Callback Route (Handles session bootstrap outside AnonymousRoute)
+  {
+    path: "auth/callback",
+    element: (
+      <SuspenseWrapper>
+        <AuthCallbackPage />
+      </SuspenseWrapper>
+    ),
+    errorElement: (
+      <SuspenseWrapper>
+        <NotFoundPage />
+      </SuspenseWrapper>
+    ),
+  },
+
   // Anonymous / Public Auth Routes
   {
     element: <AnonymousRoute />,
@@ -69,6 +86,22 @@ const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ResetPasswordPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: "auth/link-account",
+        element: (
+          <SuspenseWrapper>
+            <LinkAccountPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: "link-account",
+        element: (
+          <SuspenseWrapper>
+            <LinkAccountPage />
           </SuspenseWrapper>
         ),
       },

@@ -48,3 +48,14 @@ export interface ResetPasswordRequest {
 export interface ResetPasswordResponse {
   message: string;
 }
+
+export interface ExternalLinkInfo {
+  maskedEmail: string;
+  provider: string;
+}
+
+export interface LinkExternalAccountRequest {
+  linkTicket: string;
+  password: string;
+}
+

@@ -7,18 +7,30 @@ import * as authModule from "@/features/auth";
 import { AnonymousRoute } from "../AnonymousRoute";
 import { ProtectedRoute } from "../ProtectedRoute";
 
+function mockAuth(overrides: Partial<authModule.AuthContextValue> = {}): authModule.AuthContextValue {
+  return {
+    isBootstrapping: false,
+    isAuthenticated: false,
+    user: null,
+    authState: { status: "unauthenticated", user: null, isAuthenticated: false },
+    login: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn(),
+    linkExternalAccount: vi.fn(),
+    restoreSession: vi.fn(),
+    ...overrides,
+  };
+}
+
 describe("Route Guards", () => {
   describe("ProtectedRoute", () => {
     it("renders AuthBootSplash when bootstrapping", () => {
-      vi.spyOn(authModule, "useAuth").mockReturnValue({
-        isBootstrapping: true,
-        isAuthenticated: false,
-        user: null,
-        authState: { status: "bootstrapping", user: null, isAuthenticated: false },
-        login: vi.fn(),
-        register: vi.fn(),
-        logout: vi.fn(),
-      });
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: true,
+          authState: { status: "bootstrapping", user: null, isAuthenticated: false },
+        })
+      );
 
       render(
         <MemoryRouter initialEntries={["/dashboard"]}>
@@ -35,15 +47,14 @@ describe("Route Guards", () => {
     });
 
     it("redirects to /login preserving from location when unauthenticated", () => {
-      vi.spyOn(authModule, "useAuth").mockReturnValue({
-        isBootstrapping: false,
-        isAuthenticated: false,
-        user: null,
-        authState: { status: "unauthenticated", user: null, isAuthenticated: false },
-        login: vi.fn(),
-        register: vi.fn(),
-        logout: vi.fn(),
-      });
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: false,
+          isAuthenticated: false,
+          user: null,
+          authState: { status: "unauthenticated", user: null, isAuthenticated: false },
+        })
+      );
 
       render(
         <MemoryRouter initialEntries={["/trips/123"]}>
@@ -61,19 +72,18 @@ describe("Route Guards", () => {
     });
 
     it("renders protected child content when authenticated", () => {
-      vi.spyOn(authModule, "useAuth").mockReturnValue({
-        isBootstrapping: false,
-        isAuthenticated: true,
-        user: { id: "u-1", email: "rider@example.com" },
-        authState: {
-          status: "authenticated",
-          user: { id: "u-1", email: "rider@example.com" },
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: false,
           isAuthenticated: true,
-        },
-        login: vi.fn(),
-        register: vi.fn(),
-        logout: vi.fn(),
-      });
+          user: { id: "u-1", email: "rider@example.com" },
+          authState: {
+            status: "authenticated",
+            user: { id: "u-1", email: "rider@example.com" },
+            isAuthenticated: true,
+          },
+        })
+      );
 
       render(
         <MemoryRouter initialEntries={["/dashboard"]}>
@@ -91,15 +101,12 @@ describe("Route Guards", () => {
 
   describe("AnonymousRoute", () => {
     it("renders AuthBootSplash when bootstrapping", () => {
-      vi.spyOn(authModule, "useAuth").mockReturnValue({
-        isBootstrapping: true,
-        isAuthenticated: false,
-        user: null,
-        authState: { status: "bootstrapping", user: null, isAuthenticated: false },
-        login: vi.fn(),
-        register: vi.fn(),
-        logout: vi.fn(),
-      });
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: true,
+          authState: { status: "bootstrapping", user: null, isAuthenticated: false },
+        })
+      );
 
       render(
         <MemoryRouter initialEntries={["/login"]}>
@@ -116,15 +123,14 @@ describe("Route Guards", () => {
     });
 
     it("renders anonymous form when unauthenticated", () => {
-      vi.spyOn(authModule, "useAuth").mockReturnValue({
-        isBootstrapping: false,
-        isAuthenticated: false,
-        user: null,
-        authState: { status: "unauthenticated", user: null, isAuthenticated: false },
-        login: vi.fn(),
-        register: vi.fn(),
-        logout: vi.fn(),
-      });
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: false,
+          isAuthenticated: false,
+          user: null,
+          authState: { status: "unauthenticated", user: null, isAuthenticated: false },
+        })
+      );
 
       render(
         <MemoryRouter initialEntries={["/login"]}>
@@ -140,19 +146,18 @@ describe("Route Guards", () => {
     });
 
     it("redirects authenticated user to destination from location state", () => {
-      vi.spyOn(authModule, "useAuth").mockReturnValue({
-        isBootstrapping: false,
-        isAuthenticated: true,
-        user: { id: "u-1", email: "rider@example.com" },
-        authState: {
-          status: "authenticated",
-          user: { id: "u-1", email: "rider@example.com" },
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: false,
           isAuthenticated: true,
-        },
-        login: vi.fn(),
-        register: vi.fn(),
-        logout: vi.fn(),
-      });
+          user: { id: "u-1", email: "rider@example.com" },
+          authState: {
+            status: "authenticated",
+            user: { id: "u-1", email: "rider@example.com" },
+            isAuthenticated: true,
+          },
+        })
+      );
 
       render(
         <MemoryRouter
@@ -177,19 +182,18 @@ describe("Route Guards", () => {
     });
 
     it("redirects authenticated user to /trips if no state.from is present", () => {
-      vi.spyOn(authModule, "useAuth").mockReturnValue({
-        isBootstrapping: false,
-        isAuthenticated: true,
-        user: { id: "u-1", email: "rider@example.com" },
-        authState: {
-          status: "authenticated",
-          user: { id: "u-1", email: "rider@example.com" },
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: false,
           isAuthenticated: true,
-        },
-        login: vi.fn(),
-        register: vi.fn(),
-        logout: vi.fn(),
-      });
+          user: { id: "u-1", email: "rider@example.com" },
+          authState: {
+            status: "authenticated",
+            user: { id: "u-1", email: "rider@example.com" },
+            isAuthenticated: true,
+          },
+        })
+      );
 
       render(
         <MemoryRouter initialEntries={["/login"]}>

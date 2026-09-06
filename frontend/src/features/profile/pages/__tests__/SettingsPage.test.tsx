@@ -46,6 +46,8 @@ describe("SettingsPage", () => {
       login: vi.fn(),
       register: vi.fn(),
       logout: vi.fn(),
+      linkExternalAccount: vi.fn(),
+      restoreSession: vi.fn(),
     };
 
     return ({ children }: { children: ReactNode }) => (

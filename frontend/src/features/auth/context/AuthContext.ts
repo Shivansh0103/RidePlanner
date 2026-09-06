@@ -1,6 +1,12 @@
 import { createContext } from "react";
 
-import type { AuthState, LoginRequest, RegisterRequest, User } from "../types";
+import type {
+  AuthState,
+  LinkExternalAccountRequest,
+  LoginRequest,
+  RegisterRequest,
+  User,
+} from "../types";
 
 export interface AuthContextValue {
   authState: AuthState;
@@ -9,6 +15,8 @@ export interface AuthContextValue {
   isBootstrapping: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
   register: (credentials: RegisterRequest) => Promise<{ autoLoginSucceeded: boolean }>;
+  linkExternalAccount: (payload: LinkExternalAccountRequest) => Promise<void>;
+  restoreSession: () => Promise<void>;
   logout: () => Promise<void>;
 }
 

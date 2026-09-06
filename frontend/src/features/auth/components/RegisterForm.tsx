@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   IconButton,
   InputAdornment,
   Link,
@@ -22,6 +23,7 @@ import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 
 import { ApiError } from "@/api";
 
+import { GoogleSignInButton } from "./GoogleSignInButton";
 import { useRegister } from "../hooks/useRegister";
 import { type RegisterFormValues, registerSchema } from "../schemas/registerSchema";
 
@@ -239,6 +241,32 @@ export const RegisterForm: React.FC = () => {
             "Create Rider Profile"
           )}
         </Button>
+
+        <Box sx={{ display: "flex", alignItems: "center", my: 0.5 }}>
+          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+          <Typography
+            variant="caption"
+            sx={{
+              px: 1.5,
+              color: "text.secondary",
+              fontWeight: 600,
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+            }}
+          >
+            Or
+          </Typography>
+          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+        </Box>
+
+        <GoogleSignInButton
+          returnUrl={
+            state?.from?.pathname
+              ? `${state.from.pathname}${state.from.search || ""}`
+              : "/trips"
+          }
+          disabled={isPending}
+        />
 
         <Box sx={{ textAlign: "center", pt: 1 }}>
           <Typography variant="body2" sx={{ color: "text.secondary" }}>
