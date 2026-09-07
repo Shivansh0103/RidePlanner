@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using RidePlanner.Api.Common;
 using RidePlanner.Api.Middleware;
 using RidePlanner.Application;
 using RidePlanner.Infrastructure;
@@ -40,6 +41,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(
     builder.Configuration);
 
+builder.Services.AddAuthenticationRateLimiting(
+    builder.Configuration,
+    builder.Environment);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -60,6 +65,8 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseCors("Frontend");
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
