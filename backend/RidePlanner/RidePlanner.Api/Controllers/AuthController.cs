@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using RidePlanner.Api.Common;
 using RidePlanner.Application.Abstractions.Identity;
 using RidePlanner.Application.Features.Auth.Commands.ForgotPassword;
@@ -39,6 +40,7 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
+    [EnableRateLimiting(RateLimitPolicies.Register)]
     [HttpPost("register")]
     public async Task<ActionResult<RegisterResponse>> Register(
         [FromBody] RegisterRequest request,
@@ -49,6 +51,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [EnableRateLimiting(RateLimitPolicies.Login)]
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login(
         [FromBody] LoginRequest request,
@@ -101,6 +104,7 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
+    [EnableRateLimiting(RateLimitPolicies.ForgotPassword)]
     [HttpPost("forgot-password")]
     public async Task<ActionResult<ForgotPasswordResponse>> ForgotPassword(
         [FromBody] ForgotPasswordRequest request,
@@ -111,6 +115,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [EnableRateLimiting(RateLimitPolicies.ResetPassword)]
     [HttpPost("reset-password")]
     public async Task<ActionResult<ResetPasswordResponse>> ResetPassword(
         [FromBody] ResetPasswordRequest request,
@@ -186,6 +191,7 @@ public class AuthController : ControllerBase
         };
     }
 
+    [EnableRateLimiting(RateLimitPolicies.ExternalLink)]
     [HttpGet("external/link-info")]
     public ActionResult<ExternalLinkInfo> GetLinkInfo([FromQuery] string ticket)
     {
@@ -198,6 +204,7 @@ public class AuthController : ControllerBase
         return Ok(info);
     }
 
+    [EnableRateLimiting(RateLimitPolicies.ExternalLink)]
     [HttpPost("external/link")]
     public async Task<ActionResult<LoginResponse>> LinkAccount(
         [FromBody] LinkExternalAccountRequest request,
