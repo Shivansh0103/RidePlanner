@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using RidePlanner.Api.Common;
 using RidePlanner.Application.Abstractions.Notifications;
 
 namespace RidePlanner.Api.IntegrationTests;
@@ -38,6 +39,15 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll<IEmailSender>();
             services.AddSingleton<IEmailSender>(EmailSender);
+
+            services.Configure<RateLimitingSettings>(options =>
+            {
+                options.Login.PermitLimit = 10000;
+                options.Register.PermitLimit = 10000;
+                options.ForgotPassword.PermitLimit = 10000;
+                options.ResetPassword.PermitLimit = 10000;
+                options.ExternalLink.PermitLimit = 10000;
+            });
         });
     }
 }
