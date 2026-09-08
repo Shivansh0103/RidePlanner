@@ -1,6 +1,6 @@
 # Sprint 13 — Authentication, User-Owned Workspaces & Profiles
 
-**Status:** Planned  
+**Status:** Completed  
 **Sprint:** 13  
 **Version target:** v0.13.0  
 **Theme:** Identity, authorization, user ownership, and secure session foundations  
@@ -1035,21 +1035,21 @@ Implementation proceeds in six sequential, test-backed phases:
 
 ## 10. Security checklist
 
-- [ ] Every existing business endpoint requires authenticated access.
-- [ ] Every trip read/write resolves ownership with the current user.
-- [ ] Cross-user access returns 404 and makes no data change.
-- [ ] Passwords are handled exclusively by Identity APIs; passwords never enter logs.
-- [ ] Refresh tokens are random, hashed at rest, time-limited, rotated, and revocable.
-- [ ] Refresh cookies use `HttpOnly`, `Secure`, `SameSite=Lax`, and `Path=/api/auth`.
-- [ ] Access token validation checks issuer, audience, signing key, lifetime, and zero clock skew.
-- [ ] Memory-only access-token storage reduces persistence and exposure through browser storage; XSS prevention remains enforced via CSP and React escaping.
-- [ ] Refresh requests are strictly deduplicated on the frontend to prevent backend reuse detection from destroying active session families.
-- [ ] CORS configuration in backend explicitly allows credentials (`.AllowCredentials()`).
-- [ ] Client guarantees complete in-memory cleanup (token, query cache, local storage) upon logout, regardless of network success or failure.
-- [ ] Google sign-in uses registered redirect URIs and trusted provider validation.
-- [ ] Sensitive auth endpoints are rate-limited.
-- [ ] Secrets are loaded from local secret/configuration providers, never committed to source control.
-- [ ] Logs redact `Authorization`, cookies, passwords, reset tokens, and refresh tokens.
+- [x] Every existing business endpoint requires authenticated access.
+- [x] Every trip read/write resolves ownership with the current user.
+- [x] Cross-user access returns 404 and makes no data change.
+- [x] Passwords are handled exclusively by Identity APIs; passwords never enter logs.
+- [x] Refresh tokens are random, hashed at rest, time-limited, rotated, and revocable.
+- [x] Refresh cookies use `HttpOnly`, `Secure`, `SameSite=Lax`, and `Path=/api/auth`.
+- [x] Access token validation checks issuer, audience, signing key, lifetime, and zero clock skew.
+- [x] Memory-only access-token storage reduces persistence and exposure through browser storage; XSS prevention remains enforced via CSP and React escaping.
+- [x] Refresh requests are strictly deduplicated on the frontend to prevent backend reuse detection from destroying active session families.
+- [x] CORS configuration in backend explicitly allows credentials (`.AllowCredentials()`).
+- [x] Client guarantees complete in-memory cleanup (token, query cache, local storage) upon logout, regardless of network success or failure.
+- [x] Google sign-in uses registered redirect URIs and trusted provider validation.
+- [x] Sensitive auth endpoints are rate-limited.
+- [x] Secrets are loaded from local secret/configuration providers, never committed to source control.
+- [x] Logs redact `Authorization`, cookies, passwords, reset tokens, and refresh tokens.
 
 ---
 
@@ -1182,17 +1182,20 @@ For every major architectural decision, we record the **What → Why → How →
 
 ## 13. Documentation deliverables
 
-- [ ] ADR: ASP.NET Core Identity boundary and placement.
-- [ ] ADR: Trip aggregate ownership model.
-- [ ] ADR: Access/refresh token session strategy.
-- [ ] ADR: Frontend Decoupled Transport & Concurrency Architecture.
-- [ ] ADR: Currency, unit, and vehicle-default semantics.
-- [ ] Local setup guide for Identity, JWT, Google, and email environment configuration.
-- [ ] Production configuration handoff for Sprint 14.
-- [ ] Updated architecture/domain/data-model documentation.
-- [ ] Updated API documentation with authentication requirements and problem-response behavior.
-- [ ] Updated changelog/version/readme after completion.
-- [ ] Sprint learning log with decision evidence and verification results.
+- [x] ADR: ASP.NET Core Identity boundary and placement (ADR-0015).
+- [x] ADR: Trip aggregate ownership model (ADR-0016).
+- [x] ADR: Access/refresh token session strategy (ADR-0017).
+- [x] ADR: Explicit owner-scoped repositories (ADR-0018).
+- [x] ADR: Canonical travel values and currency snapshot (ADR-0019).
+- [x] ADR: Frontend Decoupled Transport & Concurrency Architecture (ADR-0020).
+- [x] ADR: External Identity (Google OIDC) & Proof-of-Control Account Linking (ADR-0021).
+- [x] ADR: Authentication Endpoint Rate Limiting Strategy (ADR-0022).
+- [x] Local setup guide for Identity, JWT, Google, and email environment configuration.
+- [x] Production configuration handoff for Sprint 14.
+- [x] Updated architecture/domain/data-model documentation.
+- [x] Updated API documentation with authentication requirements and problem-response behavior.
+- [x] Updated changelog/version/readme after completion.
+- [x] Sprint learning log with decision evidence and verification results.
 
 ---
 
@@ -1202,36 +1205,36 @@ Sprint 13 is complete only when all of the following are true:
 
 ### Functional
 
-- [ ] A user can register, sign in, sign out, recover/reset a password, and sign in through Google where configured.
-- [ ] Registration automatically logs the user in on success, with safe fallback to `/login` if auto-login fails.
-- [ ] A signed-in user has a private workspace and can use all existing RidePlanner feature flows.
-- [ ] Existing user-facing trip and child-resource API endpoints are authenticated.
-- [ ] Profile preferences and one default vehicle profile persist and influence intended defaults.
+- [x] A user can register, sign in, sign out, recover/reset a password, and sign in through Google where configured.
+- [x] Registration automatically logs the user in on success, with safe fallback to `/login` if auto-login fails.
+- [x] A signed-in user has a private workspace and can use all existing RidePlanner feature flows.
+- [x] Existing user-facing trip and child-resource API endpoints are authenticated.
+- [x] Profile preferences and one default vehicle profile persist and influence intended defaults.
 
 ### Security
 
-- [ ] No anonymous caller can access planning data.
-- [ ] No user can read, infer, update, or delete another user’s data.
-- [ ] Access token is stored strictly in memory; refresh token is stored in an HttpOnly, Secure cookie.
-- [ ] Refresh concurrency deduplication is proven by automated tests; concurrent 401s do not trigger session family revocation.
-- [ ] QueryClient cache is completely purged on logout and identity transition.
-- [ ] Local cleanup executes reliably even when server logout network request fails.
-- [ ] Tokens, secrets, and credentials follow the security checklist.
+- [x] No anonymous caller can access planning data.
+- [x] No user can read, infer, update, or delete another user’s data.
+- [x] Access token is stored strictly in memory; refresh token is stored in an HttpOnly, Secure cookie.
+- [x] Refresh concurrency deduplication is proven by automated tests; concurrent 401s do not trigger session family revocation.
+- [x] QueryClient cache is completely purged on logout and identity transition.
+- [x] Local cleanup executes reliably even when server logout network request fails.
+- [x] Tokens, secrets, and credentials follow the security checklist.
 
 ### Engineering quality
 
-- [ ] Transport layer enforces strict unidirectional DAG dependency flow (no circular dependencies).
-- [ ] Domain remains independent of ASP.NET Identity and HTTP infrastructure.
-- [ ] Existing tests remain green and new identity/isolation tests are added.
-- [ ] Frontend build, lint, and test suite pass.
-- [ ] API integration tests include at least two distinct authenticated users.
-- [ ] Documentation and ADRs describe the final—not merely planned—implementation.
+- [x] Transport layer enforces strict unidirectional DAG dependency flow (no circular dependencies).
+- [x] Domain remains independent of ASP.NET Identity and HTTP infrastructure.
+- [x] Existing tests remain green and new identity/isolation tests are added.
+- [x] Frontend build, lint, and test suite pass.
+- [x] API integration tests include at least two distinct authenticated users.
+- [x] Documentation and ADRs describe the final—not merely planned—implementation.
 
 ### Learning
 
-- [ ] Each ADR includes rationale and trade-offs.
-- [ ] Each major technical decision has a verification exercise.
-- [ ] The developer can explain the authentication, session, ownership, and browser-security model without relying on generated code.
+- [x] Each ADR includes rationale and trade-offs.
+- [x] Each major technical decision has a verification exercise.
+- [x] The developer can explain the authentication, session, ownership, and browser-security model without relying on generated code.
 
 ---
 

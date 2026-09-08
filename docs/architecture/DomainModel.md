@@ -3,7 +3,11 @@
 ## Core Domain Aggregates & Entities
 
 ### 1. Trip Aggregate (`RidePlanner.Domain.Entities.Trip`)
-Represents a planned or completed road trip journey.
+Represents a planned or completed road trip journey. It serves as the primary **ownership boundary** for all planning data.
+
+**Ownership & Multi-Tenancy**:
+- `OwnerUserId`: `Guid`, required. Identifies the rider who owns the trip.
+- Every read, update, or deletion of a trip or any of its child entities must verify that `Trip.OwnerUserId == currentUserId`.
 
 **Lifecycle & State Rules**:
 - `Status`: `Planning = 1`, `Active = 2`, `Completed = 3`.
@@ -22,7 +26,18 @@ Represents a planned or completed road trip journey.
 
 ---
 
-### 2. Budget Aggregate (`RidePlanner.Domain.Entities.Budget`)
+### 2. User Profile Aggregate (`RidePlanner.Domain.Entities.UserProfile`)
+Encapsulates application-specific rider settings and defaults, decoupled from infrastructure identity credentials.
+
+- `UserId`: `Guid`, foreign key mapping 1:1 to Identity `ApplicationUser`.
+- `PreferredCurrencyCode`: Currency preference (`INR`, `USD`, `EUR`, `GBP`) used as default for new trips.
+- `DistanceUnit`: Presentation distance unit (`Kilometers`, `Miles`).
+- `DefaultVehicleName`, `DefaultTankCapacityLitres`, `DefaultFuelEfficiencyKmPerLitre`: Rider's primary vehicle telemetry used to seed fuel calculator defaults.
+- `CreateDefault(userId)`: Factory method initializing sensible regional defaults.
+
+---
+
+### 3. Budget Aggregate (`RidePlanner.Domain.Entities.Budget`)
 Manages financial planning and expense tracking for a trip.
 
 - `TripBudget`: Aggregate root containing `TargetBudget` and collection of `Expenses` and `BudgetEstimates`.
@@ -31,7 +46,7 @@ Manages financial planning and expense tracking for a trip.
 
 ---
 
-### 3. Preparation Checklist (`RidePlanner.Domain.Entities.Checklist`)
+### 4. Preparation Checklist (`RidePlanner.Domain.Entities.Checklist`)
 Manages gear and preparation tasks.
 
 - `ChecklistCategory`: Logical category grouping (e.g. *Riding Gear*, *Motorcycle*, *Documents*).
@@ -39,7 +54,7 @@ Manages gear and preparation tasks.
 
 ---
 
-### 4. Travel Documents (`RidePlanner.Domain.Entities.TripDocument`)
+### 5. Travel Documents (`RidePlanner.Domain.Entities.TripDocument`)
 Stores trip-specific travel document metadata.
 
 - `Type`: Document category (`Driving License`, `Vehicle RC`, `Insurance`, `PUC`, `Permit`, `Booking Confirmation`, `ID Proof`, `Other`).
@@ -49,7 +64,7 @@ Stores trip-specific travel document metadata.
 
 ---
 
-### 5. Emergency Contacts (`RidePlanner.Domain.Entities.EmergencyContact`)
+### 6. Emergency Contacts (`RidePlanner.Domain.Entities.EmergencyContact`)
 Stores trip-specific support and emergency contact numbers.
 
 - `Name`, `Relationship`, `Phone`, `AlternatePhone`, `Email`.
@@ -57,7 +72,7 @@ Stores trip-specific support and emergency contact numbers.
 
 ---
 
-### 6. Trip Memories (`RidePlanner.Domain.Entities.TripMemory`)
+### 7. Trip Memories (`RidePlanner.Domain.Entities.TripMemory`)
 Captures personal rider logs and post-trip memories.
 
 - `Title`, `Content`, `ImageUrl`, `OdometerReadingKm`, `MemoryDate`.

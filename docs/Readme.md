@@ -77,8 +77,10 @@ Different journey types may unlock specialized planning tools while maintaining 
 
 ## Key Features
 
-The core capabilities of Ride Planner include:
-
+* ✅ User authentication with email/password & Google OpenID Connect
+* ✅ Secure dual-token session architecture (in-memory JWT + rotating HttpOnly refresh cookies)
+* ✅ Private user workspaces & strict per-rider trip ownership data isolation
+* ✅ Rider profile settings (currency preferences, distance units, default vehicle profile)
 * ✅ Intelligent trip planning & lifecycle management (`Planning`, `Active`, `Completed`)
 * ✅ Interactive route management & Google Places search
 * ✅ Multi-day itinerary planning & accommodation stay reservation tracking
@@ -89,18 +91,53 @@ The core capabilities of Ride Planner include:
 * ✅ Trip emergency contacts registry with primary contact management
 * ✅ Post-ride Trip Summary dashboard with printable summary report generator
 * ✅ Trip memories & journal log registry (photos, notes, odometer readings)
+* ✅ Authentication endpoint rate limiting & brute-force defense
 * ⏳ Weather integration
-* ⏳ Group collaboration & offline trip information
+* ⏳ Group collaboration & shared workspaces (Sprint 19)
 
 ---
 
 ## Current Status
 
-Ride Planner is actively being developed (Version **v0.12.0** — *Obsidian Velocity UI/UX & Telemetry Overhaul*).
+Ride Planner is actively being developed (Version **v0.13.0** — *Authentication, User-Owned Workspaces & Profiles*).
 
 Completed milestones include:
 * **Product Features (Sprints 1–9)**: Trip Lifecycle Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Actual Expense Log & Budget vs Actual Analysis, Preparation Checklists, Overview Command Center Dashboard, Accommodation & Stay Planning, Travel Documents, Emergency Contacts, Derived Trip Readiness Score, Printable Trip Summary Report, and Trip Memories.
 * **Backend Architecture Hardening (Sprint 10)**: MediatR & CQRS Standardization with `ISender`, Application-level `IUnitOfWork` and Transaction Boundaries, Read-Model Projections with `AsNoTracking`, Domain-Driven Design boundary refinement (`Trip.SynchronizeLifecycle`, `TripStopReconciler`), RFC 7807 `ProblemDetails` and `FluentValidation` MediatR pipeline, Explicit EF Core configurations & Foreign Key Indexing, Centralized `IAuditableEntity` timestamps in `DbContext`, Configuration-Driven CORS, and a multi-tier Testing Architecture (`Domain.Tests`, `Application.Tests`, `Api.IntegrationTests`).
+* **Frontend Architecture & UX Resilience (Sprint 11)**: TanStack Query cache invalidation policies, standardized Zod validation schemas, accessible component primitives, and resilient error/loading states.
+* **Obsidian Velocity UI/UX Overhaul (Sprint 12)**: Dark cockpit adventure telemetry interface inspired by Google Stitch designs, Bento metrics, 6-category readiness dial, and responsive layouts.
+* **Authentication, Multi-Tenancy & Profiles (Sprint 13)**: ASP.NET Core Identity with Guid keys, dual-token HttpOnly session lifecycle with reuse detection, private user workspaces (`Trip.OwnerUserId`), user profiles with travel settings, password reset flow, Google OIDC sign-in with proof-of-control account linking, and ASP.NET Core rate limiting middleware.
+
+---
+
+## Local Development & Security Configuration
+
+### 1. Prerequisites
+- **.NET 10 SDK**
+- **Node.js 20+** and `npm`
+- **PostgreSQL 16+** (or use local in-memory database fallback)
+
+### 2. Backend Configuration (`appsettings.Development.json` / User Secrets)
+Run user secrets or configure `appsettings.Development.json`:
+```bash
+cd backend/RidePlanner/RidePlanner.Api
+dotnet user-secrets set "Jwt:Secret" "your_development_secret_key_at_least_32_chars!"
+dotnet user-secrets set "Authentication:Google:ClientId" "your-google-client-id"
+dotnet user-secrets set "Authentication:Google:ClientSecret" "your-google-client-secret"
+```
+
+### 3. Database Migrations
+Apply PostgreSQL database migrations:
+```bash
+dotnet ef database update --project ../RidePlanner.Infrastructure --startup-project .
+```
+*(If no PostgreSQL connection string is provided, RidePlanner automatically falls back to an in-memory database for rapid local development).*
+
+### 4. Running the Platform
+- **Backend API**: `dotnet run --project backend/RidePlanner/RidePlanner.Api` (Listens on `http://localhost:5084`)
+- **Frontend SPA**: `cd frontend && npm install && npm run dev` (Listens on `http://localhost:5173`)
+- **Run Backend Tests**: `dotnet test backend/RidePlanner/RidePlanner.slnx` (206 automated tests)
+- **Run Frontend Tests**: `cd frontend && npm test -- --pool=threads` (91 automated tests)
 
 ---
 

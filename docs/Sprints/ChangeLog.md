@@ -6,6 +6,27 @@ The project follows an incremental sprint-based development approach.
 
 ---
 
+# [v0.13.0] - Sprint 13 Complete
+
+Release Date: September 2026
+
+## Overview
+
+Sprint 13 delivered **Authentication, User-Owned Workspaces, Multi-Tenancy & Rider Profiles**, converting RidePlanner from an anonymous local development application into a secure, user-owned multi-tenant adventure platform. Every trip, waypoint, accommodation, expense, document, checklist, and memory is strictly owned and isolated per authenticated user, while preserving the full Obsidian Velocity cockpit experience.
+
+### Key Highlights Delivered:
+1. **Identity & Persistence Foundation:** ASP.NET Core Identity with Guid keys; `ApplicationUser` in Infrastructure; `UserProfile` entity; atomic registration transactions; database migrations (`AddIdentityFoundation`, `AddUserProfileTableAndBackfill`); zero Identity framework leakage into Domain POCOs.
+2. **Dual-Token Session Strategy:** In-memory short-lived JWT access tokens (15m) + rotating HttpOnly refresh cookies (7d) scoped to `Path=/api/auth`; SHA-256 token hashing at rest; backend session family tracking with active reuse detection and family revocation (`RefreshTokenService`).
+3. **Trip Aggregate Ownership & Multi-Tenancy Isolation:** Required `Trip.OwnerUserId` foreign key; owner-scoped repository queries (`GetTripForOwnerAsync`); `[Authorize]` attributes protecting all trip controllers; cross-user access returns `404 Not Found` to prevent resource existence disclosure.
+4. **User Profile & Travel Preferences:** Domain `UserProfile` entity; custom currency (`INR`, `USD`, `EUR`, `GBP`), distance units (`Kilometers`, `Miles`), and default vehicle profile (`DefaultVehicleName`, `DefaultTankCapacityLitres`, `DefaultFuelEfficiencyKmPerLitre`); seamless integration into new trip defaults and fuel calculation dialogs; `SettingsPage.tsx` and `ProfileSettingsForm.tsx`.
+5. **Password Reset Workflow:** Secure password recovery CQRS pipeline (`POST /api/auth/forgot-password`, `POST /api/auth/reset-password`); non-enumerating generic responses for unknown accounts; `IEmailSender` notification abstraction; user GUID + reset token validation; automatic session revocation upon password reset; `ForgotPasswordPage.tsx` and `ResetPasswordPage.tsx`.
+6. **Google Sign-In & Proof-of-Control Account Linking:** Google OpenID Connect integration via `AddGoogle`; atomic account creation for new external users; strict anti-takeover policy (zero automatic linking by email); proof-of-control password prompt before `AddLoginAsync`; protected, anti-replay link ticket (`IDataProtectionProvider`, 10m expiry); zero tokens in URL query strings (bootstrapped via HttpOnly cookie and `/refresh`); `GoogleSignInButton.tsx`, `AuthCallbackPage.tsx`, `LinkAccountPage.tsx`.
+7. **Authentication Rate Limiting (Sprint 13.1):** Built-in ASP.NET Core rate limiting middleware; 5 independent fixed-window policies (`LoginRateLimit`, `RegisterRateLimit`, `ForgotPasswordRateLimit`, `ResetPasswordRateLimit`, `ExternalLinkRateLimit`); Client IP partitioning; immediate rejection (`QueueLimit = 0`); RFC 7807 429 response with `Retry-After` header; test environment isolation via `X-Test-Client-IP`.
+8. **Decoupled Dual-Client Frontend Architecture:** Directed Acyclic Graph (Level 0 `rawClient` ➔ Level 1 `refreshTransport` ➔ Level 2 `refreshManager` ➔ Level 3 `apiClient`); eliminates circular interceptor dependencies; singleton promise coordinator deduplicates concurrent 401s; in-memory `tokenStore` closure; discriminated union `AuthState` (`bootstrapping | authenticated | unauthenticated`); `AuthBootSplash.tsx`; route guards with deep-link preservation; dynamic `UserMenu.tsx` with live telemetry indicator; guaranteed cache purge (`queryClient.clear()`) on session termination.
+9. **Testing & Quality Assurance:** Comprehensive test coverage with **206 backend tests** passing (76 Domain, 59 Application, 71 API Integration) and **91 frontend Vitest tests** passing across 17 test suites; production bundle verified.
+
+---
+
 # [v0.12.0] - Sprint 12 Complete
 
 Release Date: August 2026

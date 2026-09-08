@@ -8,9 +8,37 @@ RidePlanner uses **PostgreSQL** as its primary relational database via **Entity 
 
 ## Core Entities & Relational Mappings
 
-### 1. `Trips`
+### 1. `AspNetUsers` (ApplicationUser)
+ASP.NET Core Identity table managing rider credentials and security lifecycle.
+- `Id`: `uuid` (Primary Key)
+- `Email`, `NormalizedEmail`: `varchar(256)`
+- `PasswordHash`: `text`
+- `SecurityStamp`: `text`
+- Associated Identity tables: `AspNetUserLogins` (OAuth/OIDC external logins), `AspNetUserTokens`, `AspNetUserClaims`, `AspNetUserRoles`.
+
+### 2. `UserProfiles`
+Rider preference and default travel settings (1:1 with `AspNetUsers`).
+- `UserId`: `uuid` (Primary Key, Foreign Key ➔ `AspNetUsers(Id)`, Cascade Delete)
+- `PreferredCurrencyCode`: `varchar(10)` (`INR`, `USD`, `EUR`, `GBP`)
+- `DistanceUnit`: `varchar(20)` (`Kilometers`, `Miles`)
+- `DefaultVehicleName`: `varchar(100)` (nullable)
+- `DefaultTankCapacityLitres`: `numeric(6, 2)` (nullable)
+- `DefaultFuelEfficiencyKmPerLitre`: `numeric(6, 2)` (nullable)
+- `CreatedAt`, `UpdatedAt`: `timestamp with time zone`
+
+### 3. `UserRefreshTokens`
+Persisted session state for rotating refresh tokens.
+- `Id`: `uuid` (Primary Key)
+- `UserId`: `uuid` (Foreign Key ➔ `AspNetUsers(Id)`, Cascade Delete)
+- `TokenHash`: `varchar(128)` (SHA-256 hash, indexed)
+- `ExpiresAt`: `timestamp with time zone`
+- `RevokedAt`: `timestamp with time zone` (nullable)
+- `FamilyId`: `uuid` (Session lineage tracking for reuse detection)
+
+### 4. `Trips`
 Primary table representing road trips.
 - `Id`: `uuid` (Primary Key)
+- `OwnerUserId`: `uuid` (Foreign Key ➔ `AspNetUsers(Id)`, Indexed, Required)
 - `Name`: `varchar(100)`, required
 - `Description`: `varchar(500)`
 - `StartDate`: `date`, required
