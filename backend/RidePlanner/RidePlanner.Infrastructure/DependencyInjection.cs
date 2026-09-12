@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,12 @@ public static class DependencyInjection
                 options.UseNpgsql(connectionString));
         }
 
-        services.AddDataProtection();
+        var dataProtectionBuilder = services.AddDataProtection();
+        if (!string.IsNullOrWhiteSpace(connectionString) && !string.Equals(connectionString, "InMemory", StringComparison.OrdinalIgnoreCase))
+        {
+            dataProtectionBuilder.PersistKeysToDbContext<RidePlannerDbContext>();
+        }
+
         services.AddMemoryCache();
         services.AddHttpContextAccessor();
 

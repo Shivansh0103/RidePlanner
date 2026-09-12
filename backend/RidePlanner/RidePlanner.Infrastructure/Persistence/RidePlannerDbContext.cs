@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +10,14 @@ using RidePlanner.Infrastructure.Identity;
 
 namespace RidePlanner.Infrastructure.Persistence;
 
-public class RidePlannerDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
+public class RidePlannerDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>, IDataProtectionKeyContext
 {
     public RidePlannerDbContext(DbContextOptions<RidePlannerDbContext> options)
         : base(options)
     {
     }
+
+    public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
 
     public DbSet<Trip> Trips => Set<Trip>();
     public DbSet<TripStop> TripStops => Set<TripStop>();
