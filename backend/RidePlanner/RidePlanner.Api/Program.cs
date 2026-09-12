@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using RidePlanner.Api.Common;
 using RidePlanner.Api.Middleware;
@@ -47,20 +48,50 @@ builder.Services.AddAuthenticationRateLimiting(
 
 var app = builder.Build();
 
+ProductionConfigurationValidator.Validate(app.Configuration, app.Environment);
+
+var runMigrations = app.Environment.IsDevelopment()
+    || app.Configuration.GetValue<bool>("Database:RunMigrationsOnStartup")
+    || string.Equals(Environment.GetEnvironmentVariable("RUN_MIGRATIONS_ON_STARTUP"), "true", StringComparison.OrdinalIgnoreCase);
+
+if (runMigrations)
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<RidePlannerDbContext>();
+    if (dbContext.Database.IsRelational())
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        try
+        {
+            logger.LogInformation("Applying database migrations...");
+            await dbContext.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while applying database migrations.");
+            throw;
+        }
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<RidePlannerDbContext>();
-        await dbContext.Database.MigrateAsync();
-    }
-
     app.MapOpenApi();
 
     app.MapScalarApiReference();
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+var forwardedHeadersOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    ForwardLimit = null
+};
+forwardedHeadersOptions.KnownNetworks.Clear();
+forwardedHeadersOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedHeadersOptions);
 
 app.UseHttpsRedirection();
 
@@ -75,6 +106,13 @@ app.MapControllers();
 
 if (app.Environment.IsEnvironment("Testing"))
 {
+    app.MapGet("/api/test/connection-info", (HttpContext httpContext) => Results.Ok(new
+    {
+        RemoteIp = httpContext.Connection.RemoteIpAddress?.ToString(),
+        Scheme = httpContext.Request.Scheme,
+        IsHttps = httpContext.Request.IsHttps
+    }));
+
     app.MapPost("/api/test/signin-external", async (HttpContext httpContext, TestExternalSignInRequest request) =>
     {
         var claims = new List<System.Security.Claims.Claim>

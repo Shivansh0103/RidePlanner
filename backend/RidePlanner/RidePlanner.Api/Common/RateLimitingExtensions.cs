@@ -146,7 +146,13 @@ public static class RateLimitingExtensions
             return testIp.ToString();
         }
 
-        return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var ip = context.Connection.RemoteIpAddress;
+        if (ip != null)
+        {
+            return ip.IsIPv4MappedToIPv6 ? ip.MapToIPv4().ToString() : ip.ToString();
+        }
+
+        return "unknown";
     }
 
     private static RateLimitingSettings GetCurrentSettings(HttpContext httpContext)
