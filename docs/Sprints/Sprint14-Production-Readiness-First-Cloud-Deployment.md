@@ -108,7 +108,7 @@ However, it identified important gaps in the original plan:
 
 These findings are incorporated into this final Sprint 14 plan.
 
-> **Important:** Recommendations that depend on the eventual cloud provider should be finalized only after the hosting topology is selected. The plan defines the required engineering properties first and avoids prematurely locking RidePlanner to a provider-specific implementation.
+> **Important:** Hosting and infrastructure decisions for Sprint 14 are now finalized: Vercel for the React/Vite frontend, Google Cloud Run for the containerized .NET 10 API, and Neon for managed PostgreSQL.
 
 ---
 
@@ -137,7 +137,7 @@ These findings are incorporated into this final Sprint 14 plan.
 
 # 5. Target Production Architecture
 
-The preferred architecture is deliberately simple:
+The finalized production architecture is deliberately simple:
 
 ```text
                          ┌──────────────────────┐
@@ -146,40 +146,91 @@ The preferred architecture is deliberately simple:
                                     │ HTTPS
                                     ▼
                          ┌──────────────────────┐
-                         │ Managed Frontend     │
-                         │ Vercel / Cloudflare  │
+                         │       Vercel         │
+                         │   React/Vite App     │
                          └──────────┬───────────┘
-                                    │ HTTPS
+                                    │
+                              /api/* rewrite
+                                    │
                                     ▼
                          ┌──────────────────────┐
-                         │   RidePlanner API    │
-                         │      .NET 10         │
+                         │    Google Cloud Run   │
+                         │      .NET 10 API      │
                          └──────────┬───────────┘
                                     │
                                     ▼
                          ┌──────────────────────┐
-                         │ Managed PostgreSQL   │
-                         │ Neon / Supabase etc. │
+                         │        Neon           │
+                         │     PostgreSQL        │
                          └──────────────────────┘
 
                          GitHub Actions
                                │
-                         ┌─────┴─────┐
-                         ▼           ▼
-                       CI          CD
+                               ▼
+                         Backend CI/CD
+                         → Cloud Run
 ```
 
-The exact providers should be selected based on:
+- **Frontend — Vercel**
+  - Chosen because it is a simple, low-overhead fit for the React/Vite frontend.
+  - Provides straightforward GitHub-based deployment, HTTPS, CDN/edge delivery, and supports rewrites that allow `/api/*` traffic to be proxied to the backend.
+  - This also helps preserve a same-origin browser-facing authentication topology for the Sprint 13 HttpOnly refresh-cookie flow.
 
-- .NET 10 support;
-- PostgreSQL support;
-- GitHub integration;
-- HTTPS;
-- logs;
-- health checks;
-- cost;
-- free/low-cost availability;
-- simplicity.
+- **Backend — Google Cloud Run**
+  - Chosen because RidePlanner is already containerized/being containerized and Cloud Run provides managed container execution without requiring server management.
+  - Scale-to-zero and usage-based operation keep the initial deployment inexpensive.
+  - It also provides useful production engineering experience with GCP while keeping operational complexity proportional to the project's current scale.
+
+- **Database — Neon PostgreSQL**
+  - Chosen as the managed PostgreSQL provider.
+  - Avoids operating a database server ourselves while providing a useful low-cost/free starting point and scale-to-zero characteristics appropriate for a small portfolio application.
+  - The database remains independently managed from the Cloud Run application runtime.
+
+- **Custom domain — Deferred**
+  - A custom domain will not be purchased for the initial deployment.
+  - Provider domains (`vercel.app` and `run.app`) are sufficient for the first public portfolio/learning deployment.
+  - A custom domain can be introduced later without changing the fundamental application architecture.
+
+---
+
+## 5.1 Finalized Hosting Decisions
+
+| Area | Decision | Reasoning |
+|---|---|---|
+| Frontend | Vercel | Simple React/Vite deployment, HTTPS/CDN, GitHub integration, and `/api/*` rewrites |
+| Backend | Google Cloud Run | Managed containers, scale-to-zero, low operational overhead, good GCP learning/interview value |
+| PostgreSQL | Neon | Managed PostgreSQL, low-cost/free starting point, scale-to-zero, no database server management |
+| Custom domain | Deferred | Not required for the initial portfolio deployment |
+
+### Transactional Email
+
+RidePlanner will remain **demo-only for transactional email during the initial public deployment**.
+
+The application already uses the `IEmailSender` abstraction, with `DevelopmentEmailSender` as the current implementation. The development sender logs the password-reset URL rather than delivering a real email.
+
+Do not introduce Resend, Brevo, SendGrid, SES, or another transactional email provider as part of the initial deployment.
+
+Reasoning:
+
+- Real email delivery is not necessary to validate the initial cloud deployment.
+- A production email provider would also introduce sender-domain/DNS configuration and another external dependency.
+- The existing `IEmailSender` abstraction keeps the architecture ready to introduce a real provider later without changing the authentication/application layer.
+- This is an intentional scope decision, not an unfinished architectural design.
+
+### Deferred / Not Now
+
+The following are intentionally deferred:
+
+- Custom domain
+- Real transactional email provider
+- Redis/cache infrastructure
+- Kubernetes
+- Service mesh
+- Multi-region deployment
+- Dedicated load balancer unless required by the selected hosting topology
+- Enterprise observability platforms
+
+> **Guiding principle:** Production engineering competence, not infrastructure theatre.
 
 ---
 
@@ -189,57 +240,34 @@ Sprint 13 uses an in-memory access token plus an HttpOnly refresh-token cookie.
 
 This makes production frontend/API topology an important architectural decision.
 
-A deployment such as:
+A deployment where the frontend is at `rideplanner.vercel.app` and the API is at `rideplanner-api-xyz.a.run.app` must not be assumed to behave like a same-origin application merely because CORS is configured.
+
+Because a custom domain is deferred, the **Same-Origin API Proxy** approach is selected for Sprint 14.
+
+### Selected Approach: Same-Origin API Proxy (Vercel Rewrites)
+
+Expose API traffic through the frontend origin via Vercel edge rewrites:
 
 ```text
-rideplanner.vercel.app
-        ↓
-rideplanner-api.onrender.com
+https://rideplanner.vercel.app/api/*
+                  ↓
+             Vercel rewrite
+                  ↓
+https://rideplanner-api-xyz.a.run.app/api/*
 ```
 
-must not be assumed to behave like a same-origin application merely because CORS is configured.
-
-Before production launch, choose and document one of these approaches:
-
-### Preferred: Same-Origin API Proxy
-
-Expose API traffic through the frontend origin:
-
-```text
-https://rideplanner.example/api/*
-                  ↓
-             edge rewrite
-                  ↓
-https://api-host.example/api/*
-```
-
-The browser sees one public origin.
+The browser communicates strictly with one origin (`rideplanner.vercel.app`).
 
 Benefits:
 
-- simpler cookie behavior;
+- avoids modern browser third-party cookie restrictions for the HttpOnly refresh token;
 - simpler browser security model;
-- fewer CORS concerns;
-- easier authentication troubleshooting.
+- eliminates CORS preflights on proxied requests;
+- reliable session restoration and rotation across browser restarts.
 
-### Alternative: Shared Custom Domain
+### Alternative (Deferred): Shared Custom Domain
 
-Use a deliberate domain topology such as:
-
-```text
-app.rideplanner.example
-api.rideplanner.example
-```
-
-and explicitly configure:
-
-- cookie domain/same-site behavior;
-- `Secure`;
-- CORS;
-- credentials;
-- trusted origins.
-
-The final implementation must be validated in real browsers, not assumed from server-side configuration alone.
+Using a custom domain (e.g., `app.rideplanner.example` and `api.rideplanner.example`) is documented as a viable alternative for future sprints if direct multi-domain routing is desired. For Sprint 14, custom domains are deferred in favor of the Vercel same-origin rewrite proxy.
 
 ---
 
@@ -347,7 +375,7 @@ OpenTelemetry may be introduced later when distributed tracing has meaningful va
 
 ## Production Frontend Container
 
-Not required if the selected provider directly builds and hosts the Vite static application.
+Not required because Vercel directly builds and hosts the Vite static application.
 
 The frontend should be containerized only if there is a concrete deployment or learning reason.
 
@@ -484,7 +512,7 @@ Application
 
 ### Decision Requirement
 
-The selected provider's deployment model should determine the final mechanism.
+With Google Cloud Run hosting a single-instance container, Option A (Controlled Startup Migration via `RUN_MIGRATIONS_ON_STARTUP=true` or `Database:RunMigrationsOnStartup`) is finalized for the initial deployment.
 
 The sprint is not complete until:
 
@@ -526,21 +554,11 @@ A placeholder value should never be accepted as a production credential.
 
 Sprint 13 includes password-reset behavior.
 
-If the development email sender only logs reset links, production must not silently claim that email delivery works.
+For Sprint 14, **Option B is finalized: RidePlanner remains demo-only for transactional email during the initial public deployment**.
 
-Choose one:
+The application already uses the `IEmailSender` abstraction, with `DevelopmentEmailSender` logging password-reset links rather than delivering real email. In production, it logs a clear `[PRODUCTION DEMO SENDER]` notice to application logs.
 
-### Option A
-
-Integrate a transactional email provider.
-
-### Option B
-
-Explicitly document a development/demo-only reset mechanism and prevent it from being mistaken for a production email service.
-
-For a real public deployment, a transactional provider is preferable.
-
-The provider choice should be proportional to the application's scale and cost constraints.
+External transactional email providers (Resend, Brevo, SendGrid, SES) are intentionally deferred to avoid DNS/domain management overhead during the initial release. The `IEmailSender` interface ensures a real provider can be dropped in later without code rewrites.
 
 ---
 
@@ -661,7 +679,7 @@ This must be verified by inspecting the deployment configuration and production 
 
 # 17. Frontend Container Decision
 
-If the selected hosting provider supports:
+Since Vercel directly supports:
 
 ```text
 Git repository
@@ -941,9 +959,9 @@ The goal is to ensure a leaked browser key does not become an unrestricted paid 
 
 # 27. Production Database
 
-Use managed PostgreSQL.
+Neon is finalized as the managed PostgreSQL provider.
 
-The selected service should provide a reasonable combination of:
+Neon provides:
 
 - PostgreSQL compatibility;
 - backups/recovery options;
@@ -1218,11 +1236,11 @@ Implement:
 
 ## P4 — Cloud Infrastructure
 
-Select:
+Finalized targets:
 
-- frontend provider;
-- backend provider;
-- managed PostgreSQL provider.
+- frontend: Vercel;
+- backend: Google Cloud Run (.NET 10 container);
+- database: Neon (managed PostgreSQL).
 
 Then configure:
 
