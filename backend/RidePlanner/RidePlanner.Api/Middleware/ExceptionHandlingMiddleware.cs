@@ -115,6 +115,12 @@ public class ExceptionHandlingMiddleware
                 };
             }
 
+            var correlationId = context.GetCorrelationId();
+            if (!string.IsNullOrEmpty(correlationId))
+            {
+                problemDetails.Extensions["correlationId"] = correlationId;
+            }
+
             context.Response.StatusCode = statusCode;
 
             await context.Response.WriteAsJsonAsync(problemDetails, problemDetails.GetType(), options: null, contentType: "application/problem+json");

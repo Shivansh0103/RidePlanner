@@ -86,8 +86,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
 var forwardedHeadersOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
@@ -96,6 +94,9 @@ var forwardedHeadersOptions = new ForwardedHeadersOptions
 forwardedHeadersOptions.KnownNetworks.Clear();
 forwardedHeadersOptions.KnownProxies.Clear();
 app.UseForwardedHeaders(forwardedHeadersOptions);
+
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
@@ -112,6 +113,16 @@ app.MapControllers();
 
 if (app.Environment.IsEnvironment("Testing"))
 {
+    app.MapGet("/api/test/echo-correlation-id", (HttpContext httpContext) => Results.Ok(new
+    {
+        CorrelationId = httpContext.GetCorrelationId()
+    }));
+
+    app.MapGet("/api/test/throw-error", () =>
+    {
+        throw new InvalidOperationException("Simulated test error for correlation ID verification.");
+    });
+
     app.MapGet("/api/test/connection-info", (HttpContext httpContext) => Results.Ok(new
     {
         RemoteIp = httpContext.Connection.RemoteIpAddress?.ToString(),

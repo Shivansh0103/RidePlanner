@@ -2,6 +2,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
+using RidePlanner.Api.Middleware;
 
 namespace RidePlanner.Api.Common;
 
@@ -55,6 +56,12 @@ public static class RateLimitingExtensions
                     Detail = $"Too many requests. Please try again in {retryAfterSeconds} seconds.",
                     Instance = context.HttpContext.Request.Path
                 };
+
+                var correlationId = context.HttpContext.GetCorrelationId();
+                if (!string.IsNullOrEmpty(correlationId))
+                {
+                    problemDetails.Extensions["correlationId"] = correlationId;
+                }
 
                 await context.HttpContext.Response.WriteAsJsonAsync(
                     problemDetails,
