@@ -46,6 +46,8 @@ builder.Services.AddAuthenticationRateLimiting(
     builder.Configuration,
     builder.Environment);
 
+builder.Services.AddRidePlannerHealthChecks();
+
 var app = builder.Build();
 
 ProductionConfigurationValidator.Validate(app.Configuration, app.Environment);
@@ -101,6 +103,8 @@ app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapRidePlannerHealthChecks();
 
 app.MapControllers();
 
