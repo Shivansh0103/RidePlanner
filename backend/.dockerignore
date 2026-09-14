@@ -1,0 +1,38 @@
+# Version control
+**/.git
+**/.gitignore
+**/.gitattributes
+
+# Build and compilation outputs
+**/bin/
+**/obj/
+**/out/
+
+# Visual Studio / VS Code / JetBrains Rider artifacts
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+
+# Development & environment files
+**/.env
+**/.env.*
+**/appsettings.Development.json
+
+# Docker files
+**/Dockerfile*
+**/.dockerignore
+
+# Test and coverage artifacts
+**/TestResults/
+**/*.trx
+**/*.coverage
+**/*.cobertura.xml
+
+# Logs and temporary files
+**/*.log
+**/logs/
+**/scratch/
