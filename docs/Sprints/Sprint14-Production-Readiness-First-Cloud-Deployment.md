@@ -629,6 +629,42 @@ A standard Debian-based runtime is acceptable if it provides a simpler and more 
 
 ---
 
+## 14.5 Local Docker Compose Environment (API + PostgreSQL)
+
+For local development and testing, `backend/compose.yaml` defines a complete local environment:
+
+```text
+Docker Compose
+├── api
+│   └── RidePlanner .NET 10 (Dockerfile)
+│
+└── postgres
+    └── PostgreSQL 17
+        └── postgres-data (named volume)
+```
+
+### Networking & Resolution
+- **Internal Service Communication (`api` → `postgres:5432`):** Within the Docker bridge network (`backend_default`), Compose provides internal DNS resolution mapping the service name `postgres` directly to the database container's internal IP. The API connects using:
+  ```text
+  ConnectionStrings__RidePlannerDatabase="Host=postgres;Port=5432;Database=rideplanner;Username=rideplanner;Password=rideplanner_dev_password"
+  ```
+- **Host Machine Access (`Developer` → `localhost:5433`):** Port `5433:5432` exposes the database to the host machine for developer tools (e.g. `psql`, pgAdmin, or IDE database tools) while avoiding collision with any local PostgreSQL instance on default port `5432`.
+- **Why the API must NOT use `localhost`:** Inside a container, `localhost` (`127.0.0.1`) refers strictly to the container's own isolated loopback interface. If the API attempted to connect to `localhost:5432` or `localhost:5433`, the connection would be refused because PostgreSQL runs in a separate container namespace.
+
+### Startup Ordering vs. Runtime Readiness
+- **Startup Ordering (`depends_on + condition: service_healthy`):** Compose checks PostgreSQL's health check (`pg_isready -U rideplanner -d rideplanner`) and waits until it passes before launching the API container.
+- **Runtime Readiness (`/readyz`):** Startup ordering only controls container boot order. The application's native `/readyz` endpoint validates continuous runtime reachability of PostgreSQL throughout the application lifecycle.
+
+### Production Distinction
+- This Compose setup is **strictly for local development and reproducibility**.
+- Production topology remains:
+  ```text
+  User Browser ──► Vercel (React/Vite) ──► Cloud Run (.NET 10 API) ──► Neon (Managed PostgreSQL)
+  ```
+- PostgreSQL is never packaged into the production API container.
+
+---
+
 # 15. `.dockerignore`
 
 The Docker build context must exclude unnecessary and sensitive local content.
