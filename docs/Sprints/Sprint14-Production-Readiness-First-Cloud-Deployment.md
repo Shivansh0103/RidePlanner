@@ -769,7 +769,62 @@ Key properties:
   - This is validation-only CI. It does not build/publish Docker images or deploy to Cloud Run (deferred to later steps).
   - No external PostgreSQL instance or secrets are required; all 247 test cases run hermetically.
 
-## 18.2 Frontend CI
+## 18.2 Docker Image CI Build (P1.6-B)
+
+The Backend CI workflow (`.github/workflows/backend-ci.yml`) extends beyond .NET tests to validate the production container build:
+
+```text
+P1.6-A:
+Checkout ──► Setup .NET ──► Restore ──► Build ──► Test
+
+P1.6-B:
+Checkout ──► Setup .NET ──► Restore ──► Build ──► Test ──► Docker Build ──► Verify Image
+```
+
+Key properties:
+- **Build Step:** Executes `docker build -f backend/Dockerfile -t rideplanner-api:ci backend`.
+- **Validation:** Confirms that the multi-stage Dockerfile and `.dockerignore` successfully compile and package the API in a clean CI runner environment.
+- **Scope & Non-Goals:**
+  - This step builds the image locally within the GitHub Actions runner.
+  - The image is **not pushed to any registry** yet. Artifact Registry, GCP authentication, and Cloud Run deployment are deferred to later steps.
+  - No secrets, credentials, or external databases are introduced into the CI Docker build.
+
+## 18.3 Artifact Registry Publishing via Workload Identity Federation (P1.6-C)
+
+On pushes to the `main` branch, the Backend CI workflow authenticates securely to Google Cloud and publishes the production image to Google Artifact Registry:
+
+```text
+PR Targeting main:
+Checkout ──► Setup .NET ──► Restore ──► Build ──► Test ──► Docker Build ──► Verify Image (NO GCP Auth / NO Push)
+
+Push to main:
+Checkout ──► Setup .NET ──► Restore ──► Build ──► Test ──► Docker Build ──► Verify Image
+       ──► WIF Auth (OIDC) ──► Docker Login ──► Push to Artifact Registry (SHA Tag)
+```
+
+Key architectural and security properties:
+- **Zero Stored Secrets (Keyless Authentication):** Uses Google Cloud **Workload Identity Federation (WIF)**. GitHub Actions mints a short-lived OIDC token (`id-token: write`). `google-github-actions/auth@v3` exchanges this token with Google Security Token Service (STS) for short-lived access credentials via service account impersonation. No static JSON service account keys or long-lived credentials exist in GitHub Secrets or the repository.
+- **WIF Trust Boundaries:**
+  - **Pool:** `github-actions` in project `ride-planner-504308` (`projects/73286917441/locations/global/workloadIdentityPools/github-actions`).
+  - **Provider:** `github` (`.../providers/github`).
+  - **Attribute Condition:** Strictly restricts token exchange to `assertion.repository_owner_id == '92602431' && assertion.repository_id == '1289731955'` (`Shivansh0103/RidePlanner`).
+- **Least-Privilege Service Account:**
+  - Service Account: `rideplanner-ci@ride-planner-504308.iam.gserviceaccount.com`.
+  - Roles: `Artifact Registry Writer` scoped strictly to the `rideplanner` repository. It does not possess project-wide owner or editor roles.
+- **Artifact Registry Repository:**
+  - Path: `asia-south1-docker.pkg.dev/ride-planner-504308/rideplanner/rideplanner-api`.
+- **Immutable SHA-Based Tagging:**
+  - Images are tagged with the immutable Git commit SHA: `${{ github.sha }}`.
+  - Avoids mutable `latest` tags for production deployment traceability.
+  - If a workflow run for an existing commit is re-run, an existence check (`docker manifest inspect`) skips re-pushing to honor Artifact Registry's immutable tags policy without failing the workflow.
+- **Pull Request Isolation:**
+  - Pull requests execute compilation, tests, and local Docker image building to validate changes.
+  - Pull requests **never** authenticate to Google Cloud and **never** push to Artifact Registry.
+- **Scope & Non-Goals:**
+  - This step concludes with the image published to Artifact Registry.
+  - Cloud Run service creation, revision deployment, and traffic routing are deferred to subsequent CD steps.
+
+## 18.4 Frontend CI
 
 The workflow should explicitly run:
 
