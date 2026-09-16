@@ -749,19 +749,27 @@ The backend container is the more important Docker learning objective because it
 
 # 18. CI — GitHub Actions
 
-CI should run for pull requests and appropriate pushes.
+GitHub Actions is the continuous integration system for RidePlanner.
 
-## Backend
+## 18.1 Backend CI Foundation (P1.6-A)
 
-```text
-dotnet restore
-dotnet build --configuration Release
-dotnet test --configuration Release
-```
+Automated backend validation is implemented in `.github/workflows/backend-ci.yml`.
 
-Tests must include the existing test projects.
+Key properties:
+- **Triggers:** Runs automatically on pushes to `main` and on pull requests targeting `main`.
+- **Permissions:** Configured for least privilege (`contents: read`). No cloud credentials, secrets, or write tokens are provided.
+- **Concurrency:** Automatically cancels in-progress CI runs for the same branch/PR when newer commits are pushed.
+- **Workflow Pipeline:**
+  1. Checks out repository via `actions/checkout@v4`.
+  2. Sets up .NET 10 via `actions/setup-dotnet@v4` with built-in NuGet caching (`cache: true` keyed on `backend/RidePlanner/**/*.csproj`).
+  3. Restores solution: `dotnet restore backend/RidePlanner/RidePlanner.slnx`.
+  4. Compiles solution in Release mode: `dotnet build backend/RidePlanner/RidePlanner.slnx --configuration Release --no-restore`.
+  5. Runs complete test suite: `dotnet test backend/RidePlanner/RidePlanner.slnx --configuration Release --no-build --no-restore --nologo` (covers Domain, Application, and API integration tests).
+- **Scope & Non-Goals:**
+  - This is validation-only CI. It does not build/publish Docker images or deploy to Cloud Run (deferred to later steps).
+  - No external PostgreSQL instance or secrets are required; all 247 test cases run hermetically.
 
-## Frontend
+## 18.2 Frontend CI
 
 The workflow should explicitly run:
 
