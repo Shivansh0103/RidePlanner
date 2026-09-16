@@ -769,7 +769,27 @@ Key properties:
   - This is validation-only CI. It does not build/publish Docker images or deploy to Cloud Run (deferred to later steps).
   - No external PostgreSQL instance or secrets are required; all 247 test cases run hermetically.
 
-## 18.2 Frontend CI
+## 18.2 Docker Image CI Build (P1.6-B)
+
+The Backend CI workflow (`.github/workflows/backend-ci.yml`) extends beyond .NET tests to validate the production container build:
+
+```text
+P1.6-A:
+Checkout ──► Setup .NET ──► Restore ──► Build ──► Test
+
+P1.6-B:
+Checkout ──► Setup .NET ──► Restore ──► Build ──► Test ──► Docker Build ──► Verify Image
+```
+
+Key properties:
+- **Build Step:** Executes `docker build -f backend/Dockerfile -t rideplanner-api:ci backend`.
+- **Validation:** Confirms that the multi-stage Dockerfile and `.dockerignore` successfully compile and package the API in a clean CI runner environment.
+- **Scope & Non-Goals:**
+  - This step builds the image locally within the GitHub Actions runner.
+  - The image is **not pushed to any registry** yet. Artifact Registry, GCP authentication, and Cloud Run deployment are deferred to later steps.
+  - No secrets, credentials, or external databases are introduced into the CI Docker build.
+
+## 18.3 Frontend CI
 
 The workflow should explicitly run:
 

@@ -39,3 +39,9 @@ jobs:
 
       - name: Run test suite
         run: dotnet test backend/RidePlanner/RidePlanner.slnx --configuration Release --no-build --no-restore --nologo
+
+      - name: Build Docker image
+        run: docker build -f backend/Dockerfile -t rideplanner-api:ci backend
+
+      - name: Verify Docker image
+        run: docker image inspect rideplanner-api:ci --format '{{.Id}}'
