@@ -30,11 +30,11 @@ public class HealthCheckIntegrationTests : IClassFixture<CustomWebApplicationFac
     }
 
     [Fact]
-    public async Task Healthz_ReturnsOk_AndHealthyStatus_WithoutDatabaseDependency()
+    public async Task Health_ReturnsOk_AndHealthyStatus_WithoutDatabaseDependency()
     {
         var client = _factory.CreateClient();
 
-        var response = await client.GetAsync("/healthz");
+        var response = await client.GetAsync("/health");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -47,11 +47,11 @@ public class HealthCheckIntegrationTests : IClassFixture<CustomWebApplicationFac
     }
 
     [Fact]
-    public async Task Readyz_ReturnsOk_WhenDatabaseIsAvailable()
+    public async Task Ready_ReturnsOk_WhenDatabaseIsAvailable()
     {
         var client = _factory.CreateClient();
 
-        var response = await client.GetAsync("/readyz");
+        var response = await client.GetAsync("/ready");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -64,7 +64,7 @@ public class HealthCheckIntegrationTests : IClassFixture<CustomWebApplicationFac
     }
 
     [Fact]
-    public async Task Readyz_ReturnsServiceUnavailable_WhenDatabaseIsUnavailable()
+    public async Task Ready_ReturnsServiceUnavailable_WhenDatabaseIsUnavailable()
     {
         var client = _factory.WithWebHostBuilder(builder =>
         {
@@ -80,7 +80,7 @@ public class HealthCheckIntegrationTests : IClassFixture<CustomWebApplicationFac
             });
         }).CreateClient();
 
-        var response = await client.GetAsync("/readyz");
+        var response = await client.GetAsync("/ready");
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
         Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -97,16 +97,16 @@ public class HealthCheckIntegrationTests : IClassFixture<CustomWebApplicationFac
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Authorization = null;
 
-        var healthzResponse = await client.GetAsync("/healthz");
-        var readyzResponse = await client.GetAsync("/readyz");
+        var healthResponse = await client.GetAsync("/health");
+        var readyResponse = await client.GetAsync("/ready");
 
-        Assert.NotEqual(HttpStatusCode.Unauthorized, healthzResponse.StatusCode);
-        Assert.NotEqual(HttpStatusCode.Forbidden, healthzResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, healthzResponse.StatusCode);
+        Assert.NotEqual(HttpStatusCode.Unauthorized, healthResponse.StatusCode);
+        Assert.NotEqual(HttpStatusCode.Forbidden, healthResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, healthResponse.StatusCode);
 
-        Assert.NotEqual(HttpStatusCode.Unauthorized, readyzResponse.StatusCode);
-        Assert.NotEqual(HttpStatusCode.Forbidden, readyzResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, readyzResponse.StatusCode);
+        Assert.NotEqual(HttpStatusCode.Unauthorized, readyResponse.StatusCode);
+        Assert.NotEqual(HttpStatusCode.Forbidden, readyResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, readyResponse.StatusCode);
     }
 
     [Fact]
@@ -129,10 +129,10 @@ public class HealthCheckIntegrationTests : IClassFixture<CustomWebApplicationFac
             });
         }).CreateClient();
 
-        var readyzResponse = await client.GetAsync("/readyz");
-        var rawBody = await readyzResponse.Content.ReadAsStringAsync();
+        var readyResponse = await client.GetAsync("/ready");
+        var rawBody = await readyResponse.Content.ReadAsStringAsync();
 
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, readyzResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, readyResponse.StatusCode);
         Assert.DoesNotContain(secretPassword, rawBody, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain(secretPort, rawBody, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("NpgsqlException", rawBody, StringComparison.OrdinalIgnoreCase);
@@ -143,7 +143,7 @@ public class HealthCheckIntegrationTests : IClassFixture<CustomWebApplicationFac
     }
 
     [Fact]
-    public async Task Healthz_RemainsHealthy_EvenWhenDatabaseIsDown()
+    public async Task Health_RemainsHealthy_EvenWhenDatabaseIsDown()
     {
         var client = _factory.WithWebHostBuilder(builder =>
         {
@@ -159,10 +159,10 @@ public class HealthCheckIntegrationTests : IClassFixture<CustomWebApplicationFac
             });
         }).CreateClient();
 
-        var healthzResponse = await client.GetAsync("/healthz");
+        var healthResponse = await client.GetAsync("/health");
 
-        Assert.Equal(HttpStatusCode.OK, healthzResponse.StatusCode);
-        var payload = await healthzResponse.Content.ReadFromJsonAsync<HealthCheckResponse>();
+        Assert.Equal(HttpStatusCode.OK, healthResponse.StatusCode);
+        var payload = await healthResponse.Content.ReadFromJsonAsync<HealthCheckResponse>();
         Assert.NotNull(payload);
         Assert.Equal("Healthy", payload.Status);
     }
