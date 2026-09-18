@@ -32,8 +32,8 @@ import {
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-import { useTrips } from "@/features/trips";
 import { UserMenu } from "@/features/auth";
+import { useTrips } from "@/features/trips";
 
 const SIDEBAR_WIDTH = 230;
 
@@ -58,10 +58,13 @@ export default function MainLayout() {
   const currentTripId = tripPathMatch && tripPathMatch[1] !== "new" ? tripPathMatch[1] : null;
   const currentTrip = currentTripId ? trips.find((t) => t.id === currentTripId) : null;
 
+  if (currentTripId && currentTripId !== lastActiveTripId) {
+    setLastActiveTripId(currentTripId);
+  }
+
   useEffect(() => {
     if (currentTripId) {
       localStorage.setItem("last_active_trip_id", currentTripId);
-      setLastActiveTripId(currentTripId);
     }
   }, [currentTripId]);
 

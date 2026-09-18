@@ -5,11 +5,11 @@ import type { ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { authApi } from "../api/authApi";
 import { GoogleSignInButton } from "../components/GoogleSignInButton";
 import { AuthContext, type AuthContextValue } from "../context/AuthContext";
 import { AuthCallbackPage } from "../pages/AuthCallbackPage";
 import { LinkAccountPage } from "../pages/LinkAccountPage";
-import { authApi } from "../api/authApi";
 
 vi.mock("../api/authApi", () => ({
   authApi: {

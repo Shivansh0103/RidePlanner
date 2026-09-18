@@ -2,8 +2,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/
 
 import { useCreateTripStop } from "../hooks/useCreateTripStop";
 import { useUpdateTripStop } from "../hooks/useUpdateTripStop";
-import { TripStopCategory } from "../types/tripStopCategory";
 import type { TripStopFormValues } from "../schemas/tripStopSchema";
+import { TripStopCategory } from "../types/tripStopCategory";
 import TripStopForm from "./TripStopForm";
 
 type TripStopDialogProps = {

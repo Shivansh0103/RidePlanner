@@ -11,7 +11,8 @@ import { formatDate } from "@/shared/utils/date";
 
 import type { TimelineGroup } from "../types/timelineGroup";
 import type { TripStop } from "../types/tripStop";
-import RouteLegConnector, { formatLegDistance, formatLegDuration } from "./RouteLegConnector";
+import { formatLegDistance, formatLegDuration } from "../utils/routeLegUtils";
+import RouteLegConnector from "./RouteLegConnector";
 import TripStopCard from "./TripStopCard";
 
 type TimelineDayProps = {

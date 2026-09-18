@@ -1,14 +1,12 @@
 export { default as DocumentsSection } from "./components/DocumentsSection";
-
-export { useTripDocuments } from "./hooks/useTripDocuments";
 export { useCreateTripDocument } from "./hooks/useCreateTripDocument";
-export { useUpdateTripDocument } from "./hooks/useUpdateTripDocument";
 export { useDeleteTripDocument } from "./hooks/useDeleteTripDocument";
-
-export type { TripDocument } from "./types/document";
+export { useTripDocuments } from "./hooks/useTripDocuments";
+export { useUpdateTripDocument } from "./hooks/useUpdateTripDocument";
 export {
-  createDocumentSchema,
-  updateDocumentSchema,
   type CreateDocumentRequest,
+  createDocumentSchema,
   type UpdateDocumentRequest,
+  updateDocumentSchema,
 } from "./schemas/documentSchema";
+export type { TripDocument } from "./types/document";

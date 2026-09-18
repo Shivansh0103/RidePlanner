@@ -30,14 +30,12 @@ export function getStayDurationInfo(
   const nightsCount = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
   const isOvernight = nightsCount > 0;
 
-  let label = "";
-  if (nightsCount === 1) {
-    label = "1 Night Stay";
-  } else if (nightsCount > 1) {
-    label = `${nightsCount} Nights Stay`;
-  } else {
-    label = "Same Day Stop";
-  }
+  const label =
+    nightsCount === 1
+      ? "1 Night Stay"
+      : nightsCount > 1
+        ? `${nightsCount} Nights Stay`
+        : "Same Day Stop";
 
   return { nightsCount, isOvernight, label };
 }

@@ -18,11 +18,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import { useDebounce } from "@/shared/hooks";
 import ConfirmDialog from "@/shared/components/ConfirmDialog";
+import { useDebounce } from "@/shared/hooks";
 import EmptyState from "@/shared/ui/EmptyState";
 import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
@@ -45,12 +45,10 @@ export default function TripsPage() {
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState<FilterStatus>(() => {
-    if (statusParam === "Active" || statusParam === "Planning" || statusParam === "Completed") {
-      return statusParam;
-    }
-    return "ALL";
-  });
+  const selectedFilter: FilterStatus =
+    statusParam === "Active" || statusParam === "Planning" || statusParam === "Completed"
+      ? statusParam
+      : "ALL";
 
   const [sortBy, setSortBy] = useState<SortOption>("date-desc");
 
@@ -58,19 +56,11 @@ export default function TripsPage() {
     return (localStorage.getItem("trips_view_mode") as "grid" | "list") || "grid";
   });
 
-  useEffect(() => {
-    if (statusParam === "Active" || statusParam === "Planning" || statusParam === "Completed") {
-      setSelectedFilter(statusParam);
-    } else if (!statusParam) {
-      setSelectedFilter("ALL");
-    }
-  }, [statusParam]);
-
   const handleFilterChange = (filter: FilterStatus) => {
-    setSelectedFilter(filter);
     if (filter === "ALL") {
-      searchParams.delete("status");
-      setSearchParams(searchParams);
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete("status");
+      setSearchParams(nextParams);
     } else {
       setSearchParams({ status: filter });
     }

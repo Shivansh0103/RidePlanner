@@ -1,4 +1,5 @@
 import { apiClient } from "@/api/axios";
+
 import type { TripReadiness } from "../types/readiness";
 
 export async function getTripReadiness(tripId: string): Promise<TripReadiness> {
