@@ -15,7 +15,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Box, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import type { RouteLeg } from "@/shared/maps/types/route";
 
@@ -44,12 +44,15 @@ export default function TripStopsListView({
   selectedStopId,
   onStopSelect,
 }: TripStopListProps) {
+  const [prevStops, setPrevStops] = useState<TripStop[]>(initialStops);
   const [items, setItems] = useState<TripStop[]>(initialStops);
-  const { registerRef } = useScrollToSelection(selectedStopId);
 
-  useEffect(() => {
+  if (initialStops !== prevStops) {
+    setPrevStops(initialStops);
     setItems(initialStops);
-  }, [initialStops]);
+  }
+
+  const { registerRef } = useScrollToSelection(selectedStopId);
 
   const legMapByEndStop = new Map<string, RouteLeg>();
   for (const leg of routeLegs) {

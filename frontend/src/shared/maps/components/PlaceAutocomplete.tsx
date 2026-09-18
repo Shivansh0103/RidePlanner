@@ -37,7 +37,6 @@ export function PlaceAutocomplete({
 
   useEffect(() => {
     if (!isLoaded || !debouncedQuery) {
-      setOptions([]);
       return;
     }
 
@@ -71,14 +70,19 @@ export function PlaceAutocomplete({
     };
   }, [debouncedQuery, service, isLoaded, getSessionToken]);
 
+  const displayOptions = !isLoaded || !debouncedQuery ? [] : options;
+
   return (
     <Box>
       <Autocomplete<PlaceSuggestion, false, false, false>
-        options={options}
+        options={displayOptions}
         loading={loading}
         inputValue={inputValue}
         onInputChange={(_, value) => {
           setInputValue(value);
+          if (!value.trim()) {
+            setOptions([]);
+          }
         }}
         getOptionLabel={(option) => option.text}
         filterOptions={(x) => x}

@@ -1,14 +1,12 @@
 export { default as EmergencyContactsSection } from "./components/EmergencyContactsSection";
-
-export { useEmergencyContacts } from "./hooks/useEmergencyContacts";
 export { useCreateEmergencyContact } from "./hooks/useCreateEmergencyContact";
-export { useUpdateEmergencyContact } from "./hooks/useUpdateEmergencyContact";
 export { useDeleteEmergencyContact } from "./hooks/useDeleteEmergencyContact";
-
-export type { EmergencyContact } from "./types/contact";
+export { useEmergencyContacts } from "./hooks/useEmergencyContacts";
+export { useUpdateEmergencyContact } from "./hooks/useUpdateEmergencyContact";
 export {
-  createContactSchema,
-  updateContactSchema,
   type CreateContactRequest,
+  createContactSchema,
   type UpdateContactRequest,
+  updateContactSchema,
 } from "./schemas/contactSchema";
+export type { EmergencyContact } from "./types/contact";

@@ -23,9 +23,9 @@ import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 
 import { ApiError } from "@/api";
 
-import { GoogleSignInButton } from "./GoogleSignInButton";
 import { useRegister } from "../hooks/useRegister";
 import { type RegisterFormValues, registerSchema } from "../schemas/registerSchema";
+import { GoogleSignInButton } from "./GoogleSignInButton";
 
 interface LocationState {
   from?: {

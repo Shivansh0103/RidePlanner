@@ -35,27 +35,20 @@ export default function HomePage() {
     return localStorage.getItem("last_active_trip_id") || "";
   });
 
-  useEffect(() => {
-    if (trips.length > 0) {
-      const storedId = localStorage.getItem("last_active_trip_id");
-      const validStored = trips.find((t) => t.id === (selectedTripId || storedId));
-      if (validStored) {
-        if (selectedTripId !== validStored.id) {
-          setSelectedTripId(validStored.id);
-        }
-      } else {
-        const activeTrip = trips.find((t) => t.status === "Active");
-        const defaultId = activeTrip?.id || trips[0].id;
-        setSelectedTripId(defaultId);
-        localStorage.setItem("last_active_trip_id", defaultId);
-      }
-    }
-  }, [trips, selectedTripId]);
-
   const activeTrips = trips.filter((t) => t.status === "Active");
   const planningTrips = trips.filter((t) => t.status === "Planning");
 
-  const spotlightTrip = trips.find((t) => t.id === selectedTripId) || trips[0];
+  const spotlightTrip =
+    trips.find((t) => t.id === selectedTripId) || activeTrips[0] || trips[0];
+
+  useEffect(() => {
+    if (spotlightTrip) {
+      const storedId = localStorage.getItem("last_active_trip_id");
+      if (storedId !== spotlightTrip.id) {
+        localStorage.setItem("last_active_trip_id", spotlightTrip.id);
+      }
+    }
+  }, [spotlightTrip]);
 
   // Fetch real readiness and lodging for the selected spotlight trip
   const { data: readiness } = useTripReadiness(spotlightTrip?.id ?? "");

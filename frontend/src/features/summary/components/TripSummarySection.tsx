@@ -16,9 +16,9 @@ import {
   Typography,
 } from "@mui/material";
 
-import { formatDate } from "@/shared/utils/date";
 import ErrorState from "@/shared/ui/ErrorState";
 import LoadingSpinner from "@/shared/ui/LoadingSpinner";
+import { formatDate } from "@/shared/utils/date";
 
 import { useTripSummary } from "../hooks/useTripSummary";
 
