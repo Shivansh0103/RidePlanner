@@ -251,14 +251,14 @@ public class CorrelationIdIntegrationTests : IClassFixture<CustomWebApplicationF
         const string healthCorrelationId = "trace-req-health-probe-555";
         client.DefaultRequestHeaders.Add(CorrelationIdMiddleware.HeaderName, healthCorrelationId);
 
-        var healthzResponse = await client.GetAsync("/healthz");
-        Assert.Equal(HttpStatusCode.OK, healthzResponse.StatusCode);
-        Assert.True(healthzResponse.Headers.Contains(CorrelationIdMiddleware.HeaderName));
-        Assert.Equal(healthCorrelationId, healthzResponse.Headers.GetValues(CorrelationIdMiddleware.HeaderName).Single());
+        var healthResponse = await client.GetAsync("/health");
+        Assert.Equal(HttpStatusCode.OK, healthResponse.StatusCode);
+        Assert.True(healthResponse.Headers.Contains(CorrelationIdMiddleware.HeaderName));
+        Assert.Equal(healthCorrelationId, healthResponse.Headers.GetValues(CorrelationIdMiddleware.HeaderName).Single());
 
-        var readyzResponse = await client.GetAsync("/readyz");
-        Assert.Equal(HttpStatusCode.OK, readyzResponse.StatusCode);
-        Assert.True(readyzResponse.Headers.Contains(CorrelationIdMiddleware.HeaderName));
-        Assert.Equal(healthCorrelationId, readyzResponse.Headers.GetValues(CorrelationIdMiddleware.HeaderName).Single());
+        var readyResponse = await client.GetAsync("/ready");
+        Assert.Equal(HttpStatusCode.OK, readyResponse.StatusCode);
+        Assert.True(readyResponse.Headers.Contains(CorrelationIdMiddleware.HeaderName));
+        Assert.Equal(healthCorrelationId, readyResponse.Headers.GetValues(CorrelationIdMiddleware.HeaderName).Single());
     }
 }

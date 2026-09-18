@@ -26,7 +26,7 @@ public static class HealthCheckExtensions
 
     public static IEndpointRouteBuilder MapRidePlannerHealthChecks(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapHealthChecks("/healthz", new HealthCheckOptions
+        endpoints.MapHealthChecks("/health", new HealthCheckOptions
         {
             Predicate = check => check.Tags.Contains("live"),
             ResponseWriter = WriteHealthCheckResponse
@@ -34,7 +34,7 @@ public static class HealthCheckExtensions
         .AllowAnonymous()
         .DisableRateLimiting();
 
-        endpoints.MapHealthChecks("/readyz", new HealthCheckOptions
+        endpoints.MapHealthChecks("/ready", new HealthCheckOptions
         {
             Predicate = check => check.Tags.Contains("ready"),
             ResultStatusCodes =

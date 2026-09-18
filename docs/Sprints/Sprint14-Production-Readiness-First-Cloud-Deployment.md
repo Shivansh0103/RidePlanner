@@ -319,8 +319,8 @@ Using a custom domain (e.g., `app.rideplanner.example` and `api.rideplanner.exam
 
 ### Reliability
 
-- `/healthz`;
-- `/readyz`;
+- `/health`;
+- `/ready`;
 - structured JSON logging;
 - correlation/request identifiers;
 - safe production exception behavior.
@@ -653,7 +653,7 @@ Docker Compose
 
 ### Startup Ordering vs. Runtime Readiness
 - **Startup Ordering (`depends_on + condition: service_healthy`):** Compose checks PostgreSQL's health check (`pg_isready -U rideplanner -d rideplanner`) and waits until it passes before launching the API container.
-- **Runtime Readiness (`/readyz`):** Startup ordering only controls container boot order. The application's native `/readyz` endpoint validates continuous runtime reachability of PostgreSQL throughout the application lifecycle.
+- **Runtime Readiness (`/ready`):** Startup ordering only controls container boot order. The application's native `/ready` endpoint validates continuous runtime reachability of PostgreSQL throughout the application lifecycle.
 
 ### Production Distinction
 - This Compose setup is **strictly for local development and reproducibility**.
@@ -919,7 +919,10 @@ Use native ASP.NET Core health-check infrastructure.
 
 Do not build custom controllers simply to report health.
 
-## `/healthz`
+> [!NOTE]
+> Google Cloud Run reserves/intercepts URL paths ending in "z" (e.g. `/healthz` and `/readyz`), returning Google Frontend 404s. Therefore, `/health` and `/ready` are used as standard public endpoints.
+
+## `/health`
 
 Liveness:
 
@@ -927,7 +930,7 @@ Liveness:
 
 This should answer whether the application process itself is functioning.
 
-## `/readyz`
+## `/ready`
 
 Readiness:
 
@@ -938,13 +941,13 @@ This may check critical dependencies such as PostgreSQL.
 Conceptually:
 
 ```text
-/healthz
+/health
    ↓
 Process alive
    ↓
 200
 
-/readyz
+/ready
    ↓
 Critical dependencies available
    ↓
@@ -1121,11 +1124,11 @@ GET frontend
     ↓
 HTTP 200
 
-GET /healthz
+GET /health
     ↓
 HTTP 200
 
-GET /readyz
+GET /ready
     ↓
 expected healthy response
 ```
@@ -1266,7 +1269,7 @@ The deployment documentation must explain:
 
 - how to redeploy the previous known-good application version;
 - how to inspect deployment logs;
-- how to check `/healthz` and `/readyz`;
+- how to check `/health` and `/ready`;
 - how to verify PostgreSQL availability;
 - how to disable or replace a broken deployment;
 - what database migrations occurred;
@@ -1386,8 +1389,8 @@ Frontend
 
 Verify:
 
-- `/healthz`;
-- `/readyz`;
+- `/health`;
+- `/ready`;
 - frontend;
 - API connectivity.
 
@@ -1492,8 +1495,8 @@ Document:
 
 ## Reliability
 
-- [ ] `/healthz` exists.
-- [ ] `/readyz` exists.
+- [ ] `/health` exists.
+- [ ] `/ready` exists.
 - [ ] Structured JSON logs exist.
 - [ ] Correlation/request IDs are available.
 - [ ] Sensitive information is not logged.

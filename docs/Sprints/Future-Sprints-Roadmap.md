@@ -65,7 +65,7 @@ Transform the local, anonymous single-tenant system into a secure, multi-tenant 
   * Production `docker-compose.yml` with PostgreSQL and reverse proxy (Caddy/Nginx).
 * **CI/CD & Observability**:
   * GitHub Actions workflow: lint, build, test runner (66+ backend tests, vitest), and automated deployment.
-  * Health check endpoints (`/healthz`, `/readyz`).
+  * Health check endpoints (`/health`, `/ready`).
   * Serilog structured JSON logging and OpenTelemetry tracing.
   * Production hosting: Vercel / Cloudflare Pages (Frontend) + Render / Railway / Azure (Backend) + Neon / Supabase (PostgreSQL).
   * Google Maps API Key HTTP referrer and domain restriction.
