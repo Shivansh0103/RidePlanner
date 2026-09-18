@@ -249,11 +249,11 @@ Because a custom domain is deferred, the **Same-Origin API Proxy** approach is s
 Expose API traffic through the frontend origin via Vercel edge rewrites:
 
 ```text
-https://rideplanner.vercel.app/api/*
+Vercel Frontend Origin (/api/*)
                   ↓
-             Vercel rewrite
+       Vercel rewrite (vercel.json)
                   ↓
-https://rideplanner-api-xyz.a.run.app/api/*
+https://rideplanner-api-73286917441.asia-southeast1.run.app/api/*
 ```
 
 The browser communicates strictly with one origin (`rideplanner.vercel.app`).
@@ -1058,7 +1058,20 @@ The goal is to ensure a leaked browser key does not become an unrestricted paid 
 
 # 27. Production Database
 
-Neon is finalized as the managed PostgreSQL provider.
+Neon is finalized and validated as the managed PostgreSQL provider.
+
+### Production Environment Configuration
+- **Provider:** Neon Managed PostgreSQL
+- **Project Name:** `rideplanner-production`
+- **Project ID:** `icy-butterfly-52098985`
+- **Branch:** `production`
+- **Database Name:** `rideplanner`
+- **PostgreSQL Version:** 18
+- **Region:** `ap-southeast-1` (AWS Singapore)
+- **Endpoint Type:** Connection pooling enabled (`*-pooler...`)
+- **Transport Security:** SSL required (`SSL Mode=VerifyFull; Channel Binding=Require` or `SSL Mode=Require; Trust Server Certificate=true`)
+- **Migration Strategy:** Controlled startup migration remains the selected initial deployment strategy (`RUN_MIGRATIONS_ON_STARTUP=true`). All 20 initial migrations have been applied and validated.
+- **Credentials & Secret Management:** Connection credentials are provided exclusively via deployment secrets / environment configuration (`ConnectionStrings__RidePlannerDatabase`). Passwords and raw connection strings are never committed, logged, or stored in tracked repository files.
 
 Neon provides:
 
