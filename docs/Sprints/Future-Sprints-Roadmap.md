@@ -1,25 +1,25 @@
 # Ride Planner — Future Sprints Roadmap (Sprints 13 – 22)
 
-**Current Baseline:** Version **v0.12.0** (Completed through Sprint 12 — *Obsidian Velocity UI/UX & Telemetry Overhaul*)  
+**Current Baseline:** Version **v0.14.0** (Completed through Sprint 14 — *Production Readiness & First Cloud Deployment*)  
 **Architecture:** .NET 10 (Clean Architecture, MediatR CQRS, EF Core) + React 19 / TypeScript / Vite / MUI  
 
 ---
 
 ## Executive Summary
 
-Having completed 12 foundational and experience sprints, Ride Planner has established a robust core planning experience, complete trip lifecycle support, and an Obsidian Velocity dark adventure cockpit.
+Having completed 14 foundational, experience, security, and cloud deployment sprints, Ride Planner has established a robust core planning experience, complete trip lifecycle support, user-owned multi-tenancy, and a live public production deployment on Vercel, Google Cloud Run, and Neon PostgreSQL.
 
-This document outlines the strategic execution sequence for **Sprints 13 through 22**, organized across **5 value streams**, with **AI Intelligence accelerated to Phase 3** to maximize user value and reduce onboarding friction.
+This document outlines the strategic execution sequence for **Sprints 15 through 22**, organized across remaining value streams, with **AI Intelligence accelerated to Phase 3** to maximize user value and reduce onboarding friction.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │                                 STRATEGIC SPRINT PHASES                                 │
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
-│  PHASE 1: CLOUD & MULTI-TENANCY FOUNDATION                                              │
-│    Sprint 13 ──► Authentication, Multi-Tenancy & User Profiles                          │
-│    Sprint 14 ──► DevOps, Docker, CI/CD & Production Cloud Launch                        │
+│  PHASE 1: CLOUD & MULTI-TENANCY FOUNDATION                                [COMPLETED]   │
+│    Sprint 13 ──► Authentication, Multi-Tenancy & User Profiles             [COMPLETED]   │
+│    Sprint 14 ──► DevOps, Docker, CI/CD & Production Cloud Launch           [COMPLETED]   │
 │                                                                                         │
-│  PHASE 2: LIVE FIELD COMPANION & OFF-GRID CAPABILITY                                    │
+│  PHASE 2: LIVE FIELD COMPANION & OFF-GRID CAPABILITY                      [NEXT ACTIVE] │
 │    Sprint 15 ──► Route Weather Matrix & Elevation Profiles                              │
 │    Sprint 16 ──► PWA, Offline Storage & 1-Click GPX/Navigation Handoff                  │
 │                                                                                         │
@@ -39,37 +39,43 @@ This document outlines the strategic execution sequence for **Sprints 13 through
 
 ---
 
-## Phase 1: Cloud & Multi-Tenancy Foundation (Sprints 13–14)
+## Phase 1: Cloud & Multi-Tenancy Foundation (Sprints 13–14) [COMPLETED]
 
 ### 🎯 Objective
 Transform the local, anonymous single-tenant system into a secure, multi-tenant cloud-hosted platform ready for public users.
 
 ---
 
-### Sprint 13 — Authentication, Multi-Tenancy & User Profiles
+### Sprint 13 — Authentication, Multi-Tenancy & User Profiles [Completed — v0.13.0]
 * **Backend**:
-  * Implement ASP.NET Core Identity with JWT / OAuth2 (Google Sign-In, Email/Password).
-  * Scope all root aggregates (`Trip`, `Expense`, `TripDocument`, `EmergencyContact`, `TripMemory`) to `UserId`.
-  * Add user claims enrichment and authorization middleware.
+  * Implement ASP.NET Core Identity with Guid keys, dual-token JWT + HttpOnly refresh cookies, and session family revocation.
+  * Scope all root aggregates (`Trip`, `Expense`, `TripDocument`, `EmergencyContact`, `TripMemory`) to `UserId` with 404 tenancy protection.
+  * User profile management with travel preferences (custom currency, distance unit, vehicle profile).
+  * Proof-of-control Google OAuth integration and password recovery CQRS pipeline.
+  * Built-in authentication rate limiting with Client IP partitioning.
 * **Frontend**:
-  * Auth screens (Login, Register, Forgot Password, Google OAuth flow).
-  * Auth state provider with token refresh interceptor.
-  * User settings drawer (Preferred Currency `INR/USD/EUR`, distance unit `km/mi`, default vehicle profile).
-* **Value Delivered**: Ensures full privacy and user data isolation.
+  * Auth screens (Login, Register, Forgot Password, Reset Password, Google OAuth flow).
+  * Decoupled dual-client architecture (`rawClient`, `refreshTransport`, `refreshManager`, `apiClient`).
+  * Route guards, AuthBootSplash, and User Settings drawer.
+* **Value Delivered**: Complete privacy, user data isolation, and resilient session management.
 
 ---
 
-### Sprint 14 — DevOps, Dockerization & Production Cloud Launch
+### Sprint 14 — DevOps, Dockerization & Production Cloud Launch [Completed — v0.14.0]
 * **Containerization**:
-  * Multi-stage `backend/Dockerfile` and `frontend/Dockerfile`.
-  * Production `docker-compose.yml` with PostgreSQL and reverse proxy (Caddy/Nginx).
-* **CI/CD & Observability**:
-  * GitHub Actions workflow: lint, build, test runner (66+ backend tests, vitest), and automated deployment.
-  * Health check endpoints (`/health`, `/ready`).
-  * Serilog structured JSON logging and OpenTelemetry tracing.
-  * Production hosting: Vercel / Cloudflare Pages (Frontend) + Render / Railway / Azure (Backend) + Neon / Supabase (PostgreSQL).
-  * Google Maps API Key HTTP referrer and domain restriction.
-* **Value Delivered**: Unlocks zero-downtime automated public deployment and reliable cloud infrastructure.
+  * Multi-stage `backend/Dockerfile` using .NET 10 SDK build and hardened non-root runtime (`USER $APP_UID`) on port 8080.
+  * Production-ready `backend/compose.yaml` with PostgreSQL 17 for local reproducibility.
+* **Hosting & Topology**:
+  * Frontend: Vercel edge CDN with `/api/*` rewrites proxying API traffic to Cloud Run.
+  * Backend: Google Cloud Run containerized service (`asia-southeast1`).
+  * Database: Neon managed PostgreSQL 18 (`ap-southeast-1`) with connection pooling and SSL.
+  * Persistence: ASP.NET Core Data Protection keys persisted durably in PostgreSQL `DataProtectionKeys`.
+* **CI/CD & Reliability**:
+  * GitHub Actions CI (`backend-ci.yml` and `frontend-ci.yml`) with dependency caching and hermetic validation.
+  * GitHub Actions CD via Google Cloud Workload Identity Federation (WIF) keyless OIDC auth.
+  * Zero-downtime canary deployment: 0% traffic revision tagged `sha-${SHORT_SHA}`, automated `jq`-based smoke tests against `/health` and `/ready`, and 100% traffic migration on pass.
+  * Fast-fail startup configuration validation and structured JSON logging with `X-Correlation-ID`.
+* **Value Delivered**: Production engineering competence, automated zero-downtime releases, and a live public platform.
 
 ---
 
@@ -183,4 +189,4 @@ Expand Ride Planner into an open ecosystem for discovering epic routes and shari
 ## Document Governance
 * **Maintainer:** Ride Planner Core Engineering Team
 * **Status:** Approved Sprint Strategy
-* **Next Active Sprint:** Sprint 13 — Authentication, Multi-Tenancy & User Profiles
+* **Next Active Sprint:** Sprint 15 — Route Weather Matrix & Elevation Profiles

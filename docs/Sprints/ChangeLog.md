@@ -4,6 +4,26 @@ All notable changes to Ride Planner will be documented in this file.
 
 The project follows an incremental sprint-based development approach.
 
+# [v0.14.0] - Sprint 14 Complete
+
+Release Date: September 2026
+
+## Overview
+
+Sprint 14 delivered **Production Readiness & First Cloud Deployment**, transitioning RidePlanner from a locally run multi-tenant application to a publicly deployed, secure, containerized cloud application. The application is live over HTTPS with a Vercel-hosted React frontend, a Google Cloud Run .NET 10 API, and a managed Neon PostgreSQL database.
+
+### Key Highlights Delivered:
+1. **Production Hosting Topology & Same-Origin Rewrite Proxy:** Deployed frontend on Vercel edge CDN and backend container on Google Cloud Run (`asia-southeast1`) with Neon managed PostgreSQL (`ap-southeast-1`). Implemented `/api/*` rewrites in `frontend/vercel.json` to proxy API requests to Cloud Run, preserving a same-origin browser topology for the Sprint 13 HttpOnly refresh-cookie flow without third-party cookie complications.
+2. **Backend Hardening & Proxy Awareness:** Configured ASP.NET Core `ForwardedHeaders` (`XForwardedFor | XForwardedProto`) with cleared known proxies/networks for reverse-proxy compatibility; updated rate-limiting `ResolveClientIp` to respect true client IPs behind Cloud Run; ensured correct HTTPS detection and URL generation.
+3. **Persistent ASP.NET Core Data Protection:** Implemented PostgreSQL-backed key ring persistence (`PersistKeysToDbContext<RidePlannerDbContext>()`), storing keys in the `DataProtectionKeys` table to guarantee that authentication tokens, Google OAuth linking tickets, and encrypted cookies survive container restarts and redeployments.
+4. **Controlled Startup Migrations & Configuration Validation:** Implemented controlled startup database migrations via `RUN_MIGRATIONS_ON_STARTUP=true`, applying all 20 EF Core migrations safely to Neon PostgreSQL on startup. Implemented `ProductionConfigurationValidator.Validate()` to enforce fail-fast termination if required secrets are missing or default development placeholders are detected.
+5. **Native Cloud Run Health Checks:** Configured native ASP.NET Core `/health` (liveness: in-memory "self" check) and `/ready` (readiness: Neon PostgreSQL connectivity test with 5s timeout), configured with `AllowAnonymous()`, `DisableRateLimiting()`, and structured JSON responses. Avoided Cloud Run reserved z-suffix path conflicts (`/healthz`, `/readyz`).
+6. **Containerization & Local Compose:** Authored multi-stage `backend/Dockerfile` with .NET 10 SDK build and hardened non-root runtime (`USER $APP_UID`) on port 8080. Added `.dockerignore` and `backend/compose.yaml` providing a reproducible local PostgreSQL 17 + API development environment.
+7. **Comprehensive CI Validation:** GitHub Actions workflows (`backend-ci.yml` and `frontend-ci.yml`) validating all PRs with dependency caching (NuGet and npm), compiling in Release mode, running 247 backend tests hermetically, running frontend lint, Vite build, and 91 Vitest tests, and verifying local Docker image builds without cloud credentials.
+8. **Automated Zero-Downtime CD with Smoke-Tested Traffic Migration:** On pushes to `main`, authenticated via Google Cloud Workload Identity Federation (WIF) using short-lived OIDC tokens (zero static secrets); published immutable Git SHA images to Google Artifact Registry; deployed new revisions with 0% traffic tagged with `sha-${SHORT_SHA}`; executed automated `jq`-based smoke tests against `/health` and `/ready`; and migrated 100% traffic only after both probes passed.
+9. **Artifact Registry Retention Policy:** Configured automated cleanup policy retaining the 10 most recent container images in Artifact Registry to bound storage usage while preserving a rollback window.
+10. **Instant Revision Rollback & Operational Verification:** Manually exercised and verified Cloud Run traffic rollback via `gcloud run services update-traffic` and restored traffic to the active revision. Verified end-to-end user registration, login, dual-token refresh rotation, trip management, and multi-tenant isolation in production.
+
 ---
 
 # [v0.13.0] - Sprint 13 Complete
