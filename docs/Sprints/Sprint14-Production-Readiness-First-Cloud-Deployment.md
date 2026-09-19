@@ -822,7 +822,7 @@ Key architectural and security properties:
   - Pull requests **never** authenticate to Google Cloud and **never** push to Artifact Registry.
 - **Scope & Non-Goals:**
   - This step concludes with the image published to Artifact Registry.
-  - Cloud Run service creation, revision deployment, and traffic routing are deferred to subsequent CD steps.
+  - Deployment to Cloud Run, smoke testing, and traffic routing are handled in Section 18.5.
 
 ## 18.4 Frontend CI
 
@@ -838,6 +838,50 @@ npm run test
 where those scripts are present in the current project.
 
 The important point is that "frontend checks where applicable" should become concrete CI quality gates.
+
+## 18.5 Automated Cloud Run Deployment & Safe Traffic Migration
+
+On pushes to `main`, after Artifact Registry publishing succeeds, the Backend CI workflow automatically deploys to Cloud Run using a zero-downtime, smoke-tested traffic migration strategy:
+
+```text
+main branch push
+      ↓
+CI Quality Gates (.NET build, tests, Docker build)
+      ↓
+WIF OIDC Token Exchange (Service Account: rideplanner-ci)
+      ↓
+Docker Login & Push Immutable SHA Tag to Artifact Registry
+      ↓
+Deploy New Revision to Cloud Run (0% Traffic, Tag: sha-${SHORT_SHA})
+      ↓
+Automated Smoke Tests against Tagged Revision URL (GET /health & GET /ready)
+      ↓
+   [Pass?]
+  ├── Yes ──► Migrate 100% Production Traffic to New Revision
+  └── No  ──► Fail Workflow Run (0% Traffic Moved; Existing Production Revision Remains Active)
+```
+
+### Architectural & Deployment Design Principles
+1. **Immutable Image Deployments:** Deployments always reference the exact Git commit SHA image (`asia-south1-docker.pkg.dev/ride-planner-504308/rideplanner/rideplanner-api:${{ github.sha }}`). Mutable `latest` tags are never used.
+2. **Zero-Downtime Blue/Green Revision Model:**
+   - The new revision is deployed with `--no-traffic`. It receives 0% of the service's public traffic upon initial deployment.
+   - The revision receives a dedicated Cloud Run traffic tag: `sha-${SHORT_SHA}`.
+   - Cloud Run provisions a deterministic, tagged URL:
+     ```text
+     https://sha-${SHORT_SHA}---rideplanner-api-73286917441.asia-southeast1.run.app
+     ```
+3. **Automated Smoke Tests Prior to Traffic Migration:**
+   - Probes the tagged URL without affecting public traffic:
+     - `GET /health` (Liveness: returns HTTP 200 and status `Healthy`).
+     - `GET /ready` (Readiness: returns HTTP 200, status `Healthy`, and database check `Healthy`).
+   - Retries up to 12 times with 5s backoff to accommodate cold container startup and database migration verification.
+4. **Failure Isolation:**
+   - If either health check probe fails, the deployment step terminates with `exit 1`.
+   - The traffic migration step is skipped.
+   - Public users experience zero downtime or degradation because 100% of production traffic remains pinned to the previous healthy revision.
+5. **Deterministic Traffic Migration:**
+   - Once smoke tests pass, `gcloud run services update-traffic` assigns 100% traffic specifically to the newly validated revision name (e.g. `rideplanner-api-0000X-xxx=100`).
+   - The workflow verifies and prints the updated traffic table.
 
 ---
 
@@ -1265,19 +1309,52 @@ This becomes increasingly important if RidePlanner later introduces multiple rep
 
 # 33. Rollback / Recovery
 
-The deployment documentation must explain:
+The deployment documentation explains how to respond to incidents and execute rollbacks.
 
-- how to redeploy the previous known-good application version;
-- how to inspect deployment logs;
-- how to check `/health` and `/ready`;
-- how to verify PostgreSQL availability;
-- how to disable or replace a broken deployment;
-- what database migrations occurred;
-- whether the previous application version is compatible with the current schema.
+### Cloud Run Instant Revision Rollback
 
-Key principle:
+Cloud Run revisions are **immutable snapshots**. When a new revision is deployed and receives 100% traffic, previous revisions are **not deleted**. They remain active in the service (scaled to zero if no traffic is routed, incurring no compute cost).
 
+#### Instant Traffic Rollback via gcloud CLI
+To roll back immediately to a previous known-good revision:
+
+1. List available revisions and their commit SHA tags:
+   ```bash
+   gcloud run revisions list \
+     --project ride-planner-504308 \
+     --region asia-southeast1 \
+     --service rideplanner-api \
+     --format="table(metadata.name:label=REVISION,status.conditions[0].status:label=ACTIVE,metadata.creationTimestamp:label=CREATED)"
+   ```
+
+2. Route 100% of traffic back to the previous revision:
+   ```bash
+   gcloud run services update-traffic rideplanner-api \
+     --project ride-planner-504308 \
+     --region asia-southeast1 \
+     --to-revisions PREVIOUS_REVISION_NAME=100
+   ```
+
+3. Confirm traffic distribution:
+   ```bash
+   gcloud run services describe rideplanner-api \
+     --project ride-planner-504308 \
+     --region asia-southeast1 \
+     --format="table(status.traffic.revisionName:label=REVISION,status.traffic.percent:label=PERCENT,status.traffic.tag:label=TAG)"
+   ```
+
+#### Instant Traffic Rollback via Google Cloud Console
+1. Navigate to **Cloud Run** in the Google Cloud Console for project `ride-planner-504308`.
+2. Select service `rideplanner-api` in region `asia-southeast1`.
+3. Open the **Revisions** tab.
+4. Click **Manage Traffic**.
+5. Assign 100% traffic to the desired previous revision and click **Save**. Traffic routes instantly without building or redeploying.
+
+### Database vs. Application Rollback Principle
+
+> [!IMPORTANT]
 > **Application rollback and database rollback are separate operations.**
+> Rolling back the application revision does not automatically revert database schema migrations. Forward-compatible database design (additive migrations, avoiding column deletions in active use) ensures the previous application revision remains compatible if a fast rollback is needed.
 
 ---
 
@@ -1489,9 +1566,9 @@ Document:
 
 ## CD
 
-- [ ] Main branch can deploy automatically.
-- [ ] Deployment occurs only after CI succeeds.
-- [ ] Post-deployment health verification runs.
+- [x] Main branch can deploy automatically.
+- [x] Deployment occurs only after CI succeeds.
+- [x] Post-deployment health verification runs.
 
 ## Reliability
 

@@ -18,10 +18,14 @@ concurrency:
 
 env:
   IMAGE_NAME: asia-south1-docker.pkg.dev/ride-planner-504308/rideplanner/rideplanner-api
+  GCP_PROJECT: ride-planner-504308
+  GCP_PROJECT_NUMBER: "73286917441"
+  CLOUD_RUN_SERVICE: rideplanner-api
+  CLOUD_RUN_REGION: asia-southeast1
 
 jobs:
   build-and-test:
-    name: Build & Test
+    name: Build, Test & Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -55,10 +59,14 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: google-github-actions/auth@v3
         with:
-          project_id: ride-planner-504308
+          project_id: ${{ env.GCP_PROJECT }}
           workload_identity_provider: projects/73286917441/locations/global/workloadIdentityPools/github-actions/providers/github
           service_account: rideplanner-ci@ride-planner-504308.iam.gserviceaccount.com
           token_format: access_token
+
+      - name: Set up Cloud SDK
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: google-github-actions/setup-gcloud@v2
 
       - name: Log in to Google Artifact Registry
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -76,3 +84,157 @@ jobs:
           else
             docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
           fi
+
+      - name: Deploy new revision to Cloud Run (0% traffic)
+        id: deploy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          TAG="sha-${SHORT_SHA}"
+          IMAGE_URI="${{ env.IMAGE_NAME }}:${{ github.sha }}"
+
+          echo "Deploying image ${IMAGE_URI} to Cloud Run service '${{ env.CLOUD_RUN_SERVICE }}'..."
+          echo "Traffic tag: ${TAG} (initial traffic: 0%)"
+
+          gcloud run deploy ${{ env.CLOUD_RUN_SERVICE }} \
+            --project ${{ env.GCP_PROJECT }} \
+            --region ${{ env.CLOUD_RUN_REGION }} \
+            --image "${IMAGE_URI}" \
+            --no-traffic \
+            --tag "${TAG}" \
+            --quiet
+
+          # Obtain the newly ready revision name
+          REVISION_NAME=$(gcloud run services describe ${{ env.CLOUD_RUN_SERVICE }} \
+            --project ${{ env.GCP_PROJECT }} \
+            --region ${{ env.CLOUD_RUN_REGION }} \
+            --format="value(status.latestReadyRevisionName)")
+
+          # Construct the deterministic tagged revision URL directly
+          TAGGED_URL="https://${TAG}---${{ env.CLOUD_RUN_SERVICE }}-${{ env.GCP_PROJECT_NUMBER }}.${{ env.CLOUD_RUN_REGION }}.run.app"
+
+          echo "Deployed Revision: ${REVISION_NAME}"
+          echo "Tagged Revision URL: ${TAGGED_URL}"
+
+          echo "revision_name=${REVISION_NAME}" >> "$GITHUB_OUTPUT"
+          echo "tagged_url=${TAGGED_URL}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Run automated deployment smoke tests
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          TAGGED_URL="${{ steps.deploy.outputs.tagged_url }}"
+          REVISION_NAME="${{ steps.deploy.outputs.revision_name }}"
+
+          echo "========================================================="
+          echo "Starting smoke tests against revision: ${REVISION_NAME}"
+          echo "Target URL: ${TAGGED_URL}"
+          echo "========================================================="
+
+          probe_endpoint() {
+            local endpoint="$1"
+            local probe_url="${TAGGED_URL}${endpoint}"
+            local check_db="$2"
+            local max_attempts=12
+            local delay_seconds=5
+            local attempt=1
+            local success=false
+
+            echo ""
+            echo "--- Probing ${endpoint} (up to ${max_attempts} attempts) ---"
+
+            while [ $attempt -le $max_attempts ]; do
+              echo "[Attempt ${attempt}/${max_attempts}] GET ${probe_url}"
+              
+              local response
+              local http_code
+              local body
+
+              response=$(curl -sS --max-time 15 -w "\n%{http_code}" "${probe_url}" 2>&1) || true
+              http_code=$(echo "${response}" | tail -n1)
+              body=$(echo "${response}" | sed '$d')
+
+              echo "HTTP Status Code: ${http_code}"
+              echo "Response Body: ${body}"
+
+              if [ "${http_code}" = "200" ]; then
+                local overall_status
+                overall_status=$(echo "${body}" | jq -r '.status // empty' 2>/dev/null)
+
+                if [ "${overall_status}" = "Healthy" ]; then
+                  if [ "${check_db}" = "true" ]; then
+                    local db_status
+                    db_status=$(echo "${body}" | jq -r '.checks[]? | select(.name == "database") | .status // empty' 2>/dev/null)
+
+                    if [ "${db_status}" = "Healthy" ]; then
+                      echo "Readiness and database probe passed (.status=Healthy, .checks[name=database].status=Healthy)!"
+                      success=true
+                      break
+                    else
+                      echo "Database check status is '${db_status}' (expected 'Healthy')."
+                    fi
+                  else
+                    local self_status
+                    self_status=$(echo "${body}" | jq -r '.checks[]? | select(.name == "self") | .status // empty' 2>/dev/null)
+
+                    if [ "${self_status}" = "Healthy" ]; then
+                      echo "Liveness probe passed (.status=Healthy, .checks[name=self].status=Healthy)!"
+                      success=true
+                      break
+                    else
+                      echo "Self check status is '${self_status}' (expected 'Healthy')."
+                    fi
+                  fi
+                else
+                  echo "Top-level status is '${overall_status}' (expected 'Healthy')."
+                fi
+              fi
+
+              echo "Probe not satisfied. Waiting ${delay_seconds}s before retry..."
+              sleep ${delay_seconds}
+              attempt=$((attempt + 1))
+            done
+
+            if [ "${success}" != "true" ]; then
+              echo "FAILED: Smoke test failed for ${endpoint} after ${max_attempts} attempts."
+              return 1
+            fi
+          }
+
+          echo "Step 1: Verify liveness (/health)..."
+          if ! probe_endpoint "/health" "false"; then
+            echo "::error::Liveness probe (/health) failed on new revision ${REVISION_NAME}. Aborting traffic migration."
+            exit 1
+          fi
+
+          echo "Step 2: Verify readiness & database connectivity (/ready)..."
+          if ! probe_endpoint "/ready" "true"; then
+            echo "::error::Readiness probe (/ready) failed on new revision ${REVISION_NAME}. Aborting traffic migration."
+            exit 1
+          fi
+
+          echo ""
+          echo "========================================================="
+          echo "All deployment smoke tests PASSED for ${REVISION_NAME}."
+          echo "========================================================="
+
+      - name: Migrate 100% traffic to new revision
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          REVISION_NAME="${{ steps.deploy.outputs.revision_name }}"
+          echo "Migrating 100% production traffic to validated revision '${REVISION_NAME}'..."
+
+          gcloud run services update-traffic ${{ env.CLOUD_RUN_SERVICE }} \
+            --project ${{ env.GCP_PROJECT }} \
+            --region ${{ env.CLOUD_RUN_REGION }} \
+            --to-revisions "${REVISION_NAME}=100" \
+            --quiet
+
+      - name: Verify Cloud Run traffic allocation
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "Current traffic distribution for service '${{ env.CLOUD_RUN_SERVICE }}':"
+          gcloud run services describe ${{ env.CLOUD_RUN_SERVICE }} \
+            --project ${{ env.GCP_PROJECT }} \
+            --region ${{ env.CLOUD_RUN_REGION }} \
+            --format="table(status.traffic.revisionName:label=REVISION,status.traffic.percent:label=PERCENT,status.traffic.tag:label=TAG,status.traffic.url:label=URL)"
