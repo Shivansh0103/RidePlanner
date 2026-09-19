@@ -1,5 +1,13 @@
 # Ride Planner
 
+[![Live Application](https://img.shields.io/badge/Live_App-rideplanner.vercel.app-00df8f?style=for-the-badge&logo=vercel&logoColor=white)](https://rideplanner.vercel.app)
+[![API Status](https://img.shields.io/badge/Cloud_Run_API-Healthy-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://rideplanner-api-73286917441.asia-southeast1.run.app/health)
+[![Version](https://img.shields.io/badge/Version-v0.14.0-blue?style=for-the-badge)](#current-status)
+[![Automated Tests](https://img.shields.io/badge/Tests-247_Passed-brightgreen?style=for-the-badge)](#running-the-platform)
+
+> 🌐 **Live Web Application:** [https://rideplanner.vercel.app](https://rideplanner.vercel.app)  
+> 🚀 **Production Cloud Run API:** [https://rideplanner-api-73286917441.asia-southeast1.run.app/health](https://rideplanner-api-73286917441.asia-southeast1.run.app/health)
+
 Ride Planner is a modern road trip planning platform designed to help people plan, organize, and enjoy memorable journeys.
 
 Whether you're travelling by motorcycle, car, bicycle, or campervan, planning a trip often involves juggling multiple applications for navigation, accommodation, budgeting, weather updates, packing lists, and collaboration. Ride Planner brings these experiences together into a single platform, allowing travelers to focus less on logistics and more on the journey itself.
@@ -92,14 +100,20 @@ Different journey types may unlock specialized planning tools while maintaining 
 * ✅ Post-ride Trip Summary dashboard with printable summary report generator
 * ✅ Trip memories & journal log registry (photos, notes, odometer readings)
 * ✅ Authentication endpoint rate limiting & brute-force defense
-* ⏳ Weather integration
+* ✅ Containerized microservice architecture (.NET 10 multi-stage Dockerfile running non-root on port 8080)
+* ✅ Cloud-native deployment (Google Cloud Run API + Vercel React frontend + Neon PostgreSQL)
+* ✅ Keyless CI/CD automation via GitHub Actions Workload Identity Federation (WIF) OIDC
+* ✅ Zero-downtime canary traffic migration & automated jq-based health check smoke tests (`/health` & `/ready`)
+* ✅ Persistent ASP.NET Core Data Protection in PostgreSQL & Forwarded Headers proxy awareness
+* ⏳ Weather integration (Sprint 15)
+* ⏳ Offline PWA & GPX export (Sprint 16)
 * ⏳ Group collaboration & shared workspaces (Sprint 19)
 
 ---
 
 ## Current Status
 
-Ride Planner is actively being developed (Version **v0.13.0** — *Authentication, User-Owned Workspaces & Profiles*).
+Ride Planner is actively deployed in production (Version **v0.14.0** — *Production Readiness & First Cloud Deployment*).
 
 Completed milestones include:
 * **Product Features (Sprints 1–9)**: Trip Lifecycle Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Actual Expense Log & Budget vs Actual Analysis, Preparation Checklists, Overview Command Center Dashboard, Accommodation & Stay Planning, Travel Documents, Emergency Contacts, Derived Trip Readiness Score, Printable Trip Summary Report, and Trip Memories.
@@ -107,6 +121,7 @@ Completed milestones include:
 * **Frontend Architecture & UX Resilience (Sprint 11)**: TanStack Query cache invalidation policies, standardized Zod validation schemas, accessible component primitives, and resilient error/loading states.
 * **Obsidian Velocity UI/UX Overhaul (Sprint 12)**: Dark cockpit adventure telemetry interface inspired by Google Stitch designs, Bento metrics, 6-category readiness dial, and responsive layouts.
 * **Authentication, Multi-Tenancy & Profiles (Sprint 13)**: ASP.NET Core Identity with Guid keys, dual-token HttpOnly session lifecycle with reuse detection, private user workspaces (`Trip.OwnerUserId`), user profiles with travel settings, password reset flow, Google OIDC sign-in with proof-of-control account linking, and ASP.NET Core rate limiting middleware.
+* **Production Readiness & Cloud Deployment (Sprint 14)**: Multi-stage Docker containerization on port 8080 (`USER $APP_UID`), local PostgreSQL Compose environment, Vercel frontend edge deployment with `/api/*` rewrites, Google Cloud Run serverless backend deployment (`asia-southeast1`), Neon managed PostgreSQL 18 with connection pooling, ASP.NET Core Data Protection key persistence in PostgreSQL, Forwarded Headers for reverse-proxy client IP handling, fast-fail `ProductionConfigurationValidator`, native `/health` and `/ready` health checks, GitHub Actions CI for backend and frontend with dependency caching, and automated CD with Workload Identity Federation (WIF) OIDC keyless authentication, 0% canary traffic tag, automated `jq` smoke tests, and instant revision rollback capabilities.
 
 ---
 
@@ -114,8 +129,9 @@ Completed milestones include:
 
 ### 1. Prerequisites
 - **.NET 10 SDK**
-- **Node.js 20+** and `npm`
-- **PostgreSQL 16+** (or use local in-memory database fallback)
+- **Node.js 24** and `npm`
+- **PostgreSQL 17+** (or use local in-memory database fallback or Docker Compose)
+- **Docker & Docker Compose** (optional, for containerized local execution)
 
 ### 2. Backend Configuration (`appsettings.Development.json` / User Secrets)
 Run user secrets or configure `appsettings.Development.json`:
@@ -136,8 +152,9 @@ dotnet ef database update --project ../RidePlanner.Infrastructure --startup-proj
 ### 4. Running the Platform
 - **Backend API**: `dotnet run --project backend/RidePlanner/RidePlanner.Api` (Listens on `http://localhost:5084`)
 - **Frontend SPA**: `cd frontend && npm install && npm run dev` (Listens on `http://localhost:5173`)
-- **Run Backend Tests**: `dotnet test backend/RidePlanner/RidePlanner.slnx` (206 automated tests)
-- **Run Frontend Tests**: `cd frontend && npm test -- --pool=threads` (91 automated tests)
+- **Local Docker Compose (API + PostgreSQL)**: `docker compose -f backend/compose.yaml up -d` (Listens on `http://localhost:8080`)
+- **Run Backend Tests**: `dotnet test backend/RidePlanner/RidePlanner.slnx` (247 automated tests across Domain, Application, and API Integration)
+- **Run Frontend Tests**: `cd frontend && npm test -- --pool=threads` (91 automated tests across 17 suites)
 
 ---
 

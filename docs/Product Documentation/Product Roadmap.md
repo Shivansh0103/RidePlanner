@@ -31,9 +31,9 @@ Ride Planner is expected to evolve through the following milestones.
 
 ## Current Project Status
 
-**Version:** v0.12.0 (Obsidian Velocity UI/UX & Telemetry Overhaul)
+**Version:** v0.14.0 (Production Readiness & First Cloud Deployment)
 
-### Completed Sprints (Sprints 0 – 12)
+### Completed Sprints (Sprints 0 – 14)
 
 - ✅ **Sprint 0** – Project Foundation (.NET & Architecture ADRs)
 - ✅ **Sprint 1** – Backend Foundation (Clean Architecture, Repositories, Unit of Work)
@@ -48,15 +48,17 @@ Ride Planner is expected to evolve through the following milestones.
 - ✅ **Sprint 10** – Backend Architecture Hardening (CQRS ISender, RFC 7807 ProblemDetails, FluentValidation pipeline, split queries, no-tracking projections, 66+ tests)
 - ✅ **Sprint 11** – Frontend Architecture Hardening (TanStack Query cache policies, Zod validation schemas, accessible primitives)
 - ✅ **Sprint 12** – Obsidian Velocity UI/UX Overhaul (Dark adventure cockpit aesthetic, Bento grids, HUD telemetry, sticky maps, pass cards, glowing ICE action)
+- ✅ **Sprint 13** – Authentication, Multi-Tenancy & User Profiles (ASP.NET Core Identity with Guid keys, dual-token JWT + HttpOnly refresh cookies, user aggregate ownership, user profiles & travel preferences, Google sign-in, authentication rate limiting)
+- ✅ **Sprint 14** – Production Readiness & First Cloud Deployment (Vercel React frontend, Google Cloud Run containerized .NET 10 API, Neon managed PostgreSQL, GitHub Actions WIF OIDC CI/CD, 0% canary deploy with jq health smoke tests, persistent Data Protection, forwarded headers)
 
-### Current Roadmap & Future Sprints (Sprints 13 – 22)
+### Current Roadmap & Future Sprints (Sprints 15 – 22)
 
 For full execution details, see the dedicated [Future Sprints Roadmap](file:///d:/Coding/RidePlanner/docs/Sprints/Future-Sprints-Roadmap.md).
 
-- 🔒 **Phase 1: Cloud & Multi-Tenancy Foundation**
-  - Sprint 13 — Authentication, Multi-Tenancy & User Profiles
-  - Sprint 14 — DevOps, Dockerization, CI/CD & Production Cloud Launch
-- 🧭 **Phase 2: Live Field Companion & Off-Grid Capability**
+- 🔒 **Phase 1: Cloud & Multi-Tenancy Foundation** `[COMPLETED]`
+  - Sprint 13 — Authentication, Multi-Tenancy & User Profiles `[COMPLETED]`
+  - Sprint 14 — DevOps, Dockerization, CI/CD & Production Cloud Launch `[COMPLETED]`
+- 🧭 **Phase 2: Live Field Companion & Off-Grid Capability** `[NEXT ACTIVE]`
   - Sprint 15 — Route Weather Matrix & Elevation Profiles
   - Sprint 16 — PWA, Offline Storage & 1-Click Navigation GPX Handoff
 - 🤖 **Phase 3: AI Travel Co-Pilot & Automation**
