@@ -272,7 +272,7 @@ Sprint 13 uses an in-memory access token plus an HttpOnly refresh-token cookie.
 
 This makes production frontend/API topology an important architectural decision.
 
-A deployment where the frontend is at `rideplanner.vercel.app` and the API is at `rideplanner-api-xyz.a.run.app` must not be assumed to behave like a same-origin application merely because CORS is configured.
+A deployment where the frontend is at `ride-planner-sand.vercel.app` and the API is at `rideplanner-api-xyz.a.run.app` must not be assumed to behave like a same-origin application merely because CORS is configured.
 
 Because a custom domain is deferred, the **Same-Origin API Proxy** approach is selected for Sprint 14.
 
@@ -288,7 +288,7 @@ Vercel Frontend Origin (/api/*)
 https://rideplanner-api-73286917441.asia-southeast1.run.app/api/*
 ```
 
-The browser communicates strictly with one origin (`rideplanner.vercel.app`).
+The browser communicates strictly with one origin (`ride-planner-sand.vercel.app`).
 
 Benefits:
 
@@ -1013,7 +1013,7 @@ Included in ProblemDetails on Errors
 # 25. Production CORS
 
 Because RidePlanner uses the **Same-Origin API Proxy** via Vercel rewrites:
-- Browser requests to `/api/*` originate from `rideplanner.vercel.app` and are rewritten at the edge to Cloud Run.
+- Browser requests to `/api/*` originate from `ride-planner-sand.vercel.app` and are rewritten at the edge to Cloud Run.
 - Cloud Run's CORS policy (`app.UseCors("Frontend")`) allows the Vercel production origin with credentials.
 - `AllowAnyOrigin` is prohibited in production.
 
@@ -1029,7 +1029,7 @@ Production Google Maps API key configuration:
 
 Future follow-up when production Maps is activated:
 - Provision dedicated production key in Google Cloud Console.
-- Apply HTTP referrer restrictions (`https://rideplanner.vercel.app/*`).
+- Apply HTTP referrer restrictions (`https://ride-planner-sand.vercel.app/*`).
 - Restrict enabled APIs strictly to Maps JavaScript API and Places API.
 - Maintain separate development and production keys.
 
@@ -1148,7 +1148,7 @@ Production verification was executed without mutating live user data on deployme
 
 ## Automated Deployment Probe (CI Pipeline)
 Every deployment to `main` executes automated synthetic smoke tests against the tagged canary URL before traffic is routed:
-- **Frontend Probe:** `GET https://rideplanner.vercel.app` → Returns HTTP 200.
+- **Frontend Probe:** `GET https://ride-planner-sand.vercel.app` → Returns HTTP 200.
 - **Liveness Probe:** `GET /health` → Returns HTTP 200 with `.status == "Healthy"` and `.checks[name="self"].status == "Healthy"`.
 - **Readiness Probe:** `GET /ready` → Returns HTTP 200 with `.status == "Healthy"` and `.checks[name="database"].status == "Healthy"`.
 

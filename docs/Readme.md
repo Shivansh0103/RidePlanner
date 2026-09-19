@@ -1,11 +1,11 @@
 # Ride Planner
 
-[![Live Application](https://img.shields.io/badge/Live_App-rideplanner.vercel.app-00df8f?style=for-the-badge&logo=vercel&logoColor=white)](https://rideplanner.vercel.app)
+[![Live Application](https://img.shields.io/badge/Live_App-ride--planner--sand.vercel.app-00df8f?style=for-the-badge&logo=vercel&logoColor=white)](https://ride-planner-sand.vercel.app/)
 [![API Status](https://img.shields.io/badge/Cloud_Run_API-Healthy-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://rideplanner-api-73286917441.asia-southeast1.run.app/health)
 [![Version](https://img.shields.io/badge/Version-v0.14.0-blue?style=for-the-badge)](#current-status)
 [![Automated Tests](https://img.shields.io/badge/Tests-247_Passed-brightgreen?style=for-the-badge)](#running-the-platform)
 
-> 🌐 **Live Web Application:** [https://rideplanner.vercel.app](https://rideplanner.vercel.app)  
+> 🌐 **Live Web Application:** [https://ride-planner-sand.vercel.app/](https://ride-planner-sand.vercel.app/)  
 > 🚀 **Production Cloud Run API:** [https://rideplanner-api-73286917441.asia-southeast1.run.app/health](https://rideplanner-api-73286917441.asia-southeast1.run.app/health)
 
 Ride Planner is a modern road trip planning platform designed to help people plan, organize, and enjoy memorable journeys.
