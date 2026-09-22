@@ -4,6 +4,30 @@ All notable changes to Ride Planner will be documented in this file.
 
 The project follows an incremental sprint-based development approach.
 
+# [v0.14.5] - Sprint 14.5 (In Planning / Prepared)
+
+Release Date: September 2026 (Planned)
+
+## Overview
+
+Sprint 14.5 addresses critical production gaps and user experience friction identified during the comprehensive post-Sprint 14 cloud deployment audit. It stabilizes Google OAuth across reverse-proxy boundaries, introduces a public landing page for new visitors, provides a high-contrast multi-theme system (Dark/Light/System) for daytime riding, configures production Google Maps keys, and hardens database connection resiliency for serverless PostgreSQL.
+
+### Key Highlights Planned (All 11 Audit Findings Addressed):
+1. **[AUDIT-01] Google OAuth Production Stabilization:** Resolved Google Error 401 (`invalid_client`) by externalizing production OAuth secrets in Google Secret Manager / Cloud Run; resolved reverse-proxy redirect mismatch by enabling `ForwardedHeaders.XForwardedHost` in ASP.NET Core; routed callback through Vercel edge proxy via `options.CallbackPath = "/api/signin-google"`; registered production redirect URIs in Google Cloud Console.
+2. **[AUDIT-02] Public Unauthenticated Landing Page:** Created high-impact public discovery page at `/` with hero banner, 4-pillar Bento feature overview (Cockpit, 6-Category Readiness, Fuel Range Calculator, Lodging & Documents Hub), and Sign In / Register CTAs. Updated routing so authenticated riders access their dashboard while prospective users discover the platform without an immediate login wall.
+3. **[AUDIT-03] Multi-Theme System (Dark / Light / System):** Implemented `ThemeModeProvider` with `localStorage` persistence and OS `prefers-color-scheme` listener. Created Obsidian Light theme (clean slate canvas `#f8fafc`, titanium cards `#ffffff`, high-contrast text `#0f172a`) to eliminate glare for outdoor riders; refactored hardcoded layout dark colors to semantic theme tokens; added theme switcher to user menu and Rider Settings.
+4. **[AUDIT-04] Google Maps Production Key Configuration:** Configured `VITE_GOOGLE_MAPS_API_KEY` and `VITE_GOOGLE_MAPS_MAP_ID` in Vercel project environment variables (Production & Preview), restricted by HTTP referrer (`https://ride-planner-sand.vercel.app/*`) and API scope in Google Cloud Console, eliminating the missing key fallback alert.
+5. **[AUDIT-05] Serverless Database Connection Resiliency:** Added Npgsql `EnableRetryOnFailure()` in EF Core options to gracefully handle transient network drops during Neon PostgreSQL compute auto-suspend and resume transitions.
+6. **[AUDIT-06] Production Transactional Email Integration:** Implemented real transactional email delivery (`ResendEmailSender` with responsive HTML password reset template and SMTP fallback); integrated with ASP.NET Core DI and `IdentityService`; added production configuration validation and Cloud Run secret injection.
+7. **[AUDIT-07] Public Health Check Route Mapping (Skipped):** Evaluated and skipped; native `/health` and `/ready` checks already exist directly on Cloud Run and are probed by automated CI/CD smoke tests and cloud health monitoring. Exposing an `/api/health` alias via Vercel is unnecessary.
+8. **[AUDIT-08] Session Logout LocalStorage Cleanup:** Guaranteed removal of `last_active_trip_id` from `localStorage` upon logout to prevent cross-account query errors on shared browsers.
+9. **[AUDIT-09] Actionable ErrorState Recovery:** Upgraded `ErrorState.tsx` to a structured card component with retry callbacks and direct navigation back to expeditions.
+10. **[AUDIT-10] Auth Endpoint Rate Limiting:** Applied rate limiting policies to `POST /api/auth/refresh` and `GET /api/auth/external/google/start` to defend against abuse.
+11. **[AUDIT-11] Vitest Windows Compatibility:** Configured `pool: 'threads'` in `vite.config.ts` to eliminate worker timeout errors during local test execution on Windows.
+12. **[AUDIT-12] Security Headers Hardening:** Enabled HSTS and attached defensive HTTP response headers (`nosniff`, `DENY`).
+
+---
+
 # [v0.14.0] - Sprint 14 Complete
 
 Release Date: September 2026
