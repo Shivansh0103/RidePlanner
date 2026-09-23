@@ -22,6 +22,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/features/auth";
+import { ThemeToggle } from "@/shared/components";
 
 export default function LandingPage(): React.ReactElement {
   const navigate = useNavigate();
@@ -66,11 +67,11 @@ export default function LandingPage(): React.ReactElement {
           left: 0,
           right: 0,
           zIndex: 50,
-          backgroundColor: "rgba(20, 19, 19, 0.88)",
+          backgroundColor: "var(--rp-header-bg)",
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
-          borderBottom: "1px solid var(--rp-border)",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.6)",
+          borderBottom: "1px solid var(--rp-header-border)",
+          boxShadow: "var(--rp-header-shadow)",
           transition: "all 0.3s ease",
         }}
       >
@@ -167,7 +168,7 @@ export default function LandingPage(): React.ReactElement {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "var(--rp-primary)";
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  e.currentTarget.style.backgroundColor = "var(--rp-surface-container)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = "var(--rp-on-surface-variant)";
@@ -191,7 +192,7 @@ export default function LandingPage(): React.ReactElement {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "var(--rp-primary)";
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  e.currentTarget.style.backgroundColor = "var(--rp-surface-container)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = "var(--rp-on-surface-variant)";
@@ -215,7 +216,7 @@ export default function LandingPage(): React.ReactElement {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "var(--rp-primary)";
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  e.currentTarget.style.backgroundColor = "var(--rp-surface-container)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = "var(--rp-on-surface-variant)";
@@ -285,6 +286,9 @@ export default function LandingPage(): React.ReactElement {
               </span>
             </div>
 
+            {/* Light / Dark / Auto Theme Switcher Pill */}
+            <ThemeToggle size="small" />
+
             {isAuthenticated ? (
               <button
                 type="button"
@@ -330,25 +334,26 @@ export default function LandingPage(): React.ReactElement {
                     letterSpacing: "0.05em",
                     textTransform: "uppercase",
                     color: "var(--rp-primary)",
-                    backgroundColor: "rgba(255, 255, 255, 0.06)",
-                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                    backgroundColor: "var(--rp-card-bg)",
+                    border: "1px solid var(--rp-border)",
                     textDecoration: "none",
                     padding: "8px 18px",
                     borderRadius: "10px",
                     display: "flex",
                     alignItems: "center",
                     gap: "6px",
+                    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.06)",
                     transition: "all 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(99, 102, 241, 0.15)";
-                    e.currentTarget.style.borderColor = "rgba(99, 102, 241, 0.5)";
-                    e.currentTarget.style.boxShadow = "0 0 16px rgba(99, 102, 241, 0.25)";
+                    e.currentTarget.style.backgroundColor = "var(--rp-surface-container-high)";
+                    e.currentTarget.style.borderColor = "var(--rp-electric-indigo)";
+                    e.currentTarget.style.boxShadow = "0 0 16px var(--rp-electric-indigo-glow)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.06)";
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-                    e.currentTarget.style.boxShadow = "none";
+                    e.currentTarget.style.backgroundColor = "var(--rp-card-bg)";
+                    e.currentTarget.style.borderColor = "var(--rp-border)";
+                    e.currentTarget.style.boxShadow = "0 1px 4px rgba(0, 0, 0, 0.06)";
                   }}
                 >
                   <span>Sign In</span>
@@ -422,7 +427,7 @@ export default function LandingPage(): React.ReactElement {
             }}
             referrerPolicy="no-referrer"
             alt="Cinematic coastal highway road trip"
-            className="rp-ken-burns"
+            className="rp-ken-burns rp-hero-image"
             style={{
               width: "100%",
               height: "100%",
@@ -430,21 +435,19 @@ export default function LandingPage(): React.ReactElement {
               objectPosition: "center",
             }}
           />
-          {/* Multi-layered dark obsidian gradient overlay */}
+          {/* Multi-layered theme-adaptive photographic gradient overlay */}
           <div
             style={{
               position: "absolute",
               inset: 0,
-              background:
-                "linear-gradient(to top, var(--rp-obsidian-canvas) 0%, rgba(20, 19, 19, 0.78) 50%, rgba(20, 19, 19, 0.65) 100%)",
+              background: "var(--rp-hero-overlay-1)",
             }}
           />
           <div
             style={{
               position: "absolute",
               inset: 0,
-              background:
-                "radial-gradient(circle at center, transparent 20%, rgba(20, 19, 19, 0.45) 60%, var(--rp-obsidian-canvas) 95%)",
+              background: "var(--rp-hero-overlay-2)",
             }}
           />
           {/* Ambient drifting glowing orbs in Electric Indigo & Acid Green */}
@@ -502,10 +505,10 @@ export default function LandingPage(): React.ReactElement {
               gap: "8px",
               padding: "6px 16px",
               borderRadius: "9999px",
-              backgroundColor: "rgba(26, 26, 30, 0.85)",
+              backgroundColor: "var(--rp-card-bg)",
               backdropFilter: "blur(12px)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              boxShadow: "0 4px 24px rgba(0, 0, 0, 0.6)",
+              border: "1px solid var(--rp-border)",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12)",
               marginBottom: "24px",
             }}
           >
@@ -525,7 +528,7 @@ export default function LandingPage(): React.ReactElement {
                   height: "100%",
                   width: "100%",
                   borderRadius: "9999px",
-                  backgroundColor: "var(--rp-acid-green)",
+                  backgroundColor: "var(--rp-electric-indigo)",
                   opacity: 0.8,
                 }}
               />
@@ -536,8 +539,8 @@ export default function LandingPage(): React.ReactElement {
                   borderRadius: "9999px",
                   height: "8px",
                   width: "8px",
-                  backgroundColor: "var(--rp-acid-green)",
-                  boxShadow: "0 0 10px var(--rp-acid-green-glow)",
+                  backgroundColor: "var(--rp-electric-indigo)",
+                  boxShadow: "0 0 10px var(--rp-electric-indigo-glow)",
                 }}
               />
             </span>
@@ -546,7 +549,7 @@ export default function LandingPage(): React.ReactElement {
               style={{
                 fontSize: "11px",
                 fontWeight: 700,
-                color: "var(--rp-acid-green)",
+                color: "var(--rp-electric-indigo)",
                 textTransform: "uppercase",
                 letterSpacing: "0.12em",
               }}
@@ -566,15 +569,18 @@ export default function LandingPage(): React.ReactElement {
               letterSpacing: "-0.03em",
               lineHeight: 1.1,
               margin: "0 0 20px 0",
-              textShadow: "0 4px 20px rgba(0, 0, 0, 0.7)",
+              textShadow: "var(--rp-text-shadow-heading)",
             }}
           >
             Every Road Trip, <br />
             <span
               style={{
                 fontStyle: "italic",
-                color: "var(--rp-electric-indigo)",
-                fontWeight: 700,
+                fontWeight: 800,
+                background:
+                  "linear-gradient(135deg, var(--rp-electric-indigo) 0%, #818cf8 50%, #7c3aed 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
               }}
             >
               Perfectly Orchestrated
@@ -592,7 +598,7 @@ export default function LandingPage(): React.ReactElement {
               margin: "0 0 34px 0",
               lineHeight: 1.6,
               fontWeight: 400,
-              textShadow: "0 2px 10px rgba(0,0,0,0.5)",
+              textShadow: "var(--rp-text-shadow-body)",
             }}
           >
             From Himalayan high-altitude passes to coastal highway escapes — your routes, stays,
@@ -654,14 +660,14 @@ export default function LandingPage(): React.ReactElement {
               style={{
                 padding: "14px 26px",
                 borderRadius: "12px",
-                backgroundColor: "rgba(26, 26, 30, 0.85)",
+                backgroundColor: "var(--rp-card-bg)",
                 backdropFilter: "blur(12px)",
                 color: "var(--rp-primary)",
                 fontSize: "12px",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
+                border: "1px solid var(--rp-border)",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
@@ -673,8 +679,8 @@ export default function LandingPage(): React.ReactElement {
                 e.currentTarget.style.borderColor = "var(--rp-electric-indigo)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(26, 26, 30, 0.85)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                e.currentTarget.style.backgroundColor = "var(--rp-card-bg)";
+                e.currentTarget.style.borderColor = "var(--rp-border)";
               }}
             >
               <span
@@ -702,7 +708,7 @@ export default function LandingPage(): React.ReactElement {
               gap: "20px",
               padding: "10px 24px",
               borderRadius: "9999px",
-              backgroundColor: "rgba(20, 19, 19, 0.85)",
+              backgroundColor: "var(--rp-card-bg)",
               backdropFilter: "blur(12px)",
               border: "1px solid var(--rp-border)",
               fontSize: "11px",
@@ -719,7 +725,7 @@ export default function LandingPage(): React.ReactElement {
             >
               <VerifiedIcon sx={{ fontSize: 15, color: "var(--rp-acid-green)" }} /> 100% Free Start
             </span>
-            <span style={{ color: "rgba(255, 255, 255, 0.2)" }}>•</span>
+            <span style={{ color: "var(--rp-outline-variant)" }}>•</span>
             <span
               style={{
                 display: "flex",
@@ -731,7 +737,7 @@ export default function LandingPage(): React.ReactElement {
               <AltRouteIcon sx={{ fontSize: 15, color: "var(--rp-electric-indigo)" }} /> Multi-Stop &
               Offline Maps
             </span>
-            <span style={{ color: "rgba(255, 255, 255, 0.2)" }}>•</span>
+            <span style={{ color: "var(--rp-outline-variant)" }}>•</span>
             <span
               style={{
                 display: "flex",
@@ -885,7 +891,7 @@ export default function LandingPage(): React.ReactElement {
                     left: "14px",
                     padding: "4px 10px",
                     borderRadius: "9999px",
-                    backgroundColor: "rgba(20, 19, 19, 0.85)",
+                    backgroundColor: "var(--rp-card-bg)",
                     backdropFilter: "blur(8px)",
                     fontSize: "10px",
                     fontWeight: 700,
@@ -936,7 +942,7 @@ export default function LandingPage(): React.ReactElement {
                   style={{
                     paddingTop: "16px",
                     marginTop: "16px",
-                    borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+                    borderTop: "1px solid var(--rp-border)",
                     display: "flex",
                     alignItems: "center",
                     gap: "6px",
@@ -1008,7 +1014,7 @@ export default function LandingPage(): React.ReactElement {
                     left: "14px",
                     padding: "4px 10px",
                     borderRadius: "9999px",
-                    backgroundColor: "rgba(20, 19, 19, 0.85)",
+                    backgroundColor: "var(--rp-card-bg)",
                     backdropFilter: "blur(8px)",
                     fontSize: "10px",
                     fontWeight: 700,
@@ -1060,7 +1066,7 @@ export default function LandingPage(): React.ReactElement {
                   style={{
                     paddingTop: "16px",
                     marginTop: "16px",
-                    borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+                    borderTop: "1px solid var(--rp-border)",
                     display: "flex",
                     alignItems: "center",
                     gap: "6px",
@@ -1132,7 +1138,7 @@ export default function LandingPage(): React.ReactElement {
                     left: "14px",
                     padding: "4px 10px",
                     borderRadius: "9999px",
-                    backgroundColor: "rgba(20, 19, 19, 0.85)",
+                    backgroundColor: "var(--rp-card-bg)",
                     backdropFilter: "blur(8px)",
                     fontSize: "10px",
                     fontWeight: 700,
@@ -1183,7 +1189,7 @@ export default function LandingPage(): React.ReactElement {
                   style={{
                     paddingTop: "16px",
                     marginTop: "16px",
-                    borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+                    borderTop: "1px solid var(--rp-border)",
                     display: "flex",
                     alignItems: "center",
                     gap: "6px",
@@ -1335,7 +1341,7 @@ export default function LandingPage(): React.ReactElement {
               backgroundColor: "var(--rp-obsidian-base)",
               border: "1px solid var(--rp-border)",
               padding: "32px",
-              boxShadow: "0 24px 70px rgba(0, 0, 0, 0.8)",
+              boxShadow: "var(--rp-panel-shadow)",
             }}
           >
             <div
@@ -1372,8 +1378,7 @@ export default function LandingPage(): React.ReactElement {
                     style={{
                       position: "absolute",
                       inset: 0,
-                      background:
-                        "linear-gradient(to top, rgba(20, 19, 19, 0.95) 0%, rgba(20, 19, 19, 0.35) 45%, rgba(0, 0, 0, 0.25) 100%)",
+                      background: "var(--rp-photo-overlay)",
                     }}
                   />
 
@@ -1434,12 +1439,12 @@ export default function LandingPage(): React.ReactElement {
                         whiteSpace: "nowrap",
                         padding: "4px 10px",
                         borderRadius: "6px",
-                        backgroundColor: "rgba(20, 19, 19, 0.95)",
+                        backgroundColor: "var(--rp-card-bg)",
                         border: "1px solid var(--rp-acid-green)",
                         fontSize: "9px",
                         fontWeight: 700,
                         color: "var(--rp-acid-green)",
-                        boxShadow: "0 4px 14px rgba(0,0,0,0.7)",
+                        boxShadow: "0 4px 14px rgba(0,0,0,0.35)",
                         opacity: activePinTooltip ? 1 : 0.85,
                         transition: "opacity 0.2s ease",
                       }}
@@ -1464,7 +1469,7 @@ export default function LandingPage(): React.ReactElement {
                       style={{
                         padding: "5px 12px",
                         borderRadius: "9999px",
-                        backgroundColor: "rgba(20, 19, 19, 0.9)",
+                        backgroundColor: "var(--rp-card-bg)",
                         backdropFilter: "blur(8px)",
                         fontSize: "10px",
                         fontWeight: 700,
@@ -1490,7 +1495,7 @@ export default function LandingPage(): React.ReactElement {
                       style={{
                         padding: "5px 12px",
                         borderRadius: "9999px",
-                        backgroundColor: "rgba(20, 19, 19, 0.9)",
+                        backgroundColor: "var(--rp-card-bg)",
                         backdropFilter: "blur(8px)",
                         fontSize: "10px",
                         color: "var(--rp-primary)",
@@ -1510,7 +1515,7 @@ export default function LandingPage(): React.ReactElement {
                       right: "14px",
                       padding: "12px 18px",
                       borderRadius: "14px",
-                      backgroundColor: "rgba(20, 19, 19, 0.92)",
+                      backgroundColor: "var(--rp-card-bg)",
                       backdropFilter: "blur(14px)",
                       border: "1px solid var(--rp-border)",
                       display: "flex",
@@ -1909,7 +1914,7 @@ export default function LandingPage(): React.ReactElement {
                     style={{
                       paddingTop: "14px",
                       marginTop: "14px",
-                      borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+                      borderTop: "1px solid var(--rp-border)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
@@ -2259,7 +2264,7 @@ export default function LandingPage(): React.ReactElement {
             padding: "54px 36px",
             textAlign: "center",
             position: "relative",
-            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.7)",
+            boxShadow: "var(--rp-cta-card-shadow)",
           }}
         >
           <div
@@ -2452,7 +2457,7 @@ export default function LandingPage(): React.ReactElement {
             >
               RidePlanner
             </span>
-            <span style={{ color: "rgba(255, 255, 255, 0.2)" }}>•</span>
+            <span style={{ color: "var(--rp-outline-variant)" }}>•</span>
             <span>© {new Date().getFullYear()} ALL RIGHTS RESERVED</span>
           </div>
 

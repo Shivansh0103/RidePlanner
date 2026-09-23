@@ -1,6 +1,6 @@
 /* LandingPage.css - Visual Road Trip Hub Animations & Layout */
 
-:root {
+:root, [data-theme="dark"] {
   /* Obsidian Theme Harmony with RidePlanner Design System */
   --rp-obsidian-canvas: #141313;
   --rp-obsidian-base: #1a1a1e;
@@ -18,6 +18,9 @@
   --rp-outline: #64748b;
   --rp-outline-variant: #334155;
   --rp-border: rgba(255, 255, 255, 0.08);
+  --rp-card-bg: rgba(26, 26, 30, 0.85);
+  --rp-header-bg: rgba(20, 19, 19, 0.85);
+  --rp-header-border: rgba(255, 255, 255, 0.08);
 
   /* Brand Accents - Electric Indigo & Acid Green */
   --rp-electric-indigo: #6366f1;
@@ -27,6 +30,55 @@
   --rp-acid-green-glow: rgba(190, 242, 100, 0.35);
   --rp-cyan: #06b6d4;
   --rp-cyan-glow: rgba(6, 182, 212, 0.3);
+  /* Photo overlays and typography elevation */
+  --rp-hero-overlay-1: linear-gradient(to top, var(--rp-obsidian-canvas) 0%, rgba(20, 19, 19, 0.78) 50%, rgba(20, 19, 19, 0.65) 100%);
+  --rp-hero-overlay-2: radial-gradient(circle at center, transparent 20%, rgba(20, 19, 19, 0.45) 60%, var(--rp-obsidian-canvas) 95%);
+  --rp-photo-overlay: linear-gradient(to top, rgba(9, 13, 22, 0.8) 0%, rgba(9, 13, 22, 0.35) 45%, transparent 100%);
+  --rp-text-shadow-heading: 0 4px 20px rgba(0, 0, 0, 0.7);
+  --rp-text-shadow-body: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --rp-header-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --rp-panel-shadow: 0 24px 70px rgba(0, 0, 0, 0.8);
+  --rp-cta-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] {
+  /* Refined Daylight Theme - Harmonious Electric Indigo & Natural Contrast */
+  --rp-obsidian-canvas: #F1F3F9;
+  --rp-obsidian-base: #FFFFFF;
+  --rp-obsidian-panel: #E2E7F0;
+  --rp-surface-container-low: #FFFFFF;
+  --rp-surface-container: #E4E8F2;
+  --rp-surface-container-high: #DCE2EE;
+  --rp-surface-container-highest: #CBD5E1;
+  --rp-surface-container-lowest: #F1F3F9;
+
+  /* Typography Colors */
+  --rp-primary: #0F172A;
+  --rp-on-surface: #334155;
+  --rp-on-surface-variant: #64748B;
+  --rp-outline: #64748B;
+  --rp-outline-variant: #CBD5E1;
+  --rp-border: rgba(99, 102, 241, 0.14);
+  --rp-card-bg: rgba(255, 255, 255, 0.96);
+  --rp-header-bg: rgba(255, 255, 255, 0.92);
+  --rp-header-border: rgba(99, 102, 241, 0.14);
+
+  /* Brand Accents - Rich Electric Indigo (Harmonized with dark mode) */
+  --rp-electric-indigo: #4F46E5;
+  --rp-electric-indigo-hover: #4338CA;
+  --rp-electric-indigo-glow: rgba(79, 70, 229, 0.25);
+  --rp-acid-green: #059669;
+  --rp-acid-green-glow: rgba(5, 150, 105, 0.2);
+  --rp-cyan: #0284C7;
+  --rp-cyan-glow: rgba(2, 132, 199, 0.2);
+  --rp-hero-overlay-1: linear-gradient(to bottom, rgba(241, 243, 249, 0.15) 0%, rgba(241, 243, 249, 0.52) 60%, #F1F3F9 100%);
+  --rp-hero-overlay-2: radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.65) 0%, rgba(241, 243, 249, 0.32) 55%, #F1F3F9 95%);
+  --rp-photo-overlay: linear-gradient(to top, rgba(15, 23, 42, 0.75) 0%, rgba(15, 23, 42, 0.25) 50%, transparent 100%);
+  --rp-text-shadow-heading: none;
+  --rp-text-shadow-body: none;
+  --rp-header-shadow: 0 2px 14px rgba(15, 23, 42, 0.05);
+  --rp-panel-shadow: 0 16px 45px -8px rgba(15, 23, 42, 0.07), 0 0 0 1px rgba(99, 102, 241, 0.06);
+  --rp-cta-card-shadow: 0 20px 50px -10px rgba(79, 70, 229, 0.1), 0 0 0 1px rgba(99, 102, 241, 0.08);
 }
 
 /* Animations */
