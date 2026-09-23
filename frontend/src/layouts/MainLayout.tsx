@@ -73,7 +73,7 @@ export default function MainLayout() {
 
   // Global Navigation items
   const globalNavItems = [
-    { label: "Dashboard", path: "/", icon: <DashboardIcon fontSize="small" /> },
+    { label: "Dashboard", path: "/dashboard", icon: <DashboardIcon fontSize="small" /> },
     { label: "Expeditions", path: "/trips", icon: <ExploreIcon fontSize="small" /> },
     ...(targetCockpitTripId
       ? [
@@ -337,8 +337,8 @@ export default function MainLayout() {
             })
           : globalNavItems.map((item) => {
               const active =
-                item.path === "/"
-                  ? location.pathname === "/"
+                item.path === "/dashboard"
+                  ? location.pathname === "/dashboard" || location.pathname === "/"
                   : item.path === "/trips"
                   ? location.pathname === "/trips" || location.pathname === "/trips/new"
                   : location.pathname.startsWith(item.path);

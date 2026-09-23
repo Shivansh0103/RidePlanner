@@ -1,7 +1,8 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { Toaster } from "sonner";
 
+import { AuthBootSplash, useAuth } from "@/features/auth";
 import MainLayout from "@/layouts/MainLayout";
 import { ErrorBoundary } from "@/shared/components";
 import { LoadingSpinner } from "@/shared/ui";
@@ -10,6 +11,7 @@ import { AnonymousRoute } from "./AnonymousRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 // Lazy-loaded route components for optimized bundle splitting
+const LandingPage = lazy(() => import("@/shared/pages/LandingPage"));
 const HomePage = lazy(() => import("@/shared/pages/HomePage"));
 const TripsPage = lazy(() => import("@/features/trips/pages/TripsPage"));
 const CreateTripPage = lazy(() => import("@/features/trips/pages/CreateTripPage"));
@@ -29,6 +31,24 @@ function SuspenseWrapper({ children }: { children: React.ReactNode }) {
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
     </ErrorBoundary>
+  );
+}
+
+export function RootRoute() {
+  const { isBootstrapping, isAuthenticated } = useAuth();
+
+  if (isBootstrapping) {
+    return <AuthBootSplash />;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return (
+    <SuspenseWrapper>
+      <LandingPage />
+    </SuspenseWrapper>
   );
 }
 
@@ -108,9 +128,27 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Protected Main App Routes
+  // Public Root / Landing Page Route (Unauthenticated visitors see LandingPage; Authenticated riders are redirected to /dashboard)
   {
     path: "/",
+    element: <RootRoute />,
+    errorElement: (
+      <SuspenseWrapper>
+        <NotFoundPage />
+      </SuspenseWrapper>
+    ),
+  },
+  {
+    path: "/landing",
+    element: (
+      <SuspenseWrapper>
+        <LandingPage />
+      </SuspenseWrapper>
+    ),
+  },
+
+  // Protected Main App Routes
+  {
     element: <ProtectedRoute />,
     errorElement: (
       <SuspenseWrapper>
@@ -122,7 +160,7 @@ const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           {
-            index: true,
+            path: "dashboard",
             element: (
               <SuspenseWrapper>
                 <HomePage />
