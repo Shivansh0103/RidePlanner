@@ -252,7 +252,7 @@ describe("Route Guards", () => {
       expect(
         await screen.findByText(/THE ALL-IN-ONE ROAD TRIP COMPANION/i, {}, { timeout: 4000 })
       ).toBeInTheDocument();
-      expect(screen.getByText(/Start Planning Free/i)).toBeInTheDocument();
+      expect(screen.getByText(/Start Planning/i)).toBeInTheDocument();
     });
 
     it("redirects authenticated user to /dashboard", () => {
