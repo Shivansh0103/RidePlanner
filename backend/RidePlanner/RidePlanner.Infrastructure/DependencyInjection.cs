@@ -33,7 +33,13 @@ public static class DependencyInjection
         else
         {
             services.AddDbContext<RidePlannerDbContext>(options =>
-                options.UseNpgsql(connectionString));
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorCodesToAdd: null);
+                }));
         }
 
         var dataProtectionBuilder = services.AddDataProtection();
