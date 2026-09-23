@@ -92,6 +92,7 @@ public static class DependencyInjection
             options.ClientSecret = googleClientSecret;
             options.SignInScheme = IdentityConstants.ExternalScheme;
             options.SaveTokens = false;
+            options.CallbackPath = "/api/signin-google";
         });
 
         services.AddIdentityCore<ApplicationUser>(options =>

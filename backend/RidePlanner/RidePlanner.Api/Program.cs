@@ -88,7 +88,7 @@ if (app.Environment.IsDevelopment())
 
 var forwardedHeadersOptions = new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
     ForwardLimit = null
 };
 forwardedHeadersOptions.KnownNetworks.Clear();
@@ -127,7 +127,8 @@ if (app.Environment.IsEnvironment("Testing"))
     {
         RemoteIp = httpContext.Connection.RemoteIpAddress?.ToString(),
         Scheme = httpContext.Request.Scheme,
-        IsHttps = httpContext.Request.IsHttps
+        IsHttps = httpContext.Request.IsHttps,
+        Host = httpContext.Request.Host.Value
     }));
 
     app.MapPost("/api/test/signin-external", async (HttpContext httpContext, TestExternalSignInRequest request) =>

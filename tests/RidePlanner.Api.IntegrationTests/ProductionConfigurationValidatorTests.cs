@@ -58,7 +58,9 @@ public class ProductionConfigurationValidatorTests
             ["Jwt:Secret"] = "a_very_secure_production_jwt_signing_key_that_is_long_enough_12345!",
             ["ConnectionStrings:RidePlannerDatabase"] = "Host=db.example.com;Database=rideplanner;Username=postgres;Password=secure_pw;SSL Mode=Require;",
             ["Cors:AllowedOrigins:0"] = "https://rideplanner.vercel.app",
-            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app"
+            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app",
+            ["Authentication:Google:ClientId"] = "73286917441-test.apps.googleusercontent.com",
+            ["Authentication:Google:ClientSecret"] = "GOCSPX-valid_test_secret_here"
         });
 
         var prodEnv = CreateEnvironment(Environments.Production);
@@ -78,7 +80,9 @@ public class ProductionConfigurationValidatorTests
             ["Jwt:Secret"] = invalidSecret,
             ["ConnectionStrings:RidePlannerDatabase"] = "Host=db.example.com;Database=rideplanner;Username=postgres;Password=secure_pw;",
             ["Cors:AllowedOrigins:0"] = "https://rideplanner.vercel.app",
-            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app"
+            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app",
+            ["Authentication:Google:ClientId"] = "73286917441-test.apps.googleusercontent.com",
+            ["Authentication:Google:ClientSecret"] = "GOCSPX-valid_test_secret_here"
         });
 
         var prodEnv = CreateEnvironment(Environments.Production);
@@ -102,7 +106,9 @@ public class ProductionConfigurationValidatorTests
             ["Jwt:Secret"] = "a_very_secure_production_jwt_signing_key_that_is_long_enough_12345!",
             ["ConnectionStrings:RidePlannerDatabase"] = invalidDb,
             ["Cors:AllowedOrigins:0"] = "https://rideplanner.vercel.app",
-            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app"
+            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app",
+            ["Authentication:Google:ClientId"] = "73286917441-test.apps.googleusercontent.com",
+            ["Authentication:Google:ClientSecret"] = "GOCSPX-valid_test_secret_here"
         });
 
         var prodEnv = CreateEnvironment(Environments.Production);
@@ -128,6 +134,48 @@ public class ProductionConfigurationValidatorTests
         Assert.Contains("Authentication:Google", ex.Message);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Validate_InProduction_WithMissingGoogleClientId_Throws(string? missingClientId)
+    {
+        var config = CreateConfiguration(new Dictionary<string, string?>
+        {
+            ["Jwt:Secret"] = "a_very_secure_production_jwt_signing_key_that_is_long_enough_12345!",
+            ["ConnectionStrings:RidePlannerDatabase"] = "Host=db.example.com;Database=rideplanner;Username=postgres;Password=secure_pw;",
+            ["Cors:AllowedOrigins:0"] = "https://rideplanner.vercel.app",
+            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app",
+            ["Authentication:Google:ClientId"] = missingClientId,
+            ["Authentication:Google:ClientSecret"] = "GOCSPX-valid_test_secret_here"
+        });
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Contains("Authentication:Google:ClientId is required in production", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Validate_InProduction_WithMissingGoogleClientSecret_Throws(string? missingSecret)
+    {
+        var config = CreateConfiguration(new Dictionary<string, string?>
+        {
+            ["Jwt:Secret"] = "a_very_secure_production_jwt_signing_key_that_is_long_enough_12345!",
+            ["ConnectionStrings:RidePlannerDatabase"] = "Host=db.example.com;Database=rideplanner;Username=postgres;Password=secure_pw;",
+            ["Cors:AllowedOrigins:0"] = "https://rideplanner.vercel.app",
+            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app",
+            ["Authentication:Google:ClientId"] = "73286917441-test.apps.googleusercontent.com",
+            ["Authentication:Google:ClientSecret"] = missingSecret
+        });
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Contains("Authentication:Google:ClientSecret is required in production", ex.Message);
+    }
+
     [Fact]
     public void Validate_InProduction_WhenCorsAllowedOriginsOnlyContainsLocalhost_Throws()
     {
@@ -136,7 +184,9 @@ public class ProductionConfigurationValidatorTests
             ["Jwt:Secret"] = "a_very_secure_production_jwt_signing_key_that_is_long_enough_12345!",
             ["ConnectionStrings:RidePlannerDatabase"] = "Host=db.example.com;Database=rideplanner;Username=postgres;Password=secure_pw;",
             ["Cors:AllowedOrigins:0"] = "http://localhost:5173",
-            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app"
+            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app",
+            ["Authentication:Google:ClientId"] = "73286917441-test.apps.googleusercontent.com",
+            ["Authentication:Google:ClientSecret"] = "GOCSPX-valid_test_secret_here"
         });
 
         var prodEnv = CreateEnvironment(Environments.Production);
@@ -155,7 +205,9 @@ public class ProductionConfigurationValidatorTests
             ["Jwt:Secret"] = "a_very_secure_production_jwt_signing_key_that_is_long_enough_12345!",
             ["ConnectionStrings:RidePlannerDatabase"] = "Host=db.example.com;Database=rideplanner;Username=postgres;Password=secure_pw;",
             ["Cors:AllowedOrigins:0"] = "https://rideplanner.vercel.app",
-            ["App:FrontendBaseUrl"] = invalidUrl
+            ["App:FrontendBaseUrl"] = invalidUrl,
+            ["Authentication:Google:ClientId"] = "73286917441-test.apps.googleusercontent.com",
+            ["Authentication:Google:ClientSecret"] = "GOCSPX-valid_test_secret_here"
         });
 
         var prodEnv = CreateEnvironment(Environments.Production);
