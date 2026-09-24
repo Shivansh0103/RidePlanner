@@ -150,7 +150,7 @@ export default function TripsPage() {
     <Container maxWidth="xl" sx={{ pb: 6 }} className="animate-fade-in">
       <Stack spacing={3}>
         {/* Tier 1: Page Header Section */}
-        <Box sx={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)", pb: 2.5 }}>
+        <Box sx={{ borderBottom: "1px solid", borderColor: "divider", pb: 2.5 }}>
           <Stack
             direction={{ xs: "column", sm: "row" }}
             spacing={2}
@@ -163,7 +163,7 @@ export default function TripsPage() {
                   sx={{
                     fontFamily: '"Outfit", sans-serif',
                     fontWeight: 800,
-                    color: "#f8fafc",
+                    color: "text.primary",
                     letterSpacing: "-0.03em",
                     fontSize: { xs: "1.8rem", sm: "2.3rem" },
                   }}
@@ -178,14 +178,17 @@ export default function TripsPage() {
                     borderRadius: 1.5,
                     fontSize: "0.72rem",
                     fontWeight: 700,
-                    color: "#94a3b8",
+                    bgcolor: (theme) => theme.palette.mode === "dark" ? "#141313" : "#F1F5F9",
+                    color: "text.secondary",
+                    border: "1px solid",
+                    borderColor: "divider",
                   }}
                 >
                   {trips.length} Total Journeys
                 </Box>
               </Stack>
 
-              <Typography variant="body2" sx={{ color: "#94a3b8", maxWidth: 650, lineHeight: 1.5, fontSize: "0.82rem" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary", maxWidth: 650, lineHeight: 1.5, fontSize: "0.82rem" }}>
                 A definitive archive of your terrestrial operations. Monitor active routes, refine planned
                 trajectories, and review past performance data.
               </Typography>
@@ -228,10 +231,6 @@ export default function TripsPage() {
               const isCompleted = opt.value === "Completed";
               const isActive = opt.value === "Active";
 
-              const activeColor = isActive ? "#bef264" : isCompleted ? "#38bdf8" : "#818cf8";
-              const activeBg = isActive ? "rgba(190, 242, 100, 0.15)" : isCompleted ? "rgba(56, 189, 248, 0.15)" : "rgba(99, 102, 241, 0.15)";
-              const activeBorder = isActive ? "#bef264" : isCompleted ? "#38bdf8" : "#6366f1";
-
               return (
                 <Button
                   key={opt.value}
@@ -241,10 +240,34 @@ export default function TripsPage() {
                     borderRadius: 9999,
                     px: 2,
                     py: 0.6,
-                    bgcolor: selected ? activeBg : "#1a1a1e",
-                    borderColor: selected ? activeBorder : "rgba(255, 255, 255, 0.08)",
+                    bgcolor: (theme) => {
+                      const isDark = theme.palette.mode === "dark";
+                      if (selected) {
+                        if (isActive) return isDark ? "rgba(190, 242, 100, 0.15)" : "rgba(5, 150, 105, 0.12)";
+                        if (isCompleted) return isDark ? "rgba(56, 189, 248, 0.15)" : "rgba(2, 132, 199, 0.12)";
+                        return isDark ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.12)";
+                      }
+                      return "background.paper";
+                    },
+                    borderColor: (theme) => {
+                      const isDark = theme.palette.mode === "dark";
+                      if (selected) {
+                        if (isActive) return isDark ? "#bef264" : "#059669";
+                        if (isCompleted) return isDark ? "#38bdf8" : "#0284c7";
+                        return isDark ? "#6366f1" : "#4f46e5";
+                      }
+                      return theme.palette.divider;
+                    },
                     border: "1px solid",
-                    color: selected ? activeColor : "#94a3b8",
+                    color: (theme) => {
+                      const isDark = theme.palette.mode === "dark";
+                      if (selected) {
+                        if (isActive) return isDark ? "#bef264" : "#059669";
+                        if (isCompleted) return isDark ? "#38bdf8" : "#0284c7";
+                        return isDark ? "#818cf8" : "#4f46e5";
+                      }
+                      return theme.palette.text.secondary;
+                    },
                     fontFamily: '"JetBrains Mono", monospace',
                     fontWeight: 700,
                     fontSize: "0.7rem",
@@ -252,8 +275,8 @@ export default function TripsPage() {
                     textTransform: "uppercase",
                     whiteSpace: "nowrap",
                     "&:hover": {
-                      bgcolor: selected ? activeBg : "#201f1f",
-                      color: "#ffffff",
+                      bgcolor: (theme) => theme.palette.mode === "dark" ? "#201f1f" : "#E2E8F0",
+                      color: "text.primary",
                     },
                   }}
                 >
@@ -275,7 +298,7 @@ export default function TripsPage() {
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" sx={{ color: "#94a3b8" }} />
+                      <SearchIcon fontSize="small" sx={{ color: "text.secondary" }} />
                     </InputAdornment>
                   ),
                 },
@@ -285,45 +308,45 @@ export default function TripsPage() {
                 width: { xs: "100%", sm: 200 },
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
-                  bgcolor: "#141313",
+                  bgcolor: (theme) => theme.palette.mode === "dark" ? "#141313" : "#FFFFFF",
                   fontSize: "0.78rem",
-                  "& fieldset": { borderColor: "rgba(255, 255, 255, 0.08)" },
-                  "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.2)" },
-                  "&.Mui-focused fieldset": { borderColor: "#6366f1" },
+                  "& fieldset": { borderColor: "divider" },
+                  "&:hover fieldset": { borderColor: (theme) => theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)" },
+                  "&.Mui-focused fieldset": { borderColor: "primary.main" },
                 },
               }}
             />
 
-            {/* Custom Neomorphic Dark Sort Dropdown */}
+            {/* Custom Neomorphic Sort Dropdown */}
             <FormControl size="small" sx={{ minWidth: 165 }}>
               <Select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
                 startAdornment={
                   <InputAdornment position="start">
-                    <SortIcon sx={{ fontSize: 16, color: "#818cf8", mr: -0.5 }} />
+                    <SortIcon sx={{ fontSize: 16, color: "primary.main", mr: -0.5 }} />
                   </InputAdornment>
                 }
                 className="neo-inset"
                 sx={{
                   height: 38,
-                  bgcolor: "#141313",
-                  color: "#e4e4e7",
+                  bgcolor: (theme) => theme.palette.mode === "dark" ? "#141313" : "#FFFFFF",
+                  color: "text.primary",
                   fontFamily: '"JetBrains Mono", monospace',
                   fontSize: "0.72rem",
                   fontWeight: 700,
                   borderRadius: 2,
                   "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(255, 255, 255, 0.08)",
+                    borderColor: "divider",
                   },
                   "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(255, 255, 255, 0.2)",
+                    borderColor: (theme) => theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#6366f1",
+                    borderColor: "primary.main",
                   },
                   "& .MuiSvgIcon-root": {
-                    color: "#94a3b8",
+                    color: "text.secondary",
                   },
                 }}
                 MenuProps={{
@@ -331,26 +354,27 @@ export default function TripsPage() {
                     paper: {
                       className: "neo-convex",
                       sx: {
-                        bgcolor: "#1e1e24",
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        bgcolor: "background.paper",
+                        border: "1px solid",
+                        borderColor: "divider",
                         borderRadius: 2,
-                        boxShadow: "0 10px 30px rgba(0,0,0,0.8)",
+                        boxShadow: (theme) => theme.palette.mode === "dark" ? "0 10px 30px rgba(0,0,0,0.8)" : "0 10px 25px rgba(0,0,0,0.08)",
                         mt: 0.8,
                       },
                     },
                   },
                 }}
               >
-                <MenuItem value="date-desc" sx={{ fontSize: "0.75rem", fontFamily: '"JetBrains Mono", monospace', color: "#f8fafc", "&.Mui-selected": { bgcolor: "rgba(99, 102, 241, 0.2)" } }}>
+                <MenuItem value="date-desc" sx={{ fontSize: "0.75rem", fontFamily: '"JetBrains Mono", monospace', color: "text.primary", "&.Mui-selected": { bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.2)" : "rgba(79, 70, 229, 0.12)" } }}>
                   Date: Newest
                 </MenuItem>
-                <MenuItem value="date-asc" sx={{ fontSize: "0.75rem", fontFamily: '"JetBrains Mono", monospace', color: "#f8fafc", "&.Mui-selected": { bgcolor: "rgba(99, 102, 241, 0.2)" } }}>
+                <MenuItem value="date-asc" sx={{ fontSize: "0.75rem", fontFamily: '"JetBrains Mono", monospace', color: "text.primary", "&.Mui-selected": { bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.2)" : "rgba(79, 70, 229, 0.12)" } }}>
                   Date: Oldest
                 </MenuItem>
-                <MenuItem value="name-asc" sx={{ fontSize: "0.75rem", fontFamily: '"JetBrains Mono", monospace', color: "#f8fafc", "&.Mui-selected": { bgcolor: "rgba(99, 102, 241, 0.2)" } }}>
+                <MenuItem value="name-asc" sx={{ fontSize: "0.75rem", fontFamily: '"JetBrains Mono", monospace', color: "text.primary", "&.Mui-selected": { bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.2)" : "rgba(79, 70, 229, 0.12)" } }}>
                   Name: A – Z
                 </MenuItem>
-                <MenuItem value="duration-desc" sx={{ fontSize: "0.75rem", fontFamily: '"JetBrains Mono", monospace', color: "#f8fafc", "&.Mui-selected": { bgcolor: "rgba(99, 102, 241, 0.2)" } }}>
+                <MenuItem value="duration-desc" sx={{ fontSize: "0.75rem", fontFamily: '"JetBrains Mono", monospace', color: "text.primary", "&.Mui-selected": { bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.2)" : "rgba(79, 70, 229, 0.12)" } }}>
                   Duration: Longest
                 </MenuItem>
               </Select>
@@ -364,8 +388,9 @@ export default function TripsPage() {
                 alignItems: "center",
                 p: 0.3,
                 borderRadius: 2,
-                bgcolor: "#141313",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
+                bgcolor: (theme) => theme.palette.mode === "dark" ? "#141313" : "#FFFFFF",
+                border: "1px solid",
+                borderColor: "divider",
                 height: 38,
                 boxSizing: "border-box",
               }}
@@ -377,9 +402,17 @@ export default function TripsPage() {
                   sx={{
                     p: 0.6,
                     borderRadius: 1.5,
-                    bgcolor: viewMode === "grid" ? "rgba(99, 102, 241, 0.2)" : "transparent",
-                    color: viewMode === "grid" ? "#818cf8" : "#71717a",
-                    "&:hover": { color: "#ffffff" },
+                    bgcolor: (theme) => {
+                      const isDark = theme.palette.mode === "dark";
+                      if (viewMode === "grid") return isDark ? "rgba(99, 102, 241, 0.2)" : "rgba(79, 70, 229, 0.12)";
+                      return "transparent";
+                    },
+                    color: (theme) => {
+                      const isDark = theme.palette.mode === "dark";
+                      if (viewMode === "grid") return isDark ? "#818cf8" : "#4f46e5";
+                      return theme.palette.text.secondary;
+                    },
+                    "&:hover": { color: "text.primary" },
                   }}
                 >
                   <GridViewIcon sx={{ fontSize: 18 }} />
@@ -393,9 +426,17 @@ export default function TripsPage() {
                   sx={{
                     p: 0.6,
                     borderRadius: 1.5,
-                    bgcolor: viewMode === "list" ? "rgba(99, 102, 241, 0.2)" : "transparent",
-                    color: viewMode === "list" ? "#818cf8" : "#71717a",
-                    "&:hover": { color: "#ffffff" },
+                    bgcolor: (theme) => {
+                      const isDark = theme.palette.mode === "dark";
+                      if (viewMode === "list") return isDark ? "rgba(99, 102, 241, 0.2)" : "rgba(79, 70, 229, 0.12)";
+                      return "transparent";
+                    },
+                    color: (theme) => {
+                      const isDark = theme.palette.mode === "dark";
+                      if (viewMode === "list") return isDark ? "#818cf8" : "#4f46e5";
+                      return theme.palette.text.secondary;
+                    },
+                    "&:hover": { color: "text.primary" },
                   }}
                 >
                   <ViewListIcon sx={{ fontSize: 18 }} />
@@ -428,11 +469,11 @@ export default function TripsPage() {
             }
           />
         ) : filteredTrips.length === 0 ? (
-          <Paper className="neo-convex" sx={{ p: 6, textAlign: "center", borderRadius: 3, bgcolor: "#1a1a1e" }}>
-            <Typography variant="h6" sx={{ fontWeight: 800, color: "#f8fafc", mb: 0.5 }}>
+          <Paper className="neo-convex" sx={{ p: 6, textAlign: "center", borderRadius: 3, bgcolor: "background.paper", border: "1px solid", borderColor: "divider" }}>
+            <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", mb: 0.5 }}>
               No matching expeditions found
             </Typography>
-            <Typography variant="body2" sx={{ color: "#94a3b8", mb: 3 }}>
+            <Typography variant="body2" sx={{ color: "text.secondary", mb: 3 }}>
               Try adjusting your search filter criteria or search keyword.
             </Typography>
             <Button

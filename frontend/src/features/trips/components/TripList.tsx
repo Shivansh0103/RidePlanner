@@ -18,6 +18,7 @@ import {
   Paper,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +45,8 @@ function TripListItemRow({
   onDelete: (trip: Trip) => void;
 }) {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const start = new Date(trip.startDate);
@@ -54,13 +57,21 @@ function TripListItemRow({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Active":
-        return { bg: "rgba(190, 242, 100, 0.15)", text: "#bef264", border: "rgba(190, 242, 100, 0.4)" };
+        return isDark
+          ? { bg: "rgba(190, 242, 100, 0.15)", text: "#bef264", border: "rgba(190, 242, 100, 0.4)" }
+          : { bg: "rgba(5, 150, 105, 0.12)", text: "#059669", border: "rgba(5, 150, 105, 0.3)" };
       case "Planning":
-        return { bg: "rgba(99, 102, 241, 0.15)", text: "#818cf8", border: "rgba(99, 102, 241, 0.4)" };
+        return isDark
+          ? { bg: "rgba(99, 102, 241, 0.15)", text: "#818cf8", border: "rgba(99, 102, 241, 0.4)" }
+          : { bg: "rgba(79, 70, 229, 0.1)", text: "#4f46e5", border: "rgba(79, 70, 229, 0.3)" };
       case "Completed":
-        return { bg: "rgba(56, 189, 248, 0.15)", text: "#38bdf8", border: "rgba(56, 189, 248, 0.4)" };
+        return isDark
+          ? { bg: "rgba(56, 189, 248, 0.15)", text: "#38bdf8", border: "rgba(56, 189, 248, 0.4)" }
+          : { bg: "rgba(2, 132, 199, 0.12)", text: "#0284c7", border: "rgba(2, 132, 199, 0.3)" };
       default:
-        return { bg: "rgba(255, 255, 255, 0.05)", text: "#94a3b8", border: "rgba(255, 255, 255, 0.1)" };
+        return isDark
+          ? { bg: "rgba(255, 255, 255, 0.05)", text: "#94a3b8", border: "rgba(255, 255, 255, 0.1)" }
+          : { bg: "rgba(0, 0, 0, 0.04)", text: "#64748b", border: "rgba(0, 0, 0, 0.08)" };
     }
   };
 
@@ -73,13 +84,14 @@ function TripListItemRow({
       sx={{
         p: 2,
         borderRadius: 2.5,
-        bgcolor: "#17171a",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         cursor: "pointer",
         transition: "all 0.2s ease",
         "&:hover": {
-          bgcolor: "#1f1f24",
-          borderColor: trip.status === "Active" ? "#bef264" : "#6366f1",
+          bgcolor: isDark ? "#1f1f24" : "#F8FAFC",
+          borderColor: trip.status === "Active" ? (isDark ? "#bef264" : "#059669") : (isDark ? "#6366f1" : "#4f46e5"),
           transform: "translateY(-1px)",
         },
       }}
@@ -111,14 +123,14 @@ function TripListItemRow({
           <Box sx={{ overflow: "hidden" }}>
             <Typography
               variant="subtitle1"
-              sx={{ fontWeight: 800, color: "#f8fafc", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+              sx={{ fontWeight: 800, color: "text.primary", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
             >
               {trip.name}
             </Typography>
             {trip.description && (
               <Typography
                 variant="caption"
-                sx={{ color: "#94a3b8", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+                sx={{ color: "text.secondary", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}
               >
                 {trip.description}
               </Typography>
@@ -129,8 +141,8 @@ function TripListItemRow({
         {/* Middle: Dates & Duration */}
         <Stack direction="row" spacing={3} sx={{ alignItems: "center" }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
-            <CalendarMonthIcon sx={{ fontSize: 15, color: "#818cf8" }} />
-            <Typography className="font-mono" sx={{ color: "#e4e4e7", fontSize: "0.76rem", fontWeight: 600 }}>
+            <CalendarMonthIcon sx={{ fontSize: 15, color: "primary.main" }} />
+            <Typography className="font-mono" sx={{ color: "text.secondary", fontSize: "0.76rem", fontWeight: 600 }}>
               {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
             </Typography>
           </Box>
@@ -143,8 +155,8 @@ function TripListItemRow({
               fontSize: "0.68rem",
               fontWeight: 700,
               fontFamily: '"JetBrains Mono", monospace',
-              bgcolor: "rgba(255, 255, 255, 0.05)",
-              color: "#94a3b8",
+              bgcolor: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+              color: "text.secondary",
             }}
           />
 
@@ -176,12 +188,12 @@ function TripListItemRow({
             sx={{
               py: 0.5,
               px: 1.5,
-              borderColor: "rgba(99, 102, 241, 0.4)",
-              color: "#818cf8",
+              borderColor: "primary.main",
+              color: "primary.main",
               fontFamily: '"JetBrains Mono", monospace',
               fontSize: "0.7rem",
               fontWeight: 800,
-              "&:hover": { bgcolor: "#6366f1", color: "#ffffff", borderColor: "#6366f1" },
+              "&:hover": { bgcolor: "primary.main", color: "#ffffff", borderColor: "primary.main" },
             }}
           >
             Cockpit
@@ -193,7 +205,7 @@ function TripListItemRow({
               e.stopPropagation();
               setAnchorEl(e.currentTarget);
             }}
-            sx={{ color: "#94a3b8", "&:hover": { color: "#ffffff" } }}
+            sx={{ color: "text.secondary", "&:hover": { color: "text.primary" } }}
           >
             <MoreVertIcon fontSize="small" />
           </IconButton>
@@ -205,8 +217,9 @@ function TripListItemRow({
             slotProps={{
               paper: {
                 sx: {
-                  bgcolor: "#1e1e24",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  bgcolor: "background.paper",
+                  border: "1px solid",
+                  borderColor: "divider",
                 },
               },
             }}
@@ -217,9 +230,9 @@ function TripListItemRow({
                 setAnchorEl(null);
                 onEdit(trip);
               }}
-              sx={{ color: "#e2e8f0" }}
+              sx={{ color: "text.primary" }}
             >
-              <ListItemIcon sx={{ color: "#818cf8" }}>
+              <ListItemIcon sx={{ color: "primary.main" }}>
                 <EditIcon fontSize="small" />
               </ListItemIcon>
               <ListItemText>Edit</ListItemText>
@@ -230,9 +243,9 @@ function TripListItemRow({
                 setAnchorEl(null);
                 onDelete(trip);
               }}
-              sx={{ color: "#f87171" }}
+              sx={{ color: "error.main" }}
             >
-              <ListItemIcon sx={{ color: "#f87171" }}>
+              <ListItemIcon sx={{ color: "error.main" }}>
                 <DeleteIcon fontSize="small" />
               </ListItemIcon>
               <ListItemText>Delete</ListItemText>

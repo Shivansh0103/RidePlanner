@@ -24,12 +24,15 @@ import { useNavigate } from "react-router-dom";
 import { useAccommodations } from "@/features/accommodations";
 import { useTripReadiness } from "@/features/readiness";
 import { useTrips } from "@/features/trips";
+import { useThemeMode } from "@/app/theme/ThemeContext";
 import { LoadingSpinner } from "@/shared/ui";
 import { formatDate } from "@/shared/utils";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const { data: trips = [], isLoading } = useTrips();
+  const { resolvedTheme } = useThemeMode();
+  const isDark = resolvedTheme === "dark";
 
   const [selectedTripId, setSelectedTripId] = useState<string>(() => {
     return localStorage.getItem("last_active_trip_id") || "";
@@ -99,7 +102,7 @@ export default function HomePage() {
             sx={{
               fontFamily: '"Outfit", sans-serif',
               fontWeight: 800,
-              color: "#f8fafc",
+              color: "text.primary",
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
             }}
@@ -109,7 +112,7 @@ export default function HomePage() {
           <Typography
             className="font-mono"
             variant="caption"
-            sx={{ color: "#94a3b8", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}
+            sx={{ color: "text.secondary", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}
           >
             Motorcycle Expeditions & Field Telemetry Hub
           </Typography>
@@ -146,23 +149,24 @@ export default function HomePage() {
             sx={{
               p: 2,
               borderRadius: 2.5,
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
               cursor: "pointer",
               transition: "all 0.2s ease",
-              "&:hover": { borderColor: "#6366f1", transform: "translateY(-1px)" },
+              "&:hover": { borderColor: isDark ? "#6366f1" : "#4f46e5", transform: "translateY(-1px)" },
             }}
           >
             <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
               <Box>
-                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                <Typography className="font-mono" sx={{ color: "text.secondary", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                   Total Expeditions
                 </Typography>
-                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: "#f8fafc", mt: 0.2 }}>
+                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: "text.primary", mt: 0.2 }}>
                   {trips.length}
                 </Typography>
               </Box>
-              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: "rgba(99, 102, 241, 0.12)", color: "#818cf8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: isDark ? "rgba(99, 102, 241, 0.12)" : "rgba(79, 70, 229, 0.1)", color: isDark ? "#818cf8" : "#4f46e5", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <ExploreIcon sx={{ fontSize: 18 }} />
               </Box>
             </Stack>
@@ -176,26 +180,27 @@ export default function HomePage() {
             sx={{
               p: 2,
               borderRadius: 2.5,
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(190, 242, 100, 0.3)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: isDark ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)",
               cursor: "pointer",
               transition: "all 0.2s ease",
-              "&:hover": { borderColor: "#bef264", transform: "translateY(-1px)" },
+              "&:hover": { borderColor: isDark ? "#bef264" : "#059669", transform: "translateY(-1px)" },
             }}
           >
             <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
               <Box>
                 <Stack direction="row" spacing={0.8} sx={{ alignItems: "center" }}>
-                  <Box className="pulse-telemetry glow-acid" sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#bef264" }} />
-                  <Typography className="font-mono" sx={{ color: "#bef264", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  <Box className="pulse-telemetry glow-acid" sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: isDark ? "#bef264" : "#059669" }} />
+                  <Typography className="font-mono" sx={{ color: isDark ? "#bef264" : "#059669", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                     Active In Field
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: "#bef264", mt: 0.2 }}>
+                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: isDark ? "#bef264" : "#059669", mt: 0.2 }}>
                   {activeTrips.length}
                 </Typography>
               </Box>
-              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: "rgba(190, 242, 100, 0.15)", color: "#bef264", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: isDark ? "rgba(190, 242, 100, 0.15)" : "rgba(5, 150, 105, 0.12)", color: isDark ? "#bef264" : "#059669", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <TwoWheelerIcon sx={{ fontSize: 18 }} />
               </Box>
             </Stack>
@@ -209,23 +214,24 @@ export default function HomePage() {
             sx={{
               p: 2,
               borderRadius: 2.5,
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
               cursor: "pointer",
               transition: "all 0.2s ease",
-              "&:hover": { borderColor: "#818cf8", transform: "translateY(-1px)" },
+              "&:hover": { borderColor: isDark ? "#818cf8" : "#4f46e5", transform: "translateY(-1px)" },
             }}
           >
             <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
               <Box>
-                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                <Typography className="font-mono" sx={{ color: "text.secondary", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                   In Planning
                 </Typography>
-                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: "#818cf8", mt: 0.2 }}>
+                <Typography className="font-mono" variant="h5" sx={{ fontWeight: 800, color: isDark ? "#818cf8" : "#4f46e5", mt: 0.2 }}>
                   {planningTrips.length}
                 </Typography>
               </Box>
-              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: "rgba(129, 140, 248, 0.12)", color: "#818cf8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: isDark ? "rgba(129, 140, 248, 0.12)" : "rgba(79, 70, 229, 0.1)", color: isDark ? "#818cf8" : "#4f46e5", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <RouteIcon sx={{ fontSize: 18 }} />
               </Box>
             </Stack>
@@ -249,9 +255,12 @@ export default function HomePage() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                bgcolor: "#1a1a1e",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                backgroundImage: `radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.2), transparent 50%), radial-gradient(circle at 20% 80%, rgba(190, 242, 100, 0.08), transparent 50%)`,
+                bgcolor: "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+                backgroundImage: isDark
+                  ? `radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.2), transparent 50%), radial-gradient(circle at 20% 80%, rgba(190, 242, 100, 0.08), transparent 50%)`
+                  : `radial-gradient(circle at 80% 20%, rgba(79, 70, 229, 0.08), transparent 50%), radial-gradient(circle at 20% 80%, rgba(5, 150, 105, 0.05), transparent 50%)`,
               }}
             >
               {/* Card Header with Quick Trip Selector */}
@@ -261,9 +270,15 @@ export default function HomePage() {
                     label={spotlightTrip.status === "Active" ? "LIVE EXPEDITION" : "FEATURED SPOTLIGHT"}
                     size="small"
                     sx={{
-                      bgcolor: spotlightTrip.status === "Active" ? "rgba(190, 242, 100, 0.15)" : "rgba(99, 102, 241, 0.2)",
-                      color: spotlightTrip.status === "Active" ? "#bef264" : "#818cf8",
-                      border: spotlightTrip.status === "Active" ? "1px solid rgba(190, 242, 100, 0.4)" : "1px solid rgba(99, 102, 241, 0.4)",
+                      bgcolor: spotlightTrip.status === "Active"
+                        ? (isDark ? "rgba(190, 242, 100, 0.15)" : "rgba(5, 150, 105, 0.12)")
+                        : (isDark ? "rgba(99, 102, 241, 0.2)" : "rgba(79, 70, 229, 0.1)"),
+                      color: spotlightTrip.status === "Active"
+                        ? (isDark ? "#bef264" : "#059669")
+                        : (isDark ? "#818cf8" : "#4f46e5"),
+                      border: spotlightTrip.status === "Active"
+                        ? (isDark ? "1px solid rgba(190, 242, 100, 0.4)" : "1px solid rgba(5, 150, 105, 0.3)")
+                        : (isDark ? "1px solid rgba(99, 102, 241, 0.4)" : "1px solid rgba(79, 70, 229, 0.3)"),
                       fontWeight: 800,
                       fontSize: "0.65rem",
                       letterSpacing: "0.06em",
@@ -283,10 +298,10 @@ export default function HomePage() {
                           fontSize: "0.68rem",
                           fontFamily: '"JetBrains Mono", monospace',
                           fontWeight: 700,
-                          bgcolor: "#141313",
-                          color: "#e4e4e7",
+                          bgcolor: isDark ? "#141313" : "#F8FAFC",
+                          color: "text.primary",
                           "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "rgba(255, 255, 255, 0.1)",
+                            borderColor: "divider",
                           },
                         }}
                       >
@@ -300,8 +315,8 @@ export default function HomePage() {
                   )}
                 </Stack>
 
-                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.72rem", fontWeight: 700 }}>
-                  <CalendarMonthIcon sx={{ fontSize: 14, verticalAlign: "middle", mr: 0.5, color: "#818cf8" }} />
+                <Typography className="font-mono" sx={{ color: "text.secondary", fontSize: "0.72rem", fontWeight: 700 }}>
+                  <CalendarMonthIcon sx={{ fontSize: 14, verticalAlign: "middle", mr: 0.5, color: isDark ? "#818cf8" : "#4f46e5" }} />
                   {formatDate(spotlightTrip.startDate)} – {formatDate(spotlightTrip.endDate)}
                 </Typography>
               </Box>
@@ -313,7 +328,7 @@ export default function HomePage() {
                   sx={{
                     fontFamily: '"Outfit", sans-serif',
                     fontWeight: 800,
-                    color: "#ffffff",
+                    color: "text.primary",
                     letterSpacing: "-0.02em",
                     lineHeight: 1.15,
                     mb: 1,
@@ -327,7 +342,7 @@ export default function HomePage() {
                   <Typography
                     variant="body2"
                     sx={{
-                      color: "#cbd5e1",
+                      color: "text.secondary",
                       maxWidth: 620,
                       lineHeight: 1.6,
                       fontSize: "0.88rem",
@@ -340,26 +355,26 @@ export default function HomePage() {
                     {spotlightTrip.description}
                   </Typography>
                 ) : (
-                  <Typography variant="body2" sx={{ color: "#71717a", fontStyle: "italic", fontSize: "0.82rem" }}>
+                  <Typography variant="body2" sx={{ color: "text.secondary", fontStyle: "italic", fontSize: "0.82rem" }}>
                     No mission description configured. Click "Open Cockpit" to manage waypoints and logistics.
                   </Typography>
                 )}
               </Box>
 
               {/* High Density Metrics Row */}
-              <Box sx={{ pt: 2, borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
+              <Box sx={{ pt: 2, borderTop: "1px solid", borderColor: "divider" }}>
                 <Grid container spacing={2} sx={{ alignItems: "center" }}>
                   <Grid size={{ xs: 4 }}>
-                    <Typography className="font-mono" sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.06em", fontSize: "0.65rem", mb: 0.3 }}>
+                    <Typography className="font-mono" sx={{ color: "text.secondary", fontWeight: 700, letterSpacing: "0.06em", fontSize: "0.65rem", mb: 0.3 }}>
                       LIFECYCLE STATUS
                     </Typography>
-                    <Typography className="font-mono" sx={{ fontSize: "0.95rem", fontWeight: 800, color: spotlightTrip.status === "Active" ? "#bef264" : "#818cf8" }}>
+                    <Typography className="font-mono" sx={{ fontSize: "0.95rem", fontWeight: 800, color: spotlightTrip.status === "Active" ? (isDark ? "#bef264" : "#059669") : (isDark ? "#818cf8" : "#4f46e5") }}>
                       {spotlightTrip.status.toUpperCase()}
                     </Typography>
                   </Grid>
 
                   <Grid size={{ xs: 4 }}>
-                    <Typography className="font-mono" sx={{ color: "#94a3b8", fontWeight: 700, letterSpacing: "0.06em", fontSize: "0.65rem", mb: 0.3 }}>
+                    <Typography className="font-mono" sx={{ color: "text.secondary", fontWeight: 700, letterSpacing: "0.06em", fontSize: "0.65rem", mb: 0.3 }}>
                       MISSION PHASE
                     </Typography>
                     <Typography className="font-mono" sx={{ fontSize: "0.88rem", fontWeight: 800, color: getPhaseColor(spotlightTrip.status) }}>
@@ -375,13 +390,13 @@ export default function HomePage() {
                       className="glow-indigo"
                       endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />}
                       sx={{
-                        bgcolor: "#6366f1",
+                        bgcolor: "primary.main",
                         color: "#ffffff",
                         fontFamily: '"JetBrains Mono", monospace',
                         fontSize: "0.72rem",
                         fontWeight: 800,
                         letterSpacing: "0.04em",
-                        "&:hover": { bgcolor: "#4f46e5" },
+                        "&:hover": { bgcolor: "primary.dark" },
                       }}
                     >
                       Open Cockpit
@@ -391,12 +406,12 @@ export default function HomePage() {
               </Box>
             </Paper>
           ) : (
-            <Paper className="neo-convex" sx={{ p: 5, borderRadius: 3, textAlign: "center", bgcolor: "#1a1a1e" }}>
-              <TwoWheelerIcon sx={{ fontSize: 44, color: "#818cf8", mb: 1.5 }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, color: "#f8fafc", mb: 1 }}>
+            <Paper className="neo-convex" sx={{ p: 5, borderRadius: 3, textAlign: "center", bgcolor: "background.paper", border: "1px solid", borderColor: "divider" }}>
+              <TwoWheelerIcon sx={{ fontSize: 44, color: isDark ? "#818cf8" : "#4f46e5", mb: 1.5 }} />
+              <Typography variant="h5" sx={{ fontWeight: 800, color: "text.primary", mb: 1 }}>
                 No Expeditions in Ledger
               </Typography>
-              <Button variant="contained" onClick={() => navigate("/trips/new")} sx={{ bgcolor: "#6366f1", mt: 1 }}>
+              <Button variant="contained" onClick={() => navigate("/trips/new")} sx={{ mt: 1 }}>
                 Plan Your First Mission
               </Button>
             </Paper>
@@ -410,8 +425,9 @@ export default function HomePage() {
             sx={{
               p: 2.8,
               borderRadius: 3,
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
               height: "100%",
               display: "flex",
               flexDirection: "column",
@@ -420,7 +436,7 @@ export default function HomePage() {
           >
             <Box>
               <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                <Typography className="font-mono" sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                   Expedition Readiness HUD
                 </Typography>
                 <Chip
@@ -431,9 +447,9 @@ export default function HomePage() {
                     fontSize: "0.62rem",
                     fontWeight: 800,
                     fontFamily: '"JetBrains Mono", monospace',
-                    bgcolor: (readiness?.scorePercentage ?? 0) >= 80 ? "rgba(190, 242, 100, 0.15)" : "rgba(99, 102, 241, 0.15)",
-                    color: (readiness?.scorePercentage ?? 0) >= 80 ? "#bef264" : "#818cf8",
-                    border: `1px solid ${(readiness?.scorePercentage ?? 0) >= 80 ? "rgba(190, 242, 100, 0.3)" : "rgba(99, 102, 241, 0.3)"}`,
+                    bgcolor: (readiness?.scorePercentage ?? 0) >= 80 ? (isDark ? "rgba(190, 242, 100, 0.15)" : "rgba(5, 150, 105, 0.12)") : (isDark ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.1)"),
+                    color: (readiness?.scorePercentage ?? 0) >= 80 ? (isDark ? "#bef264" : "#059669") : (isDark ? "#818cf8" : "#4f46e5"),
+                    border: `1px solid ${(readiness?.scorePercentage ?? 0) >= 80 ? (isDark ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)") : (isDark ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.3)")}`,
                   }}
                 />
               </Stack>
@@ -447,7 +463,9 @@ export default function HomePage() {
                     sx={{
                       p: 1.2,
                       borderRadius: 1.5,
-                      bgcolor: "#141313",
+                      bgcolor: isDark ? "#141313" : "#F8FAFC",
+                      border: "1px solid",
+                      borderColor: "divider",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
@@ -455,15 +473,15 @@ export default function HomePage() {
                   >
                     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                       {item.isPassed ? (
-                        <CheckCircleIcon sx={{ fontSize: 16, color: "#bef264" }} />
+                        <CheckCircleIcon sx={{ fontSize: 16, color: isDark ? "#bef264" : "#059669" }} />
                       ) : (
                         <Box sx={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid #f87171" }} />
                       )}
-                      <Typography variant="body2" sx={{ color: "#f8fafc", fontSize: "0.78rem", fontWeight: 700 }}>
+                      <Typography variant="body2" sx={{ color: "text.primary", fontSize: "0.78rem", fontWeight: 700 }}>
                         {item.title}
                       </Typography>
                     </Stack>
-                    <Typography className="font-mono" sx={{ fontSize: "0.65rem", color: item.isPassed ? "#bef264" : "#f87171", fontWeight: 700 }}>
+                    <Typography className="font-mono" sx={{ fontSize: "0.65rem", color: item.isPassed ? (isDark ? "#bef264" : "#059669") : "#f87171", fontWeight: 700 }}>
                       {item.isPassed ? "PASSED" : "PENDING"}
                     </Typography>
                   </Box>
@@ -472,21 +490,21 @@ export default function HomePage() {
             </Box>
 
             {/* Next Accommodation / Stay Preview */}
-            <Box sx={{ pt: 2, borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
-              <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.65rem", fontWeight: 700, mb: 1, textTransform: "uppercase" }}>
+            <Box sx={{ pt: 2, borderTop: "1px solid", borderColor: "divider" }}>
+              <Typography className="font-mono" sx={{ color: "text.secondary", fontSize: "0.65rem", fontWeight: 700, mb: 1, textTransform: "uppercase" }}>
                 Next Lodging Stay
               </Typography>
               {accommodations.length > 0 ? (
-                <Box className="neo-inset" sx={{ p: 1.2, borderRadius: 1.5, bgcolor: "#141313" }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.82rem" }}>
+                <Box className="neo-inset" sx={{ p: 1.2, borderRadius: 1.5, bgcolor: isDark ? "#141313" : "#F8FAFC", border: "1px solid", borderColor: "divider" }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "text.primary", fontSize: "0.82rem" }}>
                     {accommodations[0].name}
                   </Typography>
-                  <Typography className="font-mono" sx={{ color: "#818cf8", fontSize: "0.7rem", mt: 0.2 }}>
+                  <Typography className="font-mono" sx={{ color: isDark ? "#818cf8" : "#4f46e5", fontSize: "0.7rem", mt: 0.2 }}>
                     {formatDate(accommodations[0].checkInDate)} – {formatDate(accommodations[0].checkOutDate)}
                   </Typography>
                 </Box>
               ) : (
-                <Typography variant="caption" sx={{ color: "#71717a", fontStyle: "italic" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary", fontStyle: "italic" }}>
                   No lodging booked for this mission.
                 </Typography>
               )}
@@ -495,22 +513,23 @@ export default function HomePage() {
         </Grid>
       </Grid>
 
-      {/* 4. Recent Expeditions Section (Renamed from Archives) */}
+      {/* 4. Recent Expeditions Section */}
       <Paper
         className="neo-convex"
         sx={{
           p: 3,
           borderRadius: 3,
-          bgcolor: "#1a1a1e",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 2.5 }}>
           <Box>
-            <Typography variant="h6" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
+            <Typography variant="h6" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary" }}>
               Recent Expeditions & Journeys
             </Typography>
-            <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Your motorcycle adventure ledger ({trips.length} total logged)
             </Typography>
           </Box>
@@ -519,12 +538,12 @@ export default function HomePage() {
             onClick={() => navigate("/trips")}
             className="font-mono"
             sx={{
-              color: "#818cf8",
+              color: isDark ? "#818cf8" : "#4f46e5",
               fontSize: "0.72rem",
               fontWeight: 800,
               letterSpacing: "0.06em",
               textTransform: "uppercase",
-              "&:hover": { color: "#bef264" },
+              "&:hover": { color: isDark ? "#bef264" : "#059669" },
             }}
           >
             View All Expeditions [{trips.length}] →
@@ -533,7 +552,7 @@ export default function HomePage() {
 
         {trips.length === 0 ? (
           <Box sx={{ py: 3, textAlign: "center" }}>
-            <Typography variant="body2" sx={{ color: "#94a3b8" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               No past expedition records in your ledger.
             </Typography>
           </Box>
@@ -547,12 +566,13 @@ export default function HomePage() {
                   sx={{
                     p: 2,
                     borderRadius: 2,
-                    bgcolor: "#141313",
-                    border: "1px solid rgba(255, 255, 255, 0.06)",
+                    bgcolor: isDark ? "#141313" : "#F8FAFC",
+                    border: "1px solid",
+                    borderColor: "divider",
                     cursor: "pointer",
                     transition: "all 0.2s ease",
                     "&:hover": {
-                      borderColor: "#6366f1",
+                      borderColor: isDark ? "#6366f1" : "#4f46e5",
                       transform: "translateY(-2px)",
                     },
                   }}
@@ -565,16 +585,16 @@ export default function HomePage() {
                         borderRadius: 1.5,
                         bgcolor:
                           trip.status === "Active"
-                            ? "rgba(190, 242, 100, 0.12)"
+                            ? (isDark ? "rgba(190, 242, 100, 0.12)" : "rgba(5, 150, 105, 0.12)")
                             : trip.status === "Completed"
-                            ? "rgba(56, 189, 248, 0.12)"
-                            : "rgba(99, 102, 241, 0.12)",
+                            ? (isDark ? "rgba(56, 189, 248, 0.12)" : "rgba(2, 132, 199, 0.12)")
+                            : (isDark ? "rgba(99, 102, 241, 0.12)" : "rgba(79, 70, 229, 0.1)"),
                         color:
                           trip.status === "Active"
-                            ? "#bef264"
+                            ? (isDark ? "#bef264" : "#059669")
                             : trip.status === "Completed"
-                            ? "#38bdf8"
-                            : "#818cf8",
+                            ? (isDark ? "#38bdf8" : "#0284c7")
+                            : (isDark ? "#818cf8" : "#4f46e5"),
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -593,28 +613,28 @@ export default function HomePage() {
                         fontFamily: '"JetBrains Mono", monospace',
                         bgcolor:
                           trip.status === "Active"
-                            ? "rgba(190, 242, 100, 0.15)"
+                            ? (isDark ? "rgba(190, 242, 100, 0.15)" : "rgba(5, 150, 105, 0.12)")
                             : trip.status === "Completed"
-                            ? "rgba(56, 189, 248, 0.15)"
-                            : "rgba(99, 102, 241, 0.15)",
+                            ? (isDark ? "rgba(56, 189, 248, 0.15)" : "rgba(2, 132, 199, 0.12)")
+                            : (isDark ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.1)"),
                         color:
                           trip.status === "Active"
-                            ? "#bef264"
+                            ? (isDark ? "#bef264" : "#059669")
                             : trip.status === "Completed"
-                            ? "#38bdf8"
-                            : "#818cf8",
+                            ? (isDark ? "#38bdf8" : "#0284c7")
+                            : (isDark ? "#818cf8" : "#4f46e5"),
                       }}
                     />
                   </Stack>
 
                   <Typography
                     variant="subtitle2"
-                    sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.88rem", lineHeight: 1.2, mb: 0.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                    sx={{ fontWeight: 800, color: "text.primary", fontSize: "0.88rem", lineHeight: 1.2, mb: 0.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
                   >
                     {trip.name}
                   </Typography>
 
-                  <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.68rem" }}>
+                  <Typography className="font-mono" sx={{ color: "text.secondary", fontSize: "0.68rem" }}>
                     {formatDate(trip.startDate)}
                   </Typography>
                 </Box>

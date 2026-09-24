@@ -79,16 +79,17 @@ export default function RouteLegConnector({
         </Box>
 
         <Chip
-          icon={<NavigationIcon sx={{ fontSize: "0.75rem !important", color: "#818cf8 !important", transform: "rotate(45deg)" }} />}
+          icon={<NavigationIcon sx={{ fontSize: "0.75rem !important", color: "primary.main !important", transform: "rotate(45deg)" }} />}
           label={`${distanceText} • ${durationText}`}
           size="small"
           sx={{
             height: 22,
             fontSize: "0.7rem",
             fontWeight: 700,
-            color: "#e4e4e7",
-            bgcolor: "#141313",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
+            color: "text.secondary",
+            bgcolor: (theme) => theme.palette.mode === "dark" ? "#141313" : "#F1F5F9",
+            border: "1px solid",
+            borderColor: "divider",
             fontFamily: '"JetBrains Mono", monospace',
           }}
         />

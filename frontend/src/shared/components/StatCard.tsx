@@ -35,11 +35,15 @@ export default function StatCard({
       sx={{
         position: "relative",
         overflow: "hidden",
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         "&:hover": {
           borderColor: `${color}.main`,
-          boxShadow: `0 8px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px ${getAccentGlow()}`,
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? `0 8px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px ${getAccentGlow()}`
+              : `0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 0 16px ${getAccentGlow()}`,
         },
       }}
     >
@@ -50,7 +54,7 @@ export default function StatCard({
               variant="caption"
               sx={{
                 fontWeight: 700,
-                color: "#94a3b8",
+                color: "text.secondary",
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
                 fontFamily: '"Outfit", sans-serif',
@@ -63,7 +67,8 @@ export default function StatCard({
                 sx={{
                   p: 0.8,
                   borderRadius: 1.5,
-                  bgcolor: "rgba(255, 255, 255, 0.04)",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.04)",
                   color: `${color}.main`,
                   display: "flex",
                   alignItems: "center",
@@ -80,7 +85,7 @@ export default function StatCard({
             className="font-mono"
             sx={{
               fontWeight: 800,
-              color: "#f8fafc",
+              color: "text.primary",
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
             }}
@@ -89,7 +94,7 @@ export default function StatCard({
           </Typography>
 
           {subtitle && (
-            <Typography variant="caption" sx={{ color: "#64748b", fontWeight: 500 }}>
+            <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500 }}>
               {subtitle}
             </Typography>
           )}

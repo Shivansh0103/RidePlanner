@@ -29,6 +29,7 @@ import {
   Tab,
   Tabs,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -92,6 +93,9 @@ export default function TripDetailsPage() {
   const { route } = useRoute(validStops);
   const routeDistanceKm = (route?.summary?.distanceMeters ?? 0) / 1000;
 
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   // Determine active tab from URL query param (?tab=...)
   const currentTabParam = searchParams.get("tab");
   const activeTab: TabKey = TAB_KEYS.includes(currentTabParam as TabKey)
@@ -124,36 +128,36 @@ export default function TripDetailsPage() {
     switch (status) {
       case "Active":
         return {
-          bg: "rgba(20, 19, 19, 0.9)",
-          color: "#bef264",
-          border: "rgba(190, 242, 100, 0.4)",
-          dot: "#bef264",
+          bg: isDark ? "rgba(20, 19, 19, 0.9)" : "rgba(5, 150, 105, 0.08)",
+          color: isDark ? "#bef264" : "#059669",
+          border: isDark ? "rgba(190, 242, 100, 0.4)" : "rgba(5, 150, 105, 0.3)",
+          dot: isDark ? "#bef264" : "#059669",
           label: "ACTIVE / IN-FLIGHT",
-          glow: "glow-acid",
+          glow: isDark ? "glow-acid" : "",
         };
       case "Planning":
         return {
-          bg: "rgba(20, 19, 19, 0.9)",
-          color: "#818cf8",
-          border: "rgba(99, 102, 241, 0.4)",
-          dot: "#6366f1",
+          bg: isDark ? "rgba(20, 19, 19, 0.9)" : "rgba(79, 70, 229, 0.08)",
+          color: isDark ? "#818cf8" : "#4f46e5",
+          border: isDark ? "rgba(99, 102, 241, 0.4)" : "rgba(79, 70, 229, 0.3)",
+          dot: isDark ? "#6366f1" : "#4f46e5",
           label: "PLANNING / PRE-FLIGHT",
-          glow: "glow-indigo",
+          glow: isDark ? "glow-indigo" : "",
         };
       case "Completed":
         return {
-          bg: "rgba(20, 19, 19, 0.9)",
-          color: "#94a3b8",
-          border: "rgba(148, 163, 184, 0.3)",
-          dot: "#64748b",
+          bg: isDark ? "rgba(20, 19, 19, 0.9)" : "rgba(100, 116, 139, 0.08)",
+          color: isDark ? "#94a3b8" : "#64748b",
+          border: isDark ? "rgba(148, 163, 184, 0.3)" : "rgba(100, 116, 139, 0.3)",
+          dot: isDark ? "#64748b" : "#64748b",
           label: "COMPLETED / ARCHIVED",
           glow: "",
         };
       default:
         return {
-          bg: "rgba(20, 19, 19, 0.9)",
-          color: "#94a3b8",
-          border: "rgba(148, 163, 184, 0.3)",
+          bg: isDark ? "rgba(20, 19, 19, 0.9)" : "rgba(100, 116, 139, 0.08)",
+          color: isDark ? "#94a3b8" : "#64748b",
+          border: isDark ? "rgba(148, 163, 184, 0.3)" : "rgba(100, 116, 139, 0.3)",
           dot: "#64748b",
           label: status.toUpperCase(),
           glow: "",
@@ -199,12 +203,12 @@ export default function TripDetailsPage() {
             onClick={() => navigate("/trips")}
             startIcon={<ArrowBackIcon sx={{ fontSize: 14 }} />}
             sx={{
-              color: "#94a3b8",
+              color: "text.secondary",
               fontFamily: '"JetBrains Mono", monospace',
               fontSize: "0.7rem",
               fontWeight: 700,
               textTransform: "uppercase",
-              "&:hover": { color: "#818cf8" },
+              "&:hover": { color: "primary.main" },
             }}
           >
             All Expeditions
@@ -217,8 +221,9 @@ export default function TripDetailsPage() {
           sx={{
             p: { xs: 2, sm: 2.8 },
             borderRadius: 2.5,
-            bgcolor: "#1a1a1e",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
+            bgcolor: "background.paper",
+            border: "1px solid",
+            borderColor: "divider",
           }}
         >
           <Stack
@@ -258,9 +263,9 @@ export default function TripDetailsPage() {
                 <Typography
                   className="font-mono"
                   variant="caption"
-                  sx={{ display: "flex", alignItems: "center", gap: 0.5, fontWeight: 700, color: "#94a3b8", fontSize: "0.72rem" }}
+                  sx={{ display: "flex", alignItems: "center", gap: 0.5, fontWeight: 700, color: "text.secondary", fontSize: "0.72rem" }}
                 >
-                  <CalendarMonthIcon sx={{ fontSize: 13, color: "#818cf8" }} />
+                  <CalendarMonthIcon sx={{ fontSize: 13, color: "primary.main" }} />
                   {formatDate(trip.startDate)} – {formatDate(trip.endDate)} ({diffDays} {diffDays === 1 ? "Day" : "Days"})
                 </Typography>
               </Stack>
@@ -271,7 +276,7 @@ export default function TripDetailsPage() {
                   fontFamily: '"Outfit", sans-serif',
                   fontWeight: 800,
                   fontStyle: "italic",
-                  color: "#f8fafc",
+                  color: "text.primary",
                   letterSpacing: "-0.02em",
                   lineHeight: 1.15,
                   fontSize: { xs: "1.6rem", sm: "2rem" },
@@ -287,7 +292,7 @@ export default function TripDetailsPage() {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "#94a3b8",
+                    color: "text.secondary",
                     maxWidth: 700,
                     lineHeight: 1.4,
                     fontSize: "0.82rem",
@@ -310,13 +315,13 @@ export default function TripDetailsPage() {
                 onClick={() => navigate(`/trips/${trip.id}/edit`)}
                 startIcon={<EditIcon sx={{ fontSize: 14 }} />}
                 sx={{
-                  borderColor: "rgba(255, 255, 255, 0.15)",
-                  color: "#e2e8f0",
+                  borderColor: "divider",
+                  color: "text.secondary",
                   fontFamily: '"JetBrains Mono", monospace',
                   fontWeight: 700,
                   fontSize: "0.72rem",
                   py: 0.8,
-                  "&:hover": { borderColor: "#818cf8", color: "#818cf8" },
+                  "&:hover": { borderColor: "primary.main", color: "primary.main" },
                 }}
               >
                 Edit
@@ -355,10 +360,10 @@ export default function TripDetailsPage() {
                   startIcon={<CheckCircleIcon sx={{ fontSize: 16 }} />}
                   disabled={completeTripMutation.isPending}
                   onClick={() => completeTripMutation.mutate({ id: trip.id })}
-                  className="glow-acid"
+                  className={isDark ? "glow-acid" : ""}
                   sx={{
-                    bgcolor: "#bef264",
-                    color: "#141313",
+                    bgcolor: isDark ? "#bef264" : "#059669",
+                    color: isDark ? "#141313" : "#ffffff",
                     fontFamily: '"JetBrains Mono", monospace',
                     fontWeight: 800,
                     fontSize: "0.72rem",
@@ -367,7 +372,7 @@ export default function TripDetailsPage() {
                     px: 2,
                     py: 0.8,
                     whiteSpace: "nowrap",
-                    "&:hover": { bgcolor: "#a3e635" },
+                    "&:hover": { bgcolor: isDark ? "#a3e635" : "#047857" },
                   }}
                 >
                   Complete Expedition
@@ -383,8 +388,9 @@ export default function TripDetailsPage() {
           sx={{
             display: { xs: "block", md: "none" },
             borderRadius: 2,
-            bgcolor: "#18181b",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
+            bgcolor: "background.paper",
+            border: "1px solid",
+            borderColor: "divider",
           }}
         >
           <Tabs
@@ -398,9 +404,8 @@ export default function TripDetailsPage() {
               px: 0.5,
               minHeight: 44,
               "& .MuiTabs-indicator": {
-                bgcolor: "#bef264",
+                bgcolor: "primary.main",
                 height: 2.5,
-                boxShadow: "0 0 10px rgba(190, 242, 100, 0.6)",
               },
               "& .MuiTab-root": {
                 fontFamily: '"JetBrains Mono", monospace',
@@ -411,10 +416,10 @@ export default function TripDetailsPage() {
                 minHeight: 44,
                 py: 0.5,
                 px: 1.5,
-                color: "#a1a1aa",
-                "&:hover": { color: "#ffffff" },
+                color: "text.secondary",
+                "&:hover": { color: "text.primary" },
                 "&.Mui-selected": {
-                  color: "#bef264",
+                  color: "primary.main",
                 },
               },
             }}
@@ -436,8 +441,8 @@ export default function TripDetailsPage() {
                         borderRadius: 1,
                         fontSize: "0.6rem",
                         fontWeight: 800,
-                        bgcolor: activeTab === "itinerary" ? "rgba(190, 242, 100, 0.2)" : "#141313",
-                        color: activeTab === "itinerary" ? "#bef264" : "#94a3b8",
+                        bgcolor: activeTab === "itinerary" ? (isDark ? "rgba(99, 102, 241, 0.2)" : "rgba(79, 70, 229, 0.12)") : (isDark ? "#141313" : "#F1F5F9"),
+                        color: activeTab === "itinerary" ? "primary.main" : "text.secondary",
                       }}
                     >
                       {stops.length}
@@ -471,7 +476,9 @@ export default function TripDetailsPage() {
                     position: "relative",
                     borderRadius: 2.5,
                     overflow: "hidden",
-                    bgcolor: "#1a1a1e",
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
                     height: 480,
                     display: "flex",
                     flexDirection: "column",
@@ -485,13 +492,14 @@ export default function TripDetailsPage() {
                       px: 2,
                       alignItems: "center",
                       justifyContent: "space-between",
-                      borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
-                      bgcolor: "#141313",
+                      borderBottom: "1px solid",
+                      borderColor: "divider",
+                      bgcolor: isDark ? "#141313" : "#F8FAFC",
                     }}
                   >
                     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                      <TwoWheelerIcon sx={{ color: "#bef264", fontSize: 18 }} />
-                      <Typography variant="subtitle2" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc", fontSize: "0.85rem" }}>
+                      <TwoWheelerIcon sx={{ color: isDark ? "#bef264" : "#059669", fontSize: 18 }} />
+                      <Typography variant="subtitle2" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary", fontSize: "0.85rem" }}>
                         Tactical Navigation Display
                       </Typography>
                     </Stack>
@@ -499,7 +507,7 @@ export default function TripDetailsPage() {
                       size="small"
                       onClick={() => setSearchParams({ tab: "itinerary" })}
                       sx={{
-                        color: "#818cf8",
+                        color: "primary.main",
                         fontFamily: '"JetBrains Mono", monospace',
                         fontSize: "0.68rem",
                         fontWeight: 700,
@@ -527,22 +535,26 @@ export default function TripDetailsPage() {
                         display: "flex",
                         gap: 2,
                         alignItems: "center",
+                        bgcolor: isDark ? "rgba(20, 19, 19, 0.85)" : "rgba(255, 255, 255, 0.9)",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        boxShadow: isDark ? "0 8px 32px rgba(0, 0, 0, 0.5)" : "0 8px 24px rgba(0, 0, 0, 0.08)",
                       }}
                     >
                       <Box>
-                        <Typography className="font-mono" sx={{ fontSize: "0.6rem", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                        <Typography className="font-mono" sx={{ fontSize: "0.6rem", color: "text.secondary", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                           Distance
                         </Typography>
-                        <Typography className="font-mono" sx={{ fontSize: "0.9rem", color: "#f8fafc", fontWeight: 800 }}>
+                        <Typography className="font-mono" sx={{ fontSize: "0.9rem", color: "text.primary", fontWeight: 800 }}>
                           {routeDistanceKm > 0 ? `${routeDistanceKm.toFixed(1)} km` : `${stops.length} Stops`}
                         </Typography>
                       </Box>
-                      <Box sx={{ width: "1px", height: 20, bgcolor: "rgba(255, 255, 255, 0.15)" }} />
+                      <Box sx={{ width: "1px", height: 20, bgcolor: "divider" }} />
                       <Box>
-                        <Typography className="font-mono" sx={{ fontSize: "0.6rem", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                        <Typography className="font-mono" sx={{ fontSize: "0.6rem", color: "text.secondary", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                           Duration
                         </Typography>
-                        <Typography className="font-mono" sx={{ fontSize: "0.9rem", color: "#bef264", fontWeight: 800 }}>
+                        <Typography className="font-mono" sx={{ fontSize: "0.9rem", color: isDark ? "#bef264" : "#059669", fontWeight: 800 }}>
                           {diffDays} Days
                         </Typography>
                       </Box>
@@ -558,7 +570,9 @@ export default function TripDetailsPage() {
                   sx={{
                     p: 2.2,
                     borderRadius: 2.5,
-                    bgcolor: "#1a1a1e",
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
                     height: 480,
                     boxSizing: "border-box",
                     display: "flex",
@@ -567,8 +581,8 @@ export default function TripDetailsPage() {
                 >
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1.8 }}>
                     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                      <AltRouteIcon sx={{ color: "#818cf8", fontSize: 18 }} />
-                      <Typography variant="subtitle1" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc", fontSize: "0.95rem" }}>
+                      <AltRouteIcon sx={{ color: "primary.main", fontSize: 18 }} />
+                      <Typography variant="subtitle1" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary", fontSize: "0.95rem" }}>
                         Route Timeline
                       </Typography>
                       <Box
@@ -579,7 +593,10 @@ export default function TripDetailsPage() {
                           borderRadius: 1,
                           fontSize: "0.65rem",
                           fontWeight: 800,
-                          color: "#818cf8",
+                          bgcolor: isDark ? "#141313" : "#F1F5F9",
+                          color: "primary.main",
+                          border: "1px solid",
+                          borderColor: "divider",
                         }}
                       >
                         {stops.length} Stops
@@ -592,8 +609,8 @@ export default function TripDetailsPage() {
                       onClick={() => setSearchParams({ tab: "itinerary" })}
                       startIcon={<EditIcon sx={{ fontSize: 13 }} />}
                       sx={{
-                        color: "#818cf8",
-                        borderColor: "rgba(99, 102, 241, 0.35)",
+                        color: "primary.main",
+                        borderColor: "primary.main",
                         fontFamily: '"JetBrains Mono", monospace',
                         fontSize: "0.68rem",
                         fontWeight: 700,
@@ -601,7 +618,7 @@ export default function TripDetailsPage() {
                         px: 1.2,
                         py: 0.3,
                         borderRadius: 1.5,
-                        "&:hover": { borderColor: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.08)" },
+                        "&:hover": { borderColor: "primary.dark", bgcolor: isDark ? "rgba(99, 102, 241, 0.08)" : "rgba(79, 70, 229, 0.08)" },
                       }}
                     >
                       Edit Itinerary →
@@ -610,7 +627,7 @@ export default function TripDetailsPage() {
 
                   {stops.length === 0 ? (
                     <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", p: 3, textAlign: "center" }}>
-                      <Typography variant="body2" sx={{ color: "#94a3b8" }}>
+                      <Typography variant="body2" sx={{ color: "text.secondary" }}>
                         No waypoints mapped yet. Add starting point and stops in the Itinerary tab.
                       </Typography>
                     </Box>
@@ -624,7 +641,7 @@ export default function TripDetailsPage() {
                           width: "5px",
                         },
                         "&::-webkit-scrollbar-thumb": {
-                          backgroundColor: "rgba(255, 255, 255, 0.12)",
+                          backgroundColor: isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.12)",
                           borderRadius: "4px",
                         },
                       }}
@@ -644,13 +661,14 @@ export default function TripDetailsPage() {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 1.5,
-                                bgcolor: isSelected ? "rgba(99, 102, 241, 0.18)" : "#141313",
-                                border: isSelected ? "1px solid #6366f1" : "1px solid rgba(255, 255, 255, 0.04)",
+                                bgcolor: isSelected ? (isDark ? "rgba(99, 102, 241, 0.18)" : "rgba(79, 70, 229, 0.12)") : (isDark ? "#141313" : "#F8FAFC"),
+                                border: "1px solid",
+                                borderColor: isSelected ? "primary.main" : "divider",
                                 cursor: "pointer",
                                 transition: "all 0.2s ease",
                                 "&:hover": {
-                                  borderColor: "#818cf8",
-                                  bgcolor: isSelected ? "rgba(99, 102, 241, 0.25)" : "#1c1b1f",
+                                  borderColor: "primary.main",
+                                  bgcolor: isSelected ? (isDark ? "rgba(99, 102, 241, 0.25)" : "rgba(79, 70, 229, 0.18)") : (isDark ? "#1c1b1f" : "#EEF2FF"),
                                 },
                               }}
                             >
@@ -659,14 +677,15 @@ export default function TripDetailsPage() {
                                   width: 26,
                                   height: 26,
                                   borderRadius: "50%",
-                                  bgcolor: isSelected ? "#6366f1" : "#27272a",
-                                  border: isSelected ? "1px solid #818cf8" : "1px solid rgba(255, 255, 255, 0.15)",
+                                  bgcolor: isSelected ? "primary.main" : (isDark ? "#27272a" : "#E2E8F0"),
+                                  border: "1px solid",
+                                  borderColor: isSelected ? "primary.main" : "divider",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
                                   fontSize: "0.72rem",
                                   fontWeight: 800,
-                                  color: "#ffffff",
+                                  color: isSelected ? "#ffffff" : (isDark ? "#ffffff" : "#0F172A"),
                                   fontFamily: '"JetBrains Mono", monospace',
                                   flexShrink: 0,
                                   boxShadow: isSelected ? "0 0 10px rgba(99, 102, 241, 0.5)" : "none",
@@ -675,17 +694,17 @@ export default function TripDetailsPage() {
                                 {idx + 1}
                               </Box>
                               <Box sx={{ flex: 1, minWidth: 0 }}>
-                                <Typography sx={{ fontWeight: 700, color: isSelected ? "#818cf8" : "#f8fafc", fontSize: "0.82rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                <Typography sx={{ fontWeight: 700, color: isSelected ? "primary.main" : "text.primary", fontSize: "0.82rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                   {stop.name}
                                   {idx === 0 && (
-                                    <Box component="span" sx={{ ml: 1, fontSize: "0.62rem", bgcolor: "#27272a", px: 1, py: 0.2, borderRadius: 1, color: "#a1a1aa" }}>
+                                    <Box component="span" sx={{ ml: 1, fontSize: "0.62rem", bgcolor: isDark ? "#27272a" : "#E2E8F0", px: 1, py: 0.2, borderRadius: 1, color: "text.secondary" }}>
                                       Start
                                     </Box>
                                   )}
                                 </Typography>
                               </Box>
                               {stop.notes && (
-                                <Typography className="font-mono" sx={{ color: "#94a3b8", fontSize: "0.7rem", whiteSpace: "nowrap" }}>
+                                <Typography className="font-mono" sx={{ color: "text.secondary", fontSize: "0.7rem", whiteSpace: "nowrap" }}>
                                   {stop.notes}
                                 </Typography>
                               )}
@@ -708,7 +727,9 @@ export default function TripDetailsPage() {
                   sx={{
                     p: 2.2,
                     borderRadius: 2.5,
-                    bgcolor: "#1a1a1e",
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -718,7 +739,7 @@ export default function TripDetailsPage() {
                   <Box>
                     <Typography
                       className="font-mono"
-                      sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", mb: 1.5 }}
+                      sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", mb: 1.5 }}
                     >
                       Expedition Readiness
                     </Typography>
@@ -730,7 +751,7 @@ export default function TripDetailsPage() {
                           value={100}
                           size={54}
                           thickness={5}
-                          sx={{ color: "#27272a" }}
+                          sx={{ color: isDark ? "#27272a" : "#E2E8F0" }}
                         />
                         <CircularProgress
                           variant="determinate"
@@ -738,21 +759,21 @@ export default function TripDetailsPage() {
                           size={54}
                           thickness={5}
                           sx={{
-                            color: overallReadinessScore >= 80 ? "#bef264" : "#fbbf24",
+                            color: overallReadinessScore >= 80 ? (isDark ? "#bef264" : "#059669") : (isDark ? "#fbbf24" : "#d97706"),
                             position: "absolute",
                             left: 0,
-                            filter: overallReadinessScore >= 80 ? "drop-shadow(0 0 6px rgba(190, 242, 100, 0.5))" : "none",
+                            filter: overallReadinessScore >= 80 ? (isDark ? "drop-shadow(0 0 6px rgba(190, 242, 100, 0.5))" : "none") : "none",
                           }}
                         />
                         <Box sx={{ position: "absolute", textAlign: "center" }}>
-                          <Typography className="font-mono" sx={{ fontSize: "0.78rem", fontWeight: 800, color: "#f8fafc" }}>
+                          <Typography className="font-mono" sx={{ fontSize: "0.78rem", fontWeight: 800, color: "text.primary" }}>
                             {overallReadinessScore}%
                           </Typography>
                         </Box>
                       </Box>
 
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography variant="body2" sx={{ color: "#f8fafc", fontWeight: 600, fontSize: "0.78rem", lineHeight: 1.3 }}>
+                        <Typography variant="body2" sx={{ color: "text.primary", fontWeight: 600, fontSize: "0.78rem", lineHeight: 1.3 }}>
                           {overallReadinessScore === 100
                             ? "All mission checklists nominal."
                             : "Pending pre-ride items."}
@@ -760,7 +781,7 @@ export default function TripDetailsPage() {
                         <Button
                           size="small"
                           onClick={() => setSearchParams({ tab: "readiness" })}
-                          sx={{ color: "#818cf8", fontSize: "0.68rem", p: 0, mt: 0.3, textTransform: "none", fontWeight: 700 }}
+                          sx={{ color: "primary.main", fontSize: "0.68rem", p: 0, mt: 0.3, textTransform: "none", fontWeight: 700 }}
                         >
                           Inspect Breakdown →
                         </Button>
@@ -773,15 +794,16 @@ export default function TripDetailsPage() {
                       sx={{
                         p: 1,
                         borderRadius: 1.5,
-                        bgcolor: "rgba(251, 191, 36, 0.08)",
-                        border: "1px solid rgba(251, 191, 36, 0.2)",
+                        bgcolor: isDark ? "rgba(251, 191, 36, 0.08)" : "rgba(245, 158, 11, 0.08)",
+                        border: "1px solid",
+                        borderColor: isDark ? "rgba(251, 191, 36, 0.2)" : "rgba(245, 158, 11, 0.3)",
                         display: "flex",
                         alignItems: "center",
                         gap: 0.8,
                       }}
                     >
-                      <WarningAmberIcon sx={{ color: "#fbbf24", fontSize: 14 }} />
-                      <Typography sx={{ color: "#fbbf24", fontSize: "0.68rem", fontWeight: 600 }}>
+                      <WarningAmberIcon sx={{ color: isDark ? "#fbbf24" : "#b45309", fontSize: 14 }} />
+                      <Typography sx={{ color: isDark ? "#fbbf24" : "#b45309", fontSize: "0.68rem", fontWeight: 600 }}>
                         Tasks require attention.
                       </Typography>
                     </Box>
@@ -796,7 +818,9 @@ export default function TripDetailsPage() {
                   sx={{
                     p: 2.2,
                     borderRadius: 2.5,
-                    bgcolor: "#1a1a1e",
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -807,23 +831,23 @@ export default function TripDetailsPage() {
                     <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1 }}>
                       <Typography
                         className="font-mono"
-                        sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                        sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
                       >
                         Budget Tracking
                       </Typography>
-                      <Typography className="font-mono" sx={{ color: "#818cf8", fontSize: "0.68rem", fontWeight: 800 }}>
+                      <Typography className="font-mono" sx={{ color: "primary.main", fontSize: "0.68rem", fontWeight: 800 }}>
                         {budgetPercent}% Used
                       </Typography>
                     </Stack>
 
                     <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "baseline", mb: 1 }}>
-                      <Typography className="font-mono" sx={{ fontSize: "1rem", fontWeight: 800, color: "#f8fafc" }}>
+                      <Typography className="font-mono" sx={{ fontSize: "1rem", fontWeight: 800, color: "text.primary" }}>
                         {formatCurrency(spentAmount)}
-                        <Box component="span" sx={{ fontSize: "0.6rem", color: "#94a3b8", ml: 0.4 }}>
+                        <Box component="span" sx={{ fontSize: "0.6rem", color: "text.secondary", ml: 0.4 }}>
                           SPENT
                         </Box>
                       </Typography>
-                      <Typography className="font-mono" sx={{ fontSize: "0.78rem", color: "#94a3b8", fontWeight: 700 }}>
+                      <Typography className="font-mono" sx={{ fontSize: "0.78rem", color: "text.secondary", fontWeight: 700 }}>
                         {targetBudget > 0 ? formatCurrency(targetBudget) : "No Target"}
                       </Typography>
                     </Stack>
@@ -835,7 +859,9 @@ export default function TripDetailsPage() {
                         height: 5,
                         borderRadius: 9999,
                         overflow: "hidden",
-                        bgcolor: "#141313",
+                        bgcolor: isDark ? "#141313" : "#F1F5F9",
+                        border: "1px solid",
+                        borderColor: "divider",
                         mb: 1.8,
                       }}
                     >
@@ -844,7 +870,7 @@ export default function TripDetailsPage() {
                         sx={{
                           height: "100%",
                           width: `${Math.min(100, budgetPercent)}%`,
-                          bgcolor: budgetPercent > 100 ? "#f87171" : "#6366f1",
+                          bgcolor: budgetPercent > 100 ? "error.main" : "primary.main",
                           borderRadius: 9999,
                         }}
                       />
@@ -858,14 +884,15 @@ export default function TripDetailsPage() {
                       onClick={() => setSearchParams({ tab: "budget" })}
                       startIcon={<LocalGasStationIcon sx={{ fontSize: 13 }} />}
                       sx={{
-                        bgcolor: "#201f1f",
-                        border: "1px solid rgba(255, 255, 255, 0.08)",
-                        color: "#bef264",
+                        bgcolor: isDark ? "#201f1f" : "#F1F5F9",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        color: isDark ? "#bef264" : "#059669",
                         fontSize: "0.65rem",
                         fontFamily: '"JetBrains Mono", monospace',
                         fontWeight: 700,
                         py: 0.5,
-                        "&:hover": { bgcolor: "#27272a" },
+                        "&:hover": { bgcolor: isDark ? "#27272a" : "#E2E8F0" },
                       }}
                     >
                       Fuel
@@ -876,14 +903,15 @@ export default function TripDetailsPage() {
                       onClick={() => setSearchParams({ tab: "budget" })}
                       startIcon={<ReceiptLongIcon sx={{ fontSize: 13 }} />}
                       sx={{
-                        bgcolor: "#201f1f",
-                        border: "1px solid rgba(255, 255, 255, 0.08)",
-                        color: "#818cf8",
+                        bgcolor: isDark ? "#201f1f" : "#F1F5F9",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        color: "primary.main",
                         fontSize: "0.65rem",
                         fontFamily: '"JetBrains Mono", monospace',
                         fontWeight: 700,
                         py: 0.5,
-                        "&:hover": { bgcolor: "#27272a" },
+                        "&:hover": { bgcolor: isDark ? "#27272a" : "#E2E8F0" },
                       }}
                     >
                       Expense
@@ -899,7 +927,9 @@ export default function TripDetailsPage() {
                   sx={{
                     p: 2.2,
                     borderRadius: 2.5,
-                    bgcolor: "#1a1a1e",
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -910,7 +940,7 @@ export default function TripDetailsPage() {
                     <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1 }}>
                       <Typography
                         className="font-mono"
-                        sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                        sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
                       >
                         Next Stay
                       </Typography>
@@ -918,23 +948,23 @@ export default function TripDetailsPage() {
                         <Chip
                           label={nextStay.type}
                           size="small"
-                          sx={{ height: 18, fontSize: "0.6rem", bgcolor: "#27272a", color: "#a1a1aa", borderRadius: 1 }}
+                          sx={{ height: 18, fontSize: "0.6rem", bgcolor: isDark ? "#27272a" : "#F1F5F9", color: "text.secondary", border: "1px solid", borderColor: "divider", borderRadius: 1 }}
                         />
                       )}
                     </Stack>
 
                     {nextStay ? (
                       <Box sx={{ mt: 0.5 }}>
-                        <Typography sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.85rem", mb: 0.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        <Typography sx={{ fontWeight: 800, color: "text.primary", fontSize: "0.85rem", mb: 0.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                           {nextStay.name}
                         </Typography>
-                        <Typography className="font-mono" sx={{ color: "#818cf8", fontSize: "0.7rem" }}>
+                        <Typography className="font-mono" sx={{ color: "primary.main", fontSize: "0.7rem" }}>
                           {formatDate(nextStay.checkInDate)} – {formatDate(nextStay.checkOutDate)}
                         </Typography>
                       </Box>
                     ) : (
                       <Box sx={{ textAlign: "center", py: 0.8 }}>
-                        <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.75rem", mb: 0.5 }}>
+                        <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.75rem", mb: 0.5 }}>
                           No lodging booked yet.
                         </Typography>
                       </Box>
@@ -946,14 +976,15 @@ export default function TripDetailsPage() {
                     size="small"
                     onClick={() => setSearchParams({ tab: "accommodation" })}
                     sx={{
-                      bgcolor: "#201f1f",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      color: "#bef264",
+                      bgcolor: isDark ? "#201f1f" : "#F1F5F9",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      color: isDark ? "#bef264" : "#059669",
                       fontSize: "0.65rem",
                       fontFamily: '"JetBrains Mono", monospace',
                       fontWeight: 700,
                       py: 0.5,
-                      "&:hover": { bgcolor: "#27272a" },
+                      "&:hover": { bgcolor: isDark ? "#27272a" : "#E2E8F0" },
                     }}
                   >
                     {nextStay ? "View All Lodging →" : "+ Add Stay Details"}
@@ -968,7 +999,9 @@ export default function TripDetailsPage() {
                   sx={{
                     p: 2.2,
                     borderRadius: 2.5,
-                    bgcolor: "#1a1a1e",
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -979,21 +1012,21 @@ export default function TripDetailsPage() {
                     <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 1 }}>
                       <Typography
                         className="font-mono"
-                        sx={{ color: "#94a3b8", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                        sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
                       >
                         Critical Gear
                       </Typography>
                       <Button
                         size="small"
                         onClick={() => setSearchParams({ tab: "checklist" })}
-                        sx={{ color: "#818cf8", fontSize: "0.65rem", p: 0, minWidth: 0 }}
+                        sx={{ color: "primary.main", fontSize: "0.65rem", p: 0, minWidth: 0 }}
                       >
                         [{checklist?.totalItemsCount ?? 0}] All →
                       </Button>
                     </Stack>
 
                     {checklistItems.length === 0 ? (
-                      <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.75rem", py: 1, textAlign: "center" }}>
+                      <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.75rem", py: 1, textAlign: "center" }}>
                         No checklist items added.
                       </Typography>
                     ) : (
@@ -1009,7 +1042,7 @@ export default function TripDetailsPage() {
                               cursor: "pointer",
                               p: 0.3,
                               borderRadius: 1,
-                              "&:hover": { bgcolor: "rgba(255, 255, 255, 0.03)" },
+                              "&:hover": { bgcolor: "action.hover" },
                             }}
                           >
                             <Checkbox
@@ -1017,15 +1050,15 @@ export default function TripDetailsPage() {
                               size="small"
                               sx={{
                                 p: 0,
-                                color: "#52525b",
-                                "&.Mui-checked": { color: "#6366f1" },
+                                color: "text.secondary",
+                                "&.Mui-checked": { color: "primary.main" },
                               }}
                             />
                             <Typography
                               className="font-mono"
                               sx={{
                                 fontSize: "0.72rem",
-                                color: item.isCompleted ? "#71717a" : "#e4e4e7",
+                                color: item.isCompleted ? "text.secondary" : "text.primary",
                                 textDecoration: item.isCompleted ? "line-through" : "none",
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
@@ -1045,15 +1078,16 @@ export default function TripDetailsPage() {
                     size="small"
                     onClick={() => setSearchParams({ tab: "checklist" })}
                     sx={{
-                      bgcolor: "#201f1f",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      color: "#818cf8",
+                      bgcolor: isDark ? "#201f1f" : "#F1F5F9",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      color: "primary.main",
                       fontSize: "0.65rem",
                       fontFamily: '"JetBrains Mono", monospace',
                       fontWeight: 700,
                       py: 0.5,
                       mt: 1,
-                      "&:hover": { bgcolor: "#27272a" },
+                      "&:hover": { bgcolor: isDark ? "#27272a" : "#E2E8F0" },
                     }}
                   >
                     Open Checklist →
@@ -1091,7 +1125,9 @@ export default function TripDetailsPage() {
                     height: "100%",
                     borderRadius: 2.5,
                     overflow: "hidden",
-                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
                   }}
                 >
                   <Map stops={stops} selectedStopId={selectedStopId} onStopSelect={setSelectedStopId} />
