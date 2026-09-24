@@ -103,16 +103,25 @@ export default function FuelCalculatorDialog({
                 p: 2,
                 mb: 2,
                 borderRadius: 2,
-                bgcolor: "#141313",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
+                bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f0f9ff"),
+                border: "1px solid",
+                borderColor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(56, 189, 248, 0.25)" : "rgba(2, 132, 199, 0.25)",
               }}
             >
               <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
                 <Box>
-                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary", textTransform: "uppercase" }}>
                     Route Distance
                   </Typography>
-                  <Typography className="font-mono" variant="h6" sx={{ fontWeight: 800, color: "#38bdf8" }}>
+                  <Typography
+                    className="font-mono"
+                    variant="h6"
+                    sx={{
+                      fontWeight: 800,
+                      color: (theme) => (theme.palette.mode === "dark" ? "#38bdf8" : "#0284c7"),
+                    }}
+                  >
                     {routeDistanceKm.toLocaleString("en-IN", {
                       maximumFractionDigits: 1,
                     })}{" "}
@@ -121,13 +130,20 @@ export default function FuelCalculatorDialog({
                 </Box>
 
                 <Box sx={{ textAlign: "right" }}>
-                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary", textTransform: "uppercase" }}>
                     Estimated Fuel Need
                   </Typography>
-                  <Typography className="font-mono" variant="h6" sx={{ fontWeight: 800, color: "#bef264" }}>
+                  <Typography
+                    className="font-mono"
+                    variant="h6"
+                    sx={{
+                      fontWeight: 800,
+                      color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                    }}
+                  >
                     ₹{computedTotalCost.toLocaleString("en-IN")}
                   </Typography>
-                  <Typography className="font-mono" sx={{ fontSize: "0.62rem", color: "#71717a" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.62rem", color: "text.secondary" }}>
                     (~{computedFuelLiters.toFixed(1)} L)
                   </Typography>
                 </Box>
@@ -167,7 +183,7 @@ export default function FuelCalculatorDialog({
           />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, pt: 1 }}>
-          <Button onClick={onClose} disabled={isSubmitting} sx={{ color: "#94a3b8" }}>
+          <Button onClick={onClose} disabled={isSubmitting} sx={{ color: "text.secondary" }}>
             Cancel
           </Button>
           <Button
@@ -176,11 +192,11 @@ export default function FuelCalculatorDialog({
             disabled={isSubmitting || routeDistanceKm <= 0}
             className="glow-indigo"
             sx={{
-              bgcolor: "#6366f1",
+              bgcolor: "primary.main",
               color: "#ffffff",
               fontWeight: 800,
               textTransform: "none",
-              "&:hover": { bgcolor: "#4f46e5" },
+              "&:hover": { bgcolor: "primary.dark" },
             }}
           >
             {isSubmitting ? "Applying..." : `Calculate & Apply (₹${computedTotalCost.toLocaleString()})`}

@@ -75,9 +75,13 @@ export default function AccommodationDetailsDialog({
           className: "glass-panel neo-convex",
           sx: {
             borderRadius: 3,
-            bgcolor: "#1a1a1e",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            boxShadow: "0 24px 48px rgba(0,0,0,0.8)",
+            bgcolor: "background.paper",
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: (theme) =>
+              theme.palette.mode === "dark"
+                ? "0 24px 48px rgba(0,0,0,0.8)"
+                : "0 20px 40px rgba(0,0,0,0.12)",
             p: 1,
           },
         },
@@ -91,9 +95,12 @@ export default function AccommodationDetailsDialog({
                 width: 44,
                 height: 44,
                 borderRadius: 2,
-                bgcolor: "rgba(99, 102, 241, 0.15)",
-                color: "#818cf8",
-                border: "1px solid rgba(99, 102, 241, 0.3)",
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.1)",
+                color: "primary.main",
+                border: "1px solid",
+                borderColor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.25)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -108,7 +115,7 @@ export default function AccommodationDetailsDialog({
                 sx={{
                   fontFamily: '"Outfit", sans-serif',
                   fontWeight: 800,
-                  color: "#f8fafc",
+                  color: "text.primary",
                   fontSize: "1.15rem",
                   lineHeight: 1.2,
                 }}
@@ -121,9 +128,12 @@ export default function AccommodationDetailsDialog({
                 sx={{
                   fontWeight: 700,
                   fontSize: "0.66rem",
-                  bgcolor: "rgba(190, 242, 100, 0.1)",
-                  color: "#bef264",
-                  border: "1px solid rgba(190, 242, 100, 0.3)",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.1)" : "rgba(79, 70, 229, 0.08)",
+                  color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "primary.main"),
+                  border: "1px solid",
+                  borderColor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.3)" : "rgba(79, 70, 229, 0.2)",
                   fontFamily: '"JetBrains Mono", monospace',
                   height: 20,
                   mt: 0.5,
@@ -132,7 +142,7 @@ export default function AccommodationDetailsDialog({
             </Box>
           </Stack>
 
-          <IconButton onClick={onClose} size="small" sx={{ color: "#94a3b8" }}>
+          <IconButton onClick={onClose} size="small" sx={{ color: "text.secondary" }}>
             <CloseIcon fontSize="small" />
           </IconButton>
         </Stack>
@@ -143,8 +153,8 @@ export default function AccommodationDetailsDialog({
           {/* Location details */}
           {accommodation.formattedAddress && (
             <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
-              <LocationOnIcon sx={{ fontSize: 16, color: "#818cf8", mt: 0.2, flexShrink: 0 }} />
-              <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.82rem", lineHeight: 1.4 }}>
+              <LocationOnIcon sx={{ fontSize: 16, color: "primary.main", mt: 0.2, flexShrink: 0 }} />
+              <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.82rem", lineHeight: 1.4 }}>
                 {accommodation.formattedAddress}
               </Typography>
             </Stack>
@@ -155,19 +165,25 @@ export default function AccommodationDetailsDialog({
             <Grid size={{ xs: 6 }}>
               <Paper
                 className="neo-inset font-mono"
-                sx={{ p: 1.5, borderRadius: 2, bgcolor: "#141313", border: "1px solid rgba(255, 255, 255, 0.05)" }}
+                sx={{
+                  p: 1.5,
+                  borderRadius: 2,
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                  border: "1px solid",
+                  borderColor: "divider",
+                }}
               >
                 <Stack direction="row" spacing={0.8} sx={{ alignItems: "center", mb: 0.5 }}>
-                  <CalendarMonthIcon sx={{ fontSize: 14, color: "#818cf8" }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                  <CalendarMonthIcon sx={{ fontSize: 14, color: "primary.main" }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary", textTransform: "uppercase" }}>
                     Check-in Date
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 700, color: "#f8fafc" }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 700, color: "text.primary" }}>
                   {formatDate(accommodation.checkInDate)}
                 </Typography>
                 {accommodation.checkInTime && (
-                  <Typography className="font-mono" sx={{ fontSize: "0.7rem", color: "#818cf8", mt: 0.3 }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.7rem", color: "primary.main", mt: 0.3 }}>
                     Arrival: {accommodation.checkInTime}
                   </Typography>
                 )}
@@ -177,19 +193,25 @@ export default function AccommodationDetailsDialog({
             <Grid size={{ xs: 6 }}>
               <Paper
                 className="neo-inset font-mono"
-                sx={{ p: 1.5, borderRadius: 2, bgcolor: "#141313", border: "1px solid rgba(255, 255, 255, 0.05)" }}
+                sx={{
+                  p: 1.5,
+                  borderRadius: 2,
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                  border: "1px solid",
+                  borderColor: "divider",
+                }}
               >
                 <Stack direction="row" spacing={0.8} sx={{ alignItems: "center", mb: 0.5 }}>
-                  <CalendarMonthIcon sx={{ fontSize: 14, color: "#818cf8" }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                  <CalendarMonthIcon sx={{ fontSize: 14, color: "primary.main" }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary", textTransform: "uppercase" }}>
                     Check-out Date
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 700, color: "#f8fafc" }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 700, color: "text.primary" }}>
                   {formatDate(accommodation.checkOutDate)}
                 </Typography>
                 {accommodation.checkOutTime && (
-                  <Typography className="font-mono" sx={{ fontSize: "0.7rem", color: "#818cf8", mt: 0.3 }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.7rem", color: "primary.main", mt: 0.3 }}>
                     Departure: {accommodation.checkOutTime}
                   </Typography>
                 )}
@@ -199,15 +221,21 @@ export default function AccommodationDetailsDialog({
             <Grid size={{ xs: 6 }}>
               <Paper
                 className="neo-inset font-mono"
-                sx={{ p: 1.5, borderRadius: 2, bgcolor: "#141313", border: "1px solid rgba(255, 255, 255, 0.05)" }}
+                sx={{
+                  p: 1.5,
+                  borderRadius: 2,
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                  border: "1px solid",
+                  borderColor: "divider",
+                }}
               >
                 <Stack direction="row" spacing={0.8} sx={{ alignItems: "center", mb: 0.5 }}>
-                  <NightsStayIcon sx={{ fontSize: 14, color: "#38bdf8" }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                  <NightsStayIcon sx={{ fontSize: 14, color: "#0284c7" }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary", textTransform: "uppercase" }}>
                     Duration
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 800, color: "#38bdf8" }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 800, color: "#0284c7" }}>
                   {accommodation.nights} {accommodation.nights === 1 ? "Night" : "Nights"}
                 </Typography>
               </Paper>
@@ -216,15 +244,33 @@ export default function AccommodationDetailsDialog({
             <Grid size={{ xs: 6 }}>
               <Paper
                 className="neo-inset font-mono"
-                sx={{ p: 1.5, borderRadius: 2, bgcolor: "#141313", border: "1px solid rgba(255, 255, 255, 0.05)" }}
+                sx={{
+                  p: 1.5,
+                  borderRadius: 2,
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                  border: "1px solid",
+                  borderColor: "divider",
+                }}
               >
                 <Stack direction="row" spacing={0.8} sx={{ alignItems: "center", mb: 0.5 }}>
-                  <PaymentsIcon sx={{ fontSize: 14, color: "#bef264" }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                  <PaymentsIcon
+                    sx={{
+                      fontSize: 14,
+                      color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                    }}
+                  />
+                  <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary", textTransform: "uppercase" }}>
                     Lodging Cost
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 800, color: "#bef264" }}>
+                <Typography
+                  className="font-mono"
+                  sx={{
+                    fontSize: "0.85rem",
+                    fontWeight: 800,
+                    color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                  }}
+                >
                   {accommodation.cost > 0 ? formatCurrency(accommodation.cost) : "Free / Included"}
                 </Typography>
               </Paper>
@@ -240,27 +286,34 @@ export default function AccommodationDetailsDialog({
                 alignItems: "center",
                 justifyContent: "space-between",
                 p: 1.5,
-                bgcolor: "rgba(99, 102, 241, 0.08)",
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.08)" : "rgba(79, 70, 229, 0.06)",
                 borderRadius: 2,
-                border: "1px dashed rgba(99, 102, 241, 0.35)",
+                border: "1px dashed",
+                borderColor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.35)" : "rgba(79, 70, 229, 0.3)",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
-                "&:hover": { bgcolor: "rgba(99, 102, 241, 0.16)", borderColor: "#818cf8" },
+                "&:hover": {
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.16)" : "rgba(79, 70, 229, 0.12)",
+                  borderColor: "primary.main",
+                },
               }}
             >
               <Stack direction="row" spacing={1.2} sx={{ alignItems: "center" }}>
-                <ConfirmationNumberIcon sx={{ fontSize: 18, color: "#818cf8" }} />
+                <ConfirmationNumberIcon sx={{ fontSize: 18, color: "primary.main" }} />
                 <Box>
-                  <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "text.secondary", textTransform: "uppercase" }}>
                     Booking Confirmation #
                   </Typography>
-                  <Typography className="font-mono" sx={{ fontSize: "0.88rem", fontWeight: 800, color: "#f8fafc" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.88rem", fontWeight: 800, color: "text.primary" }}>
                     {accommodation.confirmationNumber}
                   </Typography>
                 </Box>
               </Stack>
               <Tooltip title="Click to copy">
-                <ContentCopyIcon sx={{ fontSize: 16, color: "#818cf8" }} />
+                <ContentCopyIcon sx={{ fontSize: 16, color: "primary.main" }} />
               </Tooltip>
             </Box>
           )}
@@ -268,7 +321,7 @@ export default function AccommodationDetailsDialog({
           {/* Contact Information & External Links */}
           {(accommodation.contactName || accommodation.contactPhone || accommodation.website) && (
             <Stack spacing={1.2}>
-              <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8", textTransform: "uppercase", fontWeight: 700 }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary", textTransform: "uppercase", fontWeight: 700 }}>
                 Contact & Property Info
               </Typography>
               <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
@@ -277,7 +330,14 @@ export default function AccommodationDetailsDialog({
                     icon={<PersonIcon sx={{ fontSize: 13 }} />}
                     label={accommodation.contactName}
                     size="small"
-                    sx={{ bgcolor: "#27272a", color: "#e4e4e7", fontFamily: '"JetBrains Mono", monospace', fontSize: "0.72rem" }}
+                    sx={{
+                      bgcolor: (theme) => (theme.palette.mode === "dark" ? "#27272a" : "#f1f5f9"),
+                      color: "text.primary",
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: "0.72rem",
+                      border: "1px solid",
+                      borderColor: "divider",
+                    }}
                   />
                 )}
                 {accommodation.contactPhone && (
@@ -288,12 +348,12 @@ export default function AccommodationDetailsDialog({
                     href={`tel:${accommodation.contactPhone}`}
                     sx={{
                       fontSize: "0.72rem",
-                      color: "#818cf8",
-                      borderColor: "rgba(99, 102, 241, 0.3)",
+                      color: "primary.main",
+                      borderColor: "divider",
                       fontFamily: '"JetBrains Mono", monospace',
                       textTransform: "none",
                       py: 0.4,
-                      "&:hover": { borderColor: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.1)" },
+                      "&:hover": { borderColor: "primary.main", bgcolor: "action.hover" },
                     }}
                   >
                     Call: {accommodation.contactPhone}
@@ -309,12 +369,15 @@ export default function AccommodationDetailsDialog({
                     rel="noopener noreferrer"
                     sx={{
                       fontSize: "0.72rem",
-                      color: "#bef264",
-                      borderColor: "rgba(190, 242, 100, 0.3)",
+                      color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                      borderColor: "divider",
                       fontFamily: '"JetBrains Mono", monospace',
                       textTransform: "none",
                       py: 0.4,
-                      "&:hover": { borderColor: "#bef264", bgcolor: "rgba(190, 242, 100, 0.1)" },
+                      "&:hover": {
+                        borderColor: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                        bgcolor: "action.hover",
+                      },
                     }}
                   >
                     Official Website ↗
@@ -327,18 +390,19 @@ export default function AccommodationDetailsDialog({
           {/* Booking Notes */}
           {accommodation.bookingNotes && (
             <Stack spacing={0.8}>
-              <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8", textTransform: "uppercase", fontWeight: 700 }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary", textTransform: "uppercase", fontWeight: 700 }}>
                 Reservation Notes & Check-in Rules
               </Typography>
               <Typography
                 variant="body2"
                 sx={{
                   fontStyle: "italic",
-                  bgcolor: "#141313",
-                  color: "#cbd5e1",
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                  color: "text.primary",
                   p: 1.5,
                   borderRadius: 2,
-                  border: "1px solid rgba(255, 255, 255, 0.06)",
+                  border: "1px solid",
+                  borderColor: "divider",
                   fontSize: "0.78rem",
                   lineHeight: 1.4,
                 }}
@@ -350,7 +414,7 @@ export default function AccommodationDetailsDialog({
         </Stack>
       </DialogContent>
 
-      <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.08)" }} />
+      <Divider sx={{ borderColor: "divider" }} />
 
       <DialogActions sx={{ px: 2.5, py: 1.5, justifyContent: "space-between" }}>
         <Stack direction="row" spacing={1}>
@@ -362,7 +426,7 @@ export default function AccommodationDetailsDialog({
                 onClose();
                 onDelete(accommodation);
               }}
-              sx={{ color: "#f87171", fontSize: "0.74rem", textTransform: "none" }}
+              sx={{ color: "error.main", fontSize: "0.74rem", textTransform: "none" }}
             >
               Remove
             </Button>
@@ -380,12 +444,12 @@ export default function AccommodationDetailsDialog({
                 onEdit(accommodation);
               }}
               sx={{
-                color: "#818cf8",
-                borderColor: "rgba(99, 102, 241, 0.3)",
+                color: "primary.main",
+                borderColor: "divider",
                 fontSize: "0.74rem",
                 textTransform: "none",
                 fontWeight: 700,
-                "&:hover": { borderColor: "#818cf8" },
+                "&:hover": { borderColor: "primary.main" },
               }}
             >
               Edit Details
@@ -396,12 +460,12 @@ export default function AccommodationDetailsDialog({
             variant="contained"
             onClick={onClose}
             sx={{
-              bgcolor: "#27272a",
-              color: "#f8fafc",
+              bgcolor: (theme) => (theme.palette.mode === "dark" ? "#27272a" : "#e2e8f0"),
+              color: "text.primary",
               fontSize: "0.74rem",
               fontWeight: 700,
               textTransform: "none",
-              "&:hover": { bgcolor: "#3f3f46" },
+              "&:hover": { bgcolor: (theme) => (theme.palette.mode === "dark" ? "#3f3f46" : "#cbd5e1") },
             }}
           >
             Done

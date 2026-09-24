@@ -111,8 +111,9 @@ export default function CategoryBreakdown({
         sx={{
           p: 2.2,
           borderRadius: 2.5,
-          bgcolor: "#1a1a1e",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Stack
@@ -129,23 +130,26 @@ export default function CategoryBreakdown({
                 width: 40,
                 height: 40,
                 borderRadius: 2,
-                bgcolor: "rgba(129, 140, 248, 0.15)",
-                color: "#818cf8",
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(129, 140, 248, 0.15)" : "rgba(79, 70, 229, 0.1)",
+                color: "primary.main",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: "1px solid rgba(129, 140, 248, 0.3)",
+                border: "1px solid",
+                borderColor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(129, 140, 248, 0.3)" : "rgba(79, 70, 229, 0.25)",
               }}
             >
               <PriceCheckIcon sx={{ fontSize: 22 }} />
             </Box>
             <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "1rem" }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1rem" }}>
                 Planned Category Allocations
               </Typography>
-              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
                 {totalItems} Planned Items totaling{" "}
-                <strong style={{ color: "#818cf8" }}>{formatCurrency(totalPlanned)}</strong>
+                <strong style={{ color: "var(--mui-palette-primary-main, #6366f1)" }}>{formatCurrency(totalPlanned)}</strong>
               </Typography>
             </Box>
           </Stack>
@@ -155,9 +159,8 @@ export default function CategoryBreakdown({
             size="small"
             endIcon={<AddIcon sx={{ fontSize: 15 }} />}
             onClick={() => onAddEstimate(selectedCategory?.category || "Fuel")}
-            className="glow-indigo"
             sx={{
-              bgcolor: "#6366f1",
+              bgcolor: "primary.main",
               color: "#ffffff",
               fontFamily: '"JetBrains Mono", monospace',
               fontSize: "0.72rem",
@@ -166,7 +169,7 @@ export default function CategoryBreakdown({
               py: 0.6,
               borderRadius: 2,
               textTransform: "none",
-              "&:hover": { bgcolor: "#4f46e5" },
+              "&:hover": { bgcolor: "primary.dark" },
             }}
           >
             Add Estimate
@@ -183,8 +186,9 @@ export default function CategoryBreakdown({
             sx={{
               p: 1.5,
               borderRadius: 2.5,
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
               height: "100%",
               display: "flex",
               flexDirection: "column",
@@ -197,7 +201,7 @@ export default function CategoryBreakdown({
                 px: 1,
                 py: 0.5,
                 fontSize: "0.66rem",
-                color: "#71717a",
+                color: "text.secondary",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
@@ -224,15 +228,28 @@ export default function CategoryBreakdown({
                     sx={{
                       p: 1.4,
                       borderRadius: 2,
-                      bgcolor: isSelected ? "#141313" : "rgba(255, 255, 255, 0.02)",
-                      border: isSelected
-                        ? `1px solid ${meta.color}66`
-                        : "1px solid rgba(255, 255, 255, 0.05)",
+                      bgcolor: (theme) =>
+                        isSelected
+                          ? theme.palette.mode === "dark"
+                            ? "#141313"
+                            : "#f1f5f9"
+                          : theme.palette.mode === "dark"
+                          ? "rgba(255, 255, 255, 0.02)"
+                          : "transparent",
+                      border: "1px solid",
+                      borderColor: isSelected ? `${meta.color}88` : "divider",
                       cursor: "pointer",
                       transition: "all 0.2s ease",
                       "&:hover": {
-                        bgcolor: isSelected ? "#141313" : "rgba(255, 255, 255, 0.04)",
-                        borderColor: isSelected ? `${meta.color}` : "rgba(255, 255, 255, 0.15)",
+                        bgcolor: (theme) =>
+                          isSelected
+                            ? theme.palette.mode === "dark"
+                              ? "#141313"
+                              : "#f1f5f9"
+                            : theme.palette.mode === "dark"
+                            ? "rgba(255, 255, 255, 0.04)"
+                            : "#f8fafc",
+                        borderColor: isSelected ? `${meta.color}` : "primary.main",
                         transform: isSelected ? "none" : "translateX(2px)",
                       },
                     }}
@@ -260,7 +277,7 @@ export default function CategoryBreakdown({
                             variant="subtitle2"
                             sx={{
                               fontWeight: isSelected ? 800 : 700,
-                              color: isSelected ? "#f8fafc" : "#cbd5e1",
+                              color: isSelected ? "text.primary" : "text.secondary",
                               fontSize: "0.84rem",
                               whiteSpace: "nowrap",
                               overflow: "hidden",
@@ -269,7 +286,7 @@ export default function CategoryBreakdown({
                           >
                             {catName}
                           </Typography>
-                          <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "#94a3b8" }}>
+                          <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "text.secondary" }}>
                             {cat.estimates.length} {cat.estimates.length === 1 ? "Item" : "Items"} · {percentOfTotal}% of total
                           </Typography>
                         </Box>
@@ -280,7 +297,7 @@ export default function CategoryBreakdown({
                         sx={{
                           fontWeight: 800,
                           fontSize: "0.85rem",
-                          color: cat.estimatedAmount > 0 ? meta.color : "#71717a",
+                          color: cat.estimatedAmount > 0 ? meta.color : "text.secondary",
                           flexShrink: 0,
                         }}
                       >
@@ -296,7 +313,8 @@ export default function CategoryBreakdown({
                         mt: 1,
                         height: 3,
                         borderRadius: 2,
-                        bgcolor: "rgba(255, 255, 255, 0.05)",
+                        bgcolor: (theme) =>
+                          theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
                         "& .MuiLinearProgress-bar": {
                           bgcolor: meta.color,
                           borderRadius: 2,
@@ -317,8 +335,9 @@ export default function CategoryBreakdown({
             sx={{
               p: { xs: 2, sm: 2.5 },
               borderRadius: 2.5,
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
               height: "100%",
               display: "flex",
               flexDirection: "column",
@@ -333,7 +352,8 @@ export default function CategoryBreakdown({
                   justifyContent: "space-between",
                   alignItems: "center",
                   pb: 2,
-                  borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                  borderBottom: "1px solid",
+                  borderColor: "divider",
                 }}
               >
                 <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
@@ -354,7 +374,7 @@ export default function CategoryBreakdown({
                   </Box>
                   <Box>
                     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                      <Typography variant="h6" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "1.05rem" }}>
+                      <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1.05rem" }}>
                         {CATEGORY_LABELS[selectedCategory.category] ?? selectedCategory.category}
                       </Typography>
                       <Chip
@@ -373,14 +393,14 @@ export default function CategoryBreakdown({
                         }}
                       />
                     </Stack>
-                    <Typography variant="caption" sx={{ color: "#94a3b8", fontSize: "0.72rem" }}>
+                    <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.72rem" }}>
                       {selectedMeta.description}
                     </Typography>
                   </Box>
                 </Stack>
 
                 <Box sx={{ textAlign: "right" }}>
-                  <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "text.secondary", textTransform: "uppercase" }}>
                     Category Total
                   </Typography>
                   <Typography
@@ -400,8 +420,10 @@ export default function CategoryBreakdown({
                     p: 1.5,
                     mt: 2,
                     borderRadius: 2,
-                    bgcolor: "#141313",
-                    border: "1px solid rgba(56, 189, 248, 0.25)",
+                    bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f0f9ff"),
+                    border: "1px solid",
+                    borderColor: (theme) =>
+                      theme.palette.mode === "dark" ? "rgba(56, 189, 248, 0.25)" : "rgba(2, 132, 199, 0.25)",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
@@ -410,15 +432,20 @@ export default function CategoryBreakdown({
                   }}
                 >
                   <Stack direction="row" spacing={1.2} sx={{ alignItems: "center" }}>
-                    <LocalGasStationIcon sx={{ color: "#38bdf8", fontSize: 22 }} />
+                    <LocalGasStationIcon
+                      sx={{
+                        color: (theme) => (theme.palette.mode === "dark" ? "#38bdf8" : "#0284c7"),
+                        fontSize: 22,
+                      }}
+                    />
                     <Box>
-                      <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#f8fafc", fontWeight: 700 }}>
+                      <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.primary", fontWeight: 700 }}>
                         ROUTE DISTANCE:{" "}
-                        <span style={{ color: "#38bdf8" }}>
+                        <span style={{ color: "var(--mui-palette-primary-main, #38bdf8)" }}>
                           {routeDistanceKm > 0 ? `${routeDistanceKm.toFixed(1)} km` : "No route plotted yet"}
                         </span>
                       </Typography>
-                      <Typography variant="caption" sx={{ fontSize: "0.66rem", color: "#94a3b8" }}>
+                      <Typography variant="caption" sx={{ fontSize: "0.66rem", color: "text.secondary" }}>
                         {routeDistanceKm > 0
                           ? `Est. fuel cost @ ${defaultMileage} km/L (₹100/L) is ~₹${Math.round((routeDistanceKm / defaultMileage) * 100).toLocaleString()}`
                           : "Add stops in the Route & Itinerary tab to calculate distance."}
@@ -431,10 +458,9 @@ export default function CategoryBreakdown({
                       size="small"
                       variant="contained"
                       onClick={onCalculateFuel}
-                      className="glow-indigo"
                       sx={{
-                        bgcolor: "#38bdf8",
-                        color: "#0f172a",
+                        bgcolor: (theme) => (theme.palette.mode === "dark" ? "#38bdf8" : "#0284c7"),
+                        color: "#ffffff",
                         fontWeight: 800,
                         fontSize: "0.68rem",
                         fontFamily: '"JetBrains Mono", monospace',
@@ -442,7 +468,7 @@ export default function CategoryBreakdown({
                         py: 0.5,
                         px: 1.4,
                         borderRadius: 1.5,
-                        "&:hover": { bgcolor: "#0284c7", color: "#ffffff" },
+                        "&:hover": { bgcolor: (theme) => (theme.palette.mode === "dark" ? "#0284c7" : "#0369a1") },
                       }}
                     >
                       ⚙️ Custom Mileage / Rate
@@ -470,9 +496,11 @@ export default function CategoryBreakdown({
                       py: 5,
                       px: 2,
                       textAlign: "center",
-                      bgcolor: "rgba(255, 255, 255, 0.02)",
+                      bgcolor: (theme) =>
+                        theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)",
                       borderRadius: 2,
-                      border: "1px dashed rgba(255, 255, 255, 0.08)",
+                      border: "1px dashed",
+                      borderColor: "divider",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
@@ -480,7 +508,7 @@ export default function CategoryBreakdown({
                       gap: 1.5,
                     }}
                   >
-                    <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.82rem" }}>
+                    <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.82rem" }}>
                       No planned estimates registered under{" "}
                       {CATEGORY_LABELS[selectedCategory.category] ?? selectedCategory.category} yet.
                     </Typography>
@@ -508,7 +536,7 @@ export default function CategoryBreakdown({
 
             {/* Bottom Add Action Bar */}
             {selectedCategory.estimates.length > 0 && (
-              <Box sx={{ pt: 2, borderTop: "1px solid rgba(255, 255, 255, 0.06)", mt: 2 }}>
+              <Box sx={{ pt: 2, borderTop: "1px solid", borderColor: "divider", mt: 2 }}>
                 <Button
                   fullWidth
                   variant="outlined"
@@ -523,7 +551,8 @@ export default function CategoryBreakdown({
                     py: 0.8,
                     borderRadius: 2,
                     textTransform: "none",
-                    bgcolor: "rgba(255, 255, 255, 0.02)",
+                    bgcolor: (theme) =>
+                      theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)",
                     "&:hover": {
                       borderColor: selectedMeta.color,
                       bgcolor: selectedMeta.bg,

@@ -74,9 +74,10 @@ export const ProfileSettingsForm: React.FC<ProfileSettingsFormProps> = ({
           variant="outlined"
           sx={{
             borderRadius: 3,
-            bgcolor: "rgba(15, 23, 42, 0.6)",
-            borderColor: "rgba(255, 255, 255, 0.08)",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25)",
+            bgcolor: "background.paper",
+            borderColor: "divider",
+            boxShadow: (theme) =>
+              theme.palette.mode === "dark" ? "0 4px 20px rgba(0, 0, 0, 0.25)" : "0 4px 16px rgba(0, 0, 0, 0.05)",
             backdropFilter: "blur(12px)",
           }}
         >
@@ -87,26 +88,29 @@ export const ProfileSettingsForm: React.FC<ProfileSettingsFormProps> = ({
                   width: 36,
                   height: 36,
                   borderRadius: 2,
-                  bgcolor: "rgba(99, 102, 241, 0.15)",
-                  border: "1px solid rgba(99, 102, 241, 0.3)",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.1)",
+                  border: "1px solid",
+                  borderColor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.25)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <PublicIcon sx={{ color: "#818cf8", fontSize: 20 }} />
+                <PublicIcon sx={{ color: "primary.main", fontSize: 20 }} />
               </Box>
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc" }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary" }}>
                   Travel & Localization Preferences
                 </Typography>
-                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
                   Configure your default monetary currency and distance presentation units for new expeditions.
                 </Typography>
               </Box>
             </Stack>
 
-            <Divider sx={{ mb: 3, borderColor: "rgba(255, 255, 255, 0.06)" }} />
+            <Divider sx={{ mb: 3, borderColor: "divider" }} />
 
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -178,9 +182,10 @@ export const ProfileSettingsForm: React.FC<ProfileSettingsFormProps> = ({
           variant="outlined"
           sx={{
             borderRadius: 3,
-            bgcolor: "rgba(15, 23, 42, 0.6)",
-            borderColor: "rgba(255, 255, 255, 0.08)",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25)",
+            bgcolor: "background.paper",
+            borderColor: "divider",
+            boxShadow: (theme) =>
+              theme.palette.mode === "dark" ? "0 4px 20px rgba(0, 0, 0, 0.25)" : "0 4px 16px rgba(0, 0, 0, 0.05)",
             backdropFilter: "blur(12px)",
           }}
         >
@@ -191,26 +196,29 @@ export const ProfileSettingsForm: React.FC<ProfileSettingsFormProps> = ({
                   width: 36,
                   height: 36,
                   borderRadius: 2,
-                  bgcolor: "rgba(56, 189, 248, 0.15)",
-                  border: "1px solid rgba(56, 189, 248, 0.3)",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(56, 189, 248, 0.15)" : "rgba(2, 132, 199, 0.1)",
+                  border: "1px solid",
+                  borderColor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(56, 189, 248, 0.3)" : "rgba(2, 132, 199, 0.25)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <DirectionsBikeIcon sx={{ color: "#38bdf8", fontSize: 20 }} />
+                <DirectionsBikeIcon sx={{ color: (theme) => (theme.palette.mode === "dark" ? "#38bdf8" : "#0284c7"), fontSize: 20 }} />
               </Box>
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc" }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary" }}>
                   Default Vehicle Profile
                 </Typography>
-                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
                   Configure your primary vehicle to auto-populate your Smart Fuel Cost Calculator.
                 </Typography>
               </Box>
             </Stack>
 
-            <Divider sx={{ mb: 3, borderColor: "rgba(255, 255, 255, 0.06)" }} />
+            <Divider sx={{ mb: 3, borderColor: "divider" }} />
 
             <Grid container spacing={3}>
               <Grid size={{ xs: 12 }}>
@@ -268,8 +276,8 @@ export const ProfileSettingsForm: React.FC<ProfileSettingsFormProps> = ({
                           endAdornment: (
                             <InputAdornment position="end">
                               <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
-                                <LocalGasStationIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
-                                <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 700 }}>
+                                <LocalGasStationIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+                                <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 700 }}>
                                   L
                                 </Typography>
                               </Stack>
@@ -309,8 +317,8 @@ export const ProfileSettingsForm: React.FC<ProfileSettingsFormProps> = ({
                           endAdornment: (
                             <InputAdornment position="end">
                               <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
-                                <SpeedIcon sx={{ fontSize: 16, color: "#94a3b8" }} />
-                                <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: 700 }}>
+                                <SpeedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+                                <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 700 }}>
                                   km/L
                                 </Typography>
                               </Stack>
@@ -333,17 +341,19 @@ export const ProfileSettingsForm: React.FC<ProfileSettingsFormProps> = ({
             variant="contained"
             disabled={isLoading || !isDirty}
             startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : <SaveIcon />}
-            className="glow-indigo"
             sx={{
-              bgcolor: "#6366f1",
+              bgcolor: "primary.main",
               color: "#ffffff",
               fontWeight: 800,
               px: 4,
               py: 1.2,
               borderRadius: 2,
               textTransform: "none",
-              boxShadow: "0 4px 14px rgba(99, 102, 241, 0.4)",
-              "&:hover": { bgcolor: "#4f46e5" },
+              boxShadow: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "0 4px 14px rgba(99, 102, 241, 0.4)"
+                  : "0 4px 14px rgba(79, 70, 229, 0.25)",
+              "&:hover": { bgcolor: "primary.dark" },
             }}
           >
             {isLoading ? "Saving Preferences..." : "Save Preferences"}

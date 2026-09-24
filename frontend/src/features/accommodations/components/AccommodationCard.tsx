@@ -46,8 +46,9 @@ export default function AccommodationCard({
       onClick={() => onViewDetails(accommodation)}
       sx={{
         borderRadius: 2.5,
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
         height: "100%",
         display: "flex",
@@ -55,12 +56,15 @@ export default function AccommodationCard({
         justifyContent: "space-between",
         cursor: "pointer",
         "&:hover": {
-          borderColor: "rgba(129, 140, 248, 0.5)",
+          borderColor: "primary.main",
           transform: "translateY(-2px)",
-          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
-          bgcolor: "#1f1f24",
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? "0 8px 24px rgba(0, 0, 0, 0.4)"
+              : "0 8px 24px rgba(0, 0, 0, 0.08)",
+          bgcolor: (theme) => (theme.palette.mode === "dark" ? "#1f1f24" : "#f8fafc"),
           "& .view-action-text": {
-            color: "#bef264",
+            color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "primary.main"),
           },
         },
       }}
@@ -75,9 +79,10 @@ export default function AccommodationCard({
                   width: 36,
                   height: 36,
                   borderRadius: 2,
-                  bgcolor: "rgba(99, 102, 241, 0.12)",
-                  color: "#818cf8",
-                  border: "1px solid rgba(99, 102, 241, 0.3)",
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.12)" : "rgba(79, 70, 229, 0.08)"),
+                  color: "primary.main",
+                  border: "1px solid",
+                  borderColor: (theme) => (theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.2)"),
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -92,7 +97,7 @@ export default function AccommodationCard({
                   variant="subtitle1"
                   sx={{
                     fontWeight: 800,
-                    color: "#f8fafc",
+                    color: "text.primary",
                     fontSize: "0.92rem",
                     lineHeight: 1.2,
                     whiteSpace: "nowrap",
@@ -108,9 +113,12 @@ export default function AccommodationCard({
                   sx={{
                     fontWeight: 700,
                     fontSize: "0.62rem",
-                    bgcolor: "rgba(190, 242, 100, 0.08)",
-                    color: "#bef264",
-                    border: "1px solid rgba(190, 242, 100, 0.25)",
+                    bgcolor: (theme) =>
+                      theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.08)" : "rgba(79, 70, 229, 0.08)",
+                    color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "primary.main"),
+                    border: "1px solid",
+                    borderColor: (theme) =>
+                      theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.25)" : "rgba(79, 70, 229, 0.2)",
                     fontFamily: '"JetBrains Mono", monospace',
                     height: 18,
                     mt: 0.3,
@@ -130,7 +138,7 @@ export default function AccommodationCard({
                 <IconButton
                   size="small"
                   onClick={() => onEdit(accommodation)}
-                  sx={{ color: "#94a3b8", p: 0.5, "&:hover": { color: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.1)" } }}
+                  sx={{ color: "text.secondary", p: 0.5, "&:hover": { color: "primary.main", bgcolor: "action.hover" } }}
                 >
                   <EditIcon sx={{ fontSize: 16 }} />
                 </IconButton>
@@ -139,7 +147,7 @@ export default function AccommodationCard({
                 <IconButton
                   size="small"
                   onClick={() => onDelete(accommodation)}
-                  sx={{ color: "#94a3b8", p: 0.5, "&:hover": { color: "#f87171", bgcolor: "rgba(248, 113, 113, 0.1)" } }}
+                  sx={{ color: "text.secondary", p: 0.5, "&:hover": { color: "error.main", bgcolor: "action.hover" } }}
                 >
                   <DeleteIcon sx={{ fontSize: 16 }} />
                 </IconButton>
@@ -150,11 +158,11 @@ export default function AccommodationCard({
           {/* Location Address */}
           {accommodation.formattedAddress && (
             <Stack direction="row" spacing={0.6} sx={{ alignItems: "flex-start" }}>
-              <LocationOnIcon sx={{ fontSize: 14, color: "#818cf8", mt: 0.2, flexShrink: 0 }} />
+              <LocationOnIcon sx={{ fontSize: 14, color: "primary.main", mt: 0.2, flexShrink: 0 }} />
               <Typography
                 variant="caption"
                 sx={{
-                  color: "#94a3b8",
+                  color: "text.secondary",
                   fontSize: "0.72rem",
                   lineHeight: 1.3,
                   display: "-webkit-box",
@@ -174,14 +182,15 @@ export default function AccommodationCard({
             sx={{
               p: 1.2,
               borderRadius: 2,
-              bgcolor: "#141313",
-              border: "1px solid rgba(255, 255, 255, 0.05)",
+              bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
             <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
               <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
-                <CalendarMonthIcon sx={{ fontSize: 14, color: "#818cf8" }} />
-                <Typography className="font-mono" sx={{ fontSize: "0.74rem", fontWeight: 700, color: "#e4e4e7" }}>
+                <CalendarMonthIcon sx={{ fontSize: 14, color: "primary.main" }} />
+                <Typography className="font-mono" sx={{ fontSize: "0.74rem", fontWeight: 700, color: "text.primary" }}>
                   {formatDate(accommodation.checkInDate)} → {formatDate(accommodation.checkOutDate)}
                 </Typography>
               </Stack>
@@ -193,9 +202,12 @@ export default function AccommodationCard({
                 sx={{
                   fontWeight: 700,
                   fontSize: "0.64rem",
-                  bgcolor: "rgba(99, 102, 241, 0.15)",
-                  color: "#818cf8",
-                  border: "1px solid rgba(99, 102, 241, 0.3)",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.1)",
+                  color: "primary.main",
+                  border: "1px solid",
+                  borderColor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.25)",
                   fontFamily: '"JetBrains Mono", monospace',
                   height: 20,
                 }}
@@ -203,7 +215,7 @@ export default function AccommodationCard({
             </Stack>
 
             <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-              <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#71717a" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary" }}>
                 Estimated Cost
               </Typography>
               <Typography
@@ -211,7 +223,12 @@ export default function AccommodationCard({
                 sx={{
                   fontSize: "0.78rem",
                   fontWeight: 800,
-                  color: accommodation.cost > 0 ? "#bef264" : "#71717a",
+                  color: (theme) =>
+                    accommodation.cost > 0
+                      ? theme.palette.mode === "dark"
+                        ? "#bef264"
+                        : "#059669"
+                      : "text.secondary",
                 }}
               >
                 {accommodation.cost > 0 ? formatCurrency(accommodation.cost) : "Free / Included"}
@@ -226,8 +243,9 @@ export default function AccommodationCard({
         sx={{
           py: 0.8,
           px: 2,
-          borderTop: "1px solid rgba(255, 255, 255, 0.06)",
-          bgcolor: "rgba(0, 0, 0, 0.2)",
+          borderTop: "1px solid",
+          borderColor: "divider",
+          bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(0, 0, 0, 0.2)" : "rgba(0, 0, 0, 0.02)"),
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -242,16 +260,19 @@ export default function AccommodationCard({
               sx={{
                 height: 18,
                 fontSize: "0.6rem",
-                bgcolor: "rgba(99, 102, 241, 0.12)",
-                color: "#818cf8",
-                border: "1px solid rgba(99, 102, 241, 0.25)",
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.12)" : "rgba(79, 70, 229, 0.08)",
+                color: "primary.main",
+                border: "1px solid",
+                borderColor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.25)" : "rgba(79, 70, 229, 0.2)",
                 fontFamily: '"JetBrains Mono", monospace',
                 fontWeight: 700,
               }}
             />
           )}
           {accommodation.bookingNotes && (
-            <Typography className="font-mono" sx={{ fontSize: "0.62rem", color: "#71717a" }}>
+            <Typography className="font-mono" sx={{ fontSize: "0.62rem", color: "text.secondary" }}>
               📝 Notes
             </Typography>
           )}
@@ -262,14 +283,14 @@ export default function AccommodationCard({
             className="view-action-text font-mono"
             sx={{
               fontSize: "0.66rem",
-              color: "#818cf8",
+              color: "primary.main",
               fontWeight: 700,
               transition: "color 0.2s ease",
             }}
           >
             Details
           </Typography>
-          <VisibilityOutlinedIcon sx={{ fontSize: 13, color: "#818cf8" }} />
+          <VisibilityOutlinedIcon sx={{ fontSize: 13, color: "primary.main" }} />
         </Stack>
       </Box>
     </Card>

@@ -22,8 +22,9 @@ export default function ChecklistOverview({
       className="neo-convex"
       sx={{
         borderRadius: 2.5,
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
       }}
     >
       <CardContent sx={{ p: 2.2 }}>
@@ -43,9 +44,12 @@ export default function ChecklistOverview({
                   width: 38,
                   height: 38,
                   borderRadius: 2,
-                  bgcolor: "rgba(190, 242, 100, 0.12)",
-                  color: "#bef264",
-                  border: "1px solid rgba(190, 242, 100, 0.3)",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.12)" : "rgba(79, 70, 229, 0.08)",
+                  color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "primary.main"),
+                  border: "1px solid",
+                  borderColor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.3)" : "rgba(79, 70, 229, 0.25)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -56,11 +60,11 @@ export default function ChecklistOverview({
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc", fontSize: "1rem" }}
+                  sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary", fontSize: "1rem" }}
                 >
                   Fleet & Gear Logistics Readiness
                 </Typography>
-                <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
                   {completedItemsCount} of {totalItemsCount} items ready ({completionPercentage}%)
                 </Typography>
               </Box>
@@ -71,9 +75,8 @@ export default function ChecklistOverview({
               size="small"
               endIcon={<AddIcon sx={{ fontSize: 15 }} />}
               onClick={onAddCategory}
-              className="glow-indigo"
               sx={{
-                bgcolor: "#6366f1",
+                bgcolor: "primary.main",
                 color: "#ffffff",
                 fontFamily: '"JetBrains Mono", monospace',
                 fontSize: "0.72rem",
@@ -83,7 +86,7 @@ export default function ChecklistOverview({
                 borderRadius: 2,
                 textTransform: "none",
                 alignSelf: { xs: "stretch", sm: "auto" },
-                "&:hover": { bgcolor: "#4f46e5" },
+                "&:hover": { bgcolor: "primary.dark" },
               }}
             >
               Add Category
@@ -97,10 +100,16 @@ export default function ChecklistOverview({
               sx={{
                 height: 6,
                 borderRadius: 3,
-                bgcolor: "rgba(255, 255, 255, 0.08)",
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
                 "& .MuiLinearProgress-bar": {
                   borderRadius: 3,
-                  bgcolor: isComplete ? "#bef264" : "#6366f1",
+                  bgcolor: (theme) =>
+                    isComplete
+                      ? theme.palette.mode === "dark"
+                        ? "#bef264"
+                        : "#059669"
+                      : "primary.main",
                 },
               }}
             />

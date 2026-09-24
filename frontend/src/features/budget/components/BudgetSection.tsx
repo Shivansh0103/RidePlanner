@@ -249,8 +249,9 @@ export default function BudgetSection({
           borderRadius: 2,
           mt: 3,
           p: 0.5,
-          bgcolor: "#141313",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f1f5f9"),
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Tabs
@@ -260,7 +261,7 @@ export default function BudgetSection({
           sx={{
             minHeight: 40,
             "& .MuiTabs-indicator": {
-              bgcolor: "#6366f1",
+              bgcolor: "primary.main",
               height: "100%",
               borderRadius: 1.5,
               zIndex: 0,
@@ -271,7 +272,7 @@ export default function BudgetSection({
               fontSize: "0.74rem",
               fontFamily: '"JetBrains Mono", monospace',
               fontWeight: 700,
-              color: "#94a3b8",
+              color: "text.secondary",
               zIndex: 1,
               textTransform: "none",
               "&.Mui-selected": {

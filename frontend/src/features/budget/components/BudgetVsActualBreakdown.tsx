@@ -32,8 +32,9 @@ export default function BudgetVsActualBreakdown({
       sx={{
         borderRadius: 2.5,
         mt: 3,
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
       }}
     >
       <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
@@ -41,11 +42,11 @@ export default function BudgetVsActualBreakdown({
           <Box>
             <Typography
               variant="h6"
-              sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc", fontSize: "1.05rem" }}
+              sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary", fontSize: "1.05rem" }}
             >
               Category Variance & Utilization Ledger
             </Typography>
-            <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.78rem" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.78rem" }}>
               Live comparison between planned estimates and realized expenditure per category
             </Typography>
           </Box>
@@ -55,26 +56,32 @@ export default function BudgetVsActualBreakdown({
             className="neo-inset"
             sx={{
               borderRadius: 2,
-              bgcolor: "#141313",
-              border: "1px solid rgba(255, 255, 255, 0.06)",
+              bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
             <Table size="small">
-              <TableHead sx={{ bgcolor: "rgba(255, 255, 255, 0.03)" }}>
+              <TableHead
+                sx={{
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)",
+                }}
+              >
                 <TableRow>
-                  <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", py: 1.2 }}>
+                  <TableCell sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", py: 1.2 }}>
                     Category
                   </TableCell>
-                  <TableCell align="right" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", py: 1.2 }}>
+                  <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", py: 1.2 }}>
                     Planned Estimate
                   </TableCell>
-                  <TableCell align="right" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", py: 1.2 }}>
+                  <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", py: 1.2 }}>
                     Actual Spent
                   </TableCell>
-                  <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", width: "28%", py: 1.2 }}>
+                  <TableCell sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", width: "28%", py: 1.2 }}>
                     Utilization
                   </TableCell>
-                  <TableCell align="right" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", py: 1.2 }}>
+                  <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.05em", py: 1.2 }}>
                     Budget Status
                   </TableCell>
                 </TableRow>
@@ -100,15 +107,16 @@ export default function BudgetVsActualBreakdown({
                     <TableRow
                       key={cat.category}
                       sx={{
-                        "&:hover": { bgcolor: "rgba(255, 255, 255, 0.02)" },
-                        borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                        "&:hover": { bgcolor: "action.hover" },
+                        borderBottom: "1px solid",
+                        borderColor: "divider",
                       }}
                     >
-                      <TableCell sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.82rem", py: 1.4 }}>
+                      <TableCell sx={{ fontWeight: 800, color: "text.primary", fontSize: "0.82rem", py: 1.4 }}>
                         {cat.category}
                       </TableCell>
 
-                      <TableCell align="right" className="font-mono" sx={{ fontWeight: 700, color: "#818cf8", fontSize: "0.8rem", py: 1.4 }}>
+                      <TableCell align="right" className="font-mono" sx={{ fontWeight: 700, color: "primary.main", fontSize: "0.8rem", py: 1.4 }}>
                         {formatCurrency(planned)}
                       </TableCell>
 
@@ -118,7 +126,12 @@ export default function BudgetVsActualBreakdown({
                         sx={{
                           fontWeight: 800,
                           fontSize: "0.8rem",
-                          color: isOver ? "#f87171" : "#38bdf8",
+                          color: (theme) =>
+                            isOver
+                              ? "error.main"
+                              : theme.palette.mode === "dark"
+                              ? "#38bdf8"
+                              : "#0284c7",
                           py: 1.4,
                         }}
                       >
@@ -134,16 +147,24 @@ export default function BudgetVsActualBreakdown({
                               flexGrow: 1,
                               height: 5,
                               borderRadius: 3,
-                              bgcolor: "rgba(255, 255, 255, 0.08)",
+                              bgcolor: (theme) =>
+                                theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
                               "& .MuiLinearProgress-bar": {
-                                bgcolor: isOver ? "#f87171" : percentage > 85 ? "#fbbf24" : "#6366f1",
+                                bgcolor: (theme) =>
+                                  isOver
+                                    ? "error.main"
+                                    : percentage > 85
+                                    ? theme.palette.mode === "dark"
+                                      ? "#fbbf24"
+                                      : "#d97706"
+                                    : "primary.main",
                                 borderRadius: 3,
                               },
                             }}
                           />
                           <Typography
                             className="font-mono"
-                            sx={{ fontWeight: 700, minWidth: 32, fontSize: "0.68rem", color: "#94a3b8" }}
+                            sx={{ fontWeight: 700, minWidth: 32, fontSize: "0.68rem", color: "text.secondary" }}
                           >
                             {percentage}%
                           </Typography>
@@ -152,7 +173,7 @@ export default function BudgetVsActualBreakdown({
 
                       <TableCell align="right" sx={{ py: 1.4 }}>
                         {!hasAllocation ? (
-                          <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#71717a" }}>
+                          <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary" }}>
                             — Unbudgeted
                           </Typography>
                         ) : isOver ? (
@@ -163,9 +184,12 @@ export default function BudgetVsActualBreakdown({
                               fontWeight: 800,
                               fontSize: "0.66rem",
                               fontFamily: '"JetBrains Mono", monospace',
-                              bgcolor: "rgba(248, 113, 113, 0.12)",
-                              color: "#f87171",
-                              border: "1px solid rgba(248, 113, 113, 0.35)",
+                              bgcolor: (theme) =>
+                                theme.palette.mode === "dark" ? "rgba(248, 113, 113, 0.12)" : "rgba(239, 68, 68, 0.1)",
+                              color: "error.main",
+                              border: "1px solid",
+                              borderColor: (theme) =>
+                                theme.palette.mode === "dark" ? "rgba(248, 113, 113, 0.35)" : "rgba(239, 68, 68, 0.3)",
                               height: 22,
                             }}
                           />
@@ -177,9 +201,12 @@ export default function BudgetVsActualBreakdown({
                               fontWeight: 800,
                               fontSize: "0.66rem",
                               fontFamily: '"JetBrains Mono", monospace',
-                              bgcolor: "rgba(190, 242, 100, 0.12)",
-                              color: "#bef264",
-                              border: "1px solid rgba(190, 242, 100, 0.35)",
+                              bgcolor: (theme) =>
+                                theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.12)" : "rgba(5, 150, 105, 0.1)",
+                              color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                              border: "1px solid",
+                              borderColor: (theme) =>
+                                theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.35)" : "rgba(5, 150, 105, 0.3)",
                               height: 22,
                             }}
                           />
@@ -191,9 +218,12 @@ export default function BudgetVsActualBreakdown({
                               fontWeight: 800,
                               fontSize: "0.66rem",
                               fontFamily: '"JetBrains Mono", monospace',
-                              bgcolor: "rgba(129, 140, 248, 0.12)",
-                              color: "#818cf8",
-                              border: "1px solid rgba(129, 140, 248, 0.3)",
+                              bgcolor: (theme) =>
+                                theme.palette.mode === "dark" ? "rgba(129, 140, 248, 0.12)" : "rgba(79, 70, 229, 0.1)",
+                              color: "primary.main",
+                              border: "1px solid",
+                              borderColor: (theme) =>
+                                theme.palette.mode === "dark" ? "rgba(129, 140, 248, 0.3)" : "rgba(79, 70, 229, 0.25)",
                               height: 22,
                             }}
                           />

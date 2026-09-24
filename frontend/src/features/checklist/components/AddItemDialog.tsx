@@ -151,7 +151,7 @@ export default function AddItemDialog({
           {/* Quick Preset Recommendations */}
           {presets.length > 0 && (
             <Box sx={{ mb: 2 }}>
-              <Typography variant="caption" sx={{ color: "#94a3b8", display: "block", mb: 0.8, fontSize: "0.68rem", fontWeight: 700 }}>
+              <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.8, fontSize: "0.68rem", fontWeight: 700 }}>
                 QUICK SUGGESTIONS:
               </Typography>
               <Stack direction="row" spacing={0.6} sx={{ flexWrap: "wrap", gap: 0.6 }}>
@@ -165,13 +165,14 @@ export default function AddItemDialog({
                       fontSize: "0.64rem",
                       fontFamily: '"JetBrains Mono", monospace',
                       cursor: "pointer",
-                      bgcolor: "rgba(255, 255, 255, 0.04)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      color: "#cbd5e1",
+                      bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.04)",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      color: "text.primary",
                       "&:hover": {
-                        bgcolor: "rgba(99, 102, 241, 0.15)",
-                        borderColor: "#818cf8",
-                        color: "#ffffff",
+                        bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.08)",
+                        borderColor: "primary.main",
+                        color: "primary.main",
                       },
                     }}
                   />
@@ -187,13 +188,13 @@ export default function AddItemDialog({
                 onChange={(e) => setValue("isRequired", e.target.checked)}
                 disabled={isLoading}
                 sx={{
-                  color: "#52525b",
-                  "&.Mui-checked": { color: "#bef264" },
+                  color: "text.secondary",
+                  "&.Mui-checked": { color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#059669" },
                 }}
               />
             }
             label={
-              <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "#e2e8f0" }}>
+              <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "text.primary" }}>
                 Required Item (affects trip readiness)
               </Typography>
             }
@@ -201,7 +202,7 @@ export default function AddItemDialog({
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 2.5, pt: 1 }}>
-          <Button onClick={onClose} disabled={isLoading} sx={{ color: "#94a3b8", textTransform: "none" }}>
+          <Button onClick={onClose} disabled={isLoading} sx={{ color: "text.secondary", textTransform: "none" }}>
             Cancel
           </Button>
           <Button
@@ -210,11 +211,11 @@ export default function AddItemDialog({
             disabled={isLoading}
             className="glow-indigo"
             sx={{
-              bgcolor: "#6366f1",
+              bgcolor: "primary.main",
               color: "#ffffff",
               fontWeight: 800,
               textTransform: "none",
-              "&:hover": { bgcolor: "#4f46e5" },
+              "&:hover": { bgcolor: "primary.dark" },
             }}
           >
             Add Item

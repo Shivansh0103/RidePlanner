@@ -30,12 +30,13 @@ export default function EstimateItem({
         py: 0.8,
         px: 1.2,
         borderRadius: 1.5,
-        bgcolor: "#141313",
-        border: "1px solid rgba(255, 255, 255, 0.04)",
+        bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+        border: "1px solid",
+        borderColor: "divider",
         transition: "all 0.2s ease",
         "&:hover": {
-          bgcolor: "#1c1b1b",
-          borderColor: "rgba(255, 255, 255, 0.1)",
+          bgcolor: (theme) => (theme.palette.mode === "dark" ? "#1c1b1b" : "#f1f5f9"),
+          borderColor: "primary.main",
         },
       }}
     >
@@ -44,7 +45,7 @@ export default function EstimateItem({
           <Typography
             sx={{
               fontWeight: 700,
-              color: "#f8fafc",
+              color: "text.primary",
               fontSize: "0.78rem",
               whiteSpace: "nowrap",
               overflow: "hidden",
@@ -61,16 +62,19 @@ export default function EstimateItem({
               sx={{
                 height: 18,
                 fontSize: "0.6rem",
-                bgcolor: "rgba(190, 242, 100, 0.1)",
-                color: "#bef264",
-                border: "1px solid rgba(190, 242, 100, 0.3)",
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.1)" : "rgba(79, 70, 229, 0.08)",
+                color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "primary.main"),
+                border: "1px solid",
+                borderColor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.3)" : "rgba(79, 70, 229, 0.25)",
                 fontFamily: '"JetBrains Mono", monospace',
               }}
             />
           )}
         </Stack>
 
-        <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#818cf8", fontWeight: 700, mt: 0.2 }}>
+        <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "primary.main", fontWeight: 700, mt: 0.2 }}>
           {formatCurrency(estimate.estimatedAmount)}
         </Typography>
       </Box>
@@ -81,7 +85,7 @@ export default function EstimateItem({
             size="small"
             aria-label={`Edit estimate ${estimate.title}`}
             onClick={() => onEdit(estimate)}
-            sx={{ p: 0.4, color: "#94a3b8", "&:hover": { color: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.1)" } }}
+            sx={{ p: 0.4, color: "text.secondary", "&:hover": { color: "primary.main", bgcolor: "action.hover" } }}
           >
             <EditOutlinedIcon sx={{ fontSize: 14 }} />
           </IconButton>
@@ -91,7 +95,7 @@ export default function EstimateItem({
             size="small"
             aria-label={`Delete estimate ${estimate.title}`}
             onClick={() => onDelete(estimate)}
-            sx={{ p: 0.4, color: "#94a3b8", "&:hover": { color: "#f87171", bgcolor: "rgba(248, 113, 113, 0.1)" } }}
+            sx={{ p: 0.4, color: "text.secondary", "&:hover": { color: "error.main", bgcolor: "action.hover" } }}
           >
             <DeleteOutlineIcon sx={{ fontSize: 14 }} />
           </IconButton>
