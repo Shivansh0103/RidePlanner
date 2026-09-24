@@ -90,7 +90,6 @@ export const RegisterForm: React.FC = () => {
         <Alert
           icon={<CheckCircleIcon fontSize="inherit" />}
           severity="success"
-          sx={{ bgcolor: "rgba(190, 242, 100, 0.1)", color: "#bef264" }}
         >
           Registration successful! Please sign in with your new credentials to enter your cockpit.
         </Alert>
@@ -240,7 +239,7 @@ export const RegisterForm: React.FC = () => {
         </Button>
 
         <Box sx={{ display: "flex", alignItems: "center", my: 0.2 }}>
-          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+          <Divider sx={{ flexGrow: 1, borderColor: "divider" }} />
           <Typography
             variant="caption"
             sx={{
@@ -254,7 +253,7 @@ export const RegisterForm: React.FC = () => {
           >
             Or
           </Typography>
-          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+          <Divider sx={{ flexGrow: 1, borderColor: "divider" }} />
         </Box>
 
         <GoogleSignInButton
@@ -274,7 +273,7 @@ export const RegisterForm: React.FC = () => {
               to="/login"
               state={state}
               sx={{
-                color: "#bef264",
+                color: "primary.main",
                 fontWeight: 700,
                 textDecoration: "none",
                 "&:hover": { textDecoration: "underline" },

@@ -92,7 +92,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
           <WarningAmberIcon sx={{ fontSize: 48 }} />
         </Box>
 
-        <Typography variant="body1" sx={{ color: "#f8fafc", fontWeight: 600 }}>
+        <Typography variant="body1" sx={{ color: "text.primary", fontWeight: 600 }}>
           Invalid or Missing Reset Link
         </Typography>
 
@@ -130,13 +130,13 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
           sx={{
             display: "flex",
             justifyContent: "center",
-            color: "#bef264",
+            color: "success.main",
           }}
         >
           <CheckCircleIcon sx={{ fontSize: 48 }} />
         </Box>
 
-        <Typography variant="body1" sx={{ color: "#f8fafc", fontWeight: 600 }}>
+        <Typography variant="body1" sx={{ color: "text.primary", fontWeight: 600 }}>
           Password Reset Complete
         </Typography>
 
@@ -282,7 +282,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
               component={RouterLink}
               to="/login"
               sx={{
-                color: "#bef264",
+                color: "primary.main",
                 fontWeight: 700,
                 textDecoration: "none",
                 "&:hover": { textDecoration: "underline" },

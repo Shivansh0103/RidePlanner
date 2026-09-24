@@ -144,7 +144,7 @@ export const LoginForm: React.FC = () => {
               color: "text.secondary",
               fontSize: "0.85rem",
               textDecoration: "none",
-              "&:hover": { color: "#bef264", textDecoration: "underline" },
+              "&:hover": { color: "primary.main", textDecoration: "underline" },
             }}
           >
             Forgot password?
@@ -175,7 +175,7 @@ export const LoginForm: React.FC = () => {
         </Button>
 
         <Box sx={{ display: "flex", alignItems: "center", my: 0.2 }}>
-          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+          <Divider sx={{ flexGrow: 1, borderColor: "divider" }} />
           <Typography
             variant="caption"
             sx={{
@@ -189,7 +189,7 @@ export const LoginForm: React.FC = () => {
           >
             Or
           </Typography>
-          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+          <Divider sx={{ flexGrow: 1, borderColor: "divider" }} />
         </Box>
 
         <GoogleSignInButton
@@ -209,7 +209,7 @@ export const LoginForm: React.FC = () => {
               to="/register"
               state={state}
               sx={{
-                color: "#bef264",
+                color: "primary.main",
                 fontWeight: 700,
                 textDecoration: "none",
                 "&:hover": { textDecoration: "underline" },

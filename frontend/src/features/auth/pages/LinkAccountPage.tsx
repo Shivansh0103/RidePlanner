@@ -104,7 +104,7 @@ export const LinkAccountPage: React.FC = () => {
     return (
       <AuthLayout title="Account Linking" subtitle="Verifying link ticket...">
         <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-          <CircularProgress size={36} sx={{ color: "#bef264" }} />
+          <CircularProgress size={36} sx={{ color: "primary.main" }} />
         </Box>
       </AuthLayout>
     );
@@ -153,9 +153,9 @@ export const LinkAccountPage: React.FC = () => {
               border: "1px solid rgba(99, 102, 241, 0.25)",
             }}
           >
-            <Typography variant="body2" sx={{ color: "#e2e8f0", lineHeight: 1.6 }}>
+            <Typography variant="body2" sx={{ color: "text.primary", lineHeight: 1.6 }}>
               A RidePlanner account already exists for{" "}
-              <Box component="span" sx={{ color: "#bef264", fontWeight: 700 }}>
+              <Box component="span" sx={{ color: "primary.main", fontWeight: 700 }}>
                 {linkInfo?.maskedEmail}
               </Box>
               . To link your {linkInfo?.provider} account for one-click login in the future, please
@@ -230,7 +230,7 @@ export const LinkAccountPage: React.FC = () => {
                 color: "text.secondary",
                 fontSize: "0.85rem",
                 textDecoration: "none",
-                "&:hover": { color: "#bef264", textDecoration: "underline" },
+                "&:hover": { color: "primary.main", textDecoration: "underline" },
               }}
             >
               Cancel and Return to Login

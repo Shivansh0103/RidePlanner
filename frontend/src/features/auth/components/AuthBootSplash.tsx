@@ -2,7 +2,12 @@ import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import React from "react";
 
+import { useThemeMode } from "@/app/theme/ThemeContext";
+
 export const AuthBootSplash: React.FC = () => {
+  const { resolvedTheme } = useThemeMode();
+  const isDark = resolvedTheme === "dark";
+
   return (
     <Box
       sx={{
@@ -14,10 +19,12 @@ export const AuthBootSplash: React.FC = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: "#0b0f19",
-        backgroundImage:
-          "radial-gradient(circle at 50% 45%, rgba(99, 102, 241, 0.18), transparent 70%), linear-gradient(180deg, #0b0f19 0%, #121416 100%)",
+        bgcolor: isDark ? "#0b0f19" : "#F1F3F9",
+        backgroundImage: isDark
+          ? "radial-gradient(circle at 50% 45%, rgba(99, 102, 241, 0.18), transparent 70%), linear-gradient(180deg, #0b0f19 0%, #121416 100%)"
+          : "radial-gradient(circle at 50% 45%, rgba(79, 70, 229, 0.08), transparent 70%), linear-gradient(180deg, #F1F3F9 0%, #FFFFFF 100%)",
         zIndex: 9999,
+        transition: "background-color 0.2s ease",
       }}
     >
       <Stack spacing={3} sx={{ alignItems: "center", textAlign: "center" }}>
@@ -27,14 +34,15 @@ export const AuthBootSplash: React.FC = () => {
             width: 72,
             height: 72,
             borderRadius: 3,
-            bgcolor: "rgba(99, 102, 241, 0.12)",
-            border: "1px solid rgba(99, 102, 241, 0.35)",
-            boxShadow:
-              "0 0 35px rgba(99, 102, 241, 0.35), inset 0 0 15px rgba(99, 102, 241, 0.2)",
+            bgcolor: isDark ? "rgba(99, 102, 241, 0.12)" : "rgba(79, 70, 229, 0.1)",
+            border: isDark ? "1px solid rgba(99, 102, 241, 0.35)" : "1px solid rgba(79, 70, 229, 0.3)",
+            boxShadow: isDark
+              ? "0 0 35px rgba(99, 102, 241, 0.35), inset 0 0 15px rgba(99, 102, 241, 0.2)"
+              : "0 0 24px rgba(79, 70, 229, 0.2)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#818cf8",
+            color: isDark ? "#818cf8" : "#4f46e5",
           }}
         >
           <TwoWheelerIcon sx={{ fontSize: 38 }} />
@@ -48,7 +56,7 @@ export const AuthBootSplash: React.FC = () => {
               fontFamily: '"Outfit", sans-serif',
               fontWeight: 800,
               fontStyle: "italic",
-              color: "#bef264",
+              color: isDark ? "#bef264" : "#4f46e5",
               letterSpacing: "-0.03em",
               lineHeight: 1.1,
               mb: 0.5,

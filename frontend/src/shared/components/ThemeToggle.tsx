@@ -9,9 +9,14 @@ import { useThemeMode, type ThemeMode } from "@/app/theme/ThemeContext";
 interface ThemeToggleProps {
   className?: string;
   size?: "small" | "medium";
+  showLabels?: boolean;
 }
 
-export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className, size = "small" }) => {
+export const ThemeToggle: React.FC<ThemeToggleProps> = ({
+  className,
+  size = "small",
+  showLabels = true,
+}) => {
   const { mode, resolvedTheme, setMode } = useThemeMode();
   const isDark = resolvedTheme === "dark";
 
@@ -96,9 +101,10 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className, size = "sma
               sx={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 0.5,
-                px: size === "small" ? 1 : 1.4,
-                py: size === "small" ? "3px" : "5px",
+                justifyContent: "center",
+                gap: showLabels ? 0.5 : 0,
+                px: showLabels ? (size === "small" ? 1 : 1.4) : (size === "small" ? "7px" : "9px"),
+                py: size === "small" ? "4px" : "6px",
                 borderRadius: "9999px",
                 border: active
                   ? isDark
@@ -144,16 +150,18 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className, size = "sma
               }}
             >
               {opt.icon}
-              <Box
-                component="span"
-                sx={{
-                  display: { xs: "none", sm: "inline" },
-                  textTransform: "uppercase",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                {opt.label}
-              </Box>
+              {showLabels && (
+                <Box
+                  component="span"
+                  sx={{
+                    display: { xs: "none", sm: "inline" },
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  {opt.label}
+                </Box>
+              )}
             </Box>
           </Tooltip>
         );

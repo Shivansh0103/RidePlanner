@@ -22,7 +22,7 @@ function getSystemTheme(): ResolvedTheme {
 }
 
 function getStoredMode(): ThemeMode {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") return "dark";
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark" || stored === "system") {
@@ -31,7 +31,7 @@ function getStoredMode(): ThemeMode {
   } catch {
     // Ignore localStorage errors
   }
-  return "system";
+  return "dark";
 }
 
 export interface ThemeProviderProps {
@@ -41,9 +41,9 @@ export interface ThemeProviderProps {
 
 export const ThemeContextProvider: React.FC<ThemeProviderProps> = ({
   children,
-  defaultMode,
+  defaultMode = "dark",
 }) => {
-  const [mode, setModeState] = useState<ThemeMode>(() => defaultMode || getStoredMode());
+  const [mode, setModeState] = useState<ThemeMode>(() => getStoredMode() || defaultMode);
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
 
   // Listen to OS system theme changes

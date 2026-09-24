@@ -26,9 +26,9 @@ describe("Theme System (AUDIT-03)", () => {
     expect(darkTheme.palette.primary.main).toBe("#6366f1");
 
     expect(lightTheme.palette.mode).toBe("light");
-    expect(lightTheme.palette.background.default).toBe("#F4F6FF");
-    expect(lightTheme.palette.text.primary).toBe("#090d16");
-    expect(lightTheme.palette.primary.main).toBe("#2563eb");
+    expect(lightTheme.palette.background.default).toBe("#F1F3F9");
+    expect(lightTheme.palette.text.primary).toBe("#0F172A");
+    expect(lightTheme.palette.primary.main).toBe("#4f46e5");
   });
 
   it("initializes with default mode and synchronizes document data-theme", () => {
@@ -73,7 +73,7 @@ describe("Theme System (AUDIT-03)", () => {
       </ThemeContextProvider>
     );
 
-    const lightBtn = screen.getByRole("button", { name: /Electric Pop Daylight/i });
+    const lightBtn = screen.getByRole("button", { name: /Daylight Mode/i });
     const darkBtn = screen.getByRole("button", { name: /Obsidian Dark/i });
     const autoBtn = screen.getByRole("button", { name: /Follow System Preference/i });
 
