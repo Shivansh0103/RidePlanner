@@ -72,7 +72,7 @@ export default function TripsPage() {
   };
 
   const debouncedSearch = useDebounce(searchQuery, 250);
-  const { data: trips = [], isLoading, isError, error } = useTrips();
+  const { data: trips = [], isLoading, isError, error, refetch } = useTrips();
   const deleteTripMutation = useDeleteTrip();
 
   if (isLoading) {
@@ -80,7 +80,13 @@ export default function TripsPage() {
   }
 
   if (isError) {
-    return <ErrorState message={error instanceof Error ? error.message : "Unable to load trips"} />;
+    return (
+      <ErrorState
+        message={error instanceof Error ? error.message : "Unable to load trips"}
+        onRetry={() => refetch()}
+        showBackToTrips={false}
+      />
+    );
   }
 
   const handleEdit = (trip: Trip) => {

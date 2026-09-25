@@ -72,7 +72,7 @@ export default function TripDetailsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
 
-  const { data: trip, isLoading, isError } = useTrip(tripId ?? "");
+  const { data: trip, isLoading, isError, refetch } = useTrip(tripId ?? "");
   const { data: stops = [] } = useTripStops(tripId ?? "");
   const { data: budget } = useTripBudget(tripId ?? "");
   const { data: checklist } = useTripChecklist(tripId ?? "");
@@ -121,7 +121,14 @@ export default function TripDetailsPage() {
   }
 
   if (isError || !trip) {
-    return <ErrorState message="Unable to load trip expedition details." />;
+    return (
+      <ErrorState
+        title="Expedition Not Found"
+        message="Unable to load this expedition's details. It may have been deleted, or your network connection was interrupted."
+        onRetry={() => refetch()}
+        showBackToTrips={true}
+      />
+    );
   }
 
   const getStatusStyles = (status: string) => {
