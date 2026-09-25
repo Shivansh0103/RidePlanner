@@ -4,8 +4,9 @@ import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { ThemeToggle } from "@/shared/components/ThemeToggle";
-import { ThemeContextProvider, useThemeMode } from "../ThemeContext";
+
 import { getAppTheme } from "../theme";
+import { ThemeContextProvider, useThemeMode } from "../ThemeContext";
 
 describe("Theme System (AUDIT-03)", () => {
   beforeEach(() => {

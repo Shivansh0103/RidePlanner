@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useSearchParams } from "react-router-dom";
 
 import { useThemeMode } from "@/app/theme/ThemeContext";
+
 import { useAuth } from "../hooks/useAuth";
 
 export const AuthCallbackPage: React.FC = () => {

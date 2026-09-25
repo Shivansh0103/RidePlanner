@@ -60,8 +60,12 @@ export const ThemeContextProvider: React.FC<ThemeProviderProps> = ({
       return () => mediaQuery.removeEventListener("change", handleChange);
     } else if ("addListener" in mediaQuery) {
       // Legacy browsers
-      (mediaQuery as any).addListener(handleChange);
-      return () => (mediaQuery as any).removeListener(handleChange);
+      const legacyQuery = mediaQuery as unknown as {
+        addListener: (listener: (e: MediaQueryListEvent) => void) => void;
+        removeListener: (listener: (e: MediaQueryListEvent) => void) => void;
+      };
+      legacyQuery.addListener(handleChange);
+      return () => legacyQuery.removeListener(handleChange);
     }
   }, []);
 
@@ -115,6 +119,7 @@ const defaultThemeContext: ThemeContextType = {
   toggleTheme: () => {},
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useThemeMode(): ThemeContextType {
   const context = useContext(ThemeContext);
   return context ?? defaultThemeContext;

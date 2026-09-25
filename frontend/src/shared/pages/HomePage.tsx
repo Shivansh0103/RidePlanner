@@ -21,10 +21,10 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useThemeMode } from "@/app/theme/ThemeContext";
 import { useAccommodations } from "@/features/accommodations";
 import { useTripReadiness } from "@/features/readiness";
 import { useTrips } from "@/features/trips";
-import { useThemeMode } from "@/app/theme/ThemeContext";
 import { LoadingSpinner } from "@/shared/ui";
 import { formatDate } from "@/shared/utils";
 

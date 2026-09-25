@@ -116,7 +116,7 @@ export default function BudgetSection({
           });
       }
     }
-  }, [routeDistanceKm, tripId, budget?.targetBudget, queryClient]);
+  }, [routeDistanceKm, tripId, budget, defaultMileage, queryClient]);
 
   // Budget Dialog states
   const [isEditBudgetOpen, setIsEditBudgetOpen] = useState(false);

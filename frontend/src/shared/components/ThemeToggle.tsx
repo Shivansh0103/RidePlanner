@@ -4,7 +4,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import { Box, Tooltip } from "@mui/material";
 import React from "react";
 
-import { useThemeMode, type ThemeMode } from "@/app/theme/ThemeContext";
+import { type ThemeMode,useThemeMode } from "@/app/theme/ThemeContext";
 
 interface ThemeToggleProps {
   className?: string;
