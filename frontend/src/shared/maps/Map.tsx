@@ -1,5 +1,6 @@
 import { Map as GoogleMap } from "@vis.gl/react-google-maps";
 
+import { useThemeMode } from "@/app/theme/ThemeContext";
 import { ErrorBoundary } from "@/shared/components";
 
 import { MapFallback } from "./components/MapFallback";
@@ -88,6 +89,9 @@ export function Map({
   selectedStopId,
   onStopSelect,
 }: MapProps) {
+  const { resolvedTheme } = useThemeMode();
+  const isDark = resolvedTheme === "dark";
+
   const validStops = stops.filter(
     (stop) =>
       stop.latitude !== null &&
@@ -113,8 +117,8 @@ export function Map({
         defaultZoom={zoom}
         gestureHandling="greedy"
         disableDefaultUI={false}
-        colorScheme="DARK"
-        styles={mapId ? undefined : darkMapStyles}
+        colorScheme={isDark ? "DARK" : "LIGHT"}
+        styles={mapId ? undefined : (isDark ? darkMapStyles : undefined)}
         style={{
           width: "100%",
           height: "100%",
