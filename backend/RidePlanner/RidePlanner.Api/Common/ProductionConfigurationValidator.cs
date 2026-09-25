@@ -86,6 +86,33 @@ public static class ProductionConfigurationValidator
             errors.Add("App:FrontendBaseUrl cannot be 'http://localhost:5173' in production.");
         }
 
+        // 6. Validate Transactional Email Provider
+        var emailProvider = configuration["Email:Provider"];
+        if (string.IsNullOrWhiteSpace(emailProvider) || string.Equals(emailProvider, "Development", StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add("Email:Provider must be configured in production ('Resend' or 'Smtp').");
+        }
+        else if (string.Equals(emailProvider, "Resend", StringComparison.OrdinalIgnoreCase))
+        {
+            var resendApiKey = configuration["Email:ApiKey"];
+            if (string.IsNullOrWhiteSpace(resendApiKey))
+            {
+                errors.Add("Email:ApiKey is required when Email:Provider is 'Resend'.");
+            }
+            else if (resendApiKey.Contains("xxxx") || string.Equals(resendApiKey, "development-placeholder", StringComparison.OrdinalIgnoreCase))
+            {
+                errors.Add("Email:ApiKey cannot use placeholder values in production.");
+            }
+        }
+        else if (string.Equals(emailProvider, "Smtp", StringComparison.OrdinalIgnoreCase))
+        {
+            var smtpHost = configuration["Email:Smtp:Host"];
+            if (string.IsNullOrWhiteSpace(smtpHost))
+            {
+                errors.Add("Email:Smtp:Host is required when Email:Provider is 'Smtp'.");
+            }
+        }
+
         if (errors.Count > 0)
         {
             var summary = string.Join(Environment.NewLine + " - ", errors);

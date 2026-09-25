@@ -136,7 +136,23 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddTransient<IEmailSender, DevelopmentEmailSender>();
+
+        services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
+        var emailSettings = configuration.GetSection(EmailSettings.SectionName).Get<EmailSettings>() ?? new EmailSettings();
+
+        if (string.Equals(emailSettings.Provider, "Resend", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddHttpClient<IEmailSender, ResendEmailSender>();
+        }
+        else if (string.Equals(emailSettings.Provider, "Smtp", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddTransient<IEmailSender, SmtpEmailSender>();
+        }
+        else
+        {
+            services.AddTransient<IEmailSender, DevelopmentEmailSender>();
+        }
+
         return services;
     }
 }
