@@ -32,6 +32,12 @@ public class RateLimitingWebApplicationFactory : CustomWebApplicationFactory
 
                 options.ExternalLink.PermitLimit = 2;
                 options.ExternalLink.WindowSeconds = 60;
+
+                options.TokenRefresh.PermitLimit = 2;
+                options.TokenRefresh.WindowSeconds = 60;
+
+                options.ExternalOAuth.PermitLimit = 2;
+                options.ExternalOAuth.WindowSeconds = 60;
             });
         });
     }
@@ -209,6 +215,47 @@ public class RateLimitingIntegrationTests : IClassFixture<RateLimitingWebApplica
 
         // 3rd request exceeds limit -> 429 Too Many Requests
         var throttledResponse = await client.PostAsJsonAsync("/api/auth/external/link", linkPayload);
+        Assert.Equal(HttpStatusCode.TooManyRequests, throttledResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task TokenRefresh_WhenPermitLimitExceeded_Returns429TooManyRequests()
+    {
+        var client = _factory.CreateClient();
+        var clientIp = $"192.168.70.{Guid.NewGuid():N}";
+        client.DefaultRequestHeaders.Add("X-Test-Client-IP", clientIp);
+
+        // PermitLimit is 2: first 2 requests fail with 401 Unauthorized (missing refresh token cookie)
+        for (var i = 0; i < 2; i++)
+        {
+            var res = await client.PostAsync("/api/auth/refresh", null);
+            Assert.Equal(HttpStatusCode.Unauthorized, res.StatusCode);
+        }
+
+        // 3rd request exceeds limit -> 429 Too Many Requests
+        var throttledResponse = await client.PostAsync("/api/auth/refresh", null);
+        Assert.Equal(HttpStatusCode.TooManyRequests, throttledResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task ExternalOAuth_WhenPermitLimitExceeded_Returns429TooManyRequests()
+    {
+        var client = _factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+        var clientIp = $"192.168.80.{Guid.NewGuid():N}";
+        client.DefaultRequestHeaders.Add("X-Test-Client-IP", clientIp);
+
+        // PermitLimit is 2: first 2 requests initiate external auth (challenge / redirect or not throttled)
+        for (var i = 0; i < 2; i++)
+        {
+            var res = await client.GetAsync("/api/auth/external/google/start");
+            Assert.NotEqual(HttpStatusCode.TooManyRequests, res.StatusCode);
+        }
+
+        // 3rd request exceeds limit -> 429 Too Many Requests
+        var throttledResponse = await client.GetAsync("/api/auth/external/google/start");
         Assert.Equal(HttpStatusCode.TooManyRequests, throttledResponse.StatusCode);
     }
 }

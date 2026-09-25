@@ -7,4 +7,6 @@ public static class RateLimitPolicies
     public const string ForgotPassword = "ForgotPasswordRateLimit";
     public const string ResetPassword = "ResetPasswordRateLimit";
     public const string ExternalLink = "ExternalLinkRateLimit";
+    public const string TokenRefresh = "TokenRefreshRateLimit";
+    public const string ExternalOAuth = "ExternalOAuthRateLimit";
 }

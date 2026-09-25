@@ -9,6 +9,8 @@ public class RateLimitingSettings
     public RateLimitPolicyConfig ForgotPassword { get; set; } = new() { PermitLimit = 5, WindowSeconds = 900 };
     public RateLimitPolicyConfig ResetPassword { get; set; } = new() { PermitLimit = 5, WindowSeconds = 900 };
     public RateLimitPolicyConfig ExternalLink { get; set; } = new() { PermitLimit = 10, WindowSeconds = 900 };
+    public RateLimitPolicyConfig TokenRefresh { get; set; } = new() { PermitLimit = 30, WindowSeconds = 60 };
+    public RateLimitPolicyConfig ExternalOAuth { get; set; } = new() { PermitLimit = 15, WindowSeconds = 60 };
 }
 
 public class RateLimitPolicyConfig
