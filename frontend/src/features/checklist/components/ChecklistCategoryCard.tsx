@@ -86,15 +86,16 @@ export default function ChecklistCategoryCard({
       className="neo-convex"
       sx={{
         borderRadius: 2.5,
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         transition: "all 0.2s ease",
         "&:hover": {
-          borderColor: `${config.color}55`,
+          borderColor: "primary.main",
         },
       }}
     >
@@ -125,7 +126,7 @@ export default function ChecklistCategoryCard({
                   variant="subtitle1"
                   sx={{
                     fontWeight: 800,
-                    color: "#f8fafc",
+                    color: "text.primary",
                     fontSize: "0.92rem",
                     lineHeight: 1.2,
                     whiteSpace: "nowrap",
@@ -135,7 +136,7 @@ export default function ChecklistCategoryCard({
                 >
                   {category.name}
                 </Typography>
-                <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "#94a3b8" }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "text.secondary" }}>
                   {category.completedItemsCount} of {category.totalItemsCount} ready ({percent}%)
                 </Typography>
               </Box>
@@ -147,7 +148,7 @@ export default function ChecklistCategoryCard({
                   size="small"
                   aria-label="edit category"
                   onClick={() => onEditCategory(category)}
-                  sx={{ p: 0.5, color: "#94a3b8", "&:hover": { color: "#818cf8" } }}
+                  sx={{ p: 0.5, color: "text.secondary", "&:hover": { color: "primary.main" } }}
                 >
                   <EditIcon sx={{ fontSize: 15 }} />
                 </IconButton>
@@ -157,7 +158,7 @@ export default function ChecklistCategoryCard({
                   size="small"
                   aria-label="delete category"
                   onClick={() => onDeleteCategory(category)}
-                  sx={{ p: 0.5, color: "#94a3b8", "&:hover": { color: "#f87171" } }}
+                  sx={{ p: 0.5, color: "text.secondary", "&:hover": { color: "error.main" } }}
                 >
                   <DeleteIcon sx={{ fontSize: 15 }} />
                 </IconButton>
@@ -172,9 +173,15 @@ export default function ChecklistCategoryCard({
             sx={{
               height: 4,
               borderRadius: 2,
-              bgcolor: "rgba(255, 255, 255, 0.06)",
+              bgcolor: (theme) =>
+                theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)",
               "& .MuiLinearProgress-bar": {
-                bgcolor: isAllCompleted ? "#bef264" : config.color,
+                bgcolor: (theme) =>
+                  isAllCompleted
+                    ? theme.palette.mode === "dark"
+                      ? "#bef264"
+                      : "#059669"
+                    : config.color,
                 borderRadius: 2,
               },
             }}
@@ -189,14 +196,20 @@ export default function ChecklistCategoryCard({
                   py: 3,
                   px: 1.5,
                   textAlign: "center",
-                  bgcolor: "rgba(255, 255, 255, 0.02)",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)",
                   borderRadius: 2,
-                  border: "1px dashed rgba(255, 255, 255, 0.08)",
+                  border: "1px dashed",
+                  borderColor: "divider",
                   cursor: "pointer",
-                  "&:hover": { bgcolor: "rgba(99, 102, 241, 0.08)", borderColor: "#818cf8" },
+                  "&:hover": {
+                    bgcolor: (theme) =>
+                      theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.08)" : "rgba(79, 70, 229, 0.06)",
+                    borderColor: "primary.main",
+                  },
                 }}
               >
-                <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
                   + Add first {category.name.toLowerCase()} item
                 </Typography>
               </Box>
@@ -219,7 +232,7 @@ export default function ChecklistCategoryCard({
 
       {/* Footer Add Button */}
       {category.items.length > 0 && (
-        <Box sx={{ p: 1.5, pt: 0, borderTop: "1px solid rgba(255, 255, 255, 0.05)" }}>
+        <Box sx={{ p: 1.5, pt: 0, borderTop: "1px solid", borderColor: "divider" }}>
           <Button
             fullWidth
             size="small"
@@ -227,7 +240,8 @@ export default function ChecklistCategoryCard({
             onClick={() => onAddItem(category.id)}
             sx={{
               color: config.color,
-              bgcolor: "rgba(255, 255, 255, 0.02)",
+              bgcolor: (theme) =>
+                theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)",
               fontSize: "0.72rem",
               fontFamily: '"JetBrains Mono", monospace',
               fontWeight: 700,

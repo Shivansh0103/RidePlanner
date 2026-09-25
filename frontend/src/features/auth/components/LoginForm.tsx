@@ -73,7 +73,7 @@ export const LoginForm: React.FC = () => {
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Stack spacing={2.5}>
+      <Stack spacing={2}>
         {errorMessage && (
           <Alert severity="error" sx={{ bgcolor: "rgba(248, 113, 113, 0.1)", color: "#f87171" }}>
             {errorMessage}
@@ -136,7 +136,7 @@ export const LoginForm: React.FC = () => {
           {...register("password")}
         />
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: -1 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: -0.5 }}>
           <Link
             component={RouterLink}
             to="/forgot-password"
@@ -144,7 +144,7 @@ export const LoginForm: React.FC = () => {
               color: "text.secondary",
               fontSize: "0.85rem",
               textDecoration: "none",
-              "&:hover": { color: "#bef264", textDecoration: "underline" },
+              "&:hover": { color: "primary.main", textDecoration: "underline" },
             }}
           >
             Forgot password?
@@ -159,7 +159,7 @@ export const LoginForm: React.FC = () => {
           fullWidth
           disabled={isPending}
           sx={{
-            py: 1.3,
+            py: 1.25,
             fontWeight: 700,
             fontSize: "0.95rem",
             textTransform: "none",
@@ -174,21 +174,22 @@ export const LoginForm: React.FC = () => {
           )}
         </Button>
 
-        <Box sx={{ display: "flex", alignItems: "center", my: 0.5 }}>
-          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+        <Box sx={{ display: "flex", alignItems: "center", my: 0.2 }}>
+          <Divider sx={{ flexGrow: 1, borderColor: "divider" }} />
           <Typography
             variant="caption"
             sx={{
               px: 1.5,
               color: "text.secondary",
               fontWeight: 600,
+              fontSize: "0.7rem",
               letterSpacing: "0.05em",
               textTransform: "uppercase",
             }}
           >
             Or
           </Typography>
-          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+          <Divider sx={{ flexGrow: 1, borderColor: "divider" }} />
         </Box>
 
         <GoogleSignInButton
@@ -208,7 +209,7 @@ export const LoginForm: React.FC = () => {
               to="/register"
               state={state}
               sx={{
-                color: "#bef264",
+                color: "primary.main",
                 fontWeight: 700,
                 textDecoration: "none",
                 "&:hover": { textDecoration: "underline" },

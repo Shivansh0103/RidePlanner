@@ -31,16 +31,18 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
       sx={{
         borderRadius: 2.5,
         height: "100%",
-        bgcolor: "#1a1a1e",
+        bgcolor: "background.paper",
         border: "1px solid",
-        borderColor: contact.isPrimary ? "rgba(99, 102, 241, 0.5)" : "rgba(255, 255, 255, 0.08)",
-        boxShadow: contact.isPrimary ? "0 0 16px rgba(99, 102, 241, 0.15)" : "none",
+        borderColor: contact.isPrimary ? "primary.main" : "divider",
+        boxShadow: contact.isPrimary
+          ? (theme) => (theme.palette.mode === "dark" ? "0 0 16px rgba(99, 102, 241, 0.15)" : "0 4px 12px rgba(79, 70, 229, 0.1)")
+          : "none",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         transition: "all 0.2s ease-in-out",
         "&:hover": {
-          borderColor: contact.isPrimary ? "#818cf8" : "rgba(255, 255, 255, 0.15)",
+          borderColor: "primary.main",
         },
       }}
     >
@@ -54,9 +56,12 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
                   width: 36,
                   height: 36,
                   borderRadius: 2,
-                  bgcolor: contact.isPrimary ? "rgba(99, 102, 241, 0.15)" : "rgba(255, 255, 255, 0.04)",
-                  color: contact.isPrimary ? "#818cf8" : "#94a3b8",
-                  border: `1px solid ${contact.isPrimary ? "rgba(99, 102, 241, 0.35)" : "rgba(255, 255, 255, 0.08)"}`,
+                  bgcolor: contact.isPrimary
+                    ? (theme) => (theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.1)")
+                    : (theme) => (theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.04)"),
+                  color: contact.isPrimary ? "primary.main" : "text.secondary",
+                  border: "1px solid",
+                  borderColor: contact.isPrimary ? "primary.main" : "divider",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -72,7 +77,7 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
                     variant="subtitle1"
                     sx={{
                       fontWeight: 800,
-                      color: "#f8fafc",
+                      color: "text.primary",
                       fontSize: "0.92rem",
                       lineHeight: 1.2,
                       whiteSpace: "nowrap",
@@ -84,23 +89,31 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
                   </Typography>
                   {contact.isPrimary && (
                     <Chip
-                      icon={<StarIcon sx={{ fontSize: "0.68rem !important", color: "#bef264 !important" }} />}
+                      icon={
+                        <StarIcon
+                          sx={{
+                            fontSize: "0.68rem !important",
+                            color: (theme) => (theme.palette.mode === "dark" ? "#bef264 !important" : "#059669 !important"),
+                          }}
+                        />
+                      }
                       label="PRIMARY"
                       size="small"
                       sx={{
                         height: 18,
                         fontWeight: 800,
                         fontSize: "0.58rem",
-                        bgcolor: "rgba(190, 242, 100, 0.12)",
-                        color: "#bef264",
-                        border: "1px solid rgba(190, 242, 100, 0.3)",
+                        bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.12)" : "rgba(5, 150, 105, 0.1)"),
+                        color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                        border: "1px solid",
+                        borderColor: (theme) => (theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)"),
                         fontFamily: '"JetBrains Mono", monospace',
                       }}
                     />
                   )}
                 </Stack>
 
-                <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "#94a3b8", mt: 0.2 }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "text.secondary", mt: 0.2 }}>
                   {contact.relationship}
                 </Typography>
               </Box>
@@ -112,7 +125,7 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
                   size="small"
                   onClick={() => onEdit(contact)}
                   aria-label="Edit contact"
-                  sx={{ p: 0.4, color: "#94a3b8", "&:hover": { color: "#818cf8" } }}
+                  sx={{ p: 0.4, color: "text.secondary", "&:hover": { color: "primary.main" } }}
                 >
                   <EditIcon sx={{ fontSize: 15 }} />
                 </IconButton>
@@ -122,7 +135,7 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
                   size="small"
                   onClick={() => onDelete(contact)}
                   aria-label="Delete contact"
-                  sx={{ p: 0.4, color: "#94a3b8", "&:hover": { color: "#f87171" } }}
+                  sx={{ p: 0.4, color: "text.secondary", "&:hover": { color: "error.main" } }}
                 >
                   <DeleteIcon sx={{ fontSize: 15 }} />
                 </IconButton>
@@ -137,16 +150,17 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
               p: 0.9,
               px: 1.2,
               borderRadius: 1.8,
-              bgcolor: "#141313",
+              bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              border: "1px solid rgba(255, 255, 255, 0.04)",
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
             <Stack direction="row" spacing={0.8} sx={{ alignItems: "center" }}>
-              <PhoneIcon sx={{ fontSize: 14, color: "#818cf8" }} />
-              <Typography className="font-mono" sx={{ fontSize: "0.76rem", fontWeight: 700, color: "#f8fafc" }}>
+              <PhoneIcon sx={{ fontSize: 14, color: "primary.main" }} />
+              <Typography className="font-mono" sx={{ fontSize: "0.76rem", fontWeight: 700, color: "text.primary" }}>
                 {contact.phone}
               </Typography>
             </Stack>
@@ -161,10 +175,13 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
                 fontSize: "0.62rem",
                 fontWeight: 800,
                 fontFamily: '"JetBrains Mono", monospace',
-                borderColor: "rgba(190, 242, 100, 0.4)",
-                color: "#bef264",
+                borderColor: (theme) => (theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.4)" : "rgba(5, 150, 105, 0.4)"),
+                color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
                 borderRadius: 1.5,
-                "&:hover": { borderColor: "#bef264", bgcolor: "rgba(190, 242, 100, 0.08)" },
+                "&:hover": {
+                  borderColor: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.08)" : "rgba(5, 150, 105, 0.08)"),
+                },
               }}
             >
               CALL NOW
@@ -175,10 +192,10 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
           <Stack spacing={0.4} sx={{ pt: 0.2 }}>
             {contact.alternatePhone ? (
               <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
-                <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#71717a" }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary" }}>
                   ALT:
                 </Typography>
-                <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8", fontWeight: 600 }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary", fontWeight: 600 }}>
                   {contact.alternatePhone}
                 </Typography>
               </Stack>
@@ -186,15 +203,15 @@ export default function ContactCard({ contact, onEdit, onDelete }: ContactCardPr
 
             {contact.email ? (
               <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
-                <AlternateEmailIcon sx={{ fontSize: 12, color: "#71717a" }} />
-                <Typography variant="caption" sx={{ fontSize: "0.68rem", color: "#94a3b8", wordBreak: "break-all" }}>
+                <AlternateEmailIcon sx={{ fontSize: 12, color: "text.secondary" }} />
+                <Typography variant="caption" sx={{ fontSize: "0.68rem", color: "text.secondary", wordBreak: "break-all" }}>
                   {contact.email}
                 </Typography>
               </Stack>
             ) : null}
 
             {!contact.alternatePhone && !contact.email && (
-              <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "#52525b" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "text.secondary" }}>
                 Primary phone is single point of contact
               </Typography>
             )}

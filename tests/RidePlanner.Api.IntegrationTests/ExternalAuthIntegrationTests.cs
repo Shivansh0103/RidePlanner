@@ -37,6 +37,27 @@ public class ExternalAuthIntegrationTests : IClassFixture<CustomWebApplicationFa
     }
 
     [Fact]
+    public async Task GoogleStart_WhenXForwardedHostProvided_GeneratesRedirectWithCorrectHostAndApiCallbackPath()
+    {
+        // Arrange
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/external/google/start?returnUrl=/trips");
+        request.Headers.Add("X-Forwarded-Host", "ride-planner-sand.vercel.app");
+        request.Headers.Add("X-Forwarded-Proto", "https");
+
+        // Act
+        var response = await _client.SendAsync(request);
+
+        // Assert: 302 Redirect to Google OAuth authorization endpoint
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        var location = response.Headers.Location?.ToString();
+        Assert.NotNull(location);
+        Assert.StartsWith("https://accounts.google.com/o/oauth2/v2/auth", location);
+
+        // Assert redirect_uri query parameter targets the public Vercel host and /api/signin-google path
+        Assert.Contains("redirect_uri=https%3A%2F%2Fride-planner-sand.vercel.app%2Fapi%2Fsignin-google", location);
+    }
+
+    [Fact]
     public async Task GoogleCallback_NewUser_CreatesUser_SetsRefreshCookie_RedirectsToSpa_AndSpaBootstrapsSession()
     {
         // Arrange: Generate unique Google user claims

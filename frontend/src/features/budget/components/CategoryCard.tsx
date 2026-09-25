@@ -54,15 +54,16 @@ export default function CategoryCard({
       className="neo-convex"
       sx={{
         borderRadius: 2.5,
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         transition: "all 0.2s ease",
         "&:hover": {
-          borderColor: "rgba(129, 140, 248, 0.4)",
+          borderColor: "primary.main",
         },
       }}
     >
@@ -86,10 +87,10 @@ export default function CategoryCard({
               {config.icon}
             </Box>
             <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.88rem" }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "text.primary", fontSize: "0.88rem" }}>
                 {categoryName}
               </Typography>
-              <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "#94a3b8" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.64rem", color: "text.secondary" }}>
                 {category.estimates.length} {category.estimates.length === 1 ? "Item" : "Items"}
               </Typography>
             </Box>
@@ -100,7 +101,7 @@ export default function CategoryCard({
             sx={{
               fontWeight: 800,
               fontSize: "0.95rem",
-              color: category.estimatedAmount > 0 ? config.color : "#71717a",
+              color: category.estimatedAmount > 0 ? config.color : "text.secondary",
             }}
           >
             {formatCurrency(category.estimatedAmount)}
@@ -127,18 +128,21 @@ export default function CategoryCard({
                 py: 1.8,
                 px: 1.5,
                 textAlign: "center",
-                bgcolor: "rgba(255, 255, 255, 0.02)",
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)",
                 borderRadius: 2,
-                border: "1px dashed rgba(255, 255, 255, 0.1)",
+                border: "1px dashed",
+                borderColor: "divider",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 "&:hover": {
-                  bgcolor: "rgba(99, 102, 241, 0.08)",
-                  borderColor: "#818cf8",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.08)" : "rgba(79, 70, 229, 0.06)",
+                  borderColor: "primary.main",
                 },
               }}
             >
-              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
                 + Add first {categoryName.toLowerCase()} estimate
               </Typography>
             </Box>
@@ -156,12 +160,16 @@ export default function CategoryCard({
               fontSize: "0.68rem",
               fontFamily: '"JetBrains Mono", monospace',
               fontWeight: 700,
-              color: "#818cf8",
-              bgcolor: "rgba(99, 102, 241, 0.06)",
+              color: "primary.main",
+              bgcolor: (theme) =>
+                theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.06)" : "rgba(79, 70, 229, 0.06)",
               borderRadius: 1.5,
               py: 0.4,
               textTransform: "none",
-              "&:hover": { bgcolor: "rgba(99, 102, 241, 0.15)" },
+              "&:hover": {
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.12)",
+              },
             }}
           >
             Add {categoryName} Item

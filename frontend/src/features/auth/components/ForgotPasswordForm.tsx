@@ -61,13 +61,13 @@ export const ForgotPasswordForm: React.FC = () => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            color: "#bef264",
+            color: "success.main",
           }}
         >
           <CheckCircleIcon sx={{ fontSize: 48 }} />
         </Box>
 
-        <Typography variant="body1" sx={{ color: "#f8fafc", fontWeight: 500 }}>
+        <Typography variant="body1" sx={{ color: "text.primary", fontWeight: 500 }}>
           If an account exists with that email address, password reset instructions have been sent.
         </Typography>
 
@@ -160,7 +160,7 @@ export const ForgotPasswordForm: React.FC = () => {
               component={RouterLink}
               to="/login"
               sx={{
-                color: "#bef264",
+                color: "primary.main",
                 fontWeight: 700,
                 textDecoration: "none",
                 "&:hover": { textDecoration: "underline" },

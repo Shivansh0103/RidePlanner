@@ -82,8 +82,9 @@ export default function ExpenseLogTable({
       sx={{
         borderRadius: 2.5,
         mt: 3,
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
       }}
     >
       <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
@@ -101,11 +102,11 @@ export default function ExpenseLogTable({
             <Box>
               <Typography
                 variant="h6"
-                sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}
+                sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary" }}
               >
                 Operational Expense Ledger
               </Typography>
-              <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
                 Real-time financial transactions logged during this expedition
               </Typography>
             </Box>
@@ -115,16 +116,15 @@ export default function ExpenseLogTable({
               size="small"
               startIcon={<AddIcon sx={{ fontSize: 16 }} />}
               onClick={onAddExpense}
-              className="glow-indigo"
               sx={{
-                bgcolor: "#6366f1",
+                bgcolor: "primary.main",
                 color: "#ffffff",
                 fontFamily: '"JetBrains Mono", monospace',
                 fontSize: "0.72rem",
                 fontWeight: 800,
                 letterSpacing: "0.04em",
                 alignSelf: { xs: "stretch", sm: "auto" },
-                "&:hover": { bgcolor: "#4f46e5" },
+                "&:hover": { bgcolor: "primary.dark" },
               }}
             >
               Log Expense
@@ -134,7 +134,7 @@ export default function ExpenseLogTable({
           {/* Filters */}
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel id="category-filter-label" sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>
+              <InputLabel id="category-filter-label" sx={{ color: "text.secondary", fontSize: "0.8rem" }}>
                 Category
               </InputLabel>
               <Select
@@ -143,11 +143,11 @@ export default function ExpenseLogTable({
                 label="Category"
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 sx={{
-                  bgcolor: "#141313",
-                  color: "#f8fafc",
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                  color: "text.primary",
                   fontSize: "0.78rem",
                   "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(255, 255, 255, 0.1)",
+                    borderColor: "divider",
                   },
                 }}
               >
@@ -160,7 +160,7 @@ export default function ExpenseLogTable({
             </FormControl>
 
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel id="payment-filter-label" sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>
+              <InputLabel id="payment-filter-label" sx={{ color: "text.secondary", fontSize: "0.8rem" }}>
                 Payment Method
               </InputLabel>
               <Select
@@ -169,11 +169,11 @@ export default function ExpenseLogTable({
                 label="Payment Method"
                 onChange={(e) => setPaymentFilter(e.target.value)}
                 sx={{
-                  bgcolor: "#141313",
-                  color: "#f8fafc",
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                  color: "text.primary",
                   fontSize: "0.78rem",
                   "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(255, 255, 255, 0.1)",
+                    borderColor: "divider",
                   },
                 }}
               >
@@ -189,7 +189,7 @@ export default function ExpenseLogTable({
           {/* Expenses Data Table */}
           {sortedExpenses.length === 0 ? (
             <EmptyState
-              icon={<ReceiptLongIcon sx={{ fontSize: 48, color: "#818cf8" }} />}
+              icon={<ReceiptLongIcon sx={{ fontSize: 48, color: "primary.main" }} />}
               title="No Logged Expenses Found"
               description={
                 expenses.length === 0
@@ -198,7 +198,7 @@ export default function ExpenseLogTable({
               }
               action={
                 expenses.length === 0 ? (
-                  <Button variant="contained" startIcon={<AddIcon />} onClick={onAddExpense} sx={{ bgcolor: "#6366f1" }}>
+                  <Button variant="contained" startIcon={<AddIcon />} onClick={onAddExpense} sx={{ bgcolor: "primary.main" }}>
                     Log First Expense
                   </Button>
                 ) : undefined
@@ -210,21 +210,27 @@ export default function ExpenseLogTable({
               className="neo-inset"
               sx={{
                 borderRadius: 2,
-                bgcolor: "#141313",
-                border: "1px solid rgba(255, 255, 255, 0.06)",
+                bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                border: "1px solid",
+                borderColor: "divider",
               }}
             >
               <Table size="medium">
-                <TableHead sx={{ bgcolor: "rgba(255, 255, 255, 0.03)" }}>
+                <TableHead
+                  sx={{
+                    bgcolor: (theme) =>
+                      theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)",
+                  }}
+                >
                   <TableRow>
-                    <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Date</TableCell>
-                    <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Category</TableCell>
-                    <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Description</TableCell>
-                    <TableCell sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Payment Mode</TableCell>
-                    <TableCell align="right" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    <TableCell sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Date</TableCell>
+                    <TableCell sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Category</TableCell>
+                    <TableCell sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Description</TableCell>
+                    <TableCell sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Payment Mode</TableCell>
+                    <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Amount
                     </TableCell>
-                    <TableCell align="center" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    <TableCell align="center" sx={{ color: "text.secondary", fontWeight: 700, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Actions
                     </TableCell>
                   </TableRow>
@@ -234,11 +240,12 @@ export default function ExpenseLogTable({
                     <TableRow
                       key={expense.id}
                       sx={{
-                        "&:hover": { bgcolor: "rgba(255, 255, 255, 0.02)" },
-                        borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                        "&:hover": { bgcolor: "action.hover" },
+                        borderBottom: "1px solid",
+                        borderColor: "divider",
                       }}
                     >
-                      <TableCell className="font-mono" sx={{ whiteSpace: "nowrap", fontSize: "0.78rem", color: "#94a3b8" }}>
+                      <TableCell className="font-mono" sx={{ whiteSpace: "nowrap", fontSize: "0.78rem", color: "text.secondary" }}>
                         {new Date(expense.expenseDate).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "short",
@@ -252,21 +259,24 @@ export default function ExpenseLogTable({
                           sx={{
                             fontWeight: 700,
                             fontSize: "0.68rem",
-                            bgcolor: "rgba(99, 102, 241, 0.15)",
-                            color: "#818cf8",
-                            border: "1px solid rgba(99, 102, 241, 0.3)",
+                            bgcolor: (theme) =>
+                              theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.1)",
+                            color: "primary.main",
+                            border: "1px solid",
+                            borderColor: (theme) =>
+                              theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.25)",
                             fontFamily: '"JetBrains Mono", monospace',
                           }}
                         />
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ fontWeight: 700, color: "#f8fafc", fontSize: "0.82rem" }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary", fontSize: "0.82rem" }}>
                           {expense.title}
                         </Typography>
                         {expense.notes && (
                           <Typography
                             variant="caption"
-                            sx={{ display: "block", mt: 0.2, color: "#94a3b8", fontStyle: "italic" }}
+                            sx={{ display: "block", mt: 0.2, color: "text.secondary", fontStyle: "italic" }}
                           >
                             {expense.notes}
                           </Typography>
@@ -280,18 +290,28 @@ export default function ExpenseLogTable({
                             sx={{
                               fontSize: "0.68rem",
                               fontWeight: 600,
-                              bgcolor: "rgba(255, 255, 255, 0.04)",
-                              color: "#a1a1aa",
-                              border: "1px solid rgba(255, 255, 255, 0.06)",
+                              bgcolor: (theme) =>
+                                theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.04)",
+                              color: "text.secondary",
+                              border: "1px solid",
+                              borderColor: "divider",
                             }}
                           />
                         ) : (
-                          <Typography variant="caption" sx={{ color: "#71717a" }}>
+                          <Typography variant="caption" sx={{ color: "text.secondary" }}>
                             —
                           </Typography>
                         )}
                       </TableCell>
-                      <TableCell align="right" className="font-mono" sx={{ fontWeight: 800, color: "#38bdf8", fontSize: "0.85rem" }}>
+                      <TableCell
+                        align="right"
+                        className="font-mono"
+                        sx={{
+                          fontWeight: 800,
+                          color: (theme) => (theme.palette.mode === "dark" ? "#38bdf8" : "#0284c7"),
+                          fontSize: "0.85rem",
+                        }}
+                      >
                         {formatCurrency(expense.amount)}
                       </TableCell>
                       <TableCell align="center">
@@ -300,7 +320,7 @@ export default function ExpenseLogTable({
                             size="small"
                             onClick={() => onEditExpense(expense)}
                             aria-label="Edit Expense"
-                            sx={{ color: "#94a3b8", "&:hover": { color: "#818cf8" } }}
+                            sx={{ color: "text.secondary", "&:hover": { color: "primary.main", bgcolor: "action.hover" } }}
                           >
                             <EditIcon fontSize="small" />
                           </IconButton>
@@ -308,7 +328,7 @@ export default function ExpenseLogTable({
                             size="small"
                             onClick={() => onDeleteExpense(expense)}
                             aria-label="Delete Expense"
-                            sx={{ color: "#94a3b8", "&:hover": { color: "#f87171" } }}
+                            sx={{ color: "text.secondary", "&:hover": { color: "error.main", bgcolor: "action.hover" } }}
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>

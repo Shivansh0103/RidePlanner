@@ -47,6 +47,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 options.ForgotPassword.PermitLimit = 10000;
                 options.ResetPassword.PermitLimit = 10000;
                 options.ExternalLink.PermitLimit = 10000;
+                options.TokenRefresh.PermitLimit = 10000;
+                options.ExternalOAuth.PermitLimit = 10000;
             });
         });
     }

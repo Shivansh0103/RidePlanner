@@ -174,8 +174,9 @@ export default function ItinerarySection({
         className="neo-convex"
         sx={{
           borderRadius: 2.5,
-          bgcolor: "#1a1a1e",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
           flex: 1,
           display: "flex",
           flexDirection: "column",
@@ -196,9 +197,10 @@ export default function ItinerarySection({
                     width: 36,
                     height: 36,
                     borderRadius: 2,
-                    bgcolor: "rgba(99, 102, 241, 0.15)",
-                    color: "#818cf8",
-                    border: "1px solid rgba(99, 102, 241, 0.3)",
+                    bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.12)",
+                    color: (theme) => theme.palette.mode === "dark" ? "#818cf8" : "#4f46e5",
+                    border: "1px solid",
+                    borderColor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.3)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -207,10 +209,10 @@ export default function ItinerarySection({
                   <AltRouteIcon sx={{ fontSize: 20 }} />
                 </Box>
                 <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "1rem" }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1rem" }}>
                     Expedition Route Itinerary
                   </Typography>
-                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary" }}>
                     Drag cards to re-sequence waypoint flow
                   </Typography>
                 </Box>
@@ -221,9 +223,10 @@ export default function ItinerarySection({
                   label={`${stops.length} Stop${stops.length === 1 ? "" : "s"}`}
                   size="small"
                   sx={{
-                    bgcolor: "rgba(190, 242, 100, 0.12)",
-                    color: "#bef264",
-                    border: "1px solid rgba(190, 242, 100, 0.3)",
+                    bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.12)" : "rgba(5, 150, 105, 0.12)",
+                    color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#059669",
+                    border: "1px solid",
+                    borderColor: (theme) => theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)",
                     fontWeight: 700,
                     fontFamily: '"JetBrains Mono", monospace',
                     fontSize: "0.68rem",
@@ -237,14 +240,14 @@ export default function ItinerarySection({
                   startIcon={<HotelIcon sx={{ fontSize: 14 }} />}
                   onClick={() => handleOpenAccommodationDialog(null)}
                   sx={{
-                    borderColor: "rgba(99, 102, 241, 0.4)",
-                    color: "#818cf8",
+                    borderColor: "primary.main",
+                    color: "primary.main",
                     fontFamily: '"JetBrains Mono", monospace',
                     fontSize: "0.68rem",
                     fontWeight: 700,
                     height: 28,
                     px: 1.2,
-                    "&:hover": { borderColor: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.08)" },
+                    "&:hover": { borderColor: "primary.main", bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.08)" : "rgba(79, 70, 229, 0.08)" },
                   }}
                 >
                   Add Stay
@@ -272,7 +275,7 @@ export default function ItinerarySection({
               </Stack>
             </Stack>
 
-            <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
+            <Divider sx={{ borderColor: "divider" }} />
           </Stack>
         </CardContent>
 
@@ -285,7 +288,7 @@ export default function ItinerarySection({
             overflowY: "auto",
             "&::-webkit-scrollbar": { width: 5 },
             "&::-webkit-scrollbar-track": { bgcolor: "transparent" },
-            "&::-webkit-scrollbar-thumb": { bgcolor: "rgba(255, 255, 255, 0.12)", borderRadius: 3 },
+            "&::-webkit-scrollbar-thumb": { bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.12)", borderRadius: 3 },
           }}
         >
           {stops.length === 0 ? (

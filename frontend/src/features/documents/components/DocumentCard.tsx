@@ -66,8 +66,8 @@ function getDocumentConfig(type: string) {
     default:
       return {
         icon: <DescriptionIcon sx={{ fontSize: 18 }} />,
-        color: "#94a3b8",
-        bg: "rgba(255, 255, 255, 0.05)",
+        color: "text.secondary",
+        bg: "action.hover",
       };
   }
 }
@@ -90,14 +90,15 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
       sx={{
         borderRadius: 2.5,
         height: "100%",
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         transition: "all 0.2s ease-in-out",
         "&:hover": {
-          borderColor: `${config.color}66`,
+          borderColor: "primary.main",
         },
       }}
     >
@@ -127,7 +128,7 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
                   variant="subtitle1"
                   sx={{
                     fontWeight: 800,
-                    color: "#f8fafc",
+                    color: "text.primary",
                     fontSize: "0.92rem",
                     lineHeight: 1.2,
                     whiteSpace: "nowrap",
@@ -160,7 +161,7 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
                   size="small"
                   onClick={() => onEdit(doc)}
                   aria-label="Edit document"
-                  sx={{ p: 0.4, color: "#94a3b8", "&:hover": { color: "#818cf8" } }}
+                  sx={{ p: 0.4, color: "text.secondary", "&:hover": { color: "primary.main" } }}
                 >
                   <EditIcon sx={{ fontSize: 15 }} />
                 </IconButton>
@@ -170,7 +171,7 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
                   size="small"
                   onClick={() => onDelete(doc)}
                   aria-label="Delete document"
-                  sx={{ p: 0.4, color: "#94a3b8", "&:hover": { color: "#f87171" } }}
+                  sx={{ p: 0.4, color: "text.secondary", "&:hover": { color: "error.main" } }}
                 >
                   <DeleteIcon sx={{ fontSize: 15 }} />
                 </IconButton>
@@ -185,18 +186,19 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
               px: 1.2,
               py: 0.8,
               borderRadius: 1.8,
-              bgcolor: "#141313",
+              bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              border: "1px solid rgba(255, 255, 255, 0.04)",
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
             <Typography
               className="font-mono"
               sx={{
                 fontSize: "0.74rem",
-                color: doc.documentNumber ? "#f8fafc" : "#71717a",
+                color: doc.documentNumber ? "text.primary" : "text.secondary",
                 fontWeight: 700,
               }}
             >
@@ -208,7 +210,7 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
                 <IconButton
                   size="small"
                   onClick={handleCopy}
-                  sx={{ p: 0.3, color: copied ? "#bef264" : "#94a3b8", "&:hover": { color: "#ffffff" } }}
+                  sx={{ p: 0.3, color: copied ? (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669") : "text.secondary", "&:hover": { color: "text.primary" } }}
                 >
                   <ContentCopyIcon sx={{ fontSize: 13 }} />
                 </IconButton>
@@ -218,7 +220,7 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
 
           {/* Expiration & Alert Status */}
           <Stack direction="row" spacing={1} sx={{ alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" }}>
-            <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8" }}>
+            <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary" }}>
               {doc.expiryDate ? `Expires: ${formatDate(doc.expiryDate)}` : "Lifetime Validity"}
             </Typography>
 
@@ -231,9 +233,10 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
                   height: 18,
                   fontWeight: 800,
                   fontSize: "0.6rem",
-                  bgcolor: "rgba(248, 113, 113, 0.15)",
-                  color: "#f87171",
-                  border: "1px solid rgba(248, 113, 113, 0.4)",
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(248, 113, 113, 0.15)" : "rgba(239, 68, 68, 0.1)"),
+                  color: "error.main",
+                  border: "1px solid",
+                  borderColor: (theme) => (theme.palette.mode === "dark" ? "rgba(248, 113, 113, 0.4)" : "rgba(239, 68, 68, 0.3)"),
                   fontFamily: '"JetBrains Mono", monospace',
                 }}
               />
@@ -246,9 +249,10 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
                   height: 18,
                   fontWeight: 800,
                   fontSize: "0.6rem",
-                  bgcolor: "rgba(251, 191, 36, 0.15)",
-                  color: "#fbbf24",
-                  border: "1px solid rgba(251, 191, 36, 0.4)",
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(251, 191, 36, 0.15)" : "rgba(217, 119, 6, 0.1)"),
+                  color: (theme) => (theme.palette.mode === "dark" ? "#fbbf24" : "#d97706"),
+                  border: "1px solid",
+                  borderColor: (theme) => (theme.palette.mode === "dark" ? "rgba(251, 191, 36, 0.4)" : "rgba(217, 119, 6, 0.3)"),
                   fontFamily: '"JetBrains Mono", monospace',
                 }}
               />
@@ -261,11 +265,12 @@ export default function DocumentCard({ document: doc, onEdit, onDelete }: Docume
               variant="caption"
               sx={{
                 p: 0.8,
-                bgcolor: "rgba(255, 255, 255, 0.02)",
+                bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)"),
                 borderRadius: 1.5,
-                border: "1px solid rgba(255, 255, 255, 0.04)",
+                border: "1px solid",
+                borderColor: "divider",
                 fontStyle: "italic",
-                color: "#94a3b8",
+                color: "text.secondary",
                 fontSize: "0.72rem",
                 display: "block",
                 lineHeight: 1.3,

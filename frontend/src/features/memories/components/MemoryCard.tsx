@@ -29,14 +29,15 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
       sx={{
         borderRadius: 2.5,
         height: "100%",
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
         transition: "all 0.2s ease-in-out",
         "&:hover": {
-          borderColor: "#6366f1",
+          borderColor: "primary.main",
           transform: "translateY(-2px)",
         },
       }}
@@ -47,7 +48,7 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
           height="190"
           image={memory.imageUrl}
           alt={memory.title}
-          sx={{ objectFit: "cover", borderBottom: "1px solid rgba(255, 255, 255, 0.06)" }}
+          sx={{ objectFit: "cover", borderBottom: "1px solid", borderColor: "divider" }}
         />
       )}
 
@@ -55,20 +56,20 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
         <Stack spacing={1.5}>
           <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
             <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "1rem", lineHeight: 1.2 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1rem", lineHeight: 1.2 }}>
                 {memory.title}
               </Typography>
 
-              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8", mt: 0.5, display: "block" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary", mt: 0.5, display: "block" }}>
                 {formatDate(memory.memoryDate)}
               </Typography>
             </Box>
 
             <Stack direction="row" spacing={0.5}>
-              <IconButton size="small" onClick={() => onEdit(memory)} aria-label="Edit memory" sx={{ color: "#94a3b8", "&:hover": { color: "#818cf8" } }}>
+              <IconButton size="small" onClick={() => onEdit(memory)} aria-label="Edit memory" sx={{ color: "text.secondary", "&:hover": { color: "primary.main" } }}>
                 <EditIcon fontSize="small" />
               </IconButton>
-              <IconButton size="small" onClick={() => onDelete(memory)} aria-label="Delete memory" sx={{ color: "#94a3b8", "&:hover": { color: "#f87171" } }}>
+              <IconButton size="small" onClick={() => onDelete(memory)} aria-label="Delete memory" sx={{ color: "text.secondary", "&:hover": { color: "error.main" } }}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Stack>
@@ -76,7 +77,7 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
 
           {memory.odometerReadingKm != null && (
             <Chip
-              icon={<SpeedIcon sx={{ fontSize: "0.75rem !important", color: "#818cf8 !important" }} />}
+              icon={<SpeedIcon sx={{ fontSize: "0.75rem !important", color: "primary.main !important" }} />}
               label={`${memory.odometerReadingKm.toLocaleString()} KM ODOMETER`}
               size="small"
               sx={{
@@ -84,9 +85,12 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
                 fontWeight: 700,
                 fontSize: "0.68rem",
                 fontFamily: '"JetBrains Mono", monospace',
-                bgcolor: "rgba(99, 102, 241, 0.12)",
-                color: "#818cf8",
-                border: "1px solid rgba(99, 102, 241, 0.3)",
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.12)" : "rgba(79, 70, 229, 0.08)",
+                color: "primary.main",
+                border: "1px solid",
+                borderColor: (theme) =>
+                  theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.25)",
               }}
             />
           )}
@@ -95,7 +99,7 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
             <Typography
               variant="body2"
               sx={{
-                color: "#cbd5e1",
+                color: "text.secondary",
                 whiteSpace: "pre-line",
                 lineHeight: 1.6,
                 fontSize: "0.82rem",

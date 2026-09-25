@@ -153,8 +153,9 @@ export default function TripStopForm({
           sx={{
             p: 0.5,
             borderRadius: 2,
-            bgcolor: "#141313",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
+            bgcolor: (theme) => theme.palette.mode === "dark" ? "#141313" : "#F1F5F9",
+            border: "1px solid",
+            borderColor: "divider",
           }}
         >
           <Tabs
@@ -164,7 +165,7 @@ export default function TripStopForm({
             sx={{
               minHeight: 36,
               "& .MuiTabs-indicator": {
-                bgcolor: "#6366f1",
+                bgcolor: "primary.main",
                 height: "100%",
                 borderRadius: 1.5,
                 zIndex: 0,
@@ -175,7 +176,7 @@ export default function TripStopForm({
                 fontSize: "0.68rem",
                 fontFamily: '"JetBrains Mono", monospace',
                 fontWeight: 700,
-                color: "#94a3b8",
+                color: "text.secondary",
                 zIndex: 1,
                 textTransform: "uppercase",
                 "&.Mui-selected": {
@@ -195,7 +196,7 @@ export default function TripStopForm({
         {category === TripStopCategory.Hotel && (
           <Alert
             severity="info"
-            icon={<HotelIcon sx={{ color: "#bef264" }} />}
+            icon={<HotelIcon sx={{ color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#059669" }} />}
             action={
               onRedirectToAccommodation && (
                 <Button
@@ -206,7 +207,7 @@ export default function TripStopForm({
                     fontFamily: '"JetBrains Mono", monospace',
                     fontSize: "0.68rem",
                     fontWeight: 700,
-                    color: "#bef264",
+                    color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#059669",
                   }}
                 >
                   Full Lodging Editor →
@@ -214,9 +215,10 @@ export default function TripStopForm({
               )
             }
             sx={{
-              bgcolor: "rgba(190, 242, 100, 0.08)",
-              border: "1px solid rgba(190, 242, 100, 0.3)",
-              color: "#e2e8f0",
+              bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.08)" : "rgba(5, 150, 105, 0.08)",
+              border: "1px solid",
+              borderColor: (theme) => theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)",
+              color: "text.primary",
               fontSize: "0.76rem",
               borderRadius: 2,
             }}

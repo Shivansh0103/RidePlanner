@@ -22,6 +22,7 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useThemeMode } from "@/app/theme/ThemeContext";
 import { formatDate } from "@/shared/utils";
 
 import type { Trip } from "../types/trip";
@@ -35,6 +36,8 @@ type TripCardProps = {
 export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
+  const { resolvedTheme } = useThemeMode();
+  const isDark = resolvedTheme === "dark";
 
   const open = Boolean(anchorEl);
   const menuId = `trip-menu-${trip.id}`;
@@ -53,35 +56,43 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
     switch (status) {
       case "Active":
         return {
-          bg: "rgba(20, 19, 19, 0.85)",
-          color: "#bef264",
-          border: "rgba(190, 242, 100, 0.4)",
-          dot: "#bef264",
-          gradient: "radial-gradient(circle at 75% 25%, rgba(190, 242, 100, 0.2), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)",
+          bg: isDark ? "rgba(20, 19, 19, 0.85)" : "rgba(255, 255, 255, 0.9)",
+          color: isDark ? "#bef264" : "#059669",
+          border: isDark ? "rgba(190, 242, 100, 0.4)" : "rgba(5, 150, 105, 0.3)",
+          dot: isDark ? "#bef264" : "#059669",
+          gradient: isDark
+            ? "radial-gradient(circle at 75% 25%, rgba(190, 242, 100, 0.2), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)"
+            : "radial-gradient(circle at 75% 25%, rgba(5, 150, 105, 0.15), transparent 60%), linear-gradient(180deg, rgba(241, 243, 249, 0.4) 0%, rgba(255, 255, 255, 0.98) 100%)",
         };
       case "Planning":
         return {
-          bg: "rgba(20, 19, 19, 0.85)",
-          color: "#818cf8",
-          border: "rgba(99, 102, 241, 0.4)",
-          dot: "#6366f1",
-          gradient: "radial-gradient(circle at 75% 25%, rgba(99, 102, 241, 0.25), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)",
+          bg: isDark ? "rgba(20, 19, 19, 0.85)" : "rgba(255, 255, 255, 0.9)",
+          color: isDark ? "#818cf8" : "#4f46e5",
+          border: isDark ? "rgba(99, 102, 241, 0.4)" : "rgba(79, 70, 229, 0.3)",
+          dot: isDark ? "#6366f1" : "#4f46e5",
+          gradient: isDark
+            ? "radial-gradient(circle at 75% 25%, rgba(99, 102, 241, 0.25), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)"
+            : "radial-gradient(circle at 75% 25%, rgba(79, 70, 229, 0.15), transparent 60%), linear-gradient(180deg, rgba(241, 243, 249, 0.4) 0%, rgba(255, 255, 255, 0.98) 100%)",
         };
       case "Completed":
         return {
-          bg: "rgba(20, 19, 19, 0.85)",
-          color: "#38bdf8",
-          border: "rgba(56, 189, 248, 0.4)",
-          dot: "#38bdf8",
-          gradient: "radial-gradient(circle at 75% 25%, rgba(56, 189, 248, 0.22), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)",
+          bg: isDark ? "rgba(20, 19, 19, 0.85)" : "rgba(255, 255, 255, 0.9)",
+          color: isDark ? "#38bdf8" : "#0284c7",
+          border: isDark ? "rgba(56, 189, 248, 0.4)" : "rgba(2, 132, 199, 0.3)",
+          dot: isDark ? "#38bdf8" : "#0284c7",
+          gradient: isDark
+            ? "radial-gradient(circle at 75% 25%, rgba(56, 189, 248, 0.22), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)"
+            : "radial-gradient(circle at 75% 25%, rgba(2, 132, 199, 0.15), transparent 60%), linear-gradient(180deg, rgba(241, 243, 249, 0.4) 0%, rgba(255, 255, 255, 0.98) 100%)",
         };
       default:
         return {
-          bg: "rgba(20, 19, 19, 0.85)",
-          color: "#94a3b8",
-          border: "rgba(148, 163, 184, 0.3)",
-          dot: "#64748b",
-          gradient: "radial-gradient(circle at 75% 25%, rgba(148, 163, 184, 0.15), transparent 60%), linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)",
+          bg: isDark ? "rgba(20, 19, 19, 0.85)" : "rgba(255, 255, 255, 0.9)",
+          color: isDark ? "#94a3b8" : "#475569",
+          border: isDark ? "rgba(148, 163, 184, 0.3)" : "rgba(15, 23, 42, 0.15)",
+          dot: isDark ? "#94a3b8" : "#475569",
+          gradient: isDark
+            ? "linear-gradient(180deg, rgba(20, 19, 19, 0.3) 0%, rgba(26, 26, 30, 0.98) 100%)"
+            : "linear-gradient(180deg, rgba(241, 243, 249, 0.4) 0%, rgba(255, 255, 255, 0.98) 100%)",
         };
     }
   };
@@ -103,16 +114,21 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        bgcolor: "#1a1a1e",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         cursor: "pointer",
         overflow: "hidden",
         position: "relative",
         transition: "all 0.3s ease-in-out",
         "&:hover": {
           transform: "translateY(-4px)",
-          boxShadow: "0 16px 36px -4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(99, 102, 241, 0.2)",
-          borderColor: trip.status === "Active" ? "rgba(190, 242, 100, 0.5)" : "rgba(99, 102, 241, 0.5)",
+          boxShadow: isDark
+            ? "0 16px 36px -4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(99, 102, 241, 0.2)"
+            : "0 16px 36px -4px rgba(15, 23, 42, 0.08), 0 0 20px rgba(79, 70, 229, 0.15)",
+          borderColor: trip.status === "Active"
+            ? (isDark ? "rgba(190, 242, 100, 0.5)" : "rgba(5, 150, 105, 0.5)")
+            : (isDark ? "rgba(99, 102, 241, 0.5)" : "rgba(79, 70, 229, 0.5)"),
           "& .card-hover-overlay": {
             opacity: 1,
           },
@@ -125,7 +141,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
           position: "relative",
           height: 160,
           width: "100%",
-          bgcolor: "#141313",
+          bgcolor: isDark ? "#141313" : "#EEF2FF",
           overflow: "hidden",
           backgroundImage: statusStyle.gradient,
         }}
@@ -177,8 +193,8 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               width: 32,
               height: 32,
               borderRadius: 1.5,
-              bgcolor: "rgba(20, 19, 19, 0.8)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              bgcolor: isDark ? "rgba(20, 19, 19, 0.8)" : "rgba(255, 255, 255, 0.9)",
+              border: isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(79, 70, 229, 0.2)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -250,11 +266,15 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
             sx={{
-              bgcolor: "rgba(20, 19, 19, 0.7)",
+              bgcolor: isDark ? "rgba(20, 19, 19, 0.7)" : "rgba(255, 255, 255, 0.9)",
               backdropFilter: "blur(6px)",
-              color: "#94a3b8",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              "&:hover": { color: "#ffffff", bgcolor: "rgba(20, 19, 19, 0.9)" },
+              color: "text.secondary",
+              border: "1px solid",
+              borderColor: "divider",
+              "&:hover": {
+                color: "text.primary",
+                bgcolor: isDark ? "rgba(20, 19, 19, 0.9)" : "#FFFFFF",
+              },
             }}
           >
             <MoreVertIcon fontSize="small" />
@@ -311,7 +331,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               sx={{
                 fontFamily: '"Outfit", sans-serif',
                 fontWeight: 800,
-                color: "#f8fafc",
+                color: "text.primary",
                 lineHeight: 1.2,
                 mb: 0.5,
                 whiteSpace: "nowrap",
@@ -326,7 +346,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               className="font-mono"
               variant="caption"
               sx={{
-                color: "#94a3b8",
+                color: "text.secondary",
                 display: "flex",
                 alignItems: "center",
                 gap: 0.8,
@@ -334,7 +354,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
                 fontWeight: 600,
               }}
             >
-              <CalendarMonthIcon sx={{ fontSize: 13, color: "#64748b" }} />
+              <CalendarMonthIcon sx={{ fontSize: 13, color: "text.secondary" }} />
               {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
             </Typography>
           </Box>
@@ -343,7 +363,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             <Typography
               variant="body2"
               sx={{
-                color: "#94a3b8",
+                color: "text.secondary",
                 fontSize: "0.82rem",
                 lineHeight: 1.5,
                 overflow: "hidden",
@@ -374,13 +394,13 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               <Typography
                 className="font-mono"
                 variant="caption"
-                sx={{ color: "#94a3b8", opacity: 0.7, fontSize: "0.62rem", letterSpacing: "0.06em", textTransform: "uppercase", display: "block" }}
+                sx={{ color: "text.secondary", opacity: 0.8, fontSize: "0.62rem", letterSpacing: "0.06em", textTransform: "uppercase", display: "block" }}
               >
                 Duration
               </Typography>
               <Typography
                 className="font-mono"
-                sx={{ color: "#f8fafc", fontWeight: 800, fontSize: "0.88rem" }}
+                sx={{ color: "text.primary", fontWeight: 800, fontSize: "0.88rem" }}
               >
                 {diffDays} {diffDays === 1 ? "Day" : "Days"}
               </Typography>
@@ -390,7 +410,7 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               <Typography
                 className="font-mono"
                 variant="caption"
-                sx={{ color: "#94a3b8", opacity: 0.7, fontSize: "0.62rem", letterSpacing: "0.06em", textTransform: "uppercase", display: "block" }}
+                sx={{ color: "text.secondary", fontSize: "0.62rem", letterSpacing: "0.06em", textTransform: "uppercase", display: "block" }}
               >
                 Telemetry
               </Typography>
@@ -413,9 +433,12 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
         slotProps={{
           paper: {
             sx: {
-              bgcolor: "#1e1e24",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.8)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
+              boxShadow: isDark
+                ? "0 10px 30px rgba(0, 0, 0, 0.8)"
+                : "0 10px 30px rgba(15, 23, 42, 0.12)",
             },
           },
           list: {
@@ -437,7 +460,12 @@ export default function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
             handleMenuClose();
             onEdit(trip);
           }}
-          sx={{ color: "#e2e8f0", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.06)" } }}
+          sx={{
+            color: "text.primary",
+            "&:hover": {
+              bgcolor: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(15, 23, 42, 0.04)",
+            },
+          }}
         >
           <ListItemIcon sx={{ color: "#818cf8" }}>
             <EditIcon fontSize="small" />

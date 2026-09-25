@@ -76,8 +76,9 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
         sx={{
           p: 2.8,
           borderRadius: 2.5,
-          bgcolor: "#1a1a1e",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
@@ -88,7 +89,7 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
                 height: 40,
                 borderRadius: 2,
                 bgcolor: "rgba(248, 113, 113, 0.12)",
-                color: "#f87171",
+                color: "error.main",
                 border: "1px solid rgba(248, 113, 113, 0.3)",
                 display: "flex",
                 alignItems: "center",
@@ -98,10 +99,10 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
               <ContactPhoneIcon sx={{ fontSize: 22 }} />
             </Box>
             <Box>
-              <Typography variant="h6" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
+              <Typography variant="h6" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary" }}>
                 Emergency Contacts & ICE Network ({contacts.length})
               </Typography>
-              <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
                 In-Case-of-Emergency contacts, blood relations, and medical response points
               </Typography>
             </Box>
@@ -112,15 +113,14 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
             size="small"
             startIcon={<AddIcon sx={{ fontSize: 16 }} />}
             onClick={handleOpenAdd}
-            className="glow-indigo"
             sx={{
-              bgcolor: "#6366f1",
+              bgcolor: "primary.main",
               color: "#ffffff",
               fontFamily: '"JetBrains Mono", monospace',
               fontSize: "0.72rem",
               fontWeight: 800,
               letterSpacing: "0.04em",
-              "&:hover": { bgcolor: "#4f46e5" },
+              "&:hover": { bgcolor: "primary.dark" },
             }}
           >
             Add ICE Contact
@@ -135,11 +135,12 @@ export default function EmergencyContactsSection({ tripId }: EmergencyContactsSe
             p: 4,
             textAlign: "center",
             borderRadius: 2.5,
-            bgcolor: "#141313",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
+            bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+            border: "1px solid",
+            borderColor: "divider",
           }}
         >
-          <Typography sx={{ color: "#94a3b8", fontSize: "0.85rem" }}>
+          <Typography sx={{ color: "text.secondary", fontSize: "0.85rem" }}>
             No emergency contacts listed for this trip. Click "+ Add ICE Contact" to register contacts for safety.
           </Typography>
         </Paper>

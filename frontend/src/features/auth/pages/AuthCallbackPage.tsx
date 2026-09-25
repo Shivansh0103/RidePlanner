@@ -3,12 +3,16 @@ import { Alert, Box, Button, CircularProgress, Container, Paper, Stack, Typograp
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useSearchParams } from "react-router-dom";
 
+import { useThemeMode } from "@/app/theme/ThemeContext";
+
 import { useAuth } from "../hooks/useAuth";
 
 export const AuthCallbackPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { restoreSession } = useAuth();
+  const { resolvedTheme } = useThemeMode();
+  const isDark = resolvedTheme === "dark";
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const status = searchParams.get("status");
@@ -75,11 +79,13 @@ export const AuthCallbackPage: React.FC = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: "#0b0f19",
-        backgroundImage:
-          "radial-gradient(ellipse at top, rgba(99, 102, 241, 0.15), transparent 70%), linear-gradient(180deg, #0b0f19 0%, #121416 100%)",
+        bgcolor: isDark ? "#0b0f19" : "#F1F3F9",
+        backgroundImage: isDark
+          ? "radial-gradient(ellipse at top, rgba(99, 102, 241, 0.15), transparent 70%), linear-gradient(180deg, #0b0f19 0%, #121416 100%)"
+          : "radial-gradient(ellipse at top, rgba(79, 70, 229, 0.08), transparent 70%), linear-gradient(180deg, #F1F3F9 0%, #FFFFFF 100%)",
         py: 4,
         px: 2,
+        transition: "background-color 0.2s ease",
       }}
     >
       <Container maxWidth="xs">
@@ -88,10 +94,11 @@ export const AuthCallbackPage: React.FC = () => {
           sx={{
             p: { xs: 3, sm: 4 },
             borderRadius: 3,
-            bgcolor: "#141824",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            boxShadow:
-              "0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.05)",
+            bgcolor: isDark ? "#141824" : "#FFFFFF",
+            border: isDark ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid #E2E8F0",
+            boxShadow: isDark
+              ? "0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.05)"
+              : "0 20px 45px -8px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(99, 102, 241, 0.06)",
             textAlign: "center",
           }}
         >
@@ -101,13 +108,13 @@ export const AuthCallbackPage: React.FC = () => {
                 width: 56,
                 height: 56,
                 borderRadius: 2.5,
-                bgcolor: "rgba(99, 102, 241, 0.12)",
-                border: "1px solid rgba(99, 102, 241, 0.35)",
-                boxShadow: "0 0 25px rgba(99, 102, 241, 0.25)",
+                bgcolor: isDark ? "rgba(99, 102, 241, 0.12)" : "rgba(79, 70, 229, 0.1)",
+                border: isDark ? "1px solid rgba(99, 102, 241, 0.35)" : "1px solid rgba(79, 70, 229, 0.3)",
+                boxShadow: isDark ? "0 0 25px rgba(99, 102, 241, 0.25)" : "0 0 16px rgba(79, 70, 229, 0.2)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#818cf8",
+                color: isDark ? "#818cf8" : "#4f46e5",
               }}
             >
               <TwoWheelerIcon sx={{ fontSize: 30 }} />
@@ -148,13 +155,13 @@ export const AuthCallbackPage: React.FC = () => {
                     variant="h6"
                     sx={{
                       fontWeight: 700,
-                      color: "#f8fafc",
+                      color: isDark ? "#f8fafc" : "#0F172A",
                       mb: 1,
                     }}
                   >
                     Authenticating Rider Cockpit
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "#94a3b8" }}>
+                  <Typography variant="body2" sx={{ color: isDark ? "#94a3b8" : "#64748B" }}>
                     Securing credentials and initializing navigation telemetry...
                   </Typography>
                 </Box>
@@ -163,7 +170,7 @@ export const AuthCallbackPage: React.FC = () => {
                   size={36}
                   thickness={4}
                   sx={{
-                    color: "#bef264",
+                    color: "primary.main",
                     my: 2,
                   }}
                 />

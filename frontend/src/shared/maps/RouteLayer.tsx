@@ -1,5 +1,7 @@
 import { Polyline } from "@vis.gl/react-google-maps";
 
+import { useThemeMode } from "@/app/theme/ThemeContext";
+
 import { useRoute } from "./hooks/useRoute";
 import type { MapStop } from "./types/map";
 
@@ -9,6 +11,8 @@ interface RouteLayerProps {
 
 export default function RouteLayer({ stops }: RouteLayerProps) {
   const { route } = useRoute(stops);
+  const { resolvedTheme } = useThemeMode();
+  const isDark = resolvedTheme === "dark";
 
   if (!route) {
     return null;
@@ -28,7 +32,7 @@ export default function RouteLayer({ stops }: RouteLayerProps) {
   return (
     <Polyline
       path={path}
-      strokeColor="#1A73E8"
+      strokeColor={isDark ? "#818cf8" : "#4f46e5"}
       strokeOpacity={0.9}
       strokeWeight={6}
       zIndex={2}

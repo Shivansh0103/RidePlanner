@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import * as authModule from "@/features/auth";
 
 import { AnonymousRoute } from "../AnonymousRoute";
+import { RootRoute } from "../AppRouter";
 import { ProtectedRoute } from "../ProtectedRoute";
 
 function mockAuth(overrides: Partial<authModule.AuthContextValue> = {}): authModule.AuthContextValue {
@@ -209,4 +210,104 @@ describe("Route Guards", () => {
       expect(screen.getByText("Trips Dashboard")).toBeInTheDocument();
     });
   });
+
+  describe("RootRoute", () => {
+    it("renders AuthBootSplash when bootstrapping", () => {
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: true,
+          authState: { status: "bootstrapping", user: null, isAuthenticated: false },
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route path="/" element={<RootRoute />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      expect(screen.getByText(/Verifying Rider Credentials/i)).toBeInTheDocument();
+    });
+
+    it("renders LandingPage when unauthenticated", async () => {
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: false,
+          isAuthenticated: false,
+          user: null,
+          authState: { status: "unauthenticated", user: null, isAuthenticated: false },
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route path="/" element={<RootRoute />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      expect(
+        await screen.findByText(/THE ALL-IN-ONE ROAD TRIP COMPANION/i, {}, { timeout: 4000 })
+      ).toBeInTheDocument();
+      expect(screen.getByText(/Start Planning/i)).toBeInTheDocument();
+    });
+
+    it("redirects authenticated user to /dashboard", () => {
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: false,
+          isAuthenticated: true,
+          user: { id: "u-1", email: "rider@example.com" },
+          authState: {
+            status: "authenticated",
+            user: { id: "u-1", email: "rider@example.com" },
+            isAuthenticated: true,
+          },
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route path="/" element={<RootRoute />} />
+            <Route path="/dashboard" element={<div>Rider Dashboard Journal</div>} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      expect(screen.getByText("Rider Dashboard Journal")).toBeInTheDocument();
+    });
+
+    it("does not allow ProtectedRoute to intercept root / when unauthenticated", async () => {
+      vi.spyOn(authModule, "useAuth").mockReturnValue(
+        mockAuth({
+          isBootstrapping: false,
+          isAuthenticated: false,
+          user: null,
+          authState: { status: "unauthenticated", user: null, isAuthenticated: false },
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route path="/" element={<RootRoute />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<div>Protected Dashboard</div>} />
+            </Route>
+            <Route path="/login" element={<div>Login Page</div>} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      expect(
+        await screen.findByText(/THE ALL-IN-ONE ROAD TRIP COMPANION/i, {}, { timeout: 4000 })
+      ).toBeInTheDocument();
+      expect(screen.queryByText("Login Page")).not.toBeInTheDocument();
+    });
+  });
 });
+

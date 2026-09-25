@@ -104,8 +104,9 @@ export default function AccommodationsSection({
         sx={{
           p: { xs: 2, sm: 2.5 },
           borderRadius: 2.5,
-          bgcolor: "#1a1a1e",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Stack
@@ -119,20 +120,20 @@ export default function AccommodationsSection({
         >
           <Box>
             <Stack direction="row" spacing={1.2} sx={{ alignItems: "center", mb: 0.3 }}>
-              <HotelIcon sx={{ color: "#bef264", fontSize: 22 }} />
+              <HotelIcon sx={{ color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "primary.main"), fontSize: 22 }} />
               <Typography
                 variant="h6"
                 sx={{
                   fontFamily: '"Outfit", sans-serif',
                   fontWeight: 800,
-                  color: "#f8fafc",
+                  color: "text.primary",
                   fontSize: { xs: "1.05rem", sm: "1.2rem" },
                 }}
               >
                 Accommodation & Stay Planning
               </Typography>
             </Stack>
-            <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.8rem" }}>
               Track hotel reservations, campsites, homestays, check-in schedules, and room costs.
             </Typography>
           </Box>
@@ -146,8 +147,9 @@ export default function AccommodationsSection({
                   display: "inline-flex",
                   p: "3px",
                   borderRadius: 2,
-                  bgcolor: "#141313",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f1f5f9"),
+                  border: "1px solid",
+                  borderColor: "divider",
                 }}
               >
                 <ToggleButtonGroup
@@ -172,15 +174,19 @@ export default function AccommodationsSection({
                       px: 1.2,
                       py: 0.4,
                       gap: 0.6,
-                      color: "#94a3b8",
+                      color: "text.secondary",
                       fontFamily: '"JetBrains Mono", monospace',
                       fontSize: "0.7rem",
                       fontWeight: 700,
                       textTransform: "none",
                       "&.Mui-selected": {
-                        bgcolor: "#222228 !important",
-                        color: "#bef264 !important",
-                        border: "1px solid rgba(190, 242, 100, 0.35) !important",
+                        bgcolor: (theme) => (theme.palette.mode === "dark" ? "#222228 !important" : "#ffffff !important"),
+                        color: (theme) => (theme.palette.mode === "dark" ? "#bef264 !important" : "primary.main !important"),
+                        border: (theme) =>
+                          theme.palette.mode === "dark"
+                            ? "1px solid rgba(190, 242, 100, 0.35) !important"
+                            : "1px solid rgba(79, 70, 229, 0.35) !important",
+                        boxShadow: (theme) => (theme.palette.mode === "light" ? "0 1px 3px rgba(0,0,0,0.08)" : "none"),
                       },
                     }}
                   >
@@ -194,15 +200,19 @@ export default function AccommodationsSection({
                       px: 1.2,
                       py: 0.4,
                       gap: 0.6,
-                      color: "#94a3b8",
+                      color: "text.secondary",
                       fontFamily: '"JetBrains Mono", monospace',
                       fontSize: "0.7rem",
                       fontWeight: 700,
                       textTransform: "none",
                       "&.Mui-selected": {
-                        bgcolor: "#222228 !important",
-                        color: "#bef264 !important",
-                        border: "1px solid rgba(190, 242, 100, 0.35) !important",
+                        bgcolor: (theme) => (theme.palette.mode === "dark" ? "#222228 !important" : "#ffffff !important"),
+                        color: (theme) => (theme.palette.mode === "dark" ? "#bef264 !important" : "primary.main !important"),
+                        border: (theme) =>
+                          theme.palette.mode === "dark"
+                            ? "1px solid rgba(190, 242, 100, 0.35) !important"
+                            : "1px solid rgba(79, 70, 229, 0.35) !important",
+                        boxShadow: (theme) => (theme.palette.mode === "light" ? "0 1px 3px rgba(0,0,0,0.08)" : "none"),
                       },
                     }}
                   >
@@ -218,10 +228,9 @@ export default function AccommodationsSection({
               size="small"
               endIcon={<HotelIcon sx={{ fontSize: 15 }} />}
               onClick={handleOpenAdd}
-              className="glow-acid"
               sx={{
-                bgcolor: "#bef264",
-                color: "#09090b",
+                bgcolor: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "primary.main"),
+                color: (theme) => (theme.palette.mode === "dark" ? "#09090b" : "#ffffff"),
                 fontFamily: '"JetBrains Mono", monospace',
                 fontSize: "0.72rem",
                 fontWeight: 800,
@@ -230,7 +239,9 @@ export default function AccommodationsSection({
                 py: 0.65,
                 borderRadius: 2,
                 textTransform: "none",
-                "&:hover": { bgcolor: "#a3e635" },
+                "&:hover": {
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "#a3e635" : "primary.dark"),
+                },
               }}
             >
               Add Stay
@@ -245,8 +256,9 @@ export default function AccommodationsSection({
               className="neo-inset"
               sx={{
                 borderRadius: 2,
-                bgcolor: "#141313",
-                border: "1px solid rgba(255, 255, 255, 0.05)",
+                bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                border: "1px solid",
+                borderColor: "divider",
               }}
             >
               <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
@@ -260,16 +272,16 @@ export default function AccommodationsSection({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#818cf8",
+                      color: "primary.main",
                     }}
                   >
                     <HotelIcon sx={{ fontSize: 18 }} />
                   </Box>
                   <Box>
-                    <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                    <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary", textTransform: "uppercase" }}>
                       Total Stays
                     </Typography>
-                    <Typography className="font-mono" sx={{ fontSize: "1.05rem", fontWeight: 800, color: "#f8fafc" }}>
+                    <Typography className="font-mono" sx={{ fontSize: "1.05rem", fontWeight: 800, color: "text.primary" }}>
                       {totalStays} {totalStays === 1 ? "Stay" : "Stays"}
                     </Typography>
                   </Box>
@@ -283,8 +295,9 @@ export default function AccommodationsSection({
               className="neo-inset"
               sx={{
                 borderRadius: 2,
-                bgcolor: "#141313",
-                border: "1px solid rgba(255, 255, 255, 0.05)",
+                bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                border: "1px solid",
+                borderColor: "divider",
               }}
             >
               <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
@@ -298,16 +311,16 @@ export default function AccommodationsSection({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#38bdf8",
+                      color: "#0284c7",
                     }}
                   >
                     <NightsStayIcon sx={{ fontSize: 18 }} />
                   </Box>
                   <Box>
-                    <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                    <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary", textTransform: "uppercase" }}>
                       Total Duration
                     </Typography>
-                    <Typography className="font-mono" sx={{ fontSize: "1.05rem", fontWeight: 800, color: "#f8fafc" }}>
+                    <Typography className="font-mono" sx={{ fontSize: "1.05rem", fontWeight: 800, color: "text.primary" }}>
                       {totalNights} {totalNights === 1 ? "Night" : "Nights"}
                     </Typography>
                   </Box>
@@ -321,8 +334,9 @@ export default function AccommodationsSection({
               className="neo-inset"
               sx={{
                 borderRadius: 2,
-                bgcolor: "#141313",
-                border: "1px solid rgba(255, 255, 255, 0.05)",
+                bgcolor: (theme) => (theme.palette.mode === "dark" ? "#141313" : "#f8fafc"),
+                border: "1px solid",
+                borderColor: "divider",
               }}
             >
               <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
@@ -332,20 +346,27 @@ export default function AccommodationsSection({
                       width: 34,
                       height: 34,
                       borderRadius: 1.5,
-                      bgcolor: "rgba(190, 242, 100, 0.15)",
+                      bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(190, 242, 100, 0.15)" : "rgba(5, 150, 105, 0.12)"),
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#bef264",
+                      color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
                     }}
                   >
                     <PaymentsIcon sx={{ fontSize: 18 }} />
                   </Box>
                   <Box>
-                    <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "#94a3b8", textTransform: "uppercase" }}>
+                    <Typography className="font-mono" sx={{ fontSize: "0.66rem", color: "text.secondary", textTransform: "uppercase" }}>
                       Lodging Budget
                     </Typography>
-                    <Typography className="font-mono" sx={{ fontSize: "1.05rem", fontWeight: 800, color: "#bef264" }}>
+                    <Typography
+                      className="font-mono"
+                      sx={{
+                        fontSize: "1.05rem",
+                        fontWeight: 800,
+                        color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
+                      }}
+                    >
                       ₹{totalCost.toLocaleString()}
                     </Typography>
                   </Box>

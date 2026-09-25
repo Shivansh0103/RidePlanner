@@ -24,7 +24,7 @@ export default function BreadcrumbsBar({ items }: BreadcrumbsBarProps) {
       sx={{ mb: 2.5 }}
     >
       <Box
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/dashboard")}
         sx={{
           display: "flex",
           alignItems: "center",

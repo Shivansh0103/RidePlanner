@@ -30,7 +30,7 @@ describe("SettingsPage", () => {
     queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
     });
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   function createWrapper() {

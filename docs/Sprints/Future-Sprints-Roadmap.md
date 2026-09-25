@@ -15,11 +15,12 @@ This document outlines the strategic execution sequence for **Sprints 15 through
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │                                 STRATEGIC SPRINT PHASES                                 │
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
-│  PHASE 1: CLOUD & MULTI-TENANCY FOUNDATION                                [COMPLETED]   │
+│  PHASE 1: CLOUD & MULTI-TENANCY FOUNDATION                                              │
 │    Sprint 13 ──► Authentication, Multi-Tenancy & User Profiles             [COMPLETED]   │
 │    Sprint 14 ──► DevOps, Docker, CI/CD & Production Cloud Launch           [COMPLETED]   │
+│    Sprint 14.5 ─► Production Polish, Public Landing, Themes & OAuth Fix    [NEXT ACTIVE] │
 │                                                                                         │
-│  PHASE 2: LIVE FIELD COMPANION & OFF-GRID CAPABILITY                      [NEXT ACTIVE] │
+│  PHASE 2: LIVE FIELD COMPANION & OFF-GRID CAPABILITY                                    │
 │    Sprint 15 ──► Route Weather Matrix & Elevation Profiles                              │
 │    Sprint 16 ──► PWA, Offline Storage & 1-Click GPX/Navigation Handoff                  │
 │                                                                                         │
@@ -76,6 +77,23 @@ Transform the local, anonymous single-tenant system into a secure, multi-tenant 
   * Zero-downtime canary deployment: 0% traffic revision tagged `sha-${SHORT_SHA}`, automated `jq`-based smoke tests against `/health` and `/ready`, and 100% traffic migration on pass.
   * Fast-fail startup configuration validation and structured JSON logging with `X-Correlation-ID`.
 * **Value Delivered**: Production engineering competence, automated zero-downtime releases, and a live public platform.
+
+---
+
+### Sprint 14.5 — Production Polish, Public Landing, Theme System & OAuth Hardening [Next Active — v0.14.5]
+* **[AUDIT-01] Google OAuth Production Stabilization**: Resolve Google Error 401 (`invalid_client`) by configuring production secrets in Cloud Run; enable `ForwardedHeaders.XForwardedHost` in ASP.NET Core; route callback via `/api/signin-google` through Vercel edge proxy; register redirect URI in Google Cloud Console.
+* **[AUDIT-02] Public Unauthenticated Landing Page**: High-impact public landing page at `/` for anonymous visitors, showcasing route mapping, 6-category readiness dials, fuel calculation, and lodging hub with clear CTAs. Preserve authenticated dashboard access.
+* **[AUDIT-03] Multi-Theme Architecture (Dark / Light / System)**: Implement `ThemeModeProvider` with `localStorage` persistence and OS `prefers-color-scheme` listener; create high-contrast Obsidian Light palette (slate/titanium tones) for outdoor daylight riding; refactor hardcoded layout hex colors to semantic theme tokens.
+* **[AUDIT-04] Google Maps Production Key**: Configure `VITE_GOOGLE_MAPS_API_KEY` on Vercel with HTTP referrer and API scope lockdown in GCP, eliminating the missing-key alert.
+* **[AUDIT-05] Serverless Database Connection Resiliency**: Add Npgsql `EnableRetryOnFailure()` in EF Core to handle transient drops during Neon auto-suspend cold starts.
+* **[AUDIT-06] Production Transactional Email Integration**: Integrate real transactional email provider (Resend HTTP API / SMTP) with branded HTML template for password reset delivery; eliminate log simulation in production.
+* **[AUDIT-07] Public Health Route (Skipped)**: Evaluated and skipped; native `/health` and `/ready` endpoints already exist directly on Cloud Run and are verified via automated smoke tests. Exposing an `/api/health` alias via Vercel is unnecessary.
+* **[AUDIT-08] Session Logout LocalStorage Cleanup**: Purge `last_active_trip_id` from `localStorage` upon logout to prevent cross-account state leakage.
+* **[AUDIT-09] Actionable ErrorState UI**: Upgrade `ErrorState` with retry triggers (`onRetry`) and `"Return to Expeditions"` navigation.
+* **[AUDIT-10] Auth Endpoint Rate Limiting**: Apply rate limit policies to `POST /api/auth/refresh` and `GET /api/auth/external/google/start`.
+* **[AUDIT-11] Vitest Windows Compatibility**: Configure `pool: 'threads'` in `vite.config.ts` to eliminate worker timeout errors during local test execution on Windows.
+* **[AUDIT-12] Security Headers Hardening**: Attach HSTS and standard defensive HTTP response headers (`nosniff`, `DENY`).
+* **Value Delivered**: Complete end-to-end production viability, welcoming public discovery, outdoor daylight riding usability, and rock-solid cloud reliability.
 
 ---
 

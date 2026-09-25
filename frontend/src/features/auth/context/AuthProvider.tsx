@@ -161,6 +161,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       tokenStore.clear();
       queryClient.clear();
+      localStorage.removeItem("last_active_trip_id");
       setAuthState({
         status: "unauthenticated",
         user: null,

@@ -18,6 +18,7 @@ import {
   Paper,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 
@@ -52,6 +53,8 @@ const CHECK_TAB_MAP: Record<string, string> = {
 export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
   const { data: readiness, isLoading, isError } = useTripReadiness(tripId);
   const [, setSearchParams] = useSearchParams();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -71,7 +74,11 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
   const isComplete = readiness.scorePercentage === 100;
   const isHigh = readiness.scorePercentage >= 70;
 
-  const scoreColor = isComplete ? "#bef264" : isHigh ? "#fbbf24" : "#f87171";
+  const scoreColor = isComplete
+    ? (isDark ? "#bef264" : "#059669")
+    : isHigh
+    ? (isDark ? "#fbbf24" : "#d97706")
+    : "#f87171";
 
   return (
     <Stack spacing={2.5} className="animate-fade-in">
@@ -81,8 +88,9 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
         sx={{
           p: { xs: 2, sm: 2.5 },
           borderRadius: 2.5,
-          bgcolor: "#1a1a1e",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Stack
@@ -98,7 +106,7 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
                 value={100}
                 size={58}
                 thickness={5}
-                sx={{ color: "#27272a" }}
+                sx={{ color: isDark ? "#27272a" : "#E2E8F0" }}
               />
               <CircularProgress
                 variant="determinate"
@@ -109,11 +117,11 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
                   color: scoreColor,
                   position: "absolute",
                   left: 0,
-                  filter: isComplete ? "drop-shadow(0 0 6px rgba(190, 242, 100, 0.5))" : "none",
+                  filter: isComplete ? (isDark ? "drop-shadow(0 0 6px rgba(190, 242, 100, 0.5))" : "none") : "none",
                 }}
               />
               <Box sx={{ position: "absolute", textAlign: "center" }}>
-                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 800, color: "#f8fafc" }}>
+                <Typography className="font-mono" sx={{ fontSize: "0.85rem", fontWeight: 800, color: "text.primary" }}>
                   {readiness.scorePercentage}%
                 </Typography>
               </Box>
@@ -124,12 +132,12 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
                 <SpeedIcon sx={{ fontSize: 18, color: scoreColor }} />
                 <Typography
                   variant="h6"
-                  sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc", fontSize: "1.1rem" }}
+                  sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary", fontSize: "1.1rem" }}
                 >
                   Expedition Readiness Audit
                 </Typography>
               </Stack>
-              <Typography variant="body2" sx={{ color: "#94a3b8", fontSize: "0.8rem", maxWidth: 600 }}>
+              <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.8rem", maxWidth: 600 }}>
                 {readiness.isReady
                   ? "All mission-critical preparation checks have been validated. You are cleared for departure."
                   : "Review pending pre-ride checklist items below to achieve 100% mission readiness."}
@@ -147,9 +155,11 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
               px: 2,
               py: 0.8,
               borderRadius: 2,
-              bgcolor: isComplete ? "rgba(190, 242, 100, 0.12)" : "rgba(251, 191, 36, 0.12)",
-              border: `1px solid ${isComplete ? "#bef264" : "rgba(251, 191, 36, 0.4)"}`,
-              color: isComplete ? "#bef264" : "#fbbf24",
+              bgcolor: isComplete
+                ? (isDark ? "rgba(190, 242, 100, 0.12)" : "rgba(5, 150, 105, 0.12)")
+                : (isDark ? "rgba(251, 191, 36, 0.12)" : "rgba(217, 119, 6, 0.12)"),
+              border: `1px solid ${isComplete ? (isDark ? "#bef264" : "#059669") : (isDark ? "rgba(251, 191, 36, 0.4)" : "rgba(217, 119, 6, 0.4)")}`,
+              color: isComplete ? (isDark ? "#bef264" : "#059669") : (isDark ? "#fbbf24" : "#d97706"),
               fontWeight: 800,
               fontSize: "0.74rem",
               letterSpacing: "0.06em",
@@ -168,7 +178,9 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
             sx={{
               height: 6,
               borderRadius: 9999,
-              bgcolor: "#141313",
+              bgcolor: isDark ? "#141313" : "#F1F5F9",
+              border: "1px solid",
+              borderColor: "divider",
               "& .MuiLinearProgress-bar": {
                 bgcolor: scoreColor,
                 borderRadius: 9999,
@@ -185,18 +197,18 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
           const isReq = item.isRequired;
 
           const itemBorderColor = isPassed
-            ? "rgba(190, 242, 100, 0.3)"
+            ? (isDark ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)")
             : isReq
             ? "rgba(248, 113, 113, 0.4)"
-            : "rgba(251, 191, 36, 0.3)";
+            : (isDark ? "rgba(251, 191, 36, 0.3)" : "rgba(217, 119, 6, 0.3)");
 
-          const itemHoverBorder = isPassed ? "#bef264" : isReq ? "#f87171" : "#818cf8";
-          const iconColor = isPassed ? "#bef264" : isReq ? "#f87171" : "#fbbf24";
+          const itemHoverBorder = isPassed ? (isDark ? "#bef264" : "#059669") : isReq ? "#f87171" : (isDark ? "#818cf8" : "#4f46e5");
+          const iconColor = isPassed ? (isDark ? "#bef264" : "#059669") : isReq ? "#f87171" : (isDark ? "#fbbf24" : "#d97706");
           const tagBg = isPassed
-            ? "rgba(190, 242, 100, 0.12)"
+            ? (isDark ? "rgba(190, 242, 100, 0.12)" : "rgba(5, 150, 105, 0.12)")
             : isReq
             ? "rgba(248, 113, 113, 0.12)"
-            : "rgba(251, 191, 36, 0.12)";
+            : (isDark ? "rgba(251, 191, 36, 0.12)" : "rgba(217, 119, 6, 0.12)");
 
           return (
             <Grid key={item.key} size={{ xs: 12, sm: 6, lg: 4 }}>
@@ -205,15 +217,15 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
                 onClick={() => handleNavigateToTab(item.key)}
                 sx={{
                   borderRadius: 2,
-                  bgcolor: "#1a1a1e",
+                  bgcolor: "background.paper",
                   border: `1px solid ${itemBorderColor}`,
                   cursor: "pointer",
                   transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                   "&:hover": {
                     transform: "translateY(-2px)",
                     borderColor: itemHoverBorder,
-                    bgcolor: "#1f1f24",
-                    boxShadow: `0 6px 20px rgba(0, 0, 0, 0.5)`,
+                    bgcolor: isDark ? "#1f1f24" : "#F8FAFC",
+                    boxShadow: isDark ? `0 6px 20px rgba(0, 0, 0, 0.5)` : `0 6px 16px rgba(0, 0, 0, 0.06)`,
                     "& .action-arrow": {
                       transform: "translateX(4px)",
                       color: itemHoverBorder,
@@ -231,19 +243,20 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
                             width: 30,
                             height: 30,
                             borderRadius: 1.5,
-                            bgcolor: "#141313",
+                            bgcolor: isDark ? "#141313" : "#F1F5F9",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             color: iconColor,
-                            border: "1px solid rgba(255, 255, 255, 0.08)",
+                            border: "1px solid",
+                            borderColor: "divider",
                           }}
                         >
                           {CHECK_ICON_MAP[item.key] ?? <AccountBalanceWalletIcon fontSize="small" />}
                         </Box>
                         <Typography
                           variant="subtitle2"
-                          sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "0.88rem" }}
+                          sx={{ fontWeight: 800, color: "text.primary", fontSize: "0.88rem" }}
                         >
                           {item.title}
                         </Typography>
@@ -271,7 +284,7 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
                     <Typography
                       variant="body2"
                       sx={{
-                        color: "#94a3b8",
+                        color: "text.secondary",
                         fontSize: "0.78rem",
                         lineHeight: 1.4,
                         minHeight: 34,
@@ -287,7 +300,8 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
                         justifyContent: "space-between",
                         alignItems: "center",
                         pt: 0.5,
-                        borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+                        borderTop: "1px solid",
+                        borderColor: "divider",
                       }}
                     >
                       <Typography
@@ -295,7 +309,7 @@ export default function ReadinessSection({ tripId }: ReadinessSectionProps) {
                         sx={{
                           fontSize: "0.68rem",
                           fontWeight: 700,
-                          color: isPassed ? "#bef264" : "#818cf8",
+                          color: isPassed ? (isDark ? "#bef264" : "#059669") : "primary.main",
                         }}
                       >
                         {isPassed ? "✓ Configured" : `Configure ${item.title}`}

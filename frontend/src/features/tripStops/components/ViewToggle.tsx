@@ -17,8 +17,9 @@ export default function ViewToggle({ value, onChange }: ViewToggleProps) {
         display: "inline-flex",
         p: "3px",
         borderRadius: 2,
-        bgcolor: "#141313",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: (theme) => theme.palette.mode === "dark" ? "#141313" : "#FFFFFF",
+        border: "1px solid",
+        borderColor: "divider",
       }}
     >
       <ToggleButtonGroup
@@ -47,28 +48,28 @@ export default function ViewToggle({ value, onChange }: ViewToggleProps) {
             px: 1.5,
             py: 0.5,
             gap: 0.8,
-            color: "#94a3b8",
+            color: "text.secondary",
             fontFamily: '"JetBrains Mono", monospace',
             fontSize: "0.72rem",
             fontWeight: 700,
             textTransform: "none",
             transition: "all 0.2s ease",
             "&:hover": {
-              bgcolor: "rgba(255, 255, 255, 0.05)",
-              color: "#f8fafc",
+              bgcolor: "action.hover",
+              color: "text.primary",
             },
             "&.Mui-selected": {
-              bgcolor: "#222228 !important",
-              color: "#bef264 !important",
-              border: "1px solid rgba(190, 242, 100, 0.35) !important",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+              bgcolor: (theme) => theme.palette.mode === "dark" ? "#222228 !important" : "#EEF2FF !important",
+              color: (theme) => theme.palette.mode === "dark" ? "#bef264 !important" : "#4F46E5 !important",
+              border: (theme) => theme.palette.mode === "dark" ? "1px solid rgba(190, 242, 100, 0.35) !important" : "1px solid rgba(79, 70, 229, 0.35) !important",
+              boxShadow: (theme) => theme.palette.mode === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.05)",
               "& .toggle-icon": {
-                color: "#bef264",
+                color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#4F46E5",
               },
             },
           }}
         >
-          <FormatListBulletedIcon className="toggle-icon" sx={{ fontSize: 15, color: value === "list" ? "#bef264" : "#71717a" }} />
+          <FormatListBulletedIcon className="toggle-icon" sx={{ fontSize: 15 }} />
           List
         </ToggleButton>
 
@@ -79,28 +80,28 @@ export default function ViewToggle({ value, onChange }: ViewToggleProps) {
             px: 1.5,
             py: 0.5,
             gap: 0.8,
-            color: "#94a3b8",
+            color: "text.secondary",
             fontFamily: '"JetBrains Mono", monospace',
             fontSize: "0.72rem",
             fontWeight: 700,
             textTransform: "none",
             transition: "all 0.2s ease",
             "&:hover": {
-              bgcolor: "rgba(255, 255, 255, 0.05)",
-              color: "#f8fafc",
+              bgcolor: "action.hover",
+              color: "text.primary",
             },
             "&.Mui-selected": {
-              bgcolor: "#222228 !important",
-              color: "#bef264 !important",
-              border: "1px solid rgba(190, 242, 100, 0.35) !important",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+              bgcolor: (theme) => theme.palette.mode === "dark" ? "#222228 !important" : "#EEF2FF !important",
+              color: (theme) => theme.palette.mode === "dark" ? "#bef264 !important" : "#4F46E5 !important",
+              border: (theme) => theme.palette.mode === "dark" ? "1px solid rgba(190, 242, 100, 0.35) !important" : "1px solid rgba(79, 70, 229, 0.35) !important",
+              boxShadow: (theme) => theme.palette.mode === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.05)",
               "& .toggle-icon": {
-                color: "#bef264",
+                color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#4F46E5",
               },
             },
           }}
         >
-          <TimelineIcon className="toggle-icon" sx={{ fontSize: 15, color: value === "timeline" ? "#bef264" : "#71717a" }} />
+          <TimelineIcon className="toggle-icon" sx={{ fontSize: 15 }} />
           Timeline
         </ToggleButton>
       </ToggleButtonGroup>

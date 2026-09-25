@@ -38,10 +38,11 @@ export default function EditTripDialog({ open, trip, onClose }: EditTripDialogPr
         paper: {
           className: "neo-convex",
           sx: {
-            bgcolor: "#1a1a1e",
+            bgcolor: "background.paper",
             borderRadius: 3,
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.8)",
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: (theme) => theme.palette.mode === "dark" ? "0 20px 50px rgba(0, 0, 0, 0.8)" : "0 20px 50px rgba(0, 0, 0, 0.12)",
           },
         },
       }}
@@ -51,7 +52,7 @@ export default function EditTripDialog({ open, trip, onClose }: EditTripDialogPr
         sx={{
           fontFamily: '"Outfit", sans-serif',
           fontWeight: 800,
-          color: "#f8fafc",
+          color: "text.primary",
           pt: 3,
           px: 3,
         }}
@@ -61,7 +62,7 @@ export default function EditTripDialog({ open, trip, onClose }: EditTripDialogPr
 
       <DialogContent sx={{ px: 3, py: 2 }}>
         {isError && (
-          <Alert severity="error" sx={{ mb: 2, bgcolor: "rgba(248, 113, 113, 0.15)", color: "#f87171" }}>
+          <Alert severity="error" sx={{ mb: 2 }}>
             {error instanceof Error ? error.message : "Failed to update trip."}
           </Alert>
         )}
@@ -82,7 +83,7 @@ export default function EditTripDialog({ open, trip, onClose }: EditTripDialogPr
         <Button
           onClick={onClose}
           disabled={isPending}
-          sx={{ color: "#94a3b8", fontFamily: '"JetBrains Mono", monospace', fontSize: "0.78rem", fontWeight: 700 }}
+          sx={{ color: "text.secondary", fontFamily: '"JetBrains Mono", monospace', fontSize: "0.78rem", fontWeight: 700 }}
         >
           Cancel
         </Button>

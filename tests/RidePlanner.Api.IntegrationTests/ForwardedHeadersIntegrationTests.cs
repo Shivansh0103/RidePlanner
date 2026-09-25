@@ -9,6 +9,7 @@ public class ConnectionInfoResponse
     public string? RemoteIp { get; set; }
     public string? Scheme { get; set; }
     public bool IsHttps { get; set; }
+    public string? Host { get; set; }
 }
 
 public class ForwardedHeadersIntegrationTests : IClassFixture<CustomWebApplicationFactory>
@@ -62,5 +63,19 @@ public class ForwardedHeadersIntegrationTests : IClassFixture<CustomWebApplicati
         Assert.NotNull(info);
         Assert.Equal("https", info.Scheme);
         Assert.True(info.IsHttps);
+    }
+
+    [Fact]
+    public async Task ForwardedHeaders_WhenXForwardedHostProvided_UpdatesHost()
+    {
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add("X-Forwarded-Host", "ride-planner-sand.vercel.app");
+
+        var response = await client.GetAsync("/api/test/connection-info");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var info = await response.Content.ReadFromJsonAsync<ConnectionInfoResponse>();
+        Assert.NotNull(info);
+        Assert.Equal("ride-planner-sand.vercel.app", info.Host);
     }
 }

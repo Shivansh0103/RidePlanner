@@ -48,6 +48,13 @@ builder.Services.AddAuthenticationRateLimiting(
     builder.Configuration,
     builder.Environment);
 
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(365);
+});
+
 builder.Services.AddRidePlannerHealthChecks();
 
 var app = builder.Build();
@@ -85,15 +92,21 @@ if (app.Environment.IsDevelopment())
 
     app.MapScalarApiReference();
 }
+else
+{
+    app.UseHsts();
+}
 
 var forwardedHeadersOptions = new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
     ForwardLimit = null
 };
 forwardedHeadersOptions.KnownNetworks.Clear();
 forwardedHeadersOptions.KnownProxies.Clear();
 app.UseForwardedHeaders(forwardedHeadersOptions);
+
+app.UseSecurityHeaders();
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -127,7 +140,8 @@ if (app.Environment.IsEnvironment("Testing"))
     {
         RemoteIp = httpContext.Connection.RemoteIpAddress?.ToString(),
         Scheme = httpContext.Request.Scheme,
-        IsHttps = httpContext.Request.IsHttps
+        IsHttps = httpContext.Request.IsHttps,
+        Host = httpContext.Request.Host.Value
     }));
 
     app.MapPost("/api/test/signin-external", async (HttpContext httpContext, TestExternalSignInRequest request) =>

@@ -47,9 +47,10 @@ export const SettingsPage: React.FC = () => {
           sx={{
             p: { xs: 3, md: 4 },
             borderRadius: 3.5,
-            bgcolor: "rgba(11, 15, 23, 0.7)",
-            borderColor: "rgba(255, 255, 255, 0.08)",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.35)",
+            bgcolor: "background.paper",
+            borderColor: "divider",
+            boxShadow: (theme) =>
+              theme.palette.mode === "dark" ? "0 8px 32px rgba(0, 0, 0, 0.35)" : "0 8px 24px rgba(0, 0, 0, 0.06)",
             backdropFilter: "blur(16px)",
           }}
         >
@@ -77,13 +78,13 @@ export const SettingsPage: React.FC = () => {
                   sx={{
                     fontWeight: 800,
                     fontFamily: '"Outfit", sans-serif',
-                    color: "#f8fafc",
+                    color: "text.primary",
                     letterSpacing: "-0.01em",
                   }}
                 >
                   Rider Settings & Expedition Preferences
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#94a3b8" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   Configure your default trip currencies, distance units, and vehicle efficiency profile.
                 </Typography>
               </Box>

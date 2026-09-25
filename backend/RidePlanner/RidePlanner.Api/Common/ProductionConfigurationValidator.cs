@@ -43,16 +43,25 @@ public static class ProductionConfigurationValidator
             errors.Add("ConnectionStrings:RidePlannerDatabase cannot be 'InMemory' in production.");
         }
 
-        // 3. Validate Google OAuth if configured
+        // 3. Validate Google OAuth
         var googleClientId = configuration["Authentication:Google:ClientId"];
         var googleClientSecret = configuration["Authentication:Google:ClientSecret"];
-        if (!string.IsNullOrWhiteSpace(googleClientId) || !string.IsNullOrWhiteSpace(googleClientSecret))
+        if (string.IsNullOrWhiteSpace(googleClientId))
         {
-            if (string.Equals(googleClientId, DefaultDevGoogleClientId, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(googleClientSecret, DefaultDevGoogleClientSecret, StringComparison.OrdinalIgnoreCase))
-            {
-                errors.Add("Authentication:Google credentials cannot use development placeholder values in production.");
-            }
+            errors.Add("Authentication:Google:ClientId is required in production.");
+        }
+        else if (string.Equals(googleClientId, DefaultDevGoogleClientId, StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add("Authentication:Google:ClientId cannot use development placeholder values in production.");
+        }
+
+        if (string.IsNullOrWhiteSpace(googleClientSecret))
+        {
+            errors.Add("Authentication:Google:ClientSecret is required in production.");
+        }
+        else if (string.Equals(googleClientSecret, DefaultDevGoogleClientSecret, StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add("Authentication:Google:ClientSecret cannot use development placeholder values in production.");
         }
 
         // 4. Validate CORS Allowed Origins

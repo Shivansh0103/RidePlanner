@@ -139,6 +139,34 @@ public static class RateLimitingExtensions
                         AutoReplenishment = true
                     });
             });
+
+            options.AddPolicy(RateLimitPolicies.TokenRefresh, httpContext =>
+            {
+                var settings = GetCurrentSettings(httpContext);
+                return RateLimitPartition.GetFixedWindowLimiter(
+                    ResolveClientIp(httpContext, environment),
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = settings.TokenRefresh.PermitLimit,
+                        Window = TimeSpan.FromSeconds(settings.TokenRefresh.WindowSeconds),
+                        QueueLimit = 0,
+                        AutoReplenishment = true
+                    });
+            });
+
+            options.AddPolicy(RateLimitPolicies.ExternalOAuth, httpContext =>
+            {
+                var settings = GetCurrentSettings(httpContext);
+                return RateLimitPartition.GetFixedWindowLimiter(
+                    ResolveClientIp(httpContext, environment),
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = settings.ExternalOAuth.PermitLimit,
+                        Window = TimeSpan.FromSeconds(settings.ExternalOAuth.WindowSeconds),
+                        QueueLimit = 0,
+                        AutoReplenishment = true
+                    });
+            });
         });
 
         return services;

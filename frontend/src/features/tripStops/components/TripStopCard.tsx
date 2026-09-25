@@ -67,14 +67,14 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
           borderRadius: 2.5,
           cursor: "pointer",
           borderLeft: "4px solid",
-          borderLeftColor: selected ? "#6366f1" : "rgba(255, 255, 255, 0.08)",
-          bgcolor: selected ? "#201f1f" : "#1a1a1e",
+          borderLeftColor: selected ? "primary.main" : "divider",
+          bgcolor: (theme) => theme.palette.mode === "dark" ? (selected ? "#201f1f" : "background.paper") : (selected ? "#EEF2FF" : "background.paper"),
           border: "1px solid",
-          borderColor: selected ? "#6366f1" : "rgba(255, 255, 255, 0.08)",
+          borderColor: selected ? "primary.main" : "divider",
           boxShadow: selected ? "0 0 16px rgba(99, 102, 241, 0.3)" : "none",
           transition: "all 0.2s ease-in-out",
           "&:hover": {
-            borderColor: selected ? "#6366f1" : "rgba(99, 102, 241, 0.4)",
+            borderColor: selected ? "primary.main" : "primary.light",
             transform: "translateY(-1px)",
           },
         }}
@@ -115,15 +115,15 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                       display: "flex",
                       alignItems: "center",
                       cursor: "grab",
-                      color: "#94a3b8",
+                      color: "text.secondary",
                       "&:active": {
                         cursor: "grabbing",
                       },
                       p: 0.4,
                       borderRadius: 1,
                       "&:hover": {
-                        bgcolor: "rgba(255, 255, 255, 0.06)",
-                        color: "#ffffff",
+                        bgcolor: "action.hover",
+                        color: "text.primary",
                       },
                     }}
                     aria-label={`Reorder ${stop.name}. Press Space or Enter to drag.`}
@@ -176,8 +176,8 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
                 sx={{
-                  color: "#94a3b8",
-                  "&:hover": { color: "#ffffff", bgcolor: "rgba(255, 255, 255, 0.06)" },
+                  color: "text.secondary",
+                  "&:hover": { color: "text.primary", bgcolor: "action.hover" },
                 }}
               >
                 <MoreVertIcon sx={{ fontSize: 18 }} />
@@ -191,7 +191,7 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                 sx={{
                   fontFamily: '"Outfit", sans-serif',
                   fontWeight: 800,
-                  color: "#f8fafc",
+                  color: "text.primary",
                   lineHeight: 1.25,
                 }}
               >
@@ -199,7 +199,7 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
               </Typography>
 
               {stop.formattedAddress && (
-                <Typography variant="caption" sx={{ color: "#94a3b8", mt: 0.3, display: "block" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary", mt: 0.3, display: "block" }}>
                   {stop.formattedAddress}
                 </Typography>
               )}
@@ -214,14 +214,16 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
                 gap: 1.5,
                 p: 1.2,
                 borderRadius: 1.5,
-                bgcolor: "#141313",
+                bgcolor: (theme) => theme.palette.mode === "dark" ? "#141313" : "#F8FAFC",
+                border: "1px solid",
+                borderColor: "divider",
                 alignItems: "center",
               }}
             >
               {stop.arrivalDate && (
                 <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
-                  <CalendarTodayIcon sx={{ fontSize: 13, color: "#818cf8" }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#e4e4e7", fontWeight: 700 }}>
+                  <CalendarTodayIcon sx={{ fontSize: 13, color: "primary.main" }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary", fontWeight: 700 }}>
                     Arr: {formatDate(stop.arrivalDate)}
                   </Typography>
                 </Stack>
@@ -229,8 +231,8 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
 
               {stop.departureDate && (
                 <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
-                  <CalendarTodayIcon sx={{ fontSize: 13, color: "#bef264" }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#e4e4e7", fontWeight: 700 }}>
+                  <CalendarTodayIcon sx={{ fontSize: 13, color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#059669" }} />
+                  <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary", fontWeight: 700 }}>
                     Dep: {formatDate(stop.departureDate)}
                   </Typography>
                 </Stack>
@@ -240,11 +242,11 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
             {/* Notes */}
             {stop.notes && (
               <Stack direction="row" spacing={0.8} sx={{ alignItems: "flex-start", mt: 0.5 }}>
-                <NotesIcon sx={{ fontSize: 14, color: "#94a3b8", mt: 0.2 }} />
+                <NotesIcon sx={{ fontSize: 14, color: "text.secondary", mt: 0.2 }} />
                 <Typography
                   variant="caption"
                   sx={{
-                    color: "#94a3b8",
+                    color: "text.secondary",
                     fontStyle: "italic",
                     lineHeight: 1.4,
                   }}
@@ -264,9 +266,10 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
           slotProps={{
             paper: {
               sx: {
-                bgcolor: "#1e1e24",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.8)",
+                bgcolor: "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+                boxShadow: (theme) => theme.palette.mode === "dark" ? "0 10px 30px rgba(0, 0, 0, 0.8)" : "0 10px 25px rgba(0, 0, 0, 0.08)",
               },
             },
             list: {
@@ -288,9 +291,9 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
               handleMenuClose();
               onEdit(stop);
             }}
-            sx={{ color: "#e2e8f0", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.06)" } }}
+            sx={{ color: "text.primary" }}
           >
-            <ListItemIcon sx={{ color: "#818cf8" }}>
+            <ListItemIcon sx={{ color: "primary.main" }}>
               <EditIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText>Edit Waypoint</ListItemText>
@@ -302,9 +305,9 @@ const TripStopCard = forwardRef<HTMLDivElement, TripStopCardProps>(
               handleMenuClose();
               onDelete(stop);
             }}
-            sx={{ color: "#f87171", "&:hover": { bgcolor: "rgba(248, 113, 113, 0.08)" } }}
+            sx={{ color: "error.main" }}
           >
-            <ListItemIcon sx={{ color: "#f87171" }}>
+            <ListItemIcon sx={{ color: "error.main" }}>
               <DeleteIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText>Delete Waypoint</ListItemText>

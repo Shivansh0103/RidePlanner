@@ -76,8 +76,9 @@ export default function MemoriesSection({ tripId }: MemoriesSectionProps) {
         sx={{
           p: 2.2,
           borderRadius: 2.5,
-          bgcolor: "#1a1a1e",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Stack
@@ -102,10 +103,10 @@ export default function MemoriesSection({ tripId }: MemoriesSectionProps) {
               <CollectionsIcon sx={{ fontSize: 20 }} />
             </Box>
             <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#f8fafc", fontSize: "1rem" }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1rem" }}>
                 Ride Memories & Journal ({memories.length})
               </Typography>
-              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
                 Capture highlights, journal logs, photo links, and mileage readings from your journey.
               </Typography>
             </Box>
@@ -116,9 +117,8 @@ export default function MemoriesSection({ tripId }: MemoriesSectionProps) {
             size="small"
             endIcon={<AddIcon sx={{ fontSize: 15 }} />}
             onClick={handleOpenAdd}
-            className="glow-indigo"
             sx={{
-              bgcolor: "#6366f1",
+              bgcolor: "primary.main",
               color: "#ffffff",
               fontFamily: '"JetBrains Mono", monospace',
               fontSize: "0.72rem",
@@ -128,7 +128,7 @@ export default function MemoriesSection({ tripId }: MemoriesSectionProps) {
               borderRadius: 2,
               textTransform: "none",
               alignSelf: { xs: "stretch", sm: "auto" },
-              "&:hover": { bgcolor: "#4f46e5" },
+              "&:hover": { bgcolor: "primary.dark" },
             }}
           >
             Add Memory

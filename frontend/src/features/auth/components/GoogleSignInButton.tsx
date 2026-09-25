@@ -1,6 +1,8 @@
 import { Button, SvgIcon } from "@mui/material";
 import React from "react";
 
+import { useThemeMode } from "@/app/theme/ThemeContext";
+
 interface GoogleSignInButtonProps {
   returnUrl?: string;
   disabled?: boolean;
@@ -35,6 +37,9 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   returnUrl = "/trips",
   disabled = false,
 }) => {
+  const { resolvedTheme } = useThemeMode();
+  const isDark = resolvedTheme === "dark";
+
   const handleGoogleSignIn = () => {
     // Sanitize returnUrl to prevent open redirects
     const sanitizedUrl =
@@ -56,18 +61,21 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
       onClick={handleGoogleSignIn}
       sx={{
         py: 1.2,
-        color: "#f8fafc",
-        bgcolor: "rgba(255, 255, 255, 0.04)",
-        borderColor: "rgba(255, 255, 255, 0.12)",
+        color: isDark ? "#f8fafc" : "#0F172A",
+        bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "#FFFFFF",
+        borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+        boxShadow: isDark ? "none" : "0 1px 3px rgba(15, 23, 42, 0.06)",
         textTransform: "none",
         fontWeight: 600,
         fontSize: "0.95rem",
         letterSpacing: "0.01em",
         transition: "all 0.2s ease-in-out",
         "&:hover": {
-          bgcolor: "rgba(255, 255, 255, 0.08)",
-          borderColor: "rgba(255, 255, 255, 0.25)",
-          boxShadow: "0 0 15px rgba(255, 255, 255, 0.06)",
+          bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F8FAFC",
+          borderColor: isDark ? "rgba(255, 255, 255, 0.25)" : "#94A3B8",
+          boxShadow: isDark
+            ? "0 0 15px rgba(255, 255, 255, 0.06)"
+            : "0 2px 6px rgba(15, 23, 42, 0.08)",
         },
       }}
     >

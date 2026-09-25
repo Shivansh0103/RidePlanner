@@ -69,6 +69,7 @@ public class AuthController : ControllerBase
         return Ok(authResult.Response);
     }
 
+    [EnableRateLimiting(RateLimitPolicies.TokenRefresh)]
     [HttpPost("refresh")]
     public async Task<ActionResult<LoginResponse>> Refresh(
         CancellationToken cancellationToken)
@@ -126,6 +127,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [EnableRateLimiting(RateLimitPolicies.ExternalOAuth)]
     [HttpGet("external/google/start")]
     public IActionResult StartGoogleLogin([FromQuery] string? returnUrl)
     {

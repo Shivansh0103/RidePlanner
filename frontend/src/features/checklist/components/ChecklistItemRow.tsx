@@ -31,12 +31,15 @@ export default function ChecklistItemRow({
         alignItems: "center",
         justifyContent: "space-between",
         transition: "background-color 0.15s ease",
-        bgcolor: item.isCompleted ? "rgba(255, 255, 255, 0.01)" : "rgba(255, 255, 255, 0.03)",
-        border: "1px solid rgba(255, 255, 255, 0.04)",
+        bgcolor: item.isCompleted
+          ? "transparent"
+          : (theme) => (theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)"),
+        border: "1px solid",
+        borderColor: "divider",
         mb: 0.8,
         "&:hover": {
-          backgroundColor: "rgba(255, 255, 255, 0.06)",
-          borderColor: "rgba(255, 255, 255, 0.08)",
+          backgroundColor: "action.hover",
+          borderColor: "primary.main",
           "& .action-buttons": {
             opacity: 1,
           },
@@ -53,9 +56,9 @@ export default function ChecklistItemRow({
           sx={{
             p: 0.4,
             mr: 0.5,
-            color: "#52525b",
+            color: "text.secondary",
             "&.Mui-checked": {
-              color: "#bef264",
+              color: (theme) => (theme.palette.mode === "dark" ? "#bef264" : "#059669"),
             },
           }}
         />
@@ -63,7 +66,7 @@ export default function ChecklistItemRow({
           variant="body2"
           sx={{
             textDecoration: item.isCompleted ? "line-through" : "none",
-            color: item.isCompleted ? "#71717a" : "#f8fafc",
+            color: item.isCompleted ? "text.secondary" : "text.primary",
             fontWeight: item.isCompleted ? 400 : 600,
             fontSize: "0.8rem",
             transition: "all 0.2s ease",
@@ -87,9 +90,11 @@ export default function ChecklistItemRow({
             sx={{
               height: 16,
               fontSize: "0.58rem",
-              bgcolor: "rgba(255, 255, 255, 0.04)",
-              color: "#71717a",
-              border: "1px solid rgba(255, 255, 255, 0.06)",
+              bgcolor: (theme) =>
+                theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.04)",
+              color: "text.secondary",
+              border: "1px solid",
+              borderColor: "divider",
               fontFamily: '"JetBrains Mono", monospace',
             }}
           />
@@ -111,7 +116,7 @@ export default function ChecklistItemRow({
             size="small"
             aria-label="edit item"
             onClick={() => onEdit(item)}
-            sx={{ p: 0.4, color: "#71717a", "&:hover": { color: "#818cf8", bgcolor: "rgba(99, 102, 241, 0.1)" } }}
+            sx={{ p: 0.4, color: "text.secondary", "&:hover": { color: "primary.main", bgcolor: "action.hover" } }}
           >
             <EditIcon sx={{ fontSize: 14 }} />
           </IconButton>
@@ -121,7 +126,7 @@ export default function ChecklistItemRow({
             size="small"
             aria-label="delete item"
             onClick={() => onDelete(item)}
-            sx={{ p: 0.4, color: "#71717a", "&:hover": { color: "#f87171", bgcolor: "rgba(248, 113, 113, 0.1)" } }}
+            sx={{ p: 0.4, color: "text.secondary", "&:hover": { color: "error.main", bgcolor: "action.hover" } }}
           >
             <DeleteIcon sx={{ fontSize: 14 }} />
           </IconButton>

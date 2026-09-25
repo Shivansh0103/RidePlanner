@@ -93,10 +93,11 @@ export function PlaceAutocomplete({
           paper: {
             className: "neo-convex",
             sx: {
-              bgcolor: "#1e1e24 !important",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
               borderRadius: 2,
-              boxShadow: "0 12px 36px rgba(0,0,0,0.8)",
+              boxShadow: (theme) => theme.palette.mode === "dark" ? "0 12px 36px rgba(0,0,0,0.8)" : "0 12px 36px rgba(15,23,42,0.12)",
               mt: 0.5,
               "& .MuiAutocomplete-listbox": {
                 py: 0.5,
@@ -114,7 +115,7 @@ export function PlaceAutocomplete({
               {...props}
               style={{
                 padding: "8px 14px",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                borderBottom: "1px solid var(--border-subtle, rgba(148, 163, 184, 0.15))",
               }}
             >
               <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", width: "100%" }}>
@@ -123,11 +124,11 @@ export function PlaceAutocomplete({
                     width: 28,
                     height: 28,
                     borderRadius: 1.5,
-                    bgcolor: "rgba(99, 102, 241, 0.15)",
+                    bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.1)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "#818cf8",
+                    color: "primary.main",
                     flexShrink: 0,
                   }}
                 >
@@ -137,7 +138,7 @@ export function PlaceAutocomplete({
                   <Typography
                     sx={{
                       fontWeight: 700,
-                      color: "#f8fafc",
+                      color: "text.primary",
                       fontSize: "0.84rem",
                       whiteSpace: "nowrap",
                       overflow: "hidden",
@@ -150,7 +151,7 @@ export function PlaceAutocomplete({
                     <Typography
                       className="font-mono"
                       sx={{
-                        color: "#94a3b8",
+                        color: "text.secondary",
                         fontSize: "0.7rem",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
@@ -206,13 +207,13 @@ export function PlaceAutocomplete({
             alignItems: "center",
             justifyContent: "space-between",
             fontSize: "0.68rem",
-            color: "#bef264",
+            color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#059669",
           }}
         >
-          <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#bef264" }}>
+          <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: (theme) => theme.palette.mode === "dark" ? "#bef264" : "#059669" }}>
             📍 GPS: {value.coordinates.latitude.toFixed(4)}°, {value.coordinates.longitude.toFixed(4)}°
           </Typography>
-          <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "#94a3b8" }}>
+          <Typography className="font-mono" sx={{ fontSize: "0.68rem", color: "text.secondary" }}>
             {value.displayName || "Position Locked"}
           </Typography>
         </Box>

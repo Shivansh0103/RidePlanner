@@ -14,6 +14,7 @@ import {
   Paper,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 
 import ErrorState from "@/shared/ui/ErrorState";
@@ -28,6 +29,8 @@ interface TripSummarySectionProps {
 
 export default function TripSummarySection({ tripId }: TripSummarySectionProps) {
   const { data: summary, isLoading, isError } = useTripSummary(tripId);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -51,8 +54,9 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
         sx={{
           p: 3,
           borderRadius: 2.5,
-          bgcolor: "#1a1a1e",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
@@ -62,9 +66,10 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
                 width: 44,
                 height: 44,
                 borderRadius: 2,
-                bgcolor: "rgba(99, 102, 241, 0.15)",
-                color: "#818cf8",
-                border: "1px solid rgba(99, 102, 241, 0.35)",
+                bgcolor: isDark ? "rgba(99, 102, 241, 0.15)" : "rgba(79, 70, 229, 0.12)",
+                color: isDark ? "#818cf8" : "#4f46e5",
+                border: "1px solid",
+                borderColor: isDark ? "rgba(99, 102, 241, 0.35)" : "rgba(79, 70, 229, 0.3)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -73,10 +78,10 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
               <AssessmentIcon sx={{ fontSize: 24 }} />
             </Box>
             <Box>
-              <Typography variant="h5" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "#f8fafc" }}>
+              <Typography variant="h5" sx={{ fontFamily: '"Outfit", sans-serif', fontWeight: 800, color: "text.primary" }}>
                 {summary.tripName} – Expedition Debrief
               </Typography>
-              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+              <Typography className="font-mono" sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
                 {summary.startedAt
                   ? `Started: ${formatDate(summary.startedAt)}`
                   : "Trip not started yet"}
@@ -90,9 +95,10 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
               label={summary.status}
               size="small"
               sx={{
-                bgcolor: "rgba(190, 242, 100, 0.15)",
-                color: "#bef264",
-                border: "1px solid rgba(190, 242, 100, 0.3)",
+                bgcolor: isDark ? "rgba(190, 242, 100, 0.15)" : "rgba(5, 150, 105, 0.12)",
+                color: isDark ? "#bef264" : "#059669",
+                border: "1px solid",
+                borderColor: isDark ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)",
                 fontFamily: '"JetBrains Mono", monospace',
                 fontWeight: 800,
                 fontSize: "0.7rem",
@@ -104,12 +110,12 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
               startIcon={<PrintIcon sx={{ fontSize: 16 }} />}
               onClick={handlePrint}
               sx={{
-                borderColor: "rgba(255, 255, 255, 0.2)",
-                color: "#f8fafc",
+                borderColor: "divider",
+                color: "text.secondary",
                 fontFamily: '"JetBrains Mono", monospace',
                 fontSize: "0.72rem",
                 fontWeight: 700,
-                "&:hover": { borderColor: "#ffffff", bgcolor: "rgba(255, 255, 255, 0.06)" },
+                "&:hover": { borderColor: "primary.main", color: "primary.main" },
               }}
             >
               Print Report
@@ -127,22 +133,23 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
             sx={{
               borderRadius: 2.5,
               height: "100%",
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
             <CardContent sx={{ p: 2.5 }}>
               <Stack spacing={1}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "#818cf8" }}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "primary.main" }}>
                   <CalendarMonthIcon sx={{ fontSize: 18 }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Duration & Stops
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "#f8fafc" }}>
+                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "text.primary" }}>
                   {summary.totalDurationDays} {summary.totalDurationDays === 1 ? "Day" : "Days"}
                 </Typography>
-                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
                   {summary.totalStops} planned route stop(s)
                 </Typography>
               </Stack>
@@ -157,19 +164,22 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
             sx={{
               borderRadius: 2.5,
               height: "100%",
-              bgcolor: "#1a1a1e",
-              border: isUnderBudget ? "1px solid rgba(190, 242, 100, 0.3)" : "1px solid rgba(248, 113, 113, 0.3)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: isUnderBudget
+                ? (isDark ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)")
+                : "rgba(248, 113, 113, 0.3)",
             }}
           >
             <CardContent sx={{ p: 2.5 }}>
               <Stack spacing={1}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "#38bdf8" }}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: isDark ? "#38bdf8" : "#0284c7" }}>
                   <AccountBalanceWalletIcon sx={{ fontSize: 18 }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Budget Spent
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "#f8fafc" }}>
+                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "text.primary" }}>
                   ₹{summary.totalExpenses.toLocaleString()}
                 </Typography>
                 <Chip
@@ -184,9 +194,11 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
                     fontWeight: 700,
                     fontSize: "0.68rem",
                     fontFamily: '"JetBrains Mono", monospace',
-                    bgcolor: isUnderBudget ? "rgba(190, 242, 100, 0.12)" : "rgba(248, 113, 113, 0.12)",
-                    color: isUnderBudget ? "#bef264" : "#f87171",
-                    border: `1px solid ${isUnderBudget ? "rgba(190, 242, 100, 0.3)" : "rgba(248, 113, 113, 0.3)"}`,
+                    bgcolor: isUnderBudget
+                      ? (isDark ? "rgba(190, 242, 100, 0.12)" : "rgba(5, 150, 105, 0.12)")
+                      : "rgba(248, 113, 113, 0.12)",
+                    color: isUnderBudget ? (isDark ? "#bef264" : "#059669") : "#f87171",
+                    border: `1px solid ${isUnderBudget ? (isDark ? "rgba(190, 242, 100, 0.3)" : "rgba(5, 150, 105, 0.3)") : "rgba(248, 113, 113, 0.3)"}`,
                   }}
                 />
               </Stack>
@@ -201,22 +213,23 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
             sx={{
               borderRadius: 2.5,
               height: "100%",
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
             <CardContent sx={{ p: 2.5 }}>
               <Stack spacing={1}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "#818cf8" }}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "primary.main" }}>
                   <HotelIcon sx={{ fontSize: 18 }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Accommodations
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "#f8fafc" }}>
+                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "text.primary" }}>
                   {summary.totalNights} {summary.totalNights === 1 ? "Night" : "Nights"}
                 </Typography>
-                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
                   ₹{summary.totalAccommodationCost.toLocaleString()} across {summary.totalAccommodations} stay(s)
                 </Typography>
               </Stack>
@@ -231,22 +244,23 @@ export default function TripSummarySection({ tripId }: TripSummarySectionProps) 
             sx={{
               borderRadius: 2.5,
               height: "100%",
-              bgcolor: "#1a1a1e",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
             <CardContent sx={{ p: 2.5 }}>
               <Stack spacing={1}>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "#bef264" }}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: isDark ? "#bef264" : "#059669" }}>
                   <ChecklistRtlIcon sx={{ fontSize: 18 }} />
-                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <Typography className="font-mono" sx={{ fontSize: "0.68rem", fontWeight: 700, color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Gear Readiness
                   </Typography>
                 </Stack>
-                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: "#bef264" }}>
+                <Typography className="font-mono" variant="h4" sx={{ fontWeight: 800, color: isDark ? "#bef264" : "#059669" }}>
                   {summary.checklistCompletionPercentage}%
                 </Typography>
-                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
                   {summary.completedChecklistItems} of {summary.totalChecklistItems} items packed
                 </Typography>
               </Stack>

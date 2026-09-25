@@ -13,6 +13,7 @@ import {
   Stack,
   Tooltip,
   Typography,
+  useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +21,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export const UserMenu: React.FC = () => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -58,13 +61,14 @@ export const UserMenu: React.FC = () => {
           justifyContent: "space-between",
           p: 1,
           borderRadius: 1.5,
-          bgcolor: "rgba(255, 255, 255, 0.03)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          bgcolor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(37, 99, 235, 0.04)",
+          border: "1px solid",
+          borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(99, 102, 241, 0.16)",
           cursor: "pointer",
           transition: "all 0.2s ease-in-out",
           "&:hover": {
-            bgcolor: "rgba(255, 255, 255, 0.06)",
-            borderColor: "rgba(99, 102, 241, 0.3)",
+            bgcolor: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(37, 99, 235, 0.08)",
+            borderColor: isDark ? "rgba(99, 102, 241, 0.3)" : "rgba(37, 99, 235, 0.4)",
           },
         }}
       >
@@ -73,7 +77,7 @@ export const UserMenu: React.FC = () => {
             sx={{
               width: 28,
               height: 28,
-              bgcolor: "#6366f1",
+              bgcolor: isDark ? "#6366f1" : "#2563eb",
               color: "#ffffff",
               fontSize: "0.75rem",
               fontWeight: 800,
@@ -87,7 +91,7 @@ export const UserMenu: React.FC = () => {
               <Typography
                 variant="body2"
                 sx={{
-                  color: "#f8fafc",
+                  color: "text.primary",
                   fontWeight: 700,
                   fontSize: "0.75rem",
                   lineHeight: 1.2,
@@ -106,14 +110,14 @@ export const UserMenu: React.FC = () => {
                   width: 5,
                   height: 5,
                   borderRadius: "50%",
-                  bgcolor: "#bef264",
-                  boxShadow: "0 0 6px #bef264",
+                  bgcolor: isDark ? "#bef264" : "#059669",
+                  boxShadow: isDark ? "0 0 6px #bef264" : "0 0 6px #059669",
                 }}
               />
               <Typography
                 className="font-mono"
                 variant="caption"
-                sx={{ color: "#818cf8", fontSize: "0.6rem", fontWeight: 600 }}
+                sx={{ color: isDark ? "#818cf8" : "#2563eb", fontSize: "0.6rem", fontWeight: 600 }}
               >
                 READY
               </Typography>
@@ -140,9 +144,12 @@ export const UserMenu: React.FC = () => {
           paper: {
             sx: {
               width: 220,
-              bgcolor: "#161b26",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.6)",
+              bgcolor: isDark ? "#161b26" : "#FFFFFF",
+              border: "1px solid",
+              borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(99, 102, 241, 0.16)",
+              boxShadow: isDark
+                ? "0 10px 30px rgba(0, 0, 0, 0.6)"
+                : "0 10px 30px rgba(99, 102, 241, 0.12)",
               borderRadius: 2,
               mb: 1,
             },
@@ -154,7 +161,7 @@ export const UserMenu: React.FC = () => {
             variant="caption"
             sx={{
               display: "block",
-              color: "#94a3b8",
+              color: isDark ? "#94a3b8" : "#64748b",
               fontFamily: 'monospace, "Fira Code", Courier',
               fontSize: "0.65rem",
               fontWeight: 700,
@@ -168,7 +175,7 @@ export const UserMenu: React.FC = () => {
           <Typography
             variant="body2"
             sx={{
-              color: "#f8fafc",
+              color: "text.primary",
               fontWeight: 700,
               fontSize: "0.8rem",
               whiteSpace: "nowrap",
@@ -180,20 +187,20 @@ export const UserMenu: React.FC = () => {
           </Typography>
         </Box>
 
-        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)" }} />
+        <Divider sx={{ borderColor: "divider" }} />
 
         <MenuItem
           onClick={handleOpenSettings}
           sx={{
             py: 1,
             px: 2,
-            color: "#f8fafc",
+            color: "text.primary",
             "&:hover": {
-              bgcolor: "rgba(99, 102, 241, 0.08)",
+              bgcolor: isDark ? "rgba(99, 102, 241, 0.08)" : "rgba(37, 99, 235, 0.06)",
             },
           }}
         >
-          <ListItemIcon sx={{ color: "#818cf8", minWidth: 28 }}>
+          <ListItemIcon sx={{ color: isDark ? "#818cf8" : "#2563eb", minWidth: 28 }}>
             <SettingsIcon sx={{ fontSize: 18 }} />
           </ListItemIcon>
           <ListItemText

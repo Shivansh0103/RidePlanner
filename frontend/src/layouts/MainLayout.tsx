@@ -34,11 +34,13 @@ import { Outlet, useLocation, useNavigate, useSearchParams } from "react-router-
 
 import { UserMenu } from "@/features/auth";
 import { useTrips } from "@/features/trips";
+import { ThemeToggle } from "@/shared/components";
 
 const SIDEBAR_WIDTH = 230;
 
 export default function MainLayout() {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
   const navigate = useNavigate();
@@ -73,7 +75,7 @@ export default function MainLayout() {
 
   // Global Navigation items
   const globalNavItems = [
-    { label: "Dashboard", path: "/", icon: <DashboardIcon fontSize="small" /> },
+    { label: "Dashboard", path: "/dashboard", icon: <DashboardIcon fontSize="small" /> },
     { label: "Expeditions", path: "/trips", icon: <ExploreIcon fontSize="small" /> },
     ...(targetCockpitTripId
       ? [
@@ -115,9 +117,10 @@ export default function MainLayout() {
         flexDirection: "column",
         height: "100%",
         p: 2,
-        bgcolor: "#18181b",
-        color: "#e5e2e1",
-        borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+        bgcolor: isDark ? "#18181b" : "#FFFFFF",
+        color: isDark ? "#e5e2e1" : "#090d16",
+        borderRight: "1px solid",
+        borderColor: "divider",
       }}
     >
       {/* Brand Header */}
@@ -128,13 +131,15 @@ export default function MainLayout() {
               width: 32,
               height: 32,
               borderRadius: 1.5,
-              bgcolor: "rgba(99, 102, 241, 0.15)",
-              border: "1px solid rgba(99, 102, 241, 0.3)",
+              bgcolor: isDark ? "rgba(99, 102, 241, 0.15)" : "rgba(37, 99, 235, 0.1)",
+              border: isDark ? "1px solid rgba(99, 102, 241, 0.3)" : "1px solid rgba(37, 99, 235, 0.3)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#818cf8",
-              boxShadow: "0 0 10px rgba(99, 102, 241, 0.25)",
+              color: isDark ? "#818cf8" : "#2563eb",
+              boxShadow: isDark
+                ? "0 0 10px rgba(99, 102, 241, 0.25)"
+                : "0 0 10px rgba(37, 99, 235, 0.15)",
             }}
           >
             <TwoWheelerIcon sx={{ fontSize: 18 }} />
@@ -146,7 +151,7 @@ export default function MainLayout() {
                 fontFamily: '"Outfit", sans-serif',
                 fontWeight: 800,
                 fontStyle: "italic",
-                color: "#bef264",
+                color: isDark ? "#bef264" : "#2563eb",
                 letterSpacing: "-0.02em",
                 lineHeight: 1.1,
               }}
@@ -157,7 +162,7 @@ export default function MainLayout() {
               className="font-mono"
               variant="caption"
               sx={{
-                color: "#94a3b8",
+                color: isDark ? "#94a3b8" : "#64748b",
                 fontSize: "0.62rem",
                 fontWeight: 700,
                 letterSpacing: "0.06em",
@@ -184,13 +189,16 @@ export default function MainLayout() {
             sx={{
               mb: 1.5,
               py: 0.6,
-              color: "#94a3b8",
+              color: isDark ? "#94a3b8" : "#64748b",
               fontFamily: '"JetBrains Mono", monospace',
               fontSize: "0.65rem",
               fontWeight: 700,
               justifyContent: "flex-start",
               textTransform: "uppercase",
-              "&:hover": { color: "#ffffff", bgcolor: "rgba(255, 255, 255, 0.04)" },
+              "&:hover": {
+                color: isDark ? "#ffffff" : "#090d16",
+                bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.04)",
+              },
             }}
           >
             All Expeditions
@@ -201,8 +209,10 @@ export default function MainLayout() {
             sx={{
               p: 1.2,
               borderRadius: 1.5,
-              bgcolor: "#141313",
-              border: "1px solid rgba(99, 102, 241, 0.25)",
+              bgcolor: isDark ? "#141313" : "#EEF1FA",
+              border: isDark
+                ? "1px solid rgba(99, 102, 241, 0.25)"
+                : "1px solid rgba(37, 99, 235, 0.25)",
             }}
           >
             <Stack direction="row" spacing={0.8} sx={{ alignItems: "center", mb: 0.4 }}>
@@ -212,7 +222,9 @@ export default function MainLayout() {
                   width: 6,
                   height: 6,
                   borderRadius: "50%",
-                  bgcolor: currentTrip.status === "Active" ? "#bef264" : "#818cf8",
+                  bgcolor: currentTrip.status === "Active"
+                    ? (isDark ? "#bef264" : "#059669")
+                    : (isDark ? "#818cf8" : "#2563eb"),
                 }}
               />
               <Typography
@@ -220,7 +232,9 @@ export default function MainLayout() {
                 sx={{
                   fontSize: "0.6rem",
                   fontWeight: 800,
-                  color: currentTrip.status === "Active" ? "#bef264" : "#818cf8",
+                  color: currentTrip.status === "Active"
+                    ? (isDark ? "#bef264" : "#059669")
+                    : (isDark ? "#818cf8" : "#2563eb"),
                   letterSpacing: "0.06em",
                   textTransform: "uppercase",
                 }}
@@ -231,7 +245,7 @@ export default function MainLayout() {
             <Typography
               variant="body2"
               sx={{
-                color: "#f8fafc",
+                color: "text.primary",
                 fontWeight: 800,
                 fontSize: "0.78rem",
                 whiteSpace: "nowrap",
@@ -293,26 +307,32 @@ export default function MainLayout() {
                       borderRadius: 1.5,
                       py: 0.8,
                       px: 1.2,
-                      bgcolor: active ? "#201f1f" : "transparent",
-                      color: active ? "#818cf8" : "#94a3b8",
-                      borderRight: active ? "3px solid #6366f1" : "3px solid transparent",
+                      bgcolor: active ? (isDark ? "#201f1f" : "#EEF2FF") : "transparent",
+                      color: active ? (isDark ? "#818cf8" : "#2563eb") : (isDark ? "#94a3b8" : "#475569"),
+                      borderRight: active
+                        ? `3px solid ${isDark ? "#6366f1" : "#2563eb"}`
+                        : "3px solid transparent",
                       transition: "all 0.15s ease",
                       "&:hover": {
-                        bgcolor: active ? "#201f1f" : "rgba(255, 255, 255, 0.04)",
-                        color: "#ffffff",
-                        "& .MuiListItemIcon-root": { color: "#818cf8" },
+                        bgcolor: active
+                          ? (isDark ? "#201f1f" : "#EEF2FF")
+                          : (isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(37, 99, 235, 0.04)"),
+                        color: isDark ? "#ffffff" : "#090d16",
+                        "& .MuiListItemIcon-root": { color: isDark ? "#818cf8" : "#2563eb" },
                       },
                       "&.Mui-selected": {
-                        bgcolor: "#201f1f",
-                        color: "#818cf8",
-                        "& .MuiListItemIcon-root": { color: "#818cf8" },
+                        bgcolor: isDark ? "#201f1f" : "#EEF2FF",
+                        color: isDark ? "#818cf8" : "#2563eb",
+                        "& .MuiListItemIcon-root": { color: isDark ? "#818cf8" : "#2563eb" },
                       },
                     }}
                   >
                     <ListItemIcon
                       sx={{
                         minWidth: 28,
-                        color: active ? "#818cf8" : "#71717a",
+                        color: active
+                          ? (isDark ? "#818cf8" : "#2563eb")
+                          : (isDark ? "#71717a" : "#94a3b8"),
                       }}
                     >
                       {item.icon}
@@ -337,8 +357,8 @@ export default function MainLayout() {
             })
           : globalNavItems.map((item) => {
               const active =
-                item.path === "/"
-                  ? location.pathname === "/"
+                item.path === "/dashboard"
+                  ? location.pathname === "/dashboard" || location.pathname === "/"
                   : item.path === "/trips"
                   ? location.pathname === "/trips" || location.pathname === "/trips/new"
                   : location.pathname.startsWith(item.path);
@@ -355,26 +375,32 @@ export default function MainLayout() {
                       borderRadius: 1.5,
                       py: 1,
                       px: 1.5,
-                      bgcolor: active ? "#201f1f" : "transparent",
-                      color: active ? "#818cf8" : "#a1a1aa",
-                      borderRight: active ? "3px solid #6366f1" : "3px solid transparent",
+                      bgcolor: active ? (isDark ? "#201f1f" : "#EEF2FF") : "transparent",
+                      color: active ? (isDark ? "#818cf8" : "#2563eb") : (isDark ? "#a1a1aa" : "#475569"),
+                      borderRight: active
+                        ? `3px solid ${isDark ? "#6366f1" : "#2563eb"}`
+                        : "3px solid transparent",
                       transition: "all 0.15s ease",
                       "&:hover": {
-                        bgcolor: active ? "#201f1f" : "rgba(255, 255, 255, 0.04)",
-                        color: "#ffffff",
-                        "& .MuiListItemIcon-root": { color: "#818cf8" },
+                        bgcolor: active
+                          ? (isDark ? "#201f1f" : "#EEF2FF")
+                          : (isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(37, 99, 235, 0.04)"),
+                        color: isDark ? "#ffffff" : "#090d16",
+                        "& .MuiListItemIcon-root": { color: isDark ? "#818cf8" : "#2563eb" },
                       },
                       "&.Mui-selected": {
-                        bgcolor: "#201f1f",
-                        color: "#818cf8",
-                        "& .MuiListItemIcon-root": { color: "#818cf8" },
+                        bgcolor: isDark ? "#201f1f" : "#EEF2FF",
+                        color: isDark ? "#818cf8" : "#2563eb",
+                        "& .MuiListItemIcon-root": { color: isDark ? "#818cf8" : "#2563eb" },
                       },
                     }}
                   >
                     <ListItemIcon
                       sx={{
                         minWidth: 30,
-                        color: active ? "#818cf8" : "#71717a",
+                        color: active
+                          ? (isDark ? "#818cf8" : "#2563eb")
+                          : (isDark ? "#71717a" : "#94a3b8"),
                       }}
                     >
                       {item.icon}
@@ -402,9 +428,9 @@ export default function MainLayout() {
                           height: 16,
                           fontSize: "0.55rem",
                           fontWeight: 800,
-                          bgcolor: "rgba(190, 242, 100, 0.15)",
-                          color: "#bef264",
-                          border: "1px solid rgba(190, 242, 100, 0.3)",
+                          bgcolor: isDark ? "rgba(190, 242, 100, 0.15)" : "rgba(5, 150, 105, 0.12)",
+                          color: isDark ? "#bef264" : "#059669",
+                          border: isDark ? "1px solid rgba(190, 242, 100, 0.3)" : "1px solid rgba(5, 150, 105, 0.3)",
                           borderRadius: 1,
                         }}
                       />
@@ -426,38 +452,60 @@ export default function MainLayout() {
             mb: 1.5,
             p: 1.2,
             borderRadius: 1.5,
-            bgcolor: "#141313",
-            border: "1px solid rgba(190, 242, 100, 0.25)",
+            bgcolor: isDark ? "#141313" : "#EEF1FA",
+            border: isDark ? "1px solid rgba(190, 242, 100, 0.25)" : "1px solid rgba(5, 150, 105, 0.25)",
             cursor: "pointer",
             transition: "all 0.2s ease",
             "&:hover": {
-              borderColor: "#bef264",
+              borderColor: isDark ? "#bef264" : "#059669",
             },
           }}
         >
           <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 0.3 }}>
             <Box
               className="pulse-telemetry glow-acid"
-              sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#bef264" }}
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                bgcolor: isDark ? "#bef264" : "#059669",
+              }}
             />
             <Typography
               className="font-mono"
               variant="caption"
-              sx={{ color: "#bef264", fontWeight: 800, fontSize: "0.62rem", letterSpacing: "0.04em" }}
+              sx={{
+                color: isDark ? "#bef264" : "#059669",
+                fontWeight: 800,
+                fontSize: "0.62rem",
+                letterSpacing: "0.04em",
+              }}
             >
               ACTIVE EXPEDITION
             </Typography>
           </Stack>
           <Typography
             variant="body2"
-            sx={{ color: "#f8fafc", fontWeight: 700, fontSize: "0.76rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+            sx={{
+              color: "text.primary",
+              fontWeight: 700,
+              fontSize: "0.76rem",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
           >
             {activeTrip.name}
           </Typography>
         </Box>
       )}
 
-      <Divider sx={{ mb: 1.5, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+      {/* Theme Switcher Pill in Sidebar */}
+      <Box sx={{ mb: 1.5, display: "flex", justifyContent: "center" }}>
+        <ThemeToggle size="small" />
+      </Box>
+
+      <Divider sx={{ mb: 1.5, borderColor: "divider" }} />
 
       {/* Bottom Profile Widget */}
       <UserMenu />
@@ -465,7 +513,7 @@ export default function MainLayout() {
   );
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#121416", overflowX: "hidden" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default", overflowX: "hidden" }}>
       {/* Desktop Persistent Sidebar */}
       <Box
         component="nav"
@@ -482,6 +530,7 @@ export default function MainLayout() {
               boxSizing: "border-box",
               width: SIDEBAR_WIDTH,
               border: "none",
+              bgcolor: isDark ? "#18181b" : "#FFFFFF",
             },
           }}
           open
@@ -502,6 +551,7 @@ export default function MainLayout() {
             boxSizing: "border-box",
             width: SIDEBAR_WIDTH,
             border: "none",
+            bgcolor: isDark ? "#18181b" : "#FFFFFF",
           },
         }}
       >
@@ -517,7 +567,7 @@ export default function MainLayout() {
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
-          bgcolor: "#121416",
+          bgcolor: "background.default",
           overflowX: "hidden",
         }}
       >
@@ -529,32 +579,36 @@ export default function MainLayout() {
               alignItems: "center",
               justifyContent: "space-between",
               p: 1.5,
-              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-              bgcolor: "#18181b",
+              borderBottom: "1px solid",
+              borderColor: "divider",
+              bgcolor: isDark ? "#18181b" : "#FFFFFF",
             }}
           >
-            <IconButton onClick={handleDrawerToggle} sx={{ color: "#f8fafc" }}>
+            <IconButton onClick={handleDrawerToggle} sx={{ color: "text.primary" }}>
               <MenuIcon />
             </IconButton>
 
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <TwoWheelerIcon sx={{ color: "#818cf8", fontSize: 20 }} />
+              <TwoWheelerIcon sx={{ color: isDark ? "#818cf8" : "#2563eb", fontSize: 20 }} />
               <Typography
                 variant="subtitle1"
                 sx={{
                   fontFamily: '"Outfit", sans-serif',
                   fontWeight: 800,
                   fontStyle: "italic",
-                  color: "#bef264",
+                  color: isDark ? "#bef264" : "#2563eb",
                 }}
               >
                 RidePlanner
               </Typography>
             </Stack>
 
-            <IconButton onClick={() => navigate("/trips/new")} sx={{ color: "#818cf8" }}>
-              <AddIcon />
-            </IconButton>
+            <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+              <ThemeToggle size="small" />
+              <IconButton onClick={() => navigate("/trips/new")} sx={{ color: isDark ? "#818cf8" : "#2563eb" }}>
+                <AddIcon />
+              </IconButton>
+            </Stack>
           </Box>
         )}
 

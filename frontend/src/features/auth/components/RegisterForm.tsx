@@ -90,7 +90,6 @@ export const RegisterForm: React.FC = () => {
         <Alert
           icon={<CheckCircleIcon fontSize="inherit" />}
           severity="success"
-          sx={{ bgcolor: "rgba(190, 242, 100, 0.1)", color: "#bef264" }}
         >
           Registration successful! Please sign in with your new credentials to enter your cockpit.
         </Alert>
@@ -117,7 +116,7 @@ export const RegisterForm: React.FC = () => {
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Stack spacing={2.5}>
+      <Stack spacing={2}>
         {errorMessage && (
           <Alert severity="error" sx={{ bgcolor: "rgba(248, 113, 113, 0.1)", color: "#f87171" }}>
             {errorMessage}
@@ -150,10 +149,7 @@ export const RegisterForm: React.FC = () => {
           fullWidth
           autoComplete="new-password"
           error={!!errors.password}
-          helperText={
-            errors.password?.message ||
-            "Minimum 8 characters with uppercase, lowercase, digit, and symbol"
-          }
+          helperText={errors.password?.message}
           disabled={isPending}
           slotProps={{
             input: {
@@ -227,7 +223,7 @@ export const RegisterForm: React.FC = () => {
           fullWidth
           disabled={isPending}
           sx={{
-            py: 1.3,
+            py: 1.25,
             fontWeight: 700,
             fontSize: "0.95rem",
             textTransform: "none",
@@ -242,21 +238,22 @@ export const RegisterForm: React.FC = () => {
           )}
         </Button>
 
-        <Box sx={{ display: "flex", alignItems: "center", my: 0.5 }}>
-          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+        <Box sx={{ display: "flex", alignItems: "center", my: 0.2 }}>
+          <Divider sx={{ flexGrow: 1, borderColor: "divider" }} />
           <Typography
             variant="caption"
             sx={{
               px: 1.5,
               color: "text.secondary",
               fontWeight: 600,
+              fontSize: "0.7rem",
               letterSpacing: "0.05em",
               textTransform: "uppercase",
             }}
           >
             Or
           </Typography>
-          <Divider sx={{ flexGrow: 1, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+          <Divider sx={{ flexGrow: 1, borderColor: "divider" }} />
         </Box>
 
         <GoogleSignInButton
@@ -276,7 +273,7 @@ export const RegisterForm: React.FC = () => {
               to="/login"
               state={state}
               sx={{
-                color: "#bef264",
+                color: "primary.main",
                 fontWeight: 700,
                 textDecoration: "none",
                 "&:hover": { textDecoration: "underline" },
