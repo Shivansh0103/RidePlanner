@@ -131,6 +131,7 @@ describe("AuthContext & AuthProvider", () => {
     });
 
     tokenStore.set("bootstrapped-token-abc");
+    localStorage.setItem("last_active_trip_id", "trip-999");
 
     await act(async () => {
       await result.current.logout();
@@ -138,6 +139,7 @@ describe("AuthContext & AuthProvider", () => {
 
     expect(logoutApiSpy).toHaveBeenCalled();
     expect(tokenStore.get()).toBeNull();
+    expect(localStorage.getItem("last_active_trip_id")).toBeNull();
     expect(queryClientClearSpy).toHaveBeenCalled();
     expect(result.current.isAuthenticated).toBe(false);
     expect(result.current.user).toBeNull();
@@ -161,6 +163,7 @@ describe("AuthContext & AuthProvider", () => {
     });
 
     tokenStore.set("bootstrapped-token-abc");
+    localStorage.setItem("last_active_trip_id", "trip-999");
 
     await act(async () => {
       await result.current.logout();
@@ -168,6 +171,7 @@ describe("AuthContext & AuthProvider", () => {
 
     // Cleanup still executed
     expect(tokenStore.get()).toBeNull();
+    expect(localStorage.getItem("last_active_trip_id")).toBeNull();
     expect(queryClientClearSpy).toHaveBeenCalled();
     expect(result.current.isAuthenticated).toBe(false);
     expect(result.current.user).toBeNull();
