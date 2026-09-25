@@ -48,6 +48,13 @@ builder.Services.AddAuthenticationRateLimiting(
     builder.Configuration,
     builder.Environment);
 
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(365);
+});
+
 builder.Services.AddRidePlannerHealthChecks();
 
 var app = builder.Build();
@@ -85,6 +92,10 @@ if (app.Environment.IsDevelopment())
 
     app.MapScalarApiReference();
 }
+else
+{
+    app.UseHsts();
+}
 
 var forwardedHeadersOptions = new ForwardedHeadersOptions
 {
@@ -94,6 +105,8 @@ var forwardedHeadersOptions = new ForwardedHeadersOptions
 forwardedHeadersOptions.KnownNetworks.Clear();
 forwardedHeadersOptions.KnownProxies.Clear();
 app.UseForwardedHeaders(forwardedHeadersOptions);
+
+app.UseSecurityHeaders();
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
