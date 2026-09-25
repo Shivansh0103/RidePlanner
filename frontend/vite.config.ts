@@ -43,7 +43,8 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
-    isolate: false,
+    isolate: true,
     fileParallelism: false,
+    pool: "threads",
   },
 });

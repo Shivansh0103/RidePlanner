@@ -108,10 +108,14 @@ export const ThemeContextProvider: React.FC<ThemeProviderProps> = ({
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
+const defaultThemeContext: ThemeContextType = {
+  mode: "dark",
+  resolvedTheme: "dark",
+  setMode: () => {},
+  toggleTheme: () => {},
+};
+
 export function useThemeMode(): ThemeContextType {
   const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useThemeMode must be used within a ThemeContextProvider");
-  }
-  return context;
+  return context ?? defaultThemeContext;
 }
