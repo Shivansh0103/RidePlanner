@@ -1,6 +1,6 @@
 # Sprint 14.5 — Production Polish, Public Landing, Theme System & OAuth Hardening
 
-**Status:** In Planning / Prepared  
+**Status:** Complete  
 **Sprint:** 14.5  
 **Version Target:** v0.14.5  
 **Theme:** Production reliability, user onboarding, multi-theme architecture, Google OAuth stabilization, and frontend resilience  
@@ -120,7 +120,7 @@ Every item below is supported by empirical evidence from the live production dep
   * [DependencyInjection.cs](file:///d:/Coding/RidePlanner/backend/RidePlanner/RidePlanner.Infrastructure/DependencyInjection.cs#L132)
 * **Root Causes:** In `DependencyInjection.cs`, `IEmailSender` is unconditionally registered as `DevelopmentEmailSender`. When users in production trigger password recovery, the reset link is written to Cloud Run stdout (`[PRODUCTION DEMO SENDER]`), but no actual email is transmitted over the wire.
 * **Impact:** Production users cannot self-service reset forgotten passwords; emails are never delivered.
-* **Action:** Integrate a production transactional email sender (supporting Resend HTTP REST API as modern default and standard SMTP fallback) with a responsive, branded HTML password reset template. Inject email credentials into Cloud Run / Secret Manager and validate non-empty configuration in `ProductionConfigurationValidator.cs`. Fallback to `DevelopmentEmailSender` in local development when unconfigured.
+* **Action:** Integrate a provider-agnostic production transactional email architecture supporting both Google/Gmail SMTP (`SmtpEmailSender`) and the modern Resend REST API (`ResendEmailSender`), paired with a responsive, branded Obsidian dark HTML password reset template. Configure Gmail SMTP as the active zero-cost production provider delivering to any recipient worldwide without custom domain verification; retain the Resend implementation ready for cutover once a dedicated custom domain is configured. Inject email credentials into Cloud Run / Secret Manager, enforce fail-fast validation in `ProductionConfigurationValidator.cs`, and gracefully fall back to `DevelopmentEmailSender` in local development when unconfigured.
 
 ---
 
@@ -425,7 +425,7 @@ Sprint 14.5 is **DONE** when all criteria below are verified:
 3. **[AUDIT-03] Multi-Theme System Operational:** Dark, Light, and System modes function seamlessly across all views. User selection persists across sessions in `localStorage`. Zero unreadable text or contrast bugs in light mode.
 4. **[AUDIT-04] Google Maps Live in Production:** Expeditions display interactive Google Maps with custom dark/light styling, polylines, and waypoints (zero missing key fallback alerts). Key is secured with HTTP referrer restrictions.
 5. **[AUDIT-05] Database Connection Resiliency Verified:** Npgsql `EnableRetryOnFailure` is active in EF Core configuration, eliminating sleep-resume 500s during Neon auto-suspend resume transitions.
-6. **[AUDIT-06] Production Transactional Email Operational:** Real transactional email delivery (Resend HTTP REST API with SMTP fallback) is integrated in `RidePlanner.Infrastructure`. Password reset emails are transmitted over the wire and received in rider inboxes with a responsive, branded HTML template. Validated at startup in production and gracefully falls back to `DevelopmentEmailSender` in local dev.
+6. **[AUDIT-06] Dual Production Transactional Email Operational (Gmail SMTP & Resend):** Provider-agnostic transactional email delivery (`IEmailSender`) is integrated in `RidePlanner.Infrastructure`. Gmail SMTP is configured as the active production sender for ₹0-cost delivery worldwide, while Resend REST API integration is retained for future custom-domain cutover. Password reset emails are transmitted over the wire and received in rider inboxes with a responsive, branded HTML template. Validated at startup in production and gracefully falls back to `DevelopmentEmailSender` in local dev.
 7. **[AUDIT-08] Clean Logout Storage Hygiene:** `last_active_trip_id` is purged from `localStorage` upon user logout.
 8. **[AUDIT-09] Actionable Error Recovery UI:** `ErrorState` renders a structured card with retry and back-navigation triggers.
 9. **[AUDIT-10] Auth Endpoint Rate Limiting:** `POST /api/auth/refresh` and `GET /api/auth/external/google/start` are protected by fixed-window rate limiters.

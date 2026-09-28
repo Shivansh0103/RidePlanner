@@ -86,6 +86,65 @@ public static class ProductionConfigurationValidator
             errors.Add("App:FrontendBaseUrl cannot be 'http://localhost:5173' in production.");
         }
 
+        // 6. Validate Transactional Email Provider
+        var emailProvider = configuration["Email:Provider"];
+        if (string.IsNullOrWhiteSpace(emailProvider) || string.Equals(emailProvider, "Development", StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add("Email:Provider must be configured in production ('Resend' or 'Smtp').");
+        }
+        else if (string.Equals(emailProvider, "Resend", StringComparison.OrdinalIgnoreCase))
+        {
+            var resendApiKey = configuration["Email:ApiKey"];
+            if (string.IsNullOrWhiteSpace(resendApiKey))
+            {
+                errors.Add("Email:ApiKey is required when Email:Provider is 'Resend'.");
+            }
+            else if (resendApiKey.Contains("xxxx") || string.Equals(resendApiKey, "development-placeholder", StringComparison.OrdinalIgnoreCase))
+            {
+                errors.Add("Email:ApiKey cannot use placeholder values in production.");
+            }
+        }
+        else if (string.Equals(emailProvider, "Smtp", StringComparison.OrdinalIgnoreCase))
+        {
+            var smtpHost = configuration["Email:Smtp:Host"];
+            if (string.IsNullOrWhiteSpace(smtpHost))
+            {
+                errors.Add("Email:Smtp:Host is required when Email:Provider is 'Smtp'.");
+            }
+
+            var smtpPortStr = configuration["Email:Smtp:Port"];
+            if (string.IsNullOrWhiteSpace(smtpPortStr))
+            {
+                errors.Add("Email:Smtp:Port is required when Email:Provider is 'Smtp'.");
+            }
+            else if (!int.TryParse(smtpPortStr, out var smtpPort) || smtpPort <= 0 || smtpPort > 65535)
+            {
+                errors.Add("Email:Smtp:Port must be a valid positive port number between 1 and 65535.");
+            }
+
+            var smtpUsername = configuration["Email:Smtp:Username"];
+            if (string.IsNullOrWhiteSpace(smtpUsername))
+            {
+                errors.Add("Email:Smtp:Username is required when Email:Provider is 'Smtp'.");
+            }
+
+            var smtpPassword = configuration["Email:Smtp:Password"];
+            if (string.IsNullOrWhiteSpace(smtpPassword))
+            {
+                errors.Add("Email:Smtp:Password is required when Email:Provider is 'Smtp'.");
+            }
+
+            var fromEmail = configuration["Email:FromEmail"];
+            if (string.IsNullOrWhiteSpace(fromEmail))
+            {
+                errors.Add("Email:FromEmail is required when Email:Provider is 'Smtp'.");
+            }
+        }
+        else
+        {
+            errors.Add($"Email:Provider '{emailProvider}' is invalid in production. Must be 'Resend' or 'Smtp'.");
+        }
+
         if (errors.Count > 0)
         {
             var summary = string.Join(Environment.NewLine + " - ", errors);
