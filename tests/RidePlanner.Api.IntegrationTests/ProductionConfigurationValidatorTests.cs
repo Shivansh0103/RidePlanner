@@ -215,16 +215,155 @@ public class ProductionConfigurationValidatorTests
         Assert.Contains("Email:ApiKey", ex.Message);
     }
 
+    private static Dictionary<string, string?> CreateValidProductionSmtpConfigDictionary()
+    {
+        return new Dictionary<string, string?>
+        {
+            ["Jwt:Secret"] = "a_very_secure_production_jwt_signing_key_that_is_long_enough_12345!",
+            ["ConnectionStrings:RidePlannerDatabase"] = "Host=db.example.com;Database=rideplanner;Username=postgres;Password=secure_pw;SSL Mode=Require;",
+            ["Cors:AllowedOrigins:0"] = "https://rideplanner.vercel.app",
+            ["App:FrontendBaseUrl"] = "https://rideplanner.vercel.app",
+            ["Authentication:Google:ClientId"] = "73286917441-test.apps.googleusercontent.com",
+            ["Authentication:Google:ClientSecret"] = "GOCSPX-valid_test_secret_here",
+            ["Email:Provider"] = "Smtp",
+            ["Email:Smtp:Host"] = "smtp.gmail.com",
+            ["Email:Smtp:Port"] = "587",
+            ["Email:Smtp:Username"] = "rideplanner.app@gmail.com",
+            ["Email:Smtp:Password"] = "app-password-secret-1234",
+            ["Email:FromEmail"] = "RidePlanner <rideplanner.app@gmail.com>"
+        };
+    }
+
     [Fact]
-    public void Validate_InProduction_WhenSmtpHostIsMissing_Throws()
+    public void Validate_InProduction_WithValidSmtpConfiguration_Succeeds()
+    {
+        var validConfig = CreateConfiguration(CreateValidProductionSmtpConfigDictionary());
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Record.Exception(() => ProductionConfigurationValidator.Validate(validConfig, prodEnv));
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void Validate_InProduction_WhenSmtpConfigured_DoesNotRequireResendApiKey()
+    {
+        var dict = CreateValidProductionSmtpConfigDictionary();
+        dict.Remove("Email:ApiKey");
+        var config = CreateConfiguration(dict);
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Record.Exception(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void Validate_InProduction_WhenResendConfigured_DoesNotRequireSmtpCredentials()
     {
         var dict = CreateValidProductionConfigDictionary();
-        dict["Email:Provider"] = "Smtp";
-        dict["Email:Smtp:Host"] = "";
+        dict["Email:Provider"] = "Resend";
+        dict["Email:ApiKey"] = "re_valid_production_api_key_12345";
+        dict.Remove("Email:Smtp:Host");
+        dict.Remove("Email:Smtp:Port");
+        dict.Remove("Email:Smtp:Username");
+        dict.Remove("Email:Smtp:Password");
+        var config = CreateConfiguration(dict);
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Record.Exception(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Null(ex);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Validate_InProduction_WhenSmtpHostIsMissing_Throws(string? invalidHost)
+    {
+        var dict = CreateValidProductionSmtpConfigDictionary();
+        dict["Email:Smtp:Host"] = invalidHost;
         var config = CreateConfiguration(dict);
 
         var prodEnv = CreateEnvironment(Environments.Production);
         var ex = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(config, prodEnv));
         Assert.Contains("Email:Smtp:Host is required", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("0")]
+    [InlineData("-1")]
+    [InlineData("not_a_number")]
+    [InlineData("70000")]
+    public void Validate_InProduction_WhenSmtpPortIsMissingOrInvalid_Throws(string? invalidPort)
+    {
+        var dict = CreateValidProductionSmtpConfigDictionary();
+        dict["Email:Smtp:Port"] = invalidPort;
+        var config = CreateConfiguration(dict);
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Contains("Email:Smtp:Port", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Validate_InProduction_WhenSmtpUsernameIsMissing_Throws(string? invalidUsername)
+    {
+        var dict = CreateValidProductionSmtpConfigDictionary();
+        dict["Email:Smtp:Username"] = invalidUsername;
+        var config = CreateConfiguration(dict);
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Contains("Email:Smtp:Username is required", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Validate_InProduction_WhenSmtpPasswordIsMissing_Throws(string? invalidPassword)
+    {
+        var dict = CreateValidProductionSmtpConfigDictionary();
+        dict["Email:Smtp:Password"] = invalidPassword;
+        var config = CreateConfiguration(dict);
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Contains("Email:Smtp:Password is required", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Validate_InProduction_WhenSmtpFromEmailIsMissing_Throws(string? invalidFromEmail)
+    {
+        var dict = CreateValidProductionSmtpConfigDictionary();
+        dict["Email:FromEmail"] = invalidFromEmail;
+        var config = CreateConfiguration(dict);
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Contains("Email:FromEmail is required", ex.Message);
+    }
+
+    [Theory]
+    [InlineData("SendGrid")]
+    [InlineData("Mailgun")]
+    [InlineData("UnknownProvider")]
+    public void Validate_InProduction_WithInvalidEmailProvider_Throws(string invalidProvider)
+    {
+        var dict = CreateValidProductionConfigDictionary();
+        dict["Email:Provider"] = invalidProvider;
+        var config = CreateConfiguration(dict);
+
+        var prodEnv = CreateEnvironment(Environments.Production);
+        var ex = Assert.Throws<InvalidOperationException>(() => ProductionConfigurationValidator.Validate(config, prodEnv));
+        Assert.Contains($"Email:Provider '{invalidProvider}' is invalid", ex.Message);
     }
 }

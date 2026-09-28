@@ -140,6 +140,8 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
         var emailSettings = configuration.GetSection(EmailSettings.SectionName).Get<EmailSettings>() ?? new EmailSettings();
 
+        services.AddSingleton<ISmtpClientFactory, DefaultSmtpClientFactory>();
+
         if (string.Equals(emailSettings.Provider, "Resend", StringComparison.OrdinalIgnoreCase))
         {
             services.AddHttpClient<IEmailSender, ResendEmailSender>();
@@ -148,9 +150,14 @@ public static class DependencyInjection
         {
             services.AddTransient<IEmailSender, SmtpEmailSender>();
         }
-        else
+        else if (string.IsNullOrWhiteSpace(emailSettings.Provider) || string.Equals(emailSettings.Provider, "Development", StringComparison.OrdinalIgnoreCase))
         {
             services.AddTransient<IEmailSender, DevelopmentEmailSender>();
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                $"Invalid email provider '{emailSettings.Provider}'. Supported providers are 'Development', 'Resend', and 'Smtp'.");
         }
 
         return services;
