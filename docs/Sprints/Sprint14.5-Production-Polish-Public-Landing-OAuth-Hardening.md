@@ -196,6 +196,21 @@ Every item below is supported by empirical evidence from the live production dep
 
 ---
 
+### 3.14 AUDIT-14: Monorepo CI/CD Path-Filtering & Selective Build Optimization
+* **Severity:** **P2**
+* **Evidence:**
+  * [.github/workflows/backend-ci.yml](file:///d:/Coding/RidePlanner/.github/workflows/backend-ci.yml#L3-L10)
+  * [.github/workflows/frontend-ci.yml](file:///d:/Coding/RidePlanner/.github/workflows/frontend-ci.yml#L3-L10)
+  * Vercel Project Settings &rarr; Build and Deployment &rarr; Root Directory
+* **Root Causes:** Both GitHub Actions workflows triggered on all pushes and pull requests to `main` without `paths` or `paths-ignore` constraints. As a result, frontend-only commits triggered backend .NET compiles, Docker builds, Artifact Registry pushes, and new Cloud Run revisions; backend-only or documentation-only commits triggered frontend lint, build, Vitest, and Vercel edge deployments.
+* **Impact:** High revision churn in Cloud Run, wasted container registry storage, and consumption of GitHub Actions and Vercel build minutes on unrelated changes.
+* **Action:** 
+  1. Add path filters to `backend-ci.yml` (`backend/**`, `tests/**`, `.github/workflows/backend-ci.yml`).
+  2. Add path filters to `frontend-ci.yml` (`frontend/**`, `.github/workflows/frontend-ci.yml`).
+  3. Validate Vercel monorepo configuration: verify Root Directory is set to `frontend`, *"Skip deployments when there are no changes to the root directory or its dependencies"* is enabled, and automatic build step evaluation skips redundant frontend deployments.
+
+---
+
 ## 4. Target Architecture & Scope Boundaries
 
 ### 4.1 Topology Preservation
@@ -389,6 +404,27 @@ Browser (HTTPS)
 
 ---
 
+### 5.8 Workstream H: Selective Monorepo CI/CD & Deployment Optimization (AUDIT-14)
+1. **Backend CI Path Filtering (`.github/workflows/backend-ci.yml`):**
+   * Scope workflow triggers using `paths`:
+     * `'backend/**'`
+     * `'tests/**'`
+     * `'.github/workflows/backend-ci.yml'`
+   * Eliminates unnecessary .NET builds, Docker packaging, Artifact Registry image pushes, and Cloud Run revision deployments when documentation, frontend code, or markdown files change.
+2. **Frontend CI Path Filtering (`.github/workflows/frontend-ci.yml`):**
+   * Scope workflow triggers using `paths`:
+     * `'frontend/**'`
+     * `'.github/workflows/frontend-ci.yml'`
+   * Skips frontend linting, building, and Vitest executions when only backend code or documentation is committed.
+3. **Vercel Monorepo Deployment Alignment:**
+   * Verify and maintain Vercel project configuration:
+     * **Root Directory:** `frontend`
+     * **Skip deployments when there are no changes to the root directory or its dependencies:** `Enabled`
+     * **Ignored Build Step:** `Automatic`
+   * Ensures Vercel's edge deployment skips redundant frontend builds upon backend-only commits.
+
+---
+
 ## 6. Testing & Quality Assurance Plan
 
 ### 6.1 Automated Tests to Add
@@ -431,5 +467,6 @@ Sprint 14.5 is **DONE** when all criteria below are verified:
 9. **[AUDIT-10] Auth Endpoint Rate Limiting:** `POST /api/auth/refresh` and `GET /api/auth/external/google/start` are protected by fixed-window rate limiters.
 10. **[AUDIT-11] Vitest Windows Compatibility:** `vite.config.ts` uses `pool: 'threads'`, allowing `npm run test` to pass cleanly on Windows without timeouts.
 11. **[AUDIT-12] Security Headers Hardening:** Standard OWASP defensive headers (HSTS, nosniff, DENY) attached to backend responses.
-12. **Code Quality & CI Validation:** All backend automated tests (250+) pass in Release mode; all frontend Vitest tests (95+) pass locally and in GitHub Actions CI with zero ESLint warnings.
+12. **[AUDIT-14] Monorepo Selective CI/CD & Deployment Optimization:** Granular `paths` filtering in `.github/workflows/backend-ci.yml` and `.github/workflows/frontend-ci.yml` ensures changes to documentation, tests, or single-tier code execute only the relevant build and deployment pipelines. Vercel Root Directory and deployment skipping prevent redundant edge builds.
+13. **Code Quality & CI Validation:** All backend automated tests (250+) pass in Release mode; all frontend Vitest tests (95+) pass locally and in GitHub Actions CI with zero ESLint warnings.
 *(Note: AUDIT-07 was reviewed and skipped as native `/health` and `/ready` checks already exist directly on Cloud Run).*
