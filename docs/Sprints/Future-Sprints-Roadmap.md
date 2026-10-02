@@ -93,6 +93,7 @@ Transform the local, anonymous single-tenant system into a secure, multi-tenant 
 * **[AUDIT-10] Auth Endpoint Rate Limiting**: Apply rate limit policies to `POST /api/auth/refresh` and `GET /api/auth/external/google/start`.
 * **[AUDIT-11] Vitest Windows Compatibility**: Configure `pool: 'threads'` in `vite.config.ts` to eliminate worker timeout errors during local test execution on Windows.
 * **[AUDIT-12] Security Headers Hardening**: Attach HSTS and standard defensive HTTP response headers (`nosniff`, `DENY`).
+* **[AUDIT-14] Monorepo Selective CI/CD**: Implement path-filtering in GitHub Actions (`backend-ci.yml` and `frontend-ci.yml`) and align with Vercel deployment skipping to eliminate redundant Docker builds and Cloud Run revisions on single-tier changes.
 * **Value Delivered**: Complete end-to-end production viability, welcoming public discovery, outdoor daylight riding usability, and rock-solid cloud reliability.
 
 ---
