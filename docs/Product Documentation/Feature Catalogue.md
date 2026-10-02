@@ -203,6 +203,20 @@ Ride Planner integrates with specialized services rather than replacing them.
 
 ---
 
+## AI Expedition Assistance & Automation
+
+AI interprets user intent and provides structured proposals; Ride Planner's domain model retains ownership of truth, business rules, and persistence.
+
+### Features
+
+* 🟢 Natural Language Expedition Generator ("Plan with AI" Copilot)
+* 🟢 Structured ExpeditionDraft Generation (JSON Schema)
+* 🟢 Conversational Draft Refinement Loop
+* 🟢 Multimodal Receipt OCR Scanner (Fuel, Tolls, Lodging)
+* 🟢 Context-Aware Adaptive Packing Assistant
+
+---
+
 # Notes
 
-This catalogue is a living document and reflects the complete state of Ride Planner as of **v0.9.0**.
+This catalogue is a living document and reflects the complete state of Ride Planner as of **v0.14.5**.

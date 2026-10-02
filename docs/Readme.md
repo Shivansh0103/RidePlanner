@@ -2,7 +2,7 @@
 
 [![Live Application](https://img.shields.io/badge/Live_App-ride--planner--sand.vercel.app-00df8f?style=for-the-badge&logo=vercel&logoColor=white)](https://ride-planner-sand.vercel.app/)
 [![API Status](https://img.shields.io/badge/Cloud_Run_API-Healthy-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://rideplanner-api-73286917441.asia-southeast1.run.app/health)
-[![Version](https://img.shields.io/badge/Version-v0.14.0-blue?style=for-the-badge)](#current-status)
+[![Version](https://img.shields.io/badge/Version-v0.14.5-blue?style=for-the-badge)](#current-status)
 [![Automated Tests](https://img.shields.io/badge/Tests-247_Passed-brightgreen?style=for-the-badge)](#running-the-platform)
 
 > 🌐 **Live Web Application:** [https://ride-planner-sand.vercel.app/](https://ride-planner-sand.vercel.app/)  
@@ -105,15 +105,19 @@ Different journey types may unlock specialized planning tools while maintaining 
 * ✅ Keyless CI/CD automation via GitHub Actions Workload Identity Federation (WIF) OIDC
 * ✅ Zero-downtime canary traffic migration & automated jq-based health check smoke tests (`/health` & `/ready`)
 * ✅ Persistent ASP.NET Core Data Protection in PostgreSQL & Forwarded Headers proxy awareness
-* ⏳ Weather integration (Sprint 15)
-* ⏳ Offline PWA & GPX export (Sprint 16)
-* ⏳ Group collaboration & shared workspaces (Sprint 19)
+* ⏳ AI Expedition Copilot & natural-language trip drafting (Sprint 15)
+* ⏳ Route intelligence: weather matrix & elevation profiles (Sprint 16)
+* ⏳ 1-click GPX/KML export & turn-by-turn navigation handoff (Sprint 17)
+* ⏳ Offline expedition mode & PWA download (Sprint 18)
+* ⏳ Shared expeditions, roles & resource permissions (Sprint 19)
+* ⏳ Real-time collaboration via SignalR (Sprint 20)
+* ⏳ Group expense splitting & debt minimization (Sprint 21)
 
 ---
 
 ## Current Status
 
-Ride Planner is actively deployed in production (Version **v0.14.0** — *Production Readiness & First Cloud Deployment*).
+Ride Planner is actively deployed in production (Version **v0.14.5** — *Production Polish, Public Landing, Theme System & OAuth Hardening*).
 
 Completed milestones include:
 * **Product Features (Sprints 1–9)**: Trip Lifecycle Management, Google Places Autocomplete, Route Visualization, Itinerary Management, Budget Planning & Smart Fuel Calculator, Actual Expense Log & Budget vs Actual Analysis, Preparation Checklists, Overview Command Center Dashboard, Accommodation & Stay Planning, Travel Documents, Emergency Contacts, Derived Trip Readiness Score, Printable Trip Summary Report, and Trip Memories.
@@ -122,6 +126,7 @@ Completed milestones include:
 * **Obsidian Velocity UI/UX Overhaul (Sprint 12)**: Dark cockpit adventure telemetry interface inspired by Google Stitch designs, Bento metrics, 6-category readiness dial, and responsive layouts.
 * **Authentication, Multi-Tenancy & Profiles (Sprint 13)**: ASP.NET Core Identity with Guid keys, dual-token HttpOnly session lifecycle with reuse detection, private user workspaces (`Trip.OwnerUserId`), user profiles with travel settings, password reset flow, Google OIDC sign-in with proof-of-control account linking, and ASP.NET Core rate limiting middleware.
 * **Production Readiness & Cloud Deployment (Sprint 14)**: Multi-stage Docker containerization on port 8080 (`USER $APP_UID`), local PostgreSQL Compose environment, Vercel frontend edge deployment with `/api/*` rewrites, Google Cloud Run serverless backend deployment (`asia-southeast1`), Neon managed PostgreSQL 18 with connection pooling, ASP.NET Core Data Protection key persistence in PostgreSQL, Forwarded Headers for reverse-proxy client IP handling, fast-fail `ProductionConfigurationValidator`, native `/health` and `/ready` health checks, GitHub Actions CI for backend and frontend with dependency caching, and automated CD with Workload Identity Federation (WIF) OIDC keyless authentication, 0% canary traffic tag, automated `jq` smoke tests, and instant revision rollback capabilities.
+* **Production Polish & OAuth Hardening (Sprint 14.5)**: Public unauthenticated landing page at `/` with hero banner and Bento feature overview; multi-theme system (Obsidian Dark / Light / System) with `localStorage` persistence and OS listener; Google OAuth reverse-proxy stabilization with `X-Forwarded-Host` and `/api/signin-google` edge proxying; dual production transactional email delivery (`IEmailSender`) with active Gmail SMTP integration and Resend REST API capability; Neon connection drop resilience via Npgsql `EnableRetryOnFailure()`; auth endpoint rate limiting; and selective CI/CD path-filtering.
 
 ---
 
